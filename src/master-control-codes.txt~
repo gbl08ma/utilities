@@ -1,0 +1,27 @@
+4520000 - Settings Menu
+4520001 - Set time
+4520002 - Set date
+4520003 - Set time format
+4520004 - Set long date format
+4520005 - Set date format
+4520006 - NOR dark theme
+4520007 - NOR display statusbar
+4520008 - NOR show advanced tools
+4520009 - NOR display FKeys
+4520010 - Set startup brightness
+4520011 - NOR show last char of passwords
+4520012 - NOR events count on calendar
+4529001 - NOR enable lock functionality
+4529002 - Enable first run setting.
+4529900 - Save Settings (doesn't override first-run setting)
+4529901 - Load Settings
+4529902 - Delete settings file
+4530000 - Time-related menu
+4530001 - Main Calendar screen
+4540000 - Power-related menu
+4540001 - Set Auto Power Off
+4540002 - Set backlight timeout
+4540003 - Set backlight level
+4540004 - Set CPU clock
+4540005 - Power Information
+5000000 - About screen

@@ -1,0 +1,53 @@
+#include <fxcg/display.h>
+#include <fxcg/file.h>
+#include <fxcg/keyboard.h>
+#include <fxcg/system.h>
+#include <fxcg/misc.h>
+#include <fxcg/serial.h>
+#include <rtc.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+//#include "settings.h"
+// SETTINGS engine
+
+// Routines for saving and loading settings
+
+void LoadSettings(unsigned char* file) {
+  int size;
+  MCSGetDlen2(DIRNAME, file, &size);
+  if (size == 0) { return; }
+  
+  unsigned char buffer[8];
+  MCSGetData1(0, 8, buffer);
+  setting_timeformat = buffer[0];
+  setting_longdateformat = buffer[1];
+  setting_dateformat = buffer[2];
+  setting_black_theme = buffer[3];
+  setting_display_statusbar = buffer[4];
+  setting_startup_brightness = buffer[5];
+  setting_show_advanced = buffer[6];
+  setting_display_fkeys = buffer[7];
+}
+
+void SaveSettings(unsigned char* file) {
+
+  int createResult = MCS_CreateDirectory( DIRNAME );
+
+  if(createResult != 0) // Check directory existence
+  { // directory already exists, so delete the exiting file that may be there
+    MCSDelVar2(DIRNAME, file);
+  }
+  unsigned char buffer[8] = {
+    setting_timeformat,
+    setting_longdateformat,
+    setting_dateformat,
+    setting_black_theme,
+    setting_display_statusbar,
+    setting_startup_brightness,
+    setting_show_advanced,
+    setting_display_fkeys
+  };
+  MCSPutVar2(DIRNAME, file, 8, buffer);
+}
+// end of settings-related code
