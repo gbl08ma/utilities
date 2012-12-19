@@ -15,6 +15,7 @@
 #include "lock.hpp"
 #include "toksplit.h"
 #include "ftoa.c"
+#include "version.c"
 #define CALENDAR_FOLDER (const char*)"@CALNDAR"
 #define SMEM_CALENDAR_FOLDER (const char*)"@CALNDAR"
 
@@ -1031,13 +1032,18 @@ void showAbout() {
  int orange = drawRGB24toRGB565(210, 68, 19);
  int textX = 0;
  int textY = 5;
- PrintMini(&textX, &textY, (unsigned char*)"Version Beta 7", 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_WHITE, 1, 0);
- PrintMini(&textX, &textY, (unsigned char*)" - December 2012", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
- textY = 25;
+ char verBuffer[100] = "";
+ getVersion(verBuffer);
+ PrintMini(&textX, &textY, (unsigned char*)"Version ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_WHITE, 1, 0);
+ PrintMini(&textX, &textY, (unsigned char*)verBuffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_WHITE, 1, 0);
+ textY = textY + 17; textX = 0;
+ getTimestamp(verBuffer);
+ PrintMini(&textX, &textY, (unsigned char*)verBuffer, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 1, 0);
+ textY = 42;
  textX = 0;
  PrintMini(&textX, &textY, (unsigned char*)"Developed by gbl08ma at", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
- drawtnyimLogo(10, 42+24); //24 pixels for the status bar
- textY = 84;
+ drawtnyimLogo(10, 59+24); //24 pixels for the status bar
+ textY = 101;
  textX = 0;
  // PrintMini and its x,y pointers allow for awesome easy color formatting... let's try
  PrintMini(&textX, &textY, (unsigned char*)"tny. ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
@@ -1045,10 +1051,10 @@ void showAbout() {
  PrintMini(&textX, &textY, (unsigned char*)"nternet ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
  PrintMini(&textX, &textY, (unsigned char*)"m", 0, 0xFFFFFFFF, 0, 0, orange, COLOR_WHITE, 1, 0);
  PrintMini(&textX, &textY, (unsigned char*)"edia", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
- textY = 114;
+ textY = 120;
  textX = 0;
  PrintMini(&textX, &textY, (unsigned char*)"http://i.tny.im | http://gbl08ma.com", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
- textY = 135;
+ textY = 137;
  textX = 0;
  PrintMini(&textX, &textY, (unsigned char*)"gbl08ma@gmail.com", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
  
