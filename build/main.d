@@ -17,7 +17,7 @@ main.o: /home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/main.cpp \
  /home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/lock.hpp \
  /home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/toksplit.h \
  /home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/ftoa.c \
- /home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/version.c
+ /home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/version.h
 
 /home/gabriel/Casio-Pro/fixedSDK/include/fxcg/display.h:
 
@@ -55,4 +55,4 @@ main.o: /home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/main.cpp \
 
 /home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/ftoa.c:
 
-/home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/version.c:
+/home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/version.h:

@@ -15,7 +15,7 @@
 #include "lock.hpp"
 #include "toksplit.h"
 #include "ftoa.c"
-#include "version.c"
+#include "version.h"
 #define CALENDAR_FOLDER (const char*)"@CALNDAR"
 #define SMEM_CALENDAR_FOLDER (const char*)"@CALNDAR"
 
@@ -1051,10 +1051,10 @@ void showAbout() {
  PrintMini(&textX, &textY, (unsigned char*)"nternet ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
  PrintMini(&textX, &textY, (unsigned char*)"m", 0, 0xFFFFFFFF, 0, 0, orange, COLOR_WHITE, 1, 0);
  PrintMini(&textX, &textY, (unsigned char*)"edia", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
- textY = 120;
+ textY = 125;
  textX = 0;
  PrintMini(&textX, &textY, (unsigned char*)"http://i.tny.im | http://gbl08ma.com", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
- textY = 137;
+ textY = 142;
  textX = 0;
  PrintMini(&textX, &textY, (unsigned char*)"gbl08ma@gmail.com", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
  
