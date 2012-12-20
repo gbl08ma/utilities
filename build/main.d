@@ -7,7 +7,7 @@ main.o: /home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/main.cpp \
  /home/gabriel/Casio-Pro/fixedSDK/include/stddef.h \
  /home/gabriel/Casio-Pro/fixedSDK/include/fxcg/app.h \
  /home/gabriel/Casio-Pro/fixedSDK/include/fxcg/serial.h \
- /home/gabriel/Casio-Pro/fixedSDK/include/rtc.h \
+ /home/gabriel/Casio-Pro/fixedSDK/include/fxcg/rtc.h \
  /home/gabriel/Casio-Pro/fixedSDK/include/string.h \
  /home/gabriel/Casio-Pro/fixedSDK/include/stdio.h \
  /home/gabriel/Casio-Pro/fixedSDK/include/stdlib.h \
@@ -35,7 +35,7 @@ main.o: /home/gabriel/Casio-Pro/fixedSDK/projects/utilities/src/main.cpp \
 
 /home/gabriel/Casio-Pro/fixedSDK/include/fxcg/serial.h:
 
-/home/gabriel/Casio-Pro/fixedSDK/include/rtc.h:
+/home/gabriel/Casio-Pro/fixedSDK/include/fxcg/rtc.h:
 
 /home/gabriel/Casio-Pro/fixedSDK/include/string.h:
 

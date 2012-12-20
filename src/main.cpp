@@ -5,7 +5,7 @@
 #include <fxcg/misc.h>
 #include <fxcg/app.h>
 #include <fxcg/serial.h>
-#include <rtc.h>
+#include <fxcg/rtc.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

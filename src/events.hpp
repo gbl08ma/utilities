@@ -32,7 +32,6 @@ typedef struct // Defines what a calendar event contains
 // end of type definitions
 extern CalendarEvent charToCalEvent(unsigned char *src,int leadingTwoBytes);
 void calEventToChar(unsigned char *buf,CalendarEvent calEvent);
-int atoi(const char *str);
 void filenameFromDate(EventDate date, char* filename);
 int AddSMEMEvent(CalendarEvent calEvent, const char* filename);
 int RemoveSMEMEvent(EventDate startdate, int calEventPos, const char* folder);

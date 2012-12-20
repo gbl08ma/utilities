@@ -15,13 +15,6 @@
 #include "events.hpp"
 #include "toksplit.h"
 
-int
-atoi(const char *str)
-{
-  //return (int)strtol(str, (char **)NULL, 10);
-  return sys_atoi(str);
-}
-
 #define FILE_HEADER "PCALEVT" //Prizm CALendar EVenT / Portable CALendar EVenT
 #define FIELD_SEPARATOR '\x1D'
 #define EVENT_SEPARATOR '\x1E'
