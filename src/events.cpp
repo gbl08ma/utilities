@@ -564,7 +564,10 @@ int RemoveSMEMDay(EventDate date, const char* folder) {
 int GetSMEMeventsForDate(EventDate startdate, const char* folder, CalendarEvent calEvents[]) {
 /*reads the storage memory searching for events starting on specified date.
   folder is where events will be searched for (useful for multiple calendar support)
+  if calEvents is not NULL:
   puts events in the array passed as calEvents, which will be empty on error (no events for the day).
+  if calEvents is NULL:
+  does not parse the inner of events, only parses to count them.
   returns number of events found for the specified day, 0 if error or no events. */
   // Generate filename from given date
   char filename[128] = "";
@@ -595,14 +598,13 @@ int GetSMEMeventsForDate(EventDate startdate, const char* folder, CalendarEvent 
     Bfile_CloseFile_OS(hFile); //we got file contents, close it
     // Parse for events
     int curevent = 0; //current event number/array index (zero based)
-    //unsigned char *token = (unsigned char*)strtok((char*)filecontents, EVENT_SEPARATOR_ONLY);
     unsigned char token[2048];
     src = toksplit(src, EVENT_SEPARATOR , token, 2048);
 
     int notfinished = 1;
     while (notfinished) {
       //pass event to the parser and store it in the string event array
-      calEvents[curevent] = charToCalEvent(token); //convert to a calendar event
+      if(calEvents != NULL) calEvents[curevent] = charToCalEvent(curevent==0? token+strlen(FILE_HEADER) : token); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
       curevent++;
       if (strlen((char*)src) < 5) { //5 bytes is not enough space to hold an event, so that means there are no more events to process... right?
         notfinished = 0;
@@ -620,6 +622,7 @@ int GetSMEMeventsForDate(EventDate startdate, const char* folder, CalendarEvent 
     return 0;
   }
 }
+
 /* Some insights on storing events on the main memory: (NOTE: currently something not needed, probably never will be)
   I don't think each add-in should use more than one or two folders in the main memory.
   The calendar add-in could use one folder per each calendar (if we ever support multiple calendars)

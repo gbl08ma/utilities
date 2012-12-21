@@ -6,6 +6,7 @@
 #include <fxcg/app.h>
 #include <fxcg/serial.h>
 #include <fxcg/rtc.h>
+#include <fxcg/heap.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -2504,10 +2505,9 @@ void loadEventsForMonth(int year, int month) {
   int day = 1;
   while (day <= monthDays[month-1] + (month == 2 && isLeap(year)) ? 1 : 0)
   {
-    CalendarEvent calevents[200];
     EventDate thisday;
     thisday.day = day; thisday.month = month; thisday.year = year;  
-    eventsfordayofcurmonth[day] = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, calevents);
+    eventsfordayofcurmonth[day] = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, NULL); //NULL means it will only count and not parse
     day++;
   }
 }
@@ -3667,10 +3667,11 @@ void viewEvent(CalendarEvent calevent, int istask=0) {
 
 void viewEvents(int y, int m, int d) {
   int key, inscreen = 1, pos=1, scroll=0, numevents=0;
-  CalendarEvent calevents[MAX_DAY_EVENTS];
-
+  //CalendarEvent calevents[MAX_DAY_EVENTS];
   EventDate thisday;
   thisday.day = d; thisday.month = m; thisday.year = y;  
+  numevents = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, NULL); //get event count only so we know how much to alloc
+  CalendarEvent* calevents = (CalendarEvent*)alloca(numevents*sizeof(CalendarEvent));
   
   char title[21] = "";
   char buffer[21] = "";
@@ -5726,11 +5727,11 @@ int viewTasks() {
   //returns 0 if the idea really is to exit the screen
   int key, inscreen = 1, scroll=0, numtasks=0;
   curSelTask = 1;
-  CalendarEvent tasks[MAX_DAY_EVENTS];
 
   EventDate taskday;
   taskday.day = 0; taskday.month = 0; taskday.year = 0;  
-  
+  numtasks = GetSMEMeventsForDate(taskday, SMEM_CALENDAR_FOLDER, NULL); //get event count only so we know how much to alloc
+  CalendarEvent* tasks = (CalendarEvent*)alloca(numtasks*sizeof(CalendarEvent));
   Bdisp_AllClr_VRAM();
   if (setting_display_statusbar == 1) DisplayStatusArea();
   numtasks = GetSMEMeventsForDate(taskday, SMEM_CALENDAR_FOLDER, tasks);
@@ -5877,7 +5878,9 @@ int viewTasks() {
         if (menu == 0) {
           if(numtasks>0) {
             toggleTaskActivity(tasks[curSelTask-1], curSelTask-1);
-            return 1;
+            //return 1; //don't return, because number of events didn't change (so our menu pos is still valid) and allocation size didn't change either.
+            //just refresh events on the same allocated buffer
+            numtasks = GetSMEMeventsForDate(taskday, SMEM_CALENDAR_FOLDER, tasks);
           }
         }
         break;
