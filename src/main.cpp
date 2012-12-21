@@ -1565,7 +1565,6 @@ void setStartupBrightness() {
   Bdisp_AllClr_VRAM();
   if (setting_display_statusbar == 1) DisplayStatusArea();
   PrintXY(1, 1, (char*)"  Set start brightness", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  //PrintXY(3, 2, (char*)"  Year", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY(5, 3, (char*)"  \xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
   PrintXY(5, 5, (char*)"  \xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
   while(inscreen)
@@ -1869,12 +1868,6 @@ void changePowerTimeout() {
     strcat(buffer1, " Minutes");
     PrintXY(5, 4, (char*)buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
 
-    /*textX=0; textY=130;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"Set the screen backlight level to be set when the add-in", 0, TEXT_COLOR_BLACK, 0 );
-    textY=textY+12; textX=0;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"starts. Select 'Do not force' to use the system brightness.", 0, TEXT_COLOR_BLACK, 0 );
-    textY=textY+12; textX=0;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"Valid values vary between 0 (minimum) and 244 (brightest).", 0, TEXT_COLOR_BLACK, 0 );*/
     mGetKey(&key);
     switch(key)
     {
@@ -1925,13 +1918,6 @@ void changeBacklightTimeout() {
       PrintXY(5, 4, (char*)buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
 
     }
-
-    /*textX=0; textY=130;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"Set the screen backlight level to be set when the add-in", 0, TEXT_COLOR_BLACK, 0 );
-    textY=textY+12; textX=0;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"starts. Select 'Do not force' to use the system brightness.", 0, TEXT_COLOR_BLACK, 0 );
-    textY=textY+12; textX=0;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"Valid values vary between 0 (minimum) and 244 (brightest).", 0, TEXT_COLOR_BLACK, 0 );*/
     mGetKey(&key);
     switch(key)
     {
@@ -1963,7 +1949,6 @@ void changeBacklightLevel() {
   Bdisp_AllClr_VRAM();
   if (setting_display_statusbar == 1) DisplayStatusArea();
   PrintXY(1, 1, (char*)"  Backlight Level", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  //PrintXY(3, 2, (char*)"  Year", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY(5, 3, (char*)"  \xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
   PrintXY(5, 5, (char*)"  \xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
   while(inscreen)
@@ -2014,8 +1999,6 @@ void powerInformation() {
   int key, textX=0, textY=24+4;
   unsigned int backlightlevel = GetBacklightSubLevel_RAW();
   volatile unsigned int*FRQCR = (unsigned int*) 0xA4150000;
-  //char buffer1[50] = "";
-  //char buffer2[50] = "";
   unsigned char voltbuffer[20];
   itoa(GetMainBatteryVoltage(1), voltbuffer);
   // We are gonna have fuuuuuun!
@@ -2027,8 +2010,6 @@ void powerInformation() {
   if (setting_display_statusbar == 1) DisplayStatusArea();
   PrintXY(1, 1, (char*)"  Power information", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
 
-  //PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, colorfg, colorbg, 0, 0); //get length
-  //textX = LCD_WIDTH_PX/2 - textX/2; //center
   PrintMini(&textX, &textY, (unsigned char*)"Main battery voltage: ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   PrintMini(&textX, &textY, (unsigned char*)voltbuffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
 
@@ -2103,7 +2084,6 @@ void powerInformation() {
 }
 void drawPowerMenu(int pos, int scroll, int numitems)
 {  
-  //Bdisp_AllClr_VRAM();
   drawFkeyPopup(0, setting_black_theme);
   if (setting_display_statusbar == 1) DisplayStatusArea();
   if(setting_black_theme) {
@@ -2111,7 +2091,6 @@ void drawPowerMenu(int pos, int scroll, int numitems)
     darkenStatusbar(); 
   }
   PrintXY(2, 2, (char*)"  Power options", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  //SetBackGround(0x07);
 
   if (numitems > 4) { //show advanced
     if(scroll < 1) PrintXY(2,3,(char*)"  Auto Power Off     ", (pos == 1 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
@@ -2393,7 +2372,6 @@ void colorLight() {
 }
 void drawLightMenu(int pos, int scroll, int numitems)
 {  
-  //Bdisp_AllClr_VRAM();
   drawFkeyPopup(1, setting_black_theme);
   if (setting_display_statusbar == 1) DisplayStatusArea();
   if(setting_black_theme) {
@@ -2529,7 +2507,6 @@ void drawCalendar(int year, int month, int d, int show_event_count=1)
     drawLine(LEFT,BOTTOM-1,RIGHT-1,BOTTOM-1,COLOR_BLACK);
     drawLine(RIGHT-1,BOTTOM-1,RIGHT-1,TOP,COLOR_BLACK);
     drawRectangle(LEFT+2,TOP+2,RIGHT-2-2-LEFT,THICKNESS,COLOR_BLACK);
-    //PrintMiniFix(LEFT+5,TOP+2-TOPOFFSET,monthNames[month-1],1,COLOR_BLACK,COLOR_WHITE);
     textX=LEFT+5; textY= TOP+2-TOPOFFSET;
     PrintMini(&textX, &textY, (unsigned char*)monthNames[month-1], 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
     int x,y,k = 0;
@@ -2577,7 +2554,6 @@ void drawCalendar(int year, int month, int d, int show_event_count=1)
             curbufyear = year; //update which year is now in buffer
           }
           if(eventsfordayofcurmonth[day] > 0) {
-            //drawRectangle(LEFT+2+WIDTH*x+1,TOP+1+2+y*THICKNESS,WIDTH-1,THICKNESS-1,COLOR_YELLOW);
             int textX = LEFT+2+WIDTH*x+2+12*2+2; //12+2 to have space to write the day and some padding
             int textY = TOP+2+y*THICKNESS-TOPOFFSET+2; //+2 to have some padding
             unsigned char eventstr[10] = "";
@@ -2689,7 +2665,6 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
   PrintXY(1, 1, (char*)message, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   PrintXY(1, 2, (char*)message2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY(1, 3, (char*)"  Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  //DisplayMBString((unsigned char*)buffer, start, cursor, 6, 3);
   int x = 6; int y = 3; int fieldwidth = 8;
   DisplayMBString2( 0, (unsigned char*)buffer, start, cursor, 0, x, y*24-24, fieldwidth+x, 0 );
   switch(setting_dateformat) {
@@ -2766,11 +2741,9 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
       if (key >= KEY_CHAR_0 && key <= KEY_CHAR_9) {
         //don't allow for typing non-digits
         cursor = EditMBStringChar((unsigned char*)buffer, 8, cursor, key);
-        //DisplayMBString((unsigned char*)buffer, start, cursor, 8, 3);
         DisplayMBString2( 0, (unsigned char*)buffer, start, cursor, 0, x, y*24-24, fieldwidth+x, 0 );
       }
     } else {
-      //EditMBStringCtrl((unsigned char*)buffer, 6, &start, &cursor, &key, 8, 3);
       EditMBStringCtrl2( (unsigned char*)buffer, 8+1, &start, &cursor, &key, x, y*24-24, 1, fieldwidth+x-1 );
     }
   }
@@ -2838,7 +2811,6 @@ int chooseTime(int *h, int *m, int *s, char* message, char* message2, int inwiza
   PrintXY(1, 1, (char*)message, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   PrintXY(1, 2, (char*)message2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY(1, 3, (char*)"  Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  //DisplayMBString((unsigned char*)buffer, start, cursor, 6, 3);
   int x = 6; int y = 3; int fieldwidth = 6;
   DisplayMBString2( 0, (unsigned char*)buffer, start, cursor, 0, x, y*24-24, fieldwidth+x, 0 );
   PrintXY(6, 4, (char*)"  HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -2896,11 +2868,9 @@ int chooseTime(int *h, int *m, int *s, char* message, char* message2, int inwiza
       if (key >= KEY_CHAR_0 && key <= KEY_CHAR_9) {
         //don't allow for typing non-digits
         cursor = EditMBStringChar((unsigned char*)buffer, 6, cursor, key);
-        //DisplayMBString((unsigned char*)buffer, start, cursor, 6, 3);
         DisplayMBString2( 0, (unsigned char*)buffer, start, cursor, 0, x, y*24-24, fieldwidth+x, 0 );
       }
     } else {
-      //EditMBStringCtrl((unsigned char*)buffer, 6, &start, &cursor, &key, 6, 3);
       EditMBStringCtrl2( (unsigned char*)buffer, 6+1, &start, &cursor, &key, x, y*24-24, 1, fieldwidth+x-1 );
     }
   }
@@ -3004,8 +2974,6 @@ int newEventTextInput(int x, int y, int charlimit, unsigned char* buffer, int al
   int start = 0, cursor = 0;
   int fieldwidth = 21; //something new on mbstring2
   int iresult;
-  //clean buffer
-  //strcpy((char*)buffer, "");
   
   if (allowF1) {
     GetFKeyPtr(0x036F, &iresult); // <
@@ -3325,11 +3293,7 @@ void editEventUI(CalendarEvent event, int pos) {
   int chooseres;
   int h=0, min=0, s=0;
   int ey=0, em=0, ed=0;
-  
-  //clean buffers: // we can't clean on editing, or else we delete content!
-  /*strcpy((char*)event.title, "");
-  strcpy((char*)event.location, "");
-  strcpy((char*)event.description, "");*/
+
 editEventTitleScreen:
   Bdisp_AllClr_VRAM();
   SetBackGround(6);
@@ -3365,7 +3329,6 @@ editEventStartTimeScreen:
       event.starttime.hour = h;
       event.starttime.minute = min;
       event.starttime.second = s;
-      //event.starttime = starttime;
       event.timed = 1;
       break;
     case 1: //invalid time, restart
@@ -3381,7 +3344,6 @@ editEventStartTimeScreen:
       event.starttime.hour = 0;
       event.starttime.minute = 0;
       event.starttime.second = 0;
-      //event.starttime = starttime;
       event.timed = 0;
       break;
   }
@@ -3394,7 +3356,6 @@ editEventEndDateScreen:
         event.enddate.day = ed;
         event.enddate.month = em;
         event.enddate.year = ey;
-        //event.enddate = enddate;
       break;
     case 1: //invalid date, restart
       goto editEventEndDateScreen;
@@ -3435,7 +3396,6 @@ editEventEndTimeScreen:
     event.endtime.hour = 0;
     event.endtime.minute = 0;
     event.endtime.second = 0;
-    //event.endtime = endtime;
   }
 
   Bdisp_AllClr_VRAM();
@@ -3508,7 +3468,6 @@ void viewEvent(CalendarEvent calevent, int istask=0) {
     textX=0; textY=scroll;
     textY = textY+24;
     PrintMini(&textX, &textY, (unsigned char*)"Location: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
-    //PrintMini(&textX, &textY, (unsigned char*)calevent.location, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     //location line breaking:
     
     int temptextY = 0;
@@ -3633,7 +3592,6 @@ void viewEvent(CalendarEvent calevent, int istask=0) {
     sb.I1 = 0;
     sb.I5 = 0;
     sb.indicatormaximum = (textY-scroll);
-    //sb.indicatorheight = (textY-24+scroll+LCD_HEIGHT_PX)/10;
     sb.indicatorheight = 10*17;
     sb.indicatorpos = -scroll;
     sb.barheight = LCD_HEIGHT_PX-24*2;
@@ -3659,15 +3617,8 @@ void viewEvent(CalendarEvent calevent, int istask=0) {
     }
   }
 }
-/*void drawViewEventsMenu(int pos, int scroll, int numevents, CalendarEvent calevents[])
-{  
-//code copied to viewEvents because of system error
-  return;
-}*/
-
 void viewEvents(int y, int m, int d) {
   int key, inscreen = 1, pos=1, scroll=0, numevents=0;
-  //CalendarEvent calevents[MAX_DAY_EVENTS];
   EventDate thisday;
   thisday.day = d; thisday.month = m; thisday.year = y;  
   numevents = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, NULL); //get event count only so we know how much to alloc
@@ -3680,15 +3631,10 @@ void viewEvents(int y, int m, int d) {
   numevents = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, calevents);
   int menu = 0;
   while(inscreen) {
-    //drawViewEventsMenu(pos, scroll, numevents, calevents); // put the menu drawing routine inside the main loop. Otherwise I get a system error about an invalid code with target of 00000000 and same pc.
-
     Bdisp_AllClr_VRAM();
-    //SetBackGround(0x07);
     int curevent = 0; //current processing event
     if (numevents>0) {
-  
       while(curevent < numevents) {
-  
         char menuitem[100] = "";
         strcpy(menuitem, "  ");
         strcat(menuitem, (char*)calevents[curevent].title);
@@ -3698,10 +3644,7 @@ void viewEvents(int y, int m, int d) {
       }
       //hide 8th item
       PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      /*char buffer[20];
-      itoa(numevents, (unsigned char*)buffer);
-      locate_OS(1,8);
-      Print_OS((unsigned char*)buffer, 0,0);*/
+      
       TScrollbar sb;
       sb.I1 = 0;
       sb.I5 = 0;
@@ -3713,7 +3656,6 @@ void viewEvents(int y, int m, int d) {
       sb.barleft = LCD_WIDTH_PX - 6;
       sb.barwidth = 6;
       Scrollbar(&sb);
-  
     } else {
       PrintXY(6,4,(char*)"  (no events)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     }
@@ -3871,7 +3813,6 @@ void viewEvents(int y, int m, int d) {
                 //reload events, because we modified calevents[pos-1] startdate. EDIT: NO NEED TO, because we're going to return.
                 numevents = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, calevents);
                 curbufmonth = 0; //force calendar event counts to refresh
-                //return;
                 break;
             }
           }
@@ -3922,7 +3863,7 @@ void viewEvents(int y, int m, int d) {
         {
           //user pressed a char key. start adding an event
           if(numevents+1 > MAX_DAY_EVENTS) {
-            //AUX_DisplayErrorMessage( 0x2E ); //no need to show error, because if user presses key on accident he/she may not be able to understand why the error appeared
+            //no need to show error, because if user presses key on accident he/she may not be able to understand why the error appeared
           } else {
             addEventUI(y, m, d, key);
             return;
@@ -4474,12 +4415,9 @@ void drawStopwatchAppropriateFKeys(int stopwatchno) {
       }
       break;
   }
-
 }
 
-void processStopwatchReturnKey(int stopwatchno) {
-  
-}
+void processStopwatchReturnKey(int stopwatchno) { /*does nothing for now*/ }
 void processStopwatchF1key(int stopwatchno) {
   //stop, start or nothing?
   switch (stopwatchno) {
@@ -4580,7 +4518,6 @@ void processStopwatchF2key(int stopwatchno) {
 void drawStopwatchesMenu(int pos, int scroll, int numitems)
 {  
   Bdisp_AllClr_VRAM();
-  //SetBackGround(0x07);
   PrintXY(1, 1, (char*)"  Stopwatches", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   int textX=18*12; int textY=4;
   //escape sequence doesn't want to be together with number 3.91:
@@ -5030,7 +4967,6 @@ void drawTimerAppropriateFKeys(int timerno) {
 }
 
 void setTimerGUI(int timerno) {
-  //setTimer(timerno, 20000);
   int key, inscreen = 1;
   long long int days = 0;
   long long int hours = 0;
@@ -5193,9 +5129,7 @@ void setTimerGUI(int timerno) {
     }
   }
 }
-void processTimerReturnKey(int timerno) {
-  
-}
+void processTimerReturnKey(int timerno) { /*does nothing at least for now */ }
 void processTimerF1key(int timerno) {
   //stop, start or nothing?
   switch (timerno) {
@@ -5385,7 +5319,6 @@ void checkAllTimersEndNoActive() {
 void drawTimersMenu(int pos, int scroll, int numitems)
 {  
   Bdisp_AllClr_VRAM();
-  //SetBackGround(0x07);
   PrintXY(1, 1, (char*)"  Timers", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   int textX=18*7; int textY=4;
   //escape sequence doesn't want to be together with number 3.91:
@@ -5708,7 +5641,6 @@ editTaskDescriptionScreen:
   }
 
   event.daterange = 0;
-  //event.repeat = 0; //we cannot change this, it's the task toggled setting!
   event.dayofweek = dow(event.startdate.day, event.startdate.month, event.startdate.year);
   EditSMEMEvent(event.startdate, pos, CALENDAR_FOLDER, event);
 }
@@ -5737,8 +5669,6 @@ int viewTasks() {
   numtasks = GetSMEMeventsForDate(taskday, SMEM_CALENDAR_FOLDER, tasks);
   int menu = 0;
   while(inscreen) {
-    //drawViewEventsMenu(curSelTask, scroll, numevents, calevents); // put the menu drawing routine inside the main loop. Otherwise I get a system error about an invalid code with target of 00000000 and same pc.
-
     Bdisp_AllClr_VRAM();
     int curtask = 0; //current processing event
     if (numtasks>0) {
@@ -5878,7 +5808,8 @@ int viewTasks() {
         if (menu == 0) {
           if(numtasks>0) {
             toggleTaskActivity(tasks[curSelTask-1], curSelTask-1);
-            //return 1; //don't return, because number of events didn't change (so our menu pos is still valid) and allocation size didn't change either.
+            //don't return, because number of events didn't change
+            //(so our menu pos is still valid) and allocation size didn't change either.
             //just refresh events on the same allocated buffer
             numtasks = GetSMEMeventsForDate(taskday, SMEM_CALENDAR_FOLDER, tasks);
           }
@@ -5896,7 +5827,7 @@ int viewTasks() {
         {
           //user pressed a char key. start adding a task
           if(numtasks+1 > MAX_DAY_EVENTS) {
-            //AUX_DisplayErrorMessage( 0x2E ); //no need to show this if user presses key on accident, as him/her may not understand the error in that case.
+            //no need to show this if user presses key on accident, as him/her may not understand the error in that case.
           } else {
             addTaskUI(key);
             return 1;
@@ -5980,24 +5911,6 @@ int moon_phase(int y, int m, int d)
 #define TORAD(d) ((d) * (PI / 180.0))                     /* Deg->Rad     */
 #define TODEG(d) ((d) * (180.0 / PI))                     /* Rad->Deg     */
 
-/* NO FSINCOS! :(
-double sin(double x)
-{
- long s,c;
- unsigned long xx;
- xx=0xffffffff*(FIXRANGLE(x)/(2*PI));
- s=fsincos(xx,&c);
- return s*1.0/LONG_MAX;
-}
-
-double cos(double x)
-{
- long s,c;
- unsigned long xx;
- xx=0xffffffff*(FIXRANGLE(x)/(2*PI));
- s=fsincos(xx,&c);
- return c*1.0/LONG_MAX;
-}*/
 #define abs(a)	   (((a) < 0) ? -(a) : (a))
 double sin(double x) //not the most precision. too lazy to find a great one (even if it's slower)
 {
@@ -6387,19 +6300,13 @@ void timeMenu() {
 //////////////////////////////////////////
 // START OF GENERIC TOOLS
 //////////////////////////////////////////
+//Syscall test findings (don't belong here and should be taken out of here and saved in a safe location ASAP):
+//with syscall == 0x1E77, no effect (may be EnableGetkeyToMain...)
+//THIS MAY BE "	CallbackAtQuitMainFunction"!!: with syscall == 0x1E78, once you press Menu you're taken to the Link app, and there pressing Menu results in a brief spinning icon but no Menu. Pressing Menu in one of the submenus of the Link screen results in you being taken to the main Link screen. Conclusion: Menu became Link.
+//with syscall == 0x1E79,0x1E7A,0x1E7B,0x1E7C,0x1E7E,0x1E7F, no effect.
 void ruler() {
   Bdisp_AllClr_VRAM();
   if (setting_display_statusbar == 1) DisplayStatusArea();
-  /*//with syscall == 0x1E77, no effect (may be EnableGetkeyToMain...)
-  //THIS MAY BE "	CallbackAtQuitMainFunction"!!: with syscall == 0x1E78, once you press Menu you're taken to the Link app, and there pressing Menu results in a brief spinning icon but no Menu. Pressing Menu in one of the submenus of the Link screen results in you being taken to the main Link screen. Conclusion: Menu became Link.
-  //with syscall == 0x1E79,0x1E7A,0x1E7B,0x1E7C,0x1E7E,0x1E7F, no effect.
-  int reply = DisableGetkeyToMainFunctionReturn(timeMenu); //TESTING: this doesn't belong in here.
-  char buffer[100] = "";
-  strcpy(buffer, "  ");
-  itoa(reply,(unsigned char*)buffer);
-  PrintXY(1, 1, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  */
-  //DisableGetkeyToMainFunctionReturn();
 #define RULER_Y LCD_HEIGHT_PX/2
 #define MARK_HEIGHT 10
 #define MARK_START 0
@@ -6416,7 +6323,6 @@ void ruler() {
 
   int key;
   GetKey(&key);
-  //EnableGetkeyToMainFunctionReturn();
 }
 
 #define TOTAL_SMEM 16801792 //as seen on the TEST MODE, on the emulator, OS 1.02, and on the TEST MODE of a real fx-CG 20, OS 1.04.
@@ -6449,7 +6355,6 @@ void memoryCapacityViewer() {
   
 #ifdef DRAW_MEMUSAGE_GRAPHS
   textY = textY + 12;
-  //unsigned int barwidthcpl = ((LCD_WIDTH_PX*(TOTAL_SMEM-smemfree))/TOTAL_SMEM);
   //what could be done in one line, has to be done in 3+another var, because of integer overflows -.-
   unsigned int tmpvar = TOTAL_SMEM-smemfree;
   tmpvar = LCD_WIDTH_PX*tmpvar;
@@ -6527,7 +6432,6 @@ typedef struct
 } file_type_t;
 int GetAddins(AddIn addins[]) {
   /*searches storage memory for active and inactive add-ins, returns their count*/
-//FBL_FileItem *item;
 	unsigned short path[0x10A], path2[0x10A], found[0x10A];
 	unsigned char buffer[0x10A], buffer2[0x10A];
 
@@ -6577,7 +6481,6 @@ int addinManager() {
   int menu = 0;
   while(inscreen) {
     Bdisp_AllClr_VRAM();
-    //SetBackGround(0x07);
     int curaddin = 0; //current processing addin
     if (numaddins>0) {
   
@@ -7168,20 +7071,7 @@ screen3:
 int testTimer = 0;
 int curTestValue = 0;
 void testTimerHandler() {
-  //curTestValue++;
-  /*char timeStr[15] = "";
-  fillTime(timeStr,setting_timeformat);
-  DefineStatusMessage((char*)timeStr, 1, 0, 0);
-  if (setting_display_statusbar == 1) DisplayStatusArea();
-  Bdisp_PutDisp_DD();
-  //SetSetupSetting( (unsigned int)0x14, 0);*/
-  Timer_Stop(3); //so we don't keep on calling test modes on top of each other, leading to multiple (yes, multiple!) system errors.
-      SaveVRAM_1();
-    	TestMode( 1 );
-    	const unsigned int default_fkeys[] = { 0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0 };
-    	Set_FKeys1( 0, (unsigned int*)default_fkeys );
-    	Set_FKeys2( 0 );
-      LoadVRAM_1();
+
 }
 
 void masterControl() {

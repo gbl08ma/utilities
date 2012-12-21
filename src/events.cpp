@@ -419,120 +419,114 @@ Bdisp_PutDisp_DD();
     if(opresult != 0) { return opresult+100; } //return error if deleting returned error
     return 0;
   } else {
-  
-  
-  
-  char foldername[128] = "";
-  unsigned short pFolder[256];
-  strcpy(foldername, "\\\\fls0\\");
-  strcat(foldername, folder);
-  Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
-  Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
-  char filename[128] = "";
-  char buffer[8] = "";
-  strcpy(filename, "\\\\fls0\\");
-  strcat(filename, folder);
-  strcat(filename, "\\");
-  filenameFromDate(startdate, buffer);
-  strcat(filename, buffer);
-  strcat(filename, ".pce"); //filenameFromDate does not include file extension, so add it
-  
-  unsigned short pFile[256];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
-  Bfile_CloseFile_OS(hFile); //close file as we don't care what it has, we just want to check if it exists
+    char foldername[128] = "";
+    unsigned short pFolder[256];
+    strcpy(foldername, "\\\\fls0\\");
+    strcat(foldername, folder);
+    Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
+    Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
+    char filename[128] = "";
+    char buffer[8] = "";
+    strcpy(filename, "\\\\fls0\\");
+    strcat(filename, folder);
+    strcat(filename, "\\");
+    filenameFromDate(startdate, buffer);
+    strcat(filename, buffer);
+    strcat(filename, ".pce"); //filenameFromDate does not include file extension, so add it
+    
+    unsigned short pFile[256];
+    Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+    int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+    Bfile_CloseFile_OS(hFile); //close file as we don't care what it has, we just want to check if it exists
 PrintXY(1,8,(char*)"  Please wait.          ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
 Bdisp_PutDisp_DD();
-  if(hFile < 0) // Check if it opened
-  {
-    //returned error, so there're no events on this day, so we return error too
-    return 1;
-  } else {
-    /*File exists and is open.
-      0. Hope there's enough heap to store everything throughout the process.
-      1. Read and parse the file contents, putting their events in an array (all using GetSMEMeventsForDate)
-      2. Close, delete the (old) file.
-      3. Look at the array so we find the event we want to edit. Change each of its fields to the fields of the new event.
-      4. Put the new array (with the modified event) into a char array.
-      5. Create the same file with the size of the char array with the modified event.
-      6. Open the new file.
-      7. Write header and edited contents, from the char we created previously.
-      8. Close file.
-      It must be done this way because once a file is created, its size cannot be changed dynamically...*/
-
-    //parse the old contents.
-    CalendarEvent calevents[MAX_DAY_EVENTS];
-    int numarrayitems = GetSMEMeventsForDate(startdate, folder, calevents);
-    // we already read the previous contents and size, and parsed the contents, then closed the file.
-    // safety check: see if GetSMEMevents didn't return error/no events
-    if (numarrayitems <= 0) {
-      return 2;
-    }
-    
-    //Edit the event at the specified position:
-    calevents[calEventPos].category = editedEvent.category;
-    calevents[calEventPos].daterange = editedEvent.daterange;
-    calevents[calEventPos].startdate.day = editedEvent.startdate.day;
-    calevents[calEventPos].startdate.month = editedEvent.startdate.month;
-    calevents[calEventPos].startdate.year = editedEvent.startdate.year;
-    calevents[calEventPos].enddate.day = editedEvent.enddate.day;
-    calevents[calEventPos].enddate.month = editedEvent.enddate.month;
-    calevents[calEventPos].enddate.year = editedEvent.enddate.year;
-    calevents[calEventPos].dayofweek = editedEvent.dayofweek;
-    calevents[calEventPos].repeat = editedEvent.repeat;
-    calevents[calEventPos].timed = editedEvent.timed;
-    calevents[calEventPos].starttime.hour = editedEvent.starttime.hour;
-    calevents[calEventPos].starttime.minute = editedEvent.starttime.minute;
-    calevents[calEventPos].starttime.second = editedEvent.starttime.second;
-    calevents[calEventPos].endtime.hour = editedEvent.endtime.hour;
-    calevents[calEventPos].endtime.minute = editedEvent.endtime.minute;
-    calevents[calEventPos].endtime.second = editedEvent.endtime.second;
-    strcpy((char*)calevents[calEventPos].title, (char*)editedEvent.title);
-    strcpy((char*)calevents[calEventPos].location, (char*)editedEvent.location);
-    strcpy((char*)calevents[calEventPos].description, (char*)editedEvent.description);    
-    
-    
-    const int numevents = numarrayitems; //put this in a const int so it isn't polluted when there are lots of calendar events/very big events.
-    // GetSMEMEvents closed the file, so we can now delete it
-    PrintXY(1,8,(char*)"  Please wait..         ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-    Bfile_DeleteEntry(pFile);
-    PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-    //convert the calevents back to char
-    unsigned char eventbuf[2048] = ""; 
-    unsigned char newfilecontents[MAX_EVENT_FILESIZE];
-    strcpy((char*)newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
-    for(int j = 0; j < numevents; j++) {
-      strcpy((char*)eventbuf, "");
-      calEventToChar(eventbuf, calevents[j]);
-      strcat((char*)newfilecontents,(char*)eventbuf);
-    }
-    PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-    // now recreate file with new size and write contents to it.
-    int newsize = strlen((char*)newfilecontents);
-    
-    if(newsize < 10) { //too small for a single event == data corruption
-      return 50;
-    }
-    int nBCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize);
-    PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-    if(nBCEres >= 0) // Did it create?
+    if(hFile < 0) // Check if it opened
     {
-      int nFile = Bfile_OpenFile_OS(pFile, READWRITE);
-      Bfile_WriteFile_OS(nFile, newfilecontents, newsize);
-      Bfile_CloseFile_OS(nFile);
-      PrintXY(1,8,(char*)"  Please wait......     ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
+      //returned error, so there're no events on this day, so we return error too
+      return 1;
     } else {
-      return 3;
-    }
-
-  }
-  return 0;
+      /*File exists and is open.
+        0. Hope there's enough heap to store everything throughout the process.
+        1. Read and parse the file contents, putting their events in an array (all using GetSMEMeventsForDate)
+        2. Close, delete the (old) file.
+        3. Look at the array so we find the event we want to edit. Change each of its fields to the fields of the new event.
+        4. Put the new array (with the modified event) into a char array.
+        5. Create the same file with the size of the char array with the modified event.
+        6. Open the new file.
+        7. Write header and edited contents, from the char we created previously.
+        8. Close file.
+        It must be done this way because once a file is created, its size cannot be changed dynamically...*/
   
+      //parse the old contents.
+      CalendarEvent calevents[MAX_DAY_EVENTS];
+      int numarrayitems = GetSMEMeventsForDate(startdate, folder, calevents);
+      // we already read the previous contents and size, and parsed the contents, then closed the file.
+      // safety check: see if GetSMEMevents didn't return error/no events
+      if (numarrayitems <= 0) {
+        return 2;
+      }
+      
+      //Edit the event at the specified position:
+      calevents[calEventPos].category = editedEvent.category;
+      calevents[calEventPos].daterange = editedEvent.daterange;
+      calevents[calEventPos].startdate.day = editedEvent.startdate.day;
+      calevents[calEventPos].startdate.month = editedEvent.startdate.month;
+      calevents[calEventPos].startdate.year = editedEvent.startdate.year;
+      calevents[calEventPos].enddate.day = editedEvent.enddate.day;
+      calevents[calEventPos].enddate.month = editedEvent.enddate.month;
+      calevents[calEventPos].enddate.year = editedEvent.enddate.year;
+      calevents[calEventPos].dayofweek = editedEvent.dayofweek;
+      calevents[calEventPos].repeat = editedEvent.repeat;
+      calevents[calEventPos].timed = editedEvent.timed;
+      calevents[calEventPos].starttime.hour = editedEvent.starttime.hour;
+      calevents[calEventPos].starttime.minute = editedEvent.starttime.minute;
+      calevents[calEventPos].starttime.second = editedEvent.starttime.second;
+      calevents[calEventPos].endtime.hour = editedEvent.endtime.hour;
+      calevents[calEventPos].endtime.minute = editedEvent.endtime.minute;
+      calevents[calEventPos].endtime.second = editedEvent.endtime.second;
+      strcpy((char*)calevents[calEventPos].title, (char*)editedEvent.title);
+      strcpy((char*)calevents[calEventPos].location, (char*)editedEvent.location);
+      strcpy((char*)calevents[calEventPos].description, (char*)editedEvent.description);
+      
+      const int numevents = numarrayitems; //put this in a const int so it isn't polluted when there are lots of calendar events/very big events.
+      // GetSMEMEvents closed the file, so we can now delete it
+      PrintXY(1,8,(char*)"  Please wait..         ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      Bdisp_PutDisp_DD();
+      Bfile_DeleteEntry(pFile);
+      PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      Bdisp_PutDisp_DD();
+      //convert the calevents back to char
+      unsigned char eventbuf[2048] = ""; 
+      unsigned char newfilecontents[MAX_EVENT_FILESIZE];
+      strcpy((char*)newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
+      for(int j = 0; j < numevents; j++) {
+        strcpy((char*)eventbuf, "");
+        calEventToChar(eventbuf, calevents[j]);
+        strcat((char*)newfilecontents,(char*)eventbuf);
+      }
+      PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      Bdisp_PutDisp_DD();
+      // now recreate file with new size and write contents to it.
+      int newsize = strlen((char*)newfilecontents);
+      
+      if(newsize < 10) { //too small for a single event == data corruption
+        return 50;
+      }
+      int nBCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize);
+      PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      Bdisp_PutDisp_DD();
+      if(nBCEres >= 0) // Did it create?
+      {
+        int nFile = Bfile_OpenFile_OS(pFile, READWRITE);
+        Bfile_WriteFile_OS(nFile, newfilecontents, newsize);
+        Bfile_CloseFile_OS(nFile);
+        PrintXY(1,8,(char*)"  Please wait......     ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        Bdisp_PutDisp_DD();
+      } else {
+        return 3;
+      }
+    }
+    return 0;
   }
 }
 
@@ -623,16 +617,6 @@ int GetSMEMeventsForDate(EventDate startdate, const char* folder, CalendarEvent 
   }
 }
 
-/* Some insights on storing events on the main memory: (NOTE: currently something not needed, probably never will be)
-  I don't think each add-in should use more than one or two folders in the main memory.
-  The calendar add-in could use one folder per each calendar (if we ever support multiple calendars)
-  If subfolders were allowed in MCS, we could store events based on their startdate. There'd be one folder for 2012 events, another inside it for August events and yet another inside the August one for events started on the 16th. The file name would then contain the starttime. This would make accessing events very easy, but unfortunately, it's not possible.
-  We still need to split events into different files, because with MCS you read and write files all at once (no progressive reading/writing). But, each file can only be 8 chars in length!
-  The solution is to store multiple events on a single file, and store all the events starting in the same day to the same file.
-  That file would have a name with the format: YYYYMMDD, where YYYY is the year, MM the month with two chars (August would be 08, not 8) and DD the day with two chars (02 instead of 2).
-  Again, this only looks at the startdate of the file. This is great, because all events have a startdate no matter for how long they extend, they repeat, or if they are full-day. (Holidays may be a problem, develop a special calendar format for them, since they are read-only?)
-
-*/
 void filenameFromDate(EventDate date, char* filename) {
   char smallbuf[8] = "";
   itoa(date.year, (unsigned char*)smallbuf); strcat(filename, smallbuf);
@@ -643,3 +627,14 @@ void filenameFromDate(EventDate date, char* filename) {
   if (date.day < 10) strcat(filename, "0"); //if day below 10, add leading 0
   strcat(filename, smallbuf);
 }
+
+/* Some insights on storing events on the main memory: (NOTE: currently something not needed, probably never will be)
+  I don't think each add-in should use more than one or two folders in the main memory.
+  The calendar add-in could use one folder per each calendar (if we ever support multiple calendars)
+  If subfolders were allowed in MCS, we could store events based on their startdate. There'd be one folder for 2012 events, another inside it for August events and yet another inside the August one for events started on the 16th. The file name would then contain the starttime. This would make accessing events very easy, but unfortunately, it's not possible.
+  We still need to split events into different files, because with MCS you read and write files all at once (no progressive reading/writing). But, each file can only be 8 chars in length!
+  The solution is to store multiple events on a single file, and store all the events starting in the same day to the same file.
+  That file would have a name with the format: YYYYMMDD, where YYYY is the year, MM the month with two chars (August would be 08, not 8) and DD the day with two chars (02 instead of 2).
+  Again, this only looks at the startdate of the file. This is great, because all events have a startdate no matter for how long they extend, they repeat, or if they are full-day. (Holidays may be a problem, develop a special calendar format for them, since they are read-only?)
+
+*/
