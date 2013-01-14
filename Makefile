@@ -29,7 +29,7 @@ INCLUDES	:=
 #---------------------------------------------------------------------------------
 $(shell touch $(FXCGSDK)/projects/utilities/src/version.c) #force version and timestamp defines to update. yes the filepath is more or less hardcoded
 GIT_VERSION = $(shell sh -c 'git describe --abbrev=4 --dirty --always')
-GIT_TIMESTAMP += "$(shell git log --pretty=format:'%ad' -1)"
+GIT_TIMESTAMP += "$(shell git log --pretty=format:'%aD' -1)"
 
 #---------------------------------------------------------------------------------
 # options for code and add-in generation
