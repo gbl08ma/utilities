@@ -1608,10 +1608,9 @@ void setStartupBrightness() {
   }
 }
 void drawLockSettingsMenu(int pos, int scroll, int numitems)
-{  
+{
   Bdisp_AllClr_VRAM();
-  //SetBackGround(0x07);
-  
+  if (setting_display_statusbar == 1) DisplayStatusArea();
   if(scroll < 1) PrintXY(1,1,(char*)"  Set lock code        ", (pos == 1 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
   if(scroll < 2) PrintXY(1,2-scroll,(setting_password_show_last_char == 1 ? (char*)"  Show last code char \xe6\xa9" : (char*)"  Show last code char \xe6\xa5"), (pos == 2 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
   if(scroll < 3) PrintXY(1,3-scroll,(setting_lock_auto_turnoff == 1 ?       (char*)"  Off after locking   \xe6\xa9" : (char*)"  Off after locking   \xe6\xa5"), (pos == 3 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
@@ -1643,8 +1642,6 @@ void drawLockSettingsMenu(int pos, int scroll, int numitems)
   sb.barleft = LCD_WIDTH_PX - 6;
   sb.barwidth = 6;
   Scrollbar(&sb);
-
-  if (setting_display_statusbar == 1) DisplayStatusArea();
 
 }
 void lockSettingsMenu()
@@ -1721,8 +1718,7 @@ void lockSettingsMenu()
 void drawSettingsMenu(int pos, int scroll, int numitems)
 {  
   Bdisp_AllClr_VRAM();
-  SetBackGround(7);
-  
+  if (setting_display_statusbar == 1) DisplayStatusArea();
   if(scroll < 1) PrintXY(1,1,(char*)"  Set time             ", (pos == 1 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
   if(scroll < 2) PrintXY(1,2-scroll,(char*)"  Set date             ", (pos == 2 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
   if(scroll < 3) PrintXY(1,3-scroll,(char*)"  Time format          ", (pos == 3 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
@@ -1750,8 +1746,6 @@ void drawSettingsMenu(int pos, int scroll, int numitems)
   sb.barleft = LCD_WIDTH_PX - 6;
   sb.barwidth = 6;
   Scrollbar(&sb);
-
-  if (setting_display_statusbar == 1) DisplayStatusArea();
 
 }
 void settingsMenu()
