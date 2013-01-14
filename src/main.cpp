@@ -6657,7 +6657,8 @@ int addinManager() {
   return 0;
 }
 void changeFKeyColor() {
-  unsigned char*selcolor = (unsigned char*) 0xFD8013E4;
+  unsigned char*keycolor = (unsigned char*) 0xFD8013E4;
+  unsigned char selcolor = (unsigned char) 0xFF; //just so it isn't uninitialized
   Bdisp_AllClr_VRAM();
   if (setting_display_statusbar == 1) DisplayStatusArea();
   PrintXY(1, 1, (char*)"  Function key color", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
@@ -6672,7 +6673,11 @@ void changeFKeyColor() {
   textY=textY+12; textX=0;
   PrintMiniMini( &textX, &textY, (unsigned char*)"screen or to reset the Main Memory.", 0, TEXT_COLOR_BLACK, 0 );
   Bdisp_PutDisp_DD();
-  *selcolor = ColorIndexDialog1( *selcolor, 0 );
+  selcolor = ColorIndexDialog1( *keycolor, 0 );
+  if(selcolor != (unsigned char)0xFF) {
+    //user didn't press EXIT, QUIT or AC/ON. input is validated.
+    *keycolor = selcolor;
+  }
 }
 void drawToolsMenu(int pos, int scroll, int numitems)
 {  
