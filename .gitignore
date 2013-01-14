@@ -6,6 +6,9 @@
 *.exe
 *.o
 *.so
+*.d
+*.bin
+*.g3a
 
 # Packages #
 ############
