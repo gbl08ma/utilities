@@ -179,44 +179,6 @@ int isPasswordSet(void) {
   return 1; //code exists in both SMEM and MCS
 }
 
-const unsigned short* keyboard_register = (unsigned short*)0xA44B0000;
-unsigned short lastkey[8];
-unsigned short holdkey[8];
-
-void keyupdate(void) { 
-   memcpy(holdkey, lastkey, sizeof(unsigned short)*8); 
-   memcpy(lastkey, keyboard_register, sizeof(unsigned short)*8); 
-} 
-int keydownlast(int basic_keycode) { 
-   int row, col, word, bit;  
-   row = basic_keycode%10;  
-   col = basic_keycode/10-1;  
-   word = row>>1;  
-   bit = col + 8*(row&1);  
-   return (0 != (lastkey[word] & 1<<bit));  
-} 
-int keydownhold(int basic_keycode) { 
-   int row, col, word, bit;  
-   row = basic_keycode%10;  
-   col = basic_keycode/10-1;  
-   word = row>>1;  
-   bit = col + 8*(row&1);  
-   return (0 != (holdkey[word] & 1<<bit));  
-}
-void waitForKey(int prgmkey, int menulock) {
-  Bdisp_PutDisp_DD();
-  int keyCol, keyRow;
-  while(1) {
-    unsigned short wkey;
-    keyupdate(); // update both key arrays 
-    if (0 != GetKeyWait_OS(&keyCol,&keyRow,KEYWAIT_HALTOFF_TIMEROFF,0,menulock,&wkey)) { 
-      //key was returned 
-      if(keydownlast(prgmkey) && !keydownhold(prgmkey)) {
-        break;
-      }
-    }
-  }
-}
 int passwordInput(int x, int y, unsigned char* buffer, int display_statusbar, int showlastchar, int lock) {
   //returns: 0 on user abort (EXIT), 1 on EXE
   int start = 0, cursor = 0, key;
@@ -225,11 +187,8 @@ int passwordInput(int x, int y, unsigned char* buffer, int display_statusbar, in
   //clean buffer and display buffer
   strcpy((char*)buffer, "");
   strcpy((char*)dispbuffer, "");
-
-  int keyCol, keyRow;
   while(1)
   {   
-    unsigned short wkey;
     strcpy((char*)dispbuffer, "");
     int numchars = strlen((char*)buffer);
     if(showlastchar)
@@ -249,103 +208,59 @@ int passwordInput(int x, int y, unsigned char* buffer, int display_statusbar, in
         }
       }
     }
+    int iresult;
+    GetFKeyPtr(0x0307, &iresult); // A<>a
+    FKey_Display(5, (int*)iresult);
     Cursor_SetFlashOn(5);
     DisplayMBString((unsigned char*)dispbuffer, start, cursor, x,y);
-    Bdisp_PutDisp_DD();
-    
-	  keyupdate(); // update both key arrays 
-	  if (0 != GetKeyWait_OS(&keyCol,&keyRow,KEYWAIT_HALTOFF_TIMEROFF,0,lock,&wkey)) { 
-      //key was returned 
-      key = 0; //always clear
-      if(keydownlast(KEY_PRGM_EXIT) && !keydownhold(KEY_PRGM_EXIT)) {
-        key = KEY_CTRL_EXIT;
-      }
-      //0-9 keys
-      if(keydownlast(71) && !keydownhold(71)) {
-         key = KEY_CHAR_0;
-      }
-      if(keydownlast(KEY_PRGM_1) && !keydownhold(KEY_PRGM_1)) {
-         key = KEY_CHAR_1;
-      }
-      if(keydownlast(KEY_PRGM_2) && !keydownhold(KEY_PRGM_2)) {
-         key = KEY_CHAR_2;
-      }
-      if(keydownlast(KEY_PRGM_3) && !keydownhold(KEY_PRGM_3)) {
-         key = KEY_CHAR_3;
-      }
-      if(keydownlast(KEY_PRGM_4) && !keydownhold(KEY_PRGM_4)) {
-         key = KEY_CHAR_4;
-      }
-      if(keydownlast(KEY_PRGM_5) && !keydownhold(KEY_PRGM_5)) {
-         key = KEY_CHAR_5;
-      }
-      if(keydownlast(KEY_PRGM_6) && !keydownhold(KEY_PRGM_6)) {
-         key = KEY_CHAR_6;
-      }
-      if(keydownlast(KEY_PRGM_7) && !keydownhold(KEY_PRGM_7)) {
-         key = KEY_CHAR_7;
-      }
-      if(keydownlast(KEY_PRGM_8) && !keydownhold(KEY_PRGM_8)) {
-         key = KEY_CHAR_8;
-      }
-      if(keydownlast(KEY_PRGM_9) && !keydownhold(KEY_PRGM_9)) {
-         key = KEY_CHAR_9;
-      }
-      //AC key
-      if(keydownlast(KEY_PRGM_ACON) && !keydownhold(KEY_PRGM_ACON)) {
-         key = KEY_CTRL_AC;
-      }
-      //EXE key
-      if(keydownlast(KEY_PRGM_RETURN) && !keydownhold(KEY_PRGM_RETURN)) {
-         key = KEY_CTRL_EXE;
-      }
-      if(keydownlast(KEY_PRGM_UP) && !keydownhold(KEY_PRGM_UP)) {
-         key = KEY_CTRL_UP;
-      }
-      if(keydownlast(KEY_PRGM_DOWN) && !keydownhold(KEY_PRGM_DOWN)) {
-         key = KEY_CTRL_DOWN;
-      }
-      if(keydownlast(KEY_PRGM_LEFT) && !keydownhold(KEY_PRGM_LEFT)) {
-         key = KEY_CTRL_LEFT;
-      }
-      if(keydownlast(KEY_PRGM_RIGHT) && !keydownhold(KEY_PRGM_RIGHT)) {
-         key = KEY_CTRL_RIGHT;
-      }
-      //DEL key
-      if(keydownlast(44) && !keydownhold(44)) {
-         key = KEY_CTRL_DEL;
-      }
-      if (key == 0) { continue; } //avoid passing key 0 value to EditMBString 
-      if (key == KEY_CTRL_EXIT) { Cursor_SetFlashOff(); return 0; }
-      if (key == KEY_CTRL_EXE) {
-        if (strlen((char*)buffer) > 0) {
-          keyupdate();
-          while(keydownhold(KEY_PRGM_RETURN)) {
-            keyupdate();
-            //don't allow for going to the main screen until EXE is released. this way the calc isn't accidentally locked again when lock-on-EXE seting is on
-          }
-          Cursor_SetFlashOff(); return 1;
+
+    int keyflag = GetSetupSetting( (unsigned int)0x14);
+    GetKey(&key);
+    if (GetSetupSetting( (unsigned int)0x14) == 0x01 || GetSetupSetting( (unsigned int)0x14) == 0x04 || GetSetupSetting( (unsigned int)0x14) == 0x84) {
+      keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.
+      //we can't update always because that way alpha-not-lock will cancel when F5 is pressed.
+    }
+    if(key == KEY_CTRL_F6)
+    {
+      if (keyflag == 0x04 || keyflag == 0x08 || keyflag == 0x84 || keyflag == 0x88) {
+        // ^only applies if some sort of alpha (not locked) is already on
+        if (keyflag == 0x08 || keyflag == 0x88) { //if lowercase
+          SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
+          if (display_statusbar == 1) DisplayStatusArea();
+          continue; //do not process the key, because otherwise we will leave alpha status
         } else {
-          MsgBoxPush(3);
-          PrintXY(3, 3, (char*)"  Code can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-          PrintXY(3, 4, (char*)"  empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-          PrintXY(3, 5, (char*)"     Press:[EXIT]", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-          waitForKey(KEY_PRGM_EXIT, lock);
-          MsgBoxPop();
+          SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
+          if (display_statusbar == 1) DisplayStatusArea();
+          continue; //do not process the key, because otherwise we will leave alpha status
         }
       }
-      if(key && key < 30000)
-      {
-        /*if ((keyflag == 0x08 || keyflag == 0x88) && key >= KEY_CHAR_A && key <= KEY_CHAR_Z) //if lowercase and key is char...
-        {
-          key = key + 32; //so we switch to lowercase characters... Casio is smart
-        }*/
-        cursor = EditMBStringChar((unsigned char*)buffer, charlimit, cursor, key);
+
+    } 
+    if (key == KEY_CTRL_EXIT) { Cursor_SetFlashOff(); return 0; }
+    if (key == KEY_CTRL_EXE) {
+      if (strlen((char*)buffer) > 0) {
+        Cursor_SetFlashOff(); return 1;
+      } else {
+        MsgBoxPush(3);
+        PrintXY(3, 3, (char*)"  Code can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        PrintXY(3, 4, (char*)"  empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        PrintXY(3, 5, (char*)"     Press:[EXIT]", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        int nkey;
+        while(1) { GetKey(&nkey); if (nkey==KEY_CTRL_EXIT) { break; } }
+        MsgBoxPop();
       }
-      else
+    }
+    if(key && key < 30000)
+    {
+      if ((keyflag == 0x08 || keyflag == 0x88) && key >= KEY_CHAR_A && key <= KEY_CHAR_Z) //if lowercase and key is char...
       {
-        EditMBStringCtrl((unsigned char*)buffer, charlimit, &start, &cursor, &key, x, y);
+        key = key + 32; //so we switch to lowercase characters... Casio is smart
       }
+      cursor = EditMBStringChar((unsigned char*)buffer, charlimit, cursor, key);
+    }
+    else
+    {
+      EditMBStringCtrl((unsigned char*)buffer, charlimit, &start, &cursor, &key, x, y);
     }
   }
   Cursor_SetFlashOff();
@@ -374,7 +289,7 @@ int unlockCalc(int display_statusbar, int showlastchar) {
   int compareRes=0;
   if (res == 0) { return 0; }
   else if (res == 1) compareRes = comparePasswordHash(password);
-  int lock = 1;
+  int key;
   switch(compareRes)
   {
     case 0:
@@ -387,7 +302,7 @@ int unlockCalc(int display_statusbar, int showlastchar) {
       PrintXY(3, 3, (char*)"  Data tampering", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       PrintXY(3, 4, (char*)"  detected!", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       PrintXY(3, 5, (char*)"     Press:[EXIT]", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      waitForKey(KEY_PRGM_EXIT, lock);
+      while(1) { GetKey(&key); if (key==KEY_CTRL_EXIT) { break; } }
       MsgBoxPop();
       return 0;
       break;
@@ -395,7 +310,7 @@ int unlockCalc(int display_statusbar, int showlastchar) {
       MsgBoxPush(3);
       PrintXY(3, 3, (char*)"  Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       PrintXY(3, 5, (char*)"     Press:[EXIT]", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      waitForKey(KEY_PRGM_EXIT, lock);
+      while(1) { GetKey(&key); if (key==KEY_CTRL_EXIT) { break; } }
       MsgBoxPop();
       return 0;
       break;
@@ -428,6 +343,7 @@ int lockCalc(int display_statusbar, int showlastchar, int autopoweroff) {
     Bdisp_PutDisp_DD();
     GetKey(&key); //oh, the pleasure of using GetKey and still have the Menu blocked
     if (key == KEY_CTRL_ALPHA) {
+      SetSetupSetting( (unsigned int)0x14, 0); //avoid alpha still being triggered at start of text input
       if(1==unlockCalc(display_statusbar, showlastchar)) {
         SetGetkeyToMainFunctionReturnFlag(1); //Enable menu return      
         return 0;
