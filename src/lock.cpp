@@ -15,6 +15,7 @@
 #define READWRITE 3
 #define READWRITE_SHARE 4
 #include "lock.hpp"
+#include "mainmenulocker.hpp"
 #include "sha2.h"
 
 #define DIRNAME_MCS (unsigned char*)"@UTILS"
@@ -416,34 +417,20 @@ int lockCalc(int display_statusbar, int showlastchar, int autopoweroff) {
   PrintMini(&textX, &textY, (unsigned char*)"Calculator locked", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); //get length
   permanentX = LCD_WIDTH_PX - textX;
   if(autopoweroff) PowerOff(1);
+  SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return
   while(1) {
     textX = permanentX;
-    unsigned short wkey;
-    int keyCol, keyRow;
+    int key;
     Bdisp_AllClr_VRAM();
     if (display_statusbar == 1) DisplayStatusArea();
     PrintMini(&textX, &textY, (unsigned char*)"Calculator locked", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
     //Handle ALPHA (when user wants to unlock) and Shift+AC for power off
     Bdisp_PutDisp_DD();
-    keyupdate();
-    if (0 != GetKeyWait_OS(&keyCol,&keyRow,KEYWAIT_HALTOFF_TIMEROFF,0,1,&wkey)) {
-      if(keydownlast(KEY_PRGM_ALPHA) && !keydownhold(KEY_PRGM_ALPHA)) {
-        if(1 == unlockCalc(display_statusbar, showlastchar)) { return 0; }
-      }
-      if(keydownlast(KEY_PRGM_ACON) && !keydownhold(KEY_PRGM_ACON)) {
-        if (GetSetupSetting( (unsigned int)0x14) == 1) {
-            PowerOff(1);
-          Bdisp_AllClr_VRAM();
-          if (display_statusbar == 1) DisplayStatusArea();
-          Bdisp_PutDisp_DD();
-        }
-      }
-      if(keydownlast(KEY_PRGM_SHIFT) && !keydownhold(KEY_PRGM_SHIFT)) {
-        if (GetSetupSetting( (unsigned int)0x14) == 0) { SetSetupSetting( (unsigned int)0x14, 1); }
-        else { SetSetupSetting( (unsigned int)0x14, 0); }
-        if (display_statusbar == 1) DisplayStatusArea(); Bdisp_PutDisp_DD();
-      } else {
-        if (!keydownhold(KEY_PRGM_SHIFT)) { SetSetupSetting( (unsigned int)0x14, 0); }
+    GetKey(&key); //oh, the pleasure of using GetKey and still have the Menu blocked
+    if (key == KEY_CTRL_ALPHA) {
+      if(1==unlockCalc(display_statusbar, showlastchar)) {
+        SetGetkeyToMainFunctionReturnFlag(1); //Enable menu return      
+        return 0;
       }
     }
   }
