@@ -1515,7 +1515,7 @@ void setLongDateFormat() {
 void setDateFormat() {
   int key, inscreen = 1;
   unsigned int selformat = setting_dateformat;
-  char dateStr[12] = "  ";
+  char dateStr[13] = "  ";
   inscreen = 1;
   Bdisp_AllClr_VRAM();
   if (setting_display_statusbar == 1) DisplayStatusArea();
