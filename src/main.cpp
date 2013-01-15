@@ -3449,6 +3449,17 @@ editEventEndTimeScreen:
   curbufmonth = 0; //force calendar event counts to refresh
 }
 
+void changeEventCategory(CalendarEvent event, int pos) {
+  //Allows for changing the category of a event/task with a color select dialog.
+  unsigned char selcolor = (unsigned char) 0xFF; //just so it isn't uninitialized
+  selcolor = ColorIndexDialog1( 0, 0 );
+  if(selcolor != (unsigned char)0xFF) {
+    //user didn't press EXIT, QUIT or AC/ON. input is validated.
+    selcolor != 7 ? event.category = selcolor+1 : event.category = 0;
+    EditSMEMEvent(event.startdate, pos, CALENDAR_FOLDER, event);
+  }
+}
+
 void viewEvent(CalendarEvent calevent, int istask=0) {
   int key, inscreen = 1;
   int textX=0, textY=24;
@@ -3844,6 +3855,12 @@ void viewEvents(int y, int m, int d) {
         } else {
           menu = 0;
         }
+        break;
+      case KEY_CTRL_FORMAT:
+        //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
+        //so on this add-in it is used to change the category (color) of a task/calendar event.
+        changeEventCategory(calevents[pos-1], pos-1);
+        return;
         break;
       case KEY_CTRL_DEL:
         if(numevents>0) {
@@ -5808,6 +5825,15 @@ int viewTasks() {
             numtasks = GetSMEMeventsForDate(taskday, SMEM_CALENDAR_FOLDER, tasks);
           }
         }
+        break;
+      case KEY_CTRL_FORMAT:
+        //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
+        //so on this add-in it is used to change the category (color) of a task/calendar event.
+        changeEventCategory(tasks[curSelTask-1], curSelTask-1);
+        //don't return, because number of events didn't change
+        //(so our menu pos is still valid) and allocation size didn't change either.
+        //just refresh events on the same allocated buffer
+        numtasks = GetSMEMeventsForDate(taskday, SMEM_CALENDAR_FOLDER, tasks);
         break;
       case KEY_CTRL_DEL:
         if(numtasks>0) {
