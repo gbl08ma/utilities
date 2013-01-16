@@ -6792,6 +6792,102 @@ void toolsMenu() {
 //////////////////////////////////////////
 // END OF GENERIC TOOLS
 //////////////////////////////////////////
+// START OF CLOCK UNADJUSTMENT DETECTION
+//////////////////////////////////////////
+int RTCunadjusted() {
+  //returns 1 if the RTC is unadjusted.
+  //this function finds out if the clock is unadjusted if its date/time is set to a previous date/time than 1st Jan 2013 00:00
+  //   (because that date has passed on all timezones and of course no adjusted clock will have it).
+  //this function is only meant to be useful for detecting if the RTC performed a reset, e.g. after taking out the batteries.
+  //in that case, the RTC usually resets to some date around 2010. So this function will serve its purpose.
+  if(1356998400000 > currentUnixTime()) {
+    return 1;
+  } return 0;
+}
+void RTCunadjustedWizard() {
+  //first check if RTC is unadjusted. if not, return.
+  if(!RTCunadjusted()) return;
+  
+  int textX = 0;
+  int textY = 0;
+  int key;
+  Bdisp_AllClr_VRAM();
+  if (setting_display_statusbar == 1) DisplayStatusArea();
+  
+  PrintXY(1, 1, (char*)"  Clock unadjusted", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  textY = 24; textX = 0;
+  PrintMini(&textX, &textY, (unsigned char*)"Looks like this calculator's clock isn't", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  textY = textY + 17; textX = 0;
+  PrintMini(&textX, &textY, (unsigned char*)"set correctly, because it is set to a", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  textY = textY + 17; textX = 0;
+  PrintMini(&textX, &textY, (unsigned char*)"date in the past. This may be because", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  textY = textY + 17; textX = 0;
+  PrintMini(&textX, &textY, (unsigned char*)"you never set this clock before or", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  textY = textY + 17; textX = 0;
+  PrintMini(&textX, &textY, (unsigned char*)"because you took off the batteries.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  
+  textY = textY + 34; textX = 0;
+  PrintMini(&textX, &textY, (unsigned char*)"Press EXE or F1 to start setting the", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  textY = textY + 17; textX = 0;
+  PrintMini(&textX, &textY, (unsigned char*)"time and date, or EXIT to ignore and", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  textY = textY + 17; textX = 0;
+  PrintMini(&textX, &textY, (unsigned char*)"continue.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  int inscreen = 1;
+  while(inscreen) {
+    mGetKey(&key);
+    switch(key) {
+      case KEY_CTRL_EXE:
+      case KEY_CTRL_F1:
+        Bdisp_AllClr_VRAM();
+        if (setting_display_statusbar == 1) DisplayStatusArea();
+        PrintXY(1, 1, (char*)"  Clock unadjusted", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+        textY = 24+17; textX = 0;
+        PrintMini(&textX, &textY, (unsigned char*)"When setting the date and time, use", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        textY = textY + 17; textX = 0;
+        PrintMini(&textX, &textY, (unsigned char*)"the up/down keys to change the", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        textY = textY + 17; textX = 0;
+        PrintMini(&textX, &textY, (unsigned char*)"displayed value, and EXE to confirm.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        textY = textY + 17+17; textX = 0;
+        PrintMini(&textX, &textY, (unsigned char*)"Press any key to start.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        mGetKey(&key);
+        setTime();
+        Bdisp_AllClr_VRAM();
+        if (setting_display_statusbar == 1) DisplayStatusArea();
+        PrintXY(1, 1, (char*)"  Clock unadjusted", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+        textY = 24+17; textX = 0;
+        PrintMini(&textX, &textY, (unsigned char*)"Now let's set the date.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        textY = textY + 17+17; textX = 0;
+        PrintMini(&textX, &textY, (unsigned char*)"Press any key to start.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        mGetKey(&key);
+        setDate();
+        Bdisp_AllClr_VRAM();
+        if (setting_display_statusbar == 1) DisplayStatusArea();
+        PrintXY(1, 1, (char*)"  Clock adjusted", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+        textY = 24+17; textX = 0;
+        PrintMini(&textX, &textY, (unsigned char*)"We're done!", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        textY = textY + 17; textX = 0;
+        PrintMini(&textX, &textY, (unsigned char*)"If you ever need to adjust the clock", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        textY = textY + 17; textX = 0;
+        PrintMini(&textX, &textY, (unsigned char*)"again press Shift->Menu and choose", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        textY = textY + 17; textX = 0;
+        PrintMini(&textX, &textY, (unsigned char*)"the appropriate options.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        textY = textY + 30; textX = 0;
+        PrintMiniMini( &textX, &textY, (unsigned char*)"You'll need to set the clock every time you take off the", 0, TEXT_COLOR_BLACK, 0 );
+        textY = textY + 12; textX = 0;
+        PrintMiniMini( &textX, &textY, (unsigned char*)"batteries.", 0, TEXT_COLOR_BLACK, 0 );
+        textY = LCD_HEIGHT_PX-17-24; textX = 0;
+        PrintMini(&textX, &textY, (unsigned char*)"Press any key to continue.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        mGetKey(&key);
+        return;
+        break;
+      case KEY_CTRL_EXIT:
+        return;
+    }
+  }
+}
+//////////////////////////////////////////
+// END OF CLOCK UNADJUSTMENT DETECTION
+//////////////////////////////////////////
 // START OF FIRST-RUN WIZARD
 //////////////////////////////////////////
 void firstRunWizard() {
@@ -7017,14 +7113,16 @@ screen3:
     textY = textY + 17; textX = 0;
     PrintMini(&textX, &textY, (unsigned char*)"that enables you to lock your", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"calculator with a numeric code.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    PrintMini(&textX, &textY, (unsigned char*)"calculator with a password.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     textY = textY + 20; textX = 0;
     PrintMiniMini( &textX, &textY, (unsigned char*)"Lock the calculator by pressing F5 on the home screen.", 0, TEXT_COLOR_BLACK, 0 );
     textY = textY + 12; textX = 0;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"You'll be prompted to set a code the first time you use this", 0, TEXT_COLOR_BLACK, 0 );
+    PrintMiniMini( &textX, &textY, (unsigned char*)"You'll be prompted to set a password the first time you use", 0, TEXT_COLOR_BLACK, 0 );
     textY = textY + 12; textX = 0;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"function. You can set a new code in the Settings screen.", 0, TEXT_COLOR_BLACK, 0 );
-
+    PrintMiniMini( &textX, &textY, (unsigned char*)"this function. You can set a new password in the Settings", 0, TEXT_COLOR_BLACK, 0 );
+    textY = textY + 12; textX = 0;
+    PrintMiniMini( &textX, &textY, (unsigned char*)"screen (you'll learn how to get there after the jump).", 0, TEXT_COLOR_BLACK, 0 );
+    
     GetKey(&key);
     switch(key)
     {
@@ -7052,23 +7150,21 @@ screen3:
     
     PrintXY(1, 1, (char*)"  Welcome to Utilities", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     textY = 24; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"That's it!", 0, 0xFFFFFFFF, 0, 0, COLOR_ORANGE, COLOR_WHITE, 1, 0);
-    textY = textY + 17; textX = 0;
     PrintMini(&textX, &textY, (unsigned char*)"Thanks for reading this welcome", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"message. If you never did it before,", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    PrintMini(&textX, &textY, (unsigned char*)"message. After selecting Finish, you", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"you should now set your calculator's", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    PrintMini(&textX, &textY, (unsigned char*)"may be warned that the clock is", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"time and date, as well as your", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    PrintMini(&textX, &textY, (unsigned char*)"unadjusted. In that case, you'll be", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"preferred format for them, in the", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-    textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"Settings screen (Shift+Menu=Set Up).", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    PrintMini(&textX, &textY, (unsigned char*)"guided to adjust it.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     textY = textY + 20; textX = 0;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"You'll need to set the clock every time you take off the", 0, TEXT_COLOR_BLACK, 0 );
-    textY = textY + 12; textX = 0;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"batteries. Settings are saved in the Main Memory.", 0, TEXT_COLOR_BLACK, 0 );
+    PrintMini(&textX, &textY, (unsigned char*)"You can change this add-in's settings", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    textY = textY + 17; textX = 0;
+    PrintMini(&textX, &textY, (unsigned char*)"by pressing Shift and then Menu.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    textY = textY + 20; textX = 0;
+    PrintMiniMini( &textX, &textY, (unsigned char*)"Settings are saved in the Main Memory.", 0, TEXT_COLOR_BLACK, 0 );
     mGetKey(&key); //do a managed GetKey now so that users can go into Settings.
     switch(key)
     {
@@ -7356,6 +7452,7 @@ int main()
   
   Bdisp_EnableColor(1); 
   if(setting_is_first_run) firstRunWizard();
+  RTCunadjustedWizard();
   while (1) {
     passiveTimerEndedMessage = 0; //here we want active
     checkAllTimersEnd();
