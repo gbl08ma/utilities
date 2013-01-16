@@ -6382,7 +6382,7 @@ void deleteSelectedFiles(File* files, int numfiles, int todelfiles) {
       strcat(buffer, "  /");
       itoa(todelfiles, (unsigned char*)buffer2);
       strcat(buffer, buffer2);
-      strcat(buffer, "  )");
+      strcat(buffer, "  )        ");
       PrintXY(1,8,(char*)buffer, TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
       
