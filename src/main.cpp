@@ -6344,7 +6344,9 @@ int GetAnyFiles(File files[], char* basepath) {
 	int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
 	while(!ret) {
 		Bfile_NameToStr_ncpy(buffer, found, 0x10A);
-		if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "@MainMem") == 0))
+		if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || \
+		strcmp((char*)buffer, "@MainMem") == 0 || strcmp((char*)buffer, "utilities.g3a") == 0
+		|| strcmp((char*)buffer, SMEM_CALENDAR_FOLDER) == 0))
 		{
 			strcpy(files[curitem].name, (char*)buffer);
 			strcpy(files[curitem].filename, basepath);
