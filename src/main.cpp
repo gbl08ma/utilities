@@ -6468,7 +6468,7 @@ void fileBrowser() {
         GetFKeyPtr(0x0038, &iresult); // DELETE
         FKey_Display(5, (int*)iresult);
       }
-      GetKey(&key);
+      mGetKey(&key);
       switch(key)
       {
         case KEY_CTRL_DOWN:
