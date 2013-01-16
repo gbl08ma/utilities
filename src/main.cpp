@@ -6510,8 +6510,23 @@ void fileBrowser() {
           files[curSelFile-1].isselected ? files[curSelFile-1].isselected = 0 : files[curSelFile-1].isselected = 1;
           break;
         case KEY_CTRL_F6:
-          deleteSelectedFiles(files, numfiles, selfiles);
-          inscreen = 0; //reload file list
+        MsgBoxPush(4);
+          while (1) {
+            
+            PrintXY(3, 2, (char*)"  Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            PrintXY(3, 3, (char*)"  Selected Files?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            PrintXY(3, 4, (char*)"     Yes:[F1]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            PrintXY(3, 5, (char*)"     No :[F6]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mGetKey(&key);
+            if (key==KEY_CTRL_F1) {
+              MsgBoxPop();
+              deleteSelectedFiles(files, numfiles, selfiles);
+              inscreen = 0; //reload file list
+            } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
+              MsgBoxPop();
+              break;
+            }
+          }
           break;
         case KEY_CTRL_EXIT:
         	if(!strcmp(browserbasepath,"\\\\fls0\\")) { //check that we aren't already in the root folder
