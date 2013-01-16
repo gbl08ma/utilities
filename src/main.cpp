@@ -742,6 +742,19 @@ void CopySprite(const void* datar, int x, int y, int width, int height) {
      VRAM += LCD_WIDTH_PX-width; 
    } 
 } 
+void CopySpriteMasked(const unsigned char* data, int x, int y, int width, int height, int maskcolor) { 
+   char* VRAM = (char*)0xA8000000; 
+   VRAM += 2*(LCD_WIDTH_PX*y + x); 
+   for(int j=y; j<y+height; j++) { 
+      for(int i=x; i<x+width;  i++) { 
+         if ((((((int)(*data))&0x000000FF)<<8) | ((((int)(*(data+1))))&0x000000FF)) != maskcolor) { 
+            *(VRAM++) = *(data++); 
+            *(VRAM++) = *(data++); 
+         } else { VRAM += 2; data += 2; } 
+      } 
+      VRAM += 2*(LCD_WIDTH_PX-width); 
+   } 
+}
 int drawRGB24toRGB565(int r, int g, int b)  
 {  
   return ((r / 8) << 11) | ((g / 4) << 5) | (b / 8);  
@@ -6278,7 +6291,7 @@ void timeMenu() {
 //with syscall == 0x1E77, no effect (may be EnableGetkeyToMain...)
 //THIS MAY BE "	CallbackAtQuitMainFunction"!!: with syscall == 0x1E78, once you press Menu you're taken to the Link app, and there pressing Menu results in a brief spinning icon but no Menu. Pressing Menu in one of the submenus of the Link screen results in you being taken to the main Link screen. Conclusion: Menu became Link.
 //with syscall == 0x1E79,0x1E7A,0x1E7B,0x1E7C,0x1E7E,0x1E7F, no effect.
-void ruler() {
+/*void ruler() {
   Bdisp_AllClr_VRAM();
   if (setting_display_statusbar == 1) DisplayStatusArea();
 #define RULER_Y LCD_HEIGHT_PX/2
@@ -6297,7 +6310,229 @@ void ruler() {
 
   int key;
   GetKey(&key);
+}*/
+
+// START of file browser
+typedef struct
+{
+  char filename[256]; //filename, not proper for use with Bfile.
+  char name[120]; //friendly name (without //fls0/ or complete path)
+  int isfolder;
+  int isselected;
+} File;
+typedef struct
+{
+	unsigned short id, type;
+	unsigned long fsize, dsize;
+	unsigned int property;
+	unsigned long address;
+} file_type_t;
+int GetAnyFiles(File files[], char* basepath) {
+  /*searches storage memory for folders and files, returns their count*/
+  /*basepath should start with \\fls0\ and should always have a slash (\) at the end */
+	unsigned short path[0x10A], found[0x10A];
+	unsigned char buffer[0x10A];
+
+	// make the buffer
+	strcpy((char*)buffer, basepath);
+	strcat((char*)buffer, "*");
+	
+	int curitem = 0;
+	file_type_t fileinfo;
+	int findhandle;
+	Bfile_StrToName_ncpy(path, buffer, 0x10A);
+	int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
+	while(!ret) {
+		Bfile_NameToStr_ncpy(buffer, found, 0x10A);
+		if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "@MainMem") == 0))
+		{
+			strcpy(files[curitem].name, (char*)buffer);
+			strcpy(files[curitem].filename, basepath);
+			strcat(files[curitem].filename, (char*)buffer);
+			if(fileinfo.fsize == 0) files[curitem].isfolder = 1; else files[curitem].isfolder = 0;
+			files[curitem].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
+			curitem++;
+		}
+		ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
+	}
+	Bfile_FindClose(findhandle);
+	
+	return curitem;
 }
+void deleteSelectedFiles(File* files, int numfiles, int todelfiles) {
+  //files: the array (list) of files to perform operations in. NOT files to delete (this will only delete selected files)
+  //numfiles: total number of files in array
+  //todelfiles: the number of files to delete (count of selected files). allows for not having to loop all the way to the end (once the amount of deleted files is deleted, the loop stops)
+  //REFRESH the files array after calling this!
+  int curfile = 0; //current processing file (not number of deleted files!)
+  int delfiles = 0; //number of files deleted
+  unsigned short path[0x10A];
+  char buffer[50] = "";
+  char buffer2[5] = "";
+  if (numfiles>0) {
+    while(curfile < numfiles && delfiles < todelfiles) {  
+      if (files[curfile].isselected) {
+        Bfile_StrToName_ncpy(path, (unsigned char*)files[curfile].filename, 0x10A);
+        Bfile_DeleteEntry( path );
+        delfiles++;
+      }
+      strcpy(buffer, "  Deleting (");
+      itoa(delfiles, (unsigned char*)buffer2);
+      strcat(buffer, buffer2);
+      strcat(buffer, "  /");
+      itoa(todelfiles, (unsigned char*)buffer2);
+      strcat(buffer, buffer2);
+      strcat(buffer, "  )");
+      PrintXY(1,8,(char*)buffer, TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      Bdisp_PutDisp_DD();
+      
+      curfile++;
+    }
+  }
+  PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+}
+void fileBrowser() {
+  char title[6] = "Files";
+  int inloop = 1;
+  char browserbasepath[256] = "\\\\fls0\\";
+  int curSelFile = 1;
+  while(inloop) {
+    int key, inscreen = 1, scroll=0, numfiles=0, selfiles=0;
+    curSelFile = 1;
+    File files[200]; 
+    
+    Bdisp_AllClr_VRAM();
+    DisplayStatusArea();
+    numfiles = GetAnyFiles(files, browserbasepath);
+    while(inscreen) {
+      Bdisp_AllClr_VRAM();
+      int curfile = 0; //current processing file
+      selfiles = 0;
+      if (numfiles>0) {
+        while(curfile < numfiles) {
+          unsigned char menuitem[100] = "";
+          strcpy((char*)menuitem, "    ");
+          strcat((char*)menuitem, (char*)files[curfile].name);
+          strcat((char*)menuitem, "                     "); //make sure we have a string big enough to have background when item is selected
+          if(scroll < curfile+1) {
+            PrintXY(1,curfile+2-scroll,(char*)menuitem, (curSelFile == curfile+1 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);     
+            if (files[curfile].isfolder == 1) {
+              if((curfile+2-scroll)>=2&&(curfile+2-scroll)<=7) CopySpriteMasked((unsigned char*)folder_icon, 18, (curfile+2-scroll)*24+4, 17, 15, 0xf81f  );
+            }
+            if (files[curfile].isselected) {
+              if (curSelFile == curfile+1) {
+                  PrintXY(1,curfile+2-scroll,(char*)"   ", TEXT_MODE_INVERT, TEXT_COLOR_BLACK);
+                  PrintXY(1,curfile+2-scroll,(char*)"  \xe6\x9b", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_GREEN);
+              } else {
+                PrintXY(1,curfile+2-scroll,(char*)"   ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+                PrintXY(1,curfile+2-scroll,(char*)"  \xe6\x9b", TEXT_MODE_NORMAL, TEXT_COLOR_PURPLE);
+              }
+            }
+          }
+          if (files[curfile].isselected) selfiles++;
+          curfile++;
+        }
+        //hide 8th item
+        PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+  
+        TScrollbar sb;
+        sb.I1 = 0;
+        sb.I5 = 0;
+        sb.indicatormaximum = numfiles;
+        sb.indicatorheight = 6;
+        sb.indicatorpos = scroll;
+        sb.barheight = LCD_HEIGHT_PX - 24*3;
+        sb.bartop = 24;
+        sb.barleft = LCD_WIDTH_PX - 6;
+        sb.barwidth = 6;
+        Scrollbar(&sb);
+      } else {
+        PrintXY(8,4,(char*)"  No Data", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      }
+      DisplayStatusArea();
+      char titleBuffer[23] = "";
+      strcpy(titleBuffer, "  ");
+      strcat(titleBuffer, title);
+      PrintXY(1, 1, titleBuffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+      int textX=strlen(title)*18+10, textY=6;
+      char friendlypath[256] = "";
+      strcpy(friendlypath, browserbasepath+6);
+      friendlypath[strlen(friendlypath)-1] = '\0'; //remove ending slash like OS does
+      PrintMini(&textX, &textY, (unsigned char*)friendlypath, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+      int iresult;
+      if(numfiles>0) {
+        GetFKeyPtr(0x0037, &iresult); // SELECT (white)
+        FKey_Display(0, (int*)iresult);
+      }
+      if(selfiles>0) {
+        GetFKeyPtr(0x0038, &iresult); // DELETE
+        FKey_Display(5, (int*)iresult);
+      }
+      GetKey(&key);
+      switch(key)
+      {
+        case KEY_CTRL_DOWN:
+          if(curSelFile == numfiles)
+          {
+            curSelFile = 1;
+            scroll = 0;
+          }
+          else
+          {
+            curSelFile++;
+            if(curSelFile > scroll+(numfiles>6 ? 6 : numfiles))
+              scroll = curSelFile -(numfiles>6 ? 6 : numfiles);
+          }
+          break;
+        case KEY_CTRL_UP:
+          if(curSelFile == 1)
+          {
+            curSelFile = numfiles;
+            scroll = curSelFile-(numfiles>6 ? 6 : numfiles);
+          }
+          else
+          {
+            curSelFile--;
+            if(curSelFile-1 < scroll)
+              scroll = curSelFile -1;
+          }
+          break;
+        case KEY_CTRL_EXE:
+          if(files[curSelFile-1].isfolder) {
+            strcpy(browserbasepath, files[curSelFile-1].filename); //switch to selected folder
+            strcat(browserbasepath, "\\");
+            inscreen = 0; //reload at new folder
+          }
+          break;
+        case KEY_CTRL_F1:
+          files[curSelFile-1].isselected ? files[curSelFile-1].isselected = 0 : files[curSelFile-1].isselected = 1;
+          break;
+        case KEY_CTRL_F6:
+          deleteSelectedFiles(files, numfiles, selfiles);
+          inscreen = 0; //reload file list
+          break;
+        case KEY_CTRL_EXIT:
+        	if(!strcmp(browserbasepath,"\\\\fls0\\")) { //check that we aren't already in the root folder
+        	  //we are, return
+            return;
+          } else {
+        	  int i=strlen(browserbasepath)-2;
+        	  while (i>=0 && browserbasepath[i] != '\\')
+        		  i--;
+        	  if (browserbasepath[i] == '\\') {
+              char tmp[256] = "";
+              memcpy(tmp,browserbasepath,i+1);
+              tmp[i+1] = '\0';
+              strcpy(browserbasepath, tmp);
+        	  }
+            inscreen = 0; //reload at new folder
+          }
+          break;
+      }
+    }
+  }
+}
+// END of file browser
 
 #define TOTAL_SMEM 16801792 //as seen on the TEST MODE, on the emulator, OS 1.02, and on the TEST MODE of a real fx-CG 20, OS 1.04.
 #define DRAW_MEMUSAGE_GRAPHS
@@ -6397,13 +6632,6 @@ typedef struct
   char filename[128]; //filename, not proper for use with Bfile.
   char name[50]; //friendly name
 } AddIn;
-typedef struct
-{
-	unsigned short id, type;
-	unsigned long fsize, dsize;
-	unsigned int property;
-	unsigned long address;
-} file_type_t;
 int GetAddins(AddIn addins[]) {
   /*searches storage memory for active and inactive add-ins, returns their count*/
 	unsigned short path[0x10A], path2[0x10A], found[0x10A];
@@ -6669,7 +6897,7 @@ void drawToolsMenu(int pos, int scroll, int numitems)
   }
   PrintXY(2, 2, (char*)"  Tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
 
-  if(scroll < 1) PrintXY(2,3,(char*)"  Ruler              ", (pos == 1 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
+  if(scroll < 1) PrintXY(2,3,(char*)"  File browser       ", (pos == 1 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
   if(scroll < 2) PrintXY(2,4-scroll,(char*)"  Memory usage       ", (pos == 2 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
   if(scroll < 3) PrintXY(2,5-scroll,(char*)"  Add-In Manager     ", (pos == 3 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
   if(scroll < 4) PrintXY(2,6-scroll,(char*)"  Function key color ", (pos == 4 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);
@@ -6716,7 +6944,8 @@ void toolsMenu() {
         switch(pos)
         {
           case 1:
-            ruler();
+            //ruler();
+            fileBrowser();
             inscreen = 0; //exit popup to avoid strange drawings
             break;
           case 2:
@@ -6734,7 +6963,7 @@ void toolsMenu() {
           default: break;
         }
         break;
-      case KEY_CHAR_1: ruler(); inscreen = 0; break;
+      case KEY_CHAR_1: fileBrowser(); inscreen = 0; break;
       case KEY_CHAR_2: memoryCapacityViewer(); inscreen = 0; break;
       case KEY_CHAR_3: while(tres==1) { tres = addinManager(); } inscreen = 0; break;
       case KEY_CHAR_4: changeFKeyColor(); inscreen = 0; break;
