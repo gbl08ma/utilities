@@ -210,6 +210,8 @@ int passwordInput(int x, int y, unsigned char* buffer, int display_statusbar, in
     }
     int iresult;
     GetFKeyPtr(0x0307, &iresult); // A<>a
+    FKey_Display(4, (int*)iresult);
+    GetFKeyPtr(0x02A1, &iresult); // CHAR
     FKey_Display(5, (int*)iresult);
     Cursor_SetFlashOn(5);
     DisplayMBString((unsigned char*)dispbuffer, start, cursor, x,y);
@@ -220,7 +222,7 @@ int passwordInput(int x, int y, unsigned char* buffer, int display_statusbar, in
       keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.
       //we can't update always because that way alpha-not-lock will cancel when F5 is pressed.
     }
-    if(key == KEY_CTRL_F6)
+    if(key == KEY_CTRL_F5)
     {
       if (keyflag == 0x04 || keyflag == 0x08 || keyflag == 0x84 || keyflag == 0x88) {
         // ^only applies if some sort of alpha (not locked) is already on
@@ -235,7 +237,16 @@ int passwordInput(int x, int y, unsigned char* buffer, int display_statusbar, in
         }
       }
 
-    } 
+    }
+    else if(key == KEY_CTRL_F6)
+    {
+      SaveVRAM_1();
+      Bkey_ClrAllFlags();
+      short character;
+      character = CharacterSelectDialog();
+      if (character) cursor = EditMBStringChar((unsigned char*)buffer, charlimit, cursor, character);
+      LoadVRAM_1();
+    }  
     if (key == KEY_CTRL_EXIT) { Cursor_SetFlashOff(); return 0; }
     if (key == KEY_CTRL_EXE) {
       if (strlen((char*)buffer) > 0) {
