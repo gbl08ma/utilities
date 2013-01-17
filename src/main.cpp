@@ -6313,13 +6313,16 @@ void timeMenu() {
 }*/
 
 // START of file browser
+#define MAX_FILENAME_SIZE 768 //full path with //fls0/, extension and everything
+#define MAX_NAME_SIZE 256 //friendly name (in "//fls0/folder/file.txt", this would be "file.txt")
 typedef struct
 {
-  char filename[256]; //filename, not proper for use with Bfile.
-  char name[120]; //friendly name (without //fls0/ or complete path)
+  char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
+  char name[MAX_NAME_SIZE]; //friendly name (without //fls0/ or complete path)
   int isfolder;
   int isselected;
 } File;
+
 typedef struct
 {
 	unsigned short id, type;
@@ -6327,11 +6330,12 @@ typedef struct
 	unsigned int property;
 	unsigned long address;
 } file_type_t;
-int GetAnyFiles(File files[], char* basepath) {
+
+int GetAnyFiles(File files[], char* basepath, int sort=1) {
   /*searches storage memory for folders and files, returns their count*/
   /*basepath should start with \\fls0\ and should always have a slash (\) at the end */
-	unsigned short path[0x10A], found[0x10A];
-	unsigned char buffer[0x10A];
+	unsigned short path[MAX_FILENAME_SIZE], found[MAX_FILENAME_SIZE];
+	unsigned char buffer[MAX_FILENAME_SIZE];
 
 	// make the buffer
 	strcpy((char*)buffer, basepath);
@@ -6340,10 +6344,10 @@ int GetAnyFiles(File files[], char* basepath) {
 	int curitem = 0;
 	file_type_t fileinfo;
 	int findhandle;
-	Bfile_StrToName_ncpy(path, buffer, 0x10A);
+	Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE);
 	int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
 	while(!ret) {
-		Bfile_NameToStr_ncpy(buffer, found, 0x10A);
+		Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE);
 		if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || \
 		strcmp((char*)buffer, "@MainMem") == 0 || strcmp((char*)buffer, "utilities.g3a") == 0
 		|| strcmp((char*)buffer, SMEM_CALENDAR_FOLDER) == 0))
@@ -6358,23 +6362,22 @@ int GetAnyFiles(File files[], char* basepath) {
 		ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
 	}
 	Bfile_FindClose(findhandle);
-	
 	return curitem;
 }
-void deleteSelectedFiles(File* files, int numfiles, int todelfiles) {
+void fileDeleteSelected(File* files, int numfiles, int todelfiles) {
   //files: the array (list) of files to perform operations in. NOT files to delete (this will only delete selected files)
   //numfiles: total number of files in array
   //todelfiles: the number of files to delete (count of selected files). allows for not having to loop all the way to the end (once the amount of deleted files is deleted, the loop stops)
   //REFRESH the files array after calling this!
   int curfile = 0; //current processing file (not number of deleted files!)
   int delfiles = 0; //number of files deleted
-  unsigned short path[0x10A];
+  unsigned short path[MAX_FILENAME_SIZE];
   char buffer[50] = "";
   char buffer2[5] = "";
   if (numfiles>0) {
     while(curfile < numfiles && delfiles < todelfiles) {  
       if (files[curfile].isselected) {
-        Bfile_StrToName_ncpy(path, (unsigned char*)files[curfile].filename, 0x10A);
+        Bfile_StrToName_ncpy(path, (unsigned char*)files[curfile].filename, MAX_FILENAME_SIZE);
         Bfile_DeleteEntry( path );
         delfiles++;
       }
@@ -6393,10 +6396,126 @@ void deleteSelectedFiles(File* files, int numfiles, int todelfiles) {
   }
   PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
 }
+int fileRenameTextInput(int x, int y, int charlimit, unsigned char* buffer, int forcetext=1) {
+  //returns: 0 on success, 1 on user abort (EXIT), 2 on EXE, 3 on F1 (when allowF1 is 1)
+  int start = 0, cursor = 0;
+  int fieldwidth = 21; //something new on mbstring2
+  int iresult;
+  GetFKeyPtr(0x02A1, &iresult); // CHAR
+  FKey_Display(3, (int*)iresult);
+  GetFKeyPtr(0x0307, &iresult); // A<>a
+  FKey_Display(4, (int*)iresult);
+  GetFKeyPtr(0x04A4, &iresult); // Finish
+  FKey_Display(5, (int*)iresult);
+  drawLine(0, y*24-1, LCD_WIDTH_PX-1, y*24-1, COLOR_GRAY);
+  drawLine(0, y*24+24, LCD_WIDTH_PX-1, y*24+24, COLOR_GRAY);
+  int key;
+  while(1)
+  {
+    DisplayMBString2( 0, (unsigned char*)buffer, start, cursor, 0, x, y*24-24, fieldwidth+x-1, 0 );
+    
+    int keyflag = GetSetupSetting( (unsigned int)0x14);
+    mGetKey(&key);
+    if (GetSetupSetting( (unsigned int)0x14) == 0x01 || GetSetupSetting( (unsigned int)0x14) == 0x04 || GetSetupSetting( (unsigned int)0x14) == 0x84) {
+      keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.
+      //we can't update always because that way alpha-not-lock will cancel when F5 is pressed.
+    }
+    if(key == KEY_CTRL_EXE || key == KEY_CTRL_F6)
+    {
+      // Next step
+      if(forcetext) {
+        if (strlen((char*)buffer) > 0) {
+          Cursor_SetFlashOff(); return 2;
+        } else {
+          MsgBoxPush(3);
+          PrintXY(3, 3, (char*)"  Field can't be", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          PrintXY(3, 4, (char*)"  empty.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mGetKey(&key);
+          MsgBoxPop();
+        }
+      } else {
+        Cursor_SetFlashOff(); return 2;
+      }
+    }
+    else if(key == KEY_CTRL_EXIT)
+    {
+      // Aborted
+      Cursor_SetFlashOff(); return 1;
+    }
+    else if(key == KEY_CTRL_F4)
+    {
+      SaveVRAM_1();
+      Bkey_ClrAllFlags();
+      short character;
+      character = CharacterSelectDialog();
+      if (character) cursor = EditMBStringChar((unsigned char*)buffer, charlimit, cursor, character);
+      LoadVRAM_1();
+    }  
+    else if(key == KEY_CTRL_F5)
+    {
+      if (keyflag == 0x04 || keyflag == 0x08 || keyflag == 0x84 || keyflag == 0x88) {
+        // ^only applies if some sort of alpha (not locked) is already on
+        if (keyflag == 0x08 || keyflag == 0x88) { //if lowercase
+          SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
+          if (setting_display_statusbar == 1) DisplayStatusArea();
+          continue; //do not process the key, because otherwise we will leave alpha status
+        } else {
+          SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
+          if (setting_display_statusbar == 1) DisplayStatusArea();
+          continue; //do not process the key, because otherwise we will leave alpha status
+        }
+      }
+    }
+    
+    if (setting_display_statusbar == 1) DisplayStatusArea(); 
+    if(key && key < 30000)
+    {
+      if ((GetSetupSetting( (unsigned int)0x14) == 0x08 || GetSetupSetting( (unsigned int)0x14) == 0x88) && key >= KEY_CHAR_A && key <= KEY_CHAR_Z) //if lowercase and key is char...
+      {
+        key = key + 32; //so we switch to lowercase characters... Casio is smart
+      }
+      cursor = EditMBStringChar((unsigned char*)buffer, charlimit, cursor, key);
+      //1st and 5th parameter are, respectively, whether selection is enabled and its starting point. 
+      DisplayMBString2( 0, (unsigned char*)buffer, start, cursor, 0, x, y*24-24, fieldwidth+x-1, 0 );
+    }
+    else EditMBStringCtrl2( (unsigned char*)buffer, charlimit+1, &start, &cursor, &key, x, y*24-24, 1, fieldwidth+x-1 );
+  }
+  Cursor_SetFlashOff();
+  return 0;
+}
+int fileRename(File* files, char* browserbasepath, int curfile) {
+  //curfile: position in "files" array where the original filename is
+  //browserbasepath: folder we're working at (this function does not allow to "rename" files between folders)
+  //reload the files array after using this function!
+  //returns 1 if user aborts, 0 if renames.
+  Bdisp_AllClr_VRAM();
+  if (setting_display_statusbar == 1) DisplayStatusArea();
+  PrintXY(1, 1, (char*)"  Rename item", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  char title[MAX_NAME_SIZE+6] = "";
+  strcpy(title, "  ");
+  strcat(title, (char*)files[curfile].name);
+  strcat(title, " to:");
+  PrintXY(1, 2, (char*)title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  char newname[MAX_NAME_SIZE] = "";
+  strcpy(newname, (char*)files[curfile].name);
+  if (fileRenameTextInput(1, 3, MAX_NAME_SIZE, (unsigned char*)newname, 1) == 1) return 1; 
+  char newfilename[MAX_FILENAME_SIZE] = "";
+  strcpy(newfilename, browserbasepath);
+  strcat(newfilename, newname);
+  unsigned short newfilenameshort[0x10A];
+  unsigned short oldfilenameshort[0x10A];
+  Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)files[curfile].filename, 0x10A);
+  Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+  PrintXY(1,8,(char*)"  Renaming...           ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+  Bdisp_PutDisp_DD();
+  Bfile_RenameEntry(oldfilenameshort , newfilenameshort);
+  return 0;
+}
+  
 void fileBrowser() {
   char title[6] = "Files";
   int inloop = 1;
-  char browserbasepath[256] = "\\\\fls0\\";
+  char browserbasepath[MAX_FILENAME_SIZE] = "\\\\fls0\\";
   int curSelFile = 1;
   while(inloop) {
     int key, inscreen = 1, scroll=0, numfiles=0, selfiles=0;
@@ -6412,10 +6531,10 @@ void fileBrowser() {
       selfiles = 0;
       if (numfiles>0) {
         while(curfile < numfiles) {
-          unsigned char menuitem[100] = "";
+          unsigned char menuitem[MAX_NAME_SIZE+21+2] = "";
           strcpy((char*)menuitem, "    ");
           strcat((char*)menuitem, (char*)files[curfile].name);
-          strcat((char*)menuitem, "                     "); //make sure we have a string big enough to have background when item is selected
+          strcat((char*)menuitem, "                   "); //make sure we have a string big enough to have background when item is selected
           if(scroll < curfile+1) {
             PrintXY(1,curfile+2-scroll,(char*)menuitem, (curSelFile == curfile+1 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), TEXT_COLOR_BLACK);     
             if (files[curfile].isfolder == 1) {
@@ -6465,6 +6584,8 @@ void fileBrowser() {
       if(numfiles>0) {
         GetFKeyPtr(0x0037, &iresult); // SELECT (white)
         FKey_Display(0, (int*)iresult);
+        GetFKeyPtr(0x0188, &iresult); // RENAME
+        FKey_Display(4, (int*)iresult);
       }
       if(selfiles>0) {
         GetFKeyPtr(0x0038, &iresult); // DELETE
@@ -6509,6 +6630,9 @@ void fileBrowser() {
         case KEY_CTRL_F1:
           files[curSelFile-1].isselected ? files[curSelFile-1].isselected = 0 : files[curSelFile-1].isselected = 1;
           break;
+        case KEY_CTRL_F5:
+          if (!fileRename(files, browserbasepath, curSelFile-1)) inscreen = 0; //reload file list. because if return value !=0 then user aborted.
+          break;
         case KEY_CTRL_F6:
           MsgBoxPush(4);
           while (1) {
@@ -6520,7 +6644,7 @@ void fileBrowser() {
             if (key==KEY_CTRL_F1) {
               MsgBoxPop();
               Bdisp_PutDisp_DD();
-              deleteSelectedFiles(files, numfiles, selfiles);
+              fileDeleteSelected(files, numfiles, selfiles);
               inscreen = 0; //reload file list
               break;
             } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
@@ -6538,7 +6662,7 @@ void fileBrowser() {
         	  while (i>=0 && browserbasepath[i] != '\\')
         		  i--;
         	  if (browserbasepath[i] == '\\') {
-              char tmp[256] = "";
+              char tmp[MAX_FILENAME_SIZE] = "";
               memcpy(tmp,browserbasepath,i+1);
               tmp[i+1] = '\0';
               strcpy(browserbasepath, tmp);
