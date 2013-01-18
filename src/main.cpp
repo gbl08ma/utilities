@@ -6605,6 +6605,44 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
   }
   PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
 }
+void fileInformation(File* files, int index) {
+  int key;
+  Bdisp_AllClr_VRAM();
+  if (setting_display_statusbar == 1) DisplayStatusArea();
+  PrintXY(1, 1, (char*)"  File information", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  int textX=0, textY=24;
+  PrintMini(&textX, &textY, (unsigned char*)"File name: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
+  textX=0; textY=textY+17;
+  PrintMini(&textX, &textY, (unsigned char*)files[index].name, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  textX=0; textY=textY+25;
+  PrintMini(&textX, &textY, (unsigned char*)"Full file path: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
+  textX=0; textY=textY+17;
+  PrintMini(&textX, &textY, (unsigned char*)files[index].filename, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  
+  //Get file size
+  unsigned short pFile[MAX_FILENAME_SIZE];
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)files[index].filename, strlen(files[index].filename)+1); 
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  if(hFile >= 0) // Check if it opened
+  { //opened
+    int filesize = Bfile_GetFileSize_OS(hFile, Bfile_TellFile_OS( hFile ));  
+    Bfile_CloseFile_OS(hFile);
+    unsigned char buffer[50] = "";
+    itoa(filesize, (unsigned char*)buffer);
+    textX=0; textY=textY+25;
+    PrintMini(&textX, &textY, (unsigned char*)"File size: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
+    PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    PrintMini(&textX, &textY, (unsigned char*)" bytes", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  }
+  while (1) {
+    mGetKey(&key);
+    if (key == KEY_CTRL_EXIT ) {
+      return;
+      break;
+    }
+  }
+  
+}
 void fileBrowser() {
   char title[6] = "Files";
   int inloop = 1;
@@ -6744,6 +6782,8 @@ void fileBrowser() {
             strcpy(browserbasepath, files[curSelFile-1].filename); //switch to selected folder
             strcat(browserbasepath, "\\");
             inscreen = 0; //reload at new folder
+          } else {
+            fileInformation(files, curSelFile-1);
           }
           break;
         case KEY_CTRL_F1:
