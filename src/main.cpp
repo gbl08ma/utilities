@@ -3235,6 +3235,7 @@ addEventEndTimeScreen:
       switch(key)
       {
         case KEY_CTRL_EXIT:
+        case KEY_CTRL_AC:
           inscreen=0;
           break;
       }
@@ -6315,7 +6316,8 @@ void timeMenu() {
 // START of file browser
 #define MAX_FILENAME_SIZE 768 //full path with //fls0/, extension and everything
 #define MAX_NAME_SIZE 256 //friendly name (in "//fls0/folder/file.txt", this would be "file.txt")
-#define MAX_ITEMS_IN_DIR 200 //actually max items will be 201 because arrays start at 0. anyway.
+#define MAX_ITEMS_IN_DIR 201 //this turns to be 201 because arrays start at 0
+#define MAX_ITEMS_IN_CLIPBOARD 51 //this turns to be 51...
 typedef struct
 {
   char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
@@ -6406,10 +6408,10 @@ void fileDeleteSelected(File* files, int numfiles, int todelfiles) {
       strcpy(buffer, "  Deleting (");
       itoa(delfiles, (unsigned char*)buffer2);
       strcat(buffer, buffer2);
-      strcat(buffer, "  /");
+      strcat(buffer, "/");
       itoa(todelfiles, (unsigned char*)buffer2);
       strcat(buffer, buffer2);
-      strcat(buffer, "  )        ");
+      strcat(buffer, ")        ");
       PrintXY(1,8,(char*)buffer, TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
       
@@ -6533,22 +6535,91 @@ int fileRename(File* files, char* browserbasepath, int curfile) {
   Bfile_RenameEntry(oldfilenameshort , newfilenameshort);
   return 0;
 }
-  
+void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard) {
+  //this copies or moves to browserbasepath the files in the clipboard.
+  //when the isselected field of a clipboard item is 0, the item will be moved.
+  //when the isselected field is 1, the item will be copied.
+  //don't forget to reload the file list after using this
+  int curfile = 0;
+  char buffer[50] = "";
+  char buffer2[5] = "";
+  if (itemsInClipboard>0) {
+    while(curfile < itemsInClipboard) {  
+      if (clipboard[curfile].isselected) {
+        //copy file
+        /*Bfile_StrToName_ncpy(path, (unsigned char*)files[curfile].filename, MAX_FILENAME_SIZE);
+        Bfile_DeleteEntry( path );*/
+        strcpy(buffer, "  Copying (");
+        itoa(curfile+1, (unsigned char*)buffer2);
+        strcat(buffer, buffer2);
+        strcat(buffer, "/");
+        itoa(itemsInClipboard, (unsigned char*)buffer2);
+        strcat(buffer, buffer2);
+        strcat(buffer, ")           ");
+        PrintXY(1,8,(char*)buffer, TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        Bdisp_PutDisp_DD();
+        
+      } else {
+        //move file
+        strcpy(buffer, "  Moving (");
+        itoa(curfile+1, (unsigned char*)buffer2);
+        strcat(buffer, buffer2);
+        strcat(buffer, "/");
+        itoa(itemsInClipboard, (unsigned char*)buffer2);
+        strcat(buffer, buffer2);
+        strcat(buffer, ")            ");
+        PrintXY(1,8,(char*)buffer, TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        Bdisp_PutDisp_DD();
+        
+        char newfilename[MAX_FILENAME_SIZE] = "";
+        strcpy(newfilename, browserbasepath);
+        strcat(newfilename, clipboard[curfile].name);
+        unsigned short newfilenameshort[0x10A];
+        unsigned short oldfilenameshort[0x10A];
+        Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)clipboard[curfile].filename, 0x10A);
+        Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+        Bfile_RenameEntry(oldfilenameshort , newfilenameshort);
+      }
+      curfile++;
+    }
+  }
+  PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+}
 void fileBrowser() {
   char title[6] = "Files";
   int inloop = 1;
   char browserbasepath[MAX_FILENAME_SIZE] = "\\\\fls0\\";
   int curSelFile = 1;
+  File clipboard[MAX_ITEMS_IN_CLIPBOARD];
+  int itemsInClipboard = 0;
   while(inloop) {
     int key, inscreen = 1, scroll=0, numfiles=0, selfiles=0;
     curSelFile = 1;
-    File files[MAX_ITEMS_IN_DIR]; 
-    
+    File files[MAX_ITEMS_IN_DIR];
+    unsigned char titlebuf[50] ="";
+    char titleBuffer[23] = ""; 
+    int smemfree;
+    unsigned short smemMedia[7]={'\\','\\','f','l','s','0',0};
+    Bfile_GetMediaFree_OS( smemMedia, &smemfree );   
+   
     Bdisp_AllClr_VRAM();
-    DisplayStatusArea();
+    if (setting_display_statusbar == 1) DisplayStatusArea();
     numfiles = GetAnyFiles(files, browserbasepath);
     while(inscreen) {
       Bdisp_AllClr_VRAM();
+      
+      if(itemsInClipboard==0) {
+        itoa(smemfree, titlebuf);
+        LocalizeMessage1( 340, titleBuffer ); //"bytes free"
+        strcat((char*)titlebuf, (char*)titleBuffer);
+      } else {
+        strcpy((char*)titlebuf, "Clipboard: ");
+        itoa(itemsInClipboard, (unsigned char*)titleBuffer);
+        strcat((char*)titlebuf, titleBuffer);
+        if(itemsInClipboard == 1) { strcat((char*)titlebuf, " item (Shift\xe6\x91"); strcat((char*)titlebuf, "9=Paste)"); }
+        else { strcat((char*)titlebuf, " items (Shift\xe6\x91"); strcat((char*)titlebuf, "9=Paste)"); }
+      }
+      DefineStatusMessage((char*)titlebuf, 1, 0, 0);
       int curfile = 0; //current processing file
       selfiles = 0;
       if (numfiles>0) {
@@ -6593,7 +6664,6 @@ void fileBrowser() {
         PrintXY(8,4,(char*)"  No Data", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       }
       DisplayStatusArea();
-      char titleBuffer[23] = "";
       strcpy(titleBuffer, "  ");
       strcat(titleBuffer, title);
       PrintXY(1, 1, titleBuffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
@@ -6610,6 +6680,8 @@ void fileBrowser() {
         FKey_Display(4, (int*)iresult);
       }
       if(selfiles>0) {
+        GetFKeyPtr(0x0069, &iresult); // CUT (white)
+        FKey_Display(1, (int*)iresult);
         GetFKeyPtr(0x0038, &iresult); // DELETE
         FKey_Display(5, (int*)iresult);
       }
@@ -6650,7 +6722,43 @@ void fileBrowser() {
           }
           break;
         case KEY_CTRL_F1:
-          files[curSelFile-1].isselected ? files[curSelFile-1].isselected = 0 : files[curSelFile-1].isselected = 1;
+          if (numfiles>0) { files[curSelFile-1].isselected ? files[curSelFile-1].isselected = 0 : files[curSelFile-1].isselected = 1; }
+          break;
+        case KEY_CTRL_F2:
+          if (selfiles>0) {
+            if((!(itemsInClipboard >= MAX_ITEMS_IN_CLIPBOARD)) && selfiles <= MAX_ITEMS_IN_CLIPBOARD-itemsInClipboard) {
+              int ifile = 0;
+              while(ifile < numfiles) {  
+                if (files[ifile].isselected) {
+                  strcpy(clipboard[itemsInClipboard].filename, files[ifile].filename);
+                  strcpy(clipboard[itemsInClipboard].name, files[ifile].name);
+                  clipboard[itemsInClipboard].isselected = 0; //0=cut file; 1=copy file
+                  files[ifile].isselected = 0; // clear selection
+                  selfiles--;
+                  itemsInClipboard++;
+                }
+                ifile++;
+              }
+            } else {
+              MsgBoxPush(4);
+              PrintXY(3, 2, (char*)"  Can't add", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              PrintXY(3, 3, (char*)"  selected items to", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              PrintXY(3, 4, (char*)"  clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              PrintXY(3, 5, (char*)"     Press:[EXIT]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              int inscreen=1;
+              while(inscreen) {
+                mGetKey(&key);
+                switch(key)
+                {
+                  case KEY_CTRL_EXIT:
+                  case KEY_CTRL_AC:
+                    inscreen=0;
+                    break;
+                }
+              }
+              MsgBoxPop();
+            }
+          }
           break;
         case KEY_CTRL_F5:
           if (!fileRename(files, browserbasepath, curSelFile-1)) inscreen = 0; //reload file list. because if return value !=0 then user aborted.
@@ -6674,6 +6782,11 @@ void fileBrowser() {
               break;
             }
           }
+          break;
+        case KEY_CTRL_PASTE:
+          filePasteClipboardItems(clipboard, browserbasepath, itemsInClipboard);
+          itemsInClipboard = 0;
+          inscreen = 0; //reload file list
           break;
         case KEY_CTRL_EXIT:
         	if(!strcmp(browserbasepath,"\\\\fls0\\")) { //check that we aren't already in the root folder
