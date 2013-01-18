@@ -6315,6 +6315,7 @@ void timeMenu() {
 // START of file browser
 #define MAX_FILENAME_SIZE 768 //full path with //fls0/, extension and everything
 #define MAX_NAME_SIZE 256 //friendly name (in "//fls0/folder/file.txt", this would be "file.txt")
+#define MAX_ITEMS_IN_DIR 200 //actually max items will be 201 because arrays start at 0. anyway.
 typedef struct
 {
   char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
@@ -6359,6 +6360,27 @@ int GetAnyFiles(File files[], char* basepath, int sort=1) {
 			files[curitem].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
 			curitem++;
 		}
+    if (curitem>MAX_ITEMS_IN_DIR) { 
+      MsgBoxPush(5);
+      PrintXY_2(TEXT_MODE_NORMAL, 1, 2, 1833, TEXT_COLOR_BLACK); //over 200 files
+      PrintXY_2(TEXT_MODE_NORMAL, 1, 3, 1834, TEXT_COLOR_BLACK); // in folder
+      PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 1835, TEXT_COLOR_BLACK); // some will
+      PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 1836, TEXT_COLOR_BLACK); // be skipped
+      PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit
+      int key,inscreen=1;
+      while(inscreen) {
+        mGetKey(&key);
+        switch(key)
+        {
+          case KEY_CTRL_EXIT:
+          case KEY_CTRL_AC:
+            inscreen=0;
+            break;
+        }
+      }
+      MsgBoxPop(); 
+      break; // Don't find more files, the array is full. 
+    } 
 		ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
 	}
 	Bfile_FindClose(findhandle);
@@ -6520,7 +6542,7 @@ void fileBrowser() {
   while(inloop) {
     int key, inscreen = 1, scroll=0, numfiles=0, selfiles=0;
     curSelFile = 1;
-    File files[200]; 
+    File files[MAX_ITEMS_IN_DIR]; 
     
     Bdisp_AllClr_VRAM();
     DisplayStatusArea();
