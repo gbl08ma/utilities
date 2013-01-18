@@ -6420,7 +6420,7 @@ void fileDeleteSelected(File* files, int numfiles, int todelfiles) {
   }
   PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
 }
-int fileRenameTextInput(int x, int y, int charlimit, unsigned char* buffer, int forcetext=1) {
+int fileTextInput(int x, int y, int charlimit, unsigned char* buffer, int forcetext=1) {
   //returns: 0 on success, 1 on user abort (EXIT), 2 on EXE, 3 on F1 (when allowF1 is 1)
   int start = 0, cursor = 0;
   int fieldwidth = 21; //something new on mbstring2
@@ -6522,7 +6522,7 @@ int fileRename(File* files, char* browserbasepath, int curfile) {
   PrintXY(1, 2, (char*)title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   char newname[MAX_NAME_SIZE] = "";
   strcpy(newname, (char*)files[curfile].name);
-  if (fileRenameTextInput(1, 3, MAX_NAME_SIZE, (unsigned char*)newname, 1) == 1) return 1; 
+  if (fileTextInput(1, 3, MAX_NAME_SIZE, (unsigned char*)newname, 1) == 1) return 1; 
   char newfilename[MAX_FILENAME_SIZE] = "";
   strcpy(newfilename, browserbasepath);
   strcat(newfilename, newname);
@@ -6533,6 +6533,26 @@ int fileRename(File* files, char* browserbasepath, int curfile) {
   PrintXY(1,8,(char*)"  Renaming...           ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
   Bdisp_PutDisp_DD();
   Bfile_RenameEntry(oldfilenameshort , newfilenameshort);
+  return 0;
+}
+int fileMakeFolder(char* browserbasepath) {
+  //browserbasepath: folder we're working at
+  //reload the files array after using this function!
+  //returns 1 if user aborts, 0 if makes folder.
+  Bdisp_AllClr_VRAM();
+  if (setting_display_statusbar == 1) DisplayStatusArea();
+  PrintXY(1, 1, (char*)"  Create folder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  PrintXY(1, 2, (char*)"  Name:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  char newname[MAX_NAME_SIZE] = "";
+  if (fileTextInput(1, 3, MAX_NAME_SIZE, (unsigned char*)newname, 1) == 1) return 1; 
+  char newfilename[MAX_FILENAME_SIZE] = "";
+  strcpy(newfilename, browserbasepath);
+  strcat(newfilename, newname);
+  unsigned short newfilenameshort[0x10A];
+  Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+  PrintXY(1,8,(char*)"  Creating folder...       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+  Bdisp_PutDisp_DD();
+  Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FOLDER, 0); //create a folder for the file
   return 0;
 }
 void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard) {
@@ -6592,6 +6612,7 @@ void fileBrowser() {
   int curSelFile = 1;
   File clipboard[MAX_ITEMS_IN_CLIPBOARD];
   int itemsInClipboard = 0;
+  int fkeymenu = 0;
   while(inloop) {
     int key, inscreen = 1, scroll=0, numfiles=0, selfiles=0;
     curSelFile = 1;
@@ -6673,17 +6694,21 @@ void fileBrowser() {
       friendlypath[strlen(friendlypath)-1] = '\0'; //remove ending slash like OS does
       PrintMini(&textX, &textY, (unsigned char*)friendlypath, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
       int iresult;
-      if(numfiles>0) {
-        GetFKeyPtr(0x0037, &iresult); // SELECT (white)
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x0188, &iresult); // RENAME
-        FKey_Display(4, (int*)iresult);
-      }
-      if(selfiles>0) {
-        GetFKeyPtr(0x0069, &iresult); // CUT (white)
-        FKey_Display(1, (int*)iresult);
-        GetFKeyPtr(0x0038, &iresult); // DELETE
-        FKey_Display(5, (int*)iresult);
+      if(fkeymenu == 0) {
+        if(numfiles>0) {
+          GetFKeyPtr(0x0037, &iresult); // SELECT (white)
+          FKey_Display(0, (int*)iresult);
+          GetFKeyPtr(0x0188, &iresult); // RENAME
+          FKey_Display(4, (int*)iresult);
+        }
+        if(selfiles>0) {
+          GetFKeyPtr(0x0069, &iresult); // CUT (white)
+          FKey_Display(1, (int*)iresult);
+          GetFKeyPtr(0x0038, &iresult); // DELETE
+          FKey_Display(5, (int*)iresult);
+        }
+        GetFKeyPtr(0x038E, &iresult); // MKFLDR
+        FKey_Display(3, (int*)iresult);
       }
       mGetKey(&key);
       switch(key)
@@ -6722,10 +6747,10 @@ void fileBrowser() {
           }
           break;
         case KEY_CTRL_F1:
-          if (numfiles>0) { files[curSelFile-1].isselected ? files[curSelFile-1].isselected = 0 : files[curSelFile-1].isselected = 1; }
+          if (numfiles>0 && fkeymenu==0) { files[curSelFile-1].isselected ? files[curSelFile-1].isselected = 0 : files[curSelFile-1].isselected = 1; }
           break;
         case KEY_CTRL_F2:
-          if (selfiles>0) {
+          if (selfiles>0 && fkeymenu==0) {
             if((!(itemsInClipboard >= MAX_ITEMS_IN_CLIPBOARD)) && selfiles <= MAX_ITEMS_IN_CLIPBOARD-itemsInClipboard) {
               int ifile = 0;
               while(ifile < numfiles) {  
@@ -6760,26 +6785,31 @@ void fileBrowser() {
             }
           }
           break;
+        case KEY_CTRL_F4:
+          if(fkeymenu==0) { if (!fileMakeFolder(browserbasepath)) inscreen = 0; } //reload file list. because if return value !=0 then user aborted.
+          break;
         case KEY_CTRL_F5:
-          if (!fileRename(files, browserbasepath, curSelFile-1)) inscreen = 0; //reload file list. because if return value !=0 then user aborted.
+          if(fkeymenu==0) { if (!fileRename(files, browserbasepath, curSelFile-1)) inscreen = 0; } //reload file list. because if return value !=0 then user aborted.
           break;
         case KEY_CTRL_F6:
-          MsgBoxPush(4);
-          while (1) {
-            PrintXY(3, 2, (char*)"  Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 3, (char*)"  Selected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 4, (char*)"     Yes:[F1]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 5, (char*)"     No :[F6]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            mGetKey(&key);
-            if (key==KEY_CTRL_F1) {
-              MsgBoxPop();
-              Bdisp_PutDisp_DD();
-              fileDeleteSelected(files, numfiles, selfiles);
-              inscreen = 0; //reload file list
-              break;
-            } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
-              MsgBoxPop();
-              break;
+          if(fkeymenu==0) {
+            MsgBoxPush(4);
+            while (1) {
+              PrintXY(3, 2, (char*)"  Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              PrintXY(3, 3, (char*)"  Selected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              PrintXY(3, 4, (char*)"     Yes:[F1]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              PrintXY(3, 5, (char*)"     No :[F6]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              mGetKey(&key);
+              if (key==KEY_CTRL_F1) {
+                MsgBoxPop();
+                Bdisp_PutDisp_DD();
+                fileDeleteSelected(files, numfiles, selfiles);
+                inscreen = 0; //reload file list
+                break;
+              } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
+                MsgBoxPop();
+                break;
+              }
             }
           }
           break;
