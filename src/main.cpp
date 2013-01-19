@@ -7719,11 +7719,6 @@ screen3:
 //Master-control is using for controlling add-in and calculator functionality by entering numeric codes.
 //It is meant for easy debugging of things that aren't yet in a nice UI, available to the user.
 //(even because some of these things aren't meant to be available to the common user as they can be things like unknown syscalls testing)
-int testTimer = 0;
-int curTestValue = 0;
-void testTimerHandler() {
-
-}
 
 void masterControl() {
   char buffer[100] = ""; // Some string length
@@ -7918,12 +7913,31 @@ void masterControl() {
 //////////////////////////////////////////
 // END OF MASTER-CONTROL
 //////////////////////////////////////////
+/*int clockTimer = 0;
+void statusClockTimerHandler() {
+  char timeStr[14] = "";
+  fillTime(timeStr,setting_timeformat);
+  int textX = LCD_WIDTH_PX-57;
+  int textY = 2;
+  PrintMiniMini( &textX, &textY, (unsigned char*)timeStr, 64, TEXT_COLOR_BLACK, 0 ); //draw; 64 == unlock status area
+  //Bdisp_PutDisp_DD_stripe( 0, 14 );
+  unsigned short key = PRGM_GetKey();
+  if(key == 25) {
+    SetSetupSetting( (unsigned int)0x14, 0);
+    Timer_Stop(clockTimer);
+    Timer_Deinstall(clockTimer);
+    masterControl();
+  }
+}*/
 void managedLockCalc() {
   if (setting_enable_lock_func) {
     int lockres = lockCalc(setting_display_statusbar, setting_password_show_last_char, setting_lock_auto_turnoff);
     if(lockres == 0) {
-      if (setting_unlock_runmat == 1) { APP_RUNMAT(0,0); }
-      else if (setting_unlock_runmat == 2) {
+      if (setting_unlock_runmat == 1) {
+        /*clockTimer = Timer_Install(0, statusClockTimerHandler, 500);
+        if (clockTimer > 0) { Timer_Start(clockTimer); }*/
+        APP_RUNMAT(0,0);
+      } else if (setting_unlock_runmat == 2) {
         MsgBoxPush(4);
         PrintXY(3, 2, (char*)"  Open Run-Mat?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         PrintXY(3, 4, (char*)"     Yes:[F1]/[1]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -7935,7 +7949,9 @@ void managedLockCalc() {
           {
             case KEY_CTRL_F1:
             case KEY_CHAR_1:
-              MsgBoxPop(); 
+              MsgBoxPop();
+              /*clockTimer = Timer_Install(0, statusClockTimerHandler, 500);
+              if (clockTimer > 0) { Timer_Start(clockTimer); }*/
               APP_RUNMAT(0,0);
               break;
             default:
