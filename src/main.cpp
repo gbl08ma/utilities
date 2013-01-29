@@ -2692,10 +2692,10 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
       Cursor_SetFlashOff();
       return 2;
     }
-    if(key == KEY_CTRL_EXE && cursor == 8) {
+    if(key == KEY_CTRL_EXE && strlen(buffer)==8) {
       break;
     }
-    if(inwizard && key == KEY_CTRL_F6 && cursor == 8) {
+    if(inwizard && key == KEY_CTRL_F6 && strlen(buffer)==8) {
       break;
     }
     if(key && key < 30000) {
@@ -2819,10 +2819,10 @@ int chooseTime(int *h, int *m, int *s, char* message, char* message2, int inwiza
       Cursor_SetFlashOff();
       return 2;
     }
-    if(key == KEY_CTRL_EXE && cursor == 6) {
+    if(key == KEY_CTRL_EXE && strlen(buffer)==6) {
       break;
     }
-    if(inwizard && key == KEY_CTRL_F6 && cursor == 6) {
+    if(inwizard && key == KEY_CTRL_F6 && strlen(buffer)==6) {
       break;
     }
     if(key && key < 30000) {
