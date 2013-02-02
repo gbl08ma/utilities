@@ -6567,8 +6567,6 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
     while(curfile < itemsInClipboard) {  
       if (clipboard[curfile].isselected) {
         //copy file
-        /*Bfile_StrToName_ncpy(path, (unsigned char*)files[curfile].filename, MAX_FILENAME_SIZE);
-        Bfile_DeleteEntry( path );*/
         strcpy(buffer, "  Copying (");
         itoa(curfile+1, (unsigned char*)buffer2);
         strcat(buffer, buffer2);
@@ -6578,6 +6576,60 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         strcat(buffer, ")           ");
         PrintXY(1,8,(char*)buffer, TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         Bdisp_PutDisp_DD();
+        
+        char newfilename[MAX_FILENAME_SIZE] = "";
+        strcpy(newfilename, browserbasepath);
+        strcat(newfilename, clipboard[curfile].name);
+        if(!strcmp(newfilename, clipboard[curfile].filename)) {
+          //a file with that name already exists on the new location.
+          continue; //skip
+        }
+        unsigned short newfilenameshort[0x10A];
+        unsigned short oldfilenameshort[0x10A];
+        Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)clipboard[curfile].filename, 0x10A);
+        Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+        
+        int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READ); // Get handle for the old file
+        if(hOldFile < 0) {
+          //returned error: couldn't open file to copy.
+          continue; //skip this file
+        } else {
+          //file to copy exists and is open. get its size.
+          int copySize = Bfile_GetFileSize_OS(hOldFile, Bfile_TellFile_OS( hOldFile ));
+          int hNewFile = Bfile_OpenFile_OS(newfilenameshort, WRITE); // Get handle for the destination file. This should fail because the file shouldn't exist.
+          if(hNewFile < 0) {
+            // Returned error, dest file does not exist (which is good)
+            int BCEres = Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &copySize);
+            if(BCEres >= 0) // Did it create?
+            {
+              //created. open newly-created destination file
+              hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE);
+              if(hNewFile < 0) // Still failing?
+              {
+                //skip this copy.
+                Bfile_CloseFile_OS(hOldFile);
+                continue;
+              }
+              //File to copy is open, destination file is created and open.
+              //copy 4 KB at a time.
+              unsigned char copybuffer[4096];
+              int curpos = 0;
+              while(curpos < copySize) {
+                strcpy((char*)copybuffer, "");
+                int writesize = 0;
+                if(copySize - curpos > 4096) {
+                  writesize = 4096;
+                } else writesize = copySize - curpos;
+                Bfile_ReadFile_OS( hOldFile, copybuffer, writesize, -1 );
+                Bfile_WriteFile_OS(hNewFile, copybuffer, writesize);
+                curpos = curpos + writesize;
+              }
+              //done copying, close files.
+              Bfile_CloseFile_OS(hOldFile);
+              Bfile_CloseFile_OS(hNewFile);
+            }
+          }
+        }
         
       } else {
         //move file
@@ -6742,6 +6794,8 @@ void fileBrowser() {
         if(selfiles>0) {
           GetFKeyPtr(0x0069, &iresult); // CUT (white)
           FKey_Display(1, (int*)iresult);
+          GetFKeyPtr(0x0034, &iresult); // COPY (white)
+          FKey_Display(2, (int*)iresult);
           GetFKeyPtr(0x0038, &iresult); // DELETE
           FKey_Display(5, (int*)iresult);
         }
@@ -6790,17 +6844,49 @@ void fileBrowser() {
           if (numfiles>0 && fkeymenu==0) { files[curSelFile-1].isselected ? files[curSelFile-1].isselected = 0 : files[curSelFile-1].isselected = 1; }
           break;
         case KEY_CTRL_F2:
+        case KEY_CTRL_F3:
           if (selfiles>0 && fkeymenu==0) {
             if((!(itemsInClipboard >= MAX_ITEMS_IN_CLIPBOARD)) && selfiles <= MAX_ITEMS_IN_CLIPBOARD-itemsInClipboard) {
-              int ifile = 0;
+              int ifile = 0; int hasShownFolderCopyWarning = 0;
               while(ifile < numfiles) {  
                 if (files[ifile].isselected) {
-                  strcpy(clipboard[itemsInClipboard].filename, files[ifile].filename);
-                  strcpy(clipboard[itemsInClipboard].name, files[ifile].name);
-                  clipboard[itemsInClipboard].isselected = 0; //0=cut file; 1=copy file
+                  if(key == KEY_CTRL_F2) {
+                    strcpy(clipboard[itemsInClipboard].filename, files[ifile].filename);
+                    strcpy(clipboard[itemsInClipboard].name, files[ifile].name);
+                    //0=cut file; 1=copy file:
+                    clipboard[itemsInClipboard].isselected = 0;
+                    itemsInClipboard++;
+                  } else {
+                    if (!files[ifile].isfolder) {
+                      strcpy(clipboard[itemsInClipboard].filename, files[ifile].filename);
+                      strcpy(clipboard[itemsInClipboard].name, files[ifile].name);
+                      //0=cut file; 1=copy file:
+                      clipboard[itemsInClipboard].isselected = 1;
+                      itemsInClipboard++;
+                    } else {
+                      if (!hasShownFolderCopyWarning) {
+                        MsgBoxPush(4);
+                        PrintXY(3, 2, (char*)"  Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+                        PrintXY(3, 3, (char*)"  not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+                        PrintXY(3, 5, (char*)"     Press:[EXIT]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+                        int inscreen=1;
+                        while(inscreen) {
+                          mGetKey(&key);
+                          switch(key)
+                          {
+                            case KEY_CTRL_EXIT:
+                            case KEY_CTRL_AC:
+                              inscreen=0;
+                              break;
+                          }
+                        }
+                        MsgBoxPop();
+                        hasShownFolderCopyWarning = 1;
+                      }
+                    }
+                  }
                   files[ifile].isselected = 0; // clear selection
                   selfiles--;
-                  itemsInClipboard++;
                 }
                 ifile++;
               }
