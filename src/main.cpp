@@ -123,21 +123,21 @@ void SaveSettings(unsigned char* file, int nofirstrun=1) {
   if(nofirstrun) setting_is_first_run = 0; //if we're saving settings, then for sure we have completed the first run wizard.
   //...except if we really want to say it's still the first run...
   unsigned char buffer[15] = {
-    setting_timeformat,
-    setting_longdateformat,
-    setting_dateformat,
-    setting_black_theme,
-    setting_display_statusbar,
-    setting_startup_brightness,
-    setting_show_advanced,
-    setting_display_fkeys,
-    setting_password_show_last_char,
-    setting_show_events_count_on_calendar,
-    setting_is_first_run,
-    setting_enable_lock_func,
-    setting_lock_auto_turnoff,
-    setting_lock_on_exe,
-    setting_unlock_runmat
+    (unsigned char)setting_timeformat,
+    (unsigned char)setting_longdateformat,
+    (unsigned char)setting_dateformat,
+    (unsigned char)setting_black_theme,
+    (unsigned char)setting_display_statusbar,
+    (unsigned char)setting_startup_brightness,
+    (unsigned char)setting_show_advanced,
+    (unsigned char)setting_display_fkeys,
+    (unsigned char)setting_password_show_last_char,
+    (unsigned char)setting_show_events_count_on_calendar,
+    (unsigned char)setting_is_first_run,
+    (unsigned char)setting_enable_lock_func,
+    (unsigned char)setting_lock_auto_turnoff,
+    (unsigned char)setting_lock_on_exe,
+    (unsigned char)setting_unlock_runmat
   };
   MCSPutVar2(DIRNAME, file, 15, buffer);
 }
