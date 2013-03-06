@@ -927,10 +927,10 @@ void mGetKey(int* key) {
       break;
     } else if (*key == KEY_SHIFT_OPTN && setting_debug_on) {
       SaveVRAM_1();
-    	TestMode( 1 );
-    	const unsigned int default_fkeys[] = { 0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0 };
-    	Set_FKeys1( 0, (unsigned int*)default_fkeys );
-    	Set_FKeys2( 0 );
+            TestMode( 1 );
+            const unsigned int default_fkeys[] = { 0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0 };
+            Set_FKeys1( 0, (unsigned int*)default_fkeys );
+            Set_FKeys2( 0 );
       LoadVRAM_1();
     } else {
       break; 
@@ -2890,8 +2890,8 @@ void dbgPrint(unsigned char*msg) {
   locate_OS(1,1);
   Print_OS((unsigned char*)"                     ", 0, 0);
   locate_OS(1,1);
-	Print_OS(msg, 0, 0);
-	GetKey(&key);
+        Print_OS(msg, 0, 0);
+        GetKey(&key);
 }
 void delEventUI(int y, int m, int d, int pos, int istask=0) {
   EventDate date; date.day = d; date.month = m; date.year = y;
@@ -5851,10 +5851,10 @@ int moon_phase(int y, int m, int d)
     e = 30.6*m;
     jd = c+e+d-694039.09;  /* jd is total days elapsed */
     jd /= 29.53;           /* divide by the moon cycle (29.53 days) */
-    b = jd;		   /* int(jd) -> b, take integer part of jd */
-    jd -= b;		   /* subtract integer part to leave fractional part of original jd */
-    b = jd*8 + 0.5;	   /* scale fraction from 0-8 and round by adding 0.5 */
-    b = b & 7;		   /* 0 and 8 are the same so turn 8 into 0 */
+    b = jd;                   /* int(jd) -> b, take integer part of jd */
+    jd -= b;                   /* subtract integer part to leave fractional part of original jd */
+    b = jd*8 + 0.5;           /* scale fraction from 0-8 and round by adding 0.5 */
+    b = b & 7;                   /* 0 and 8 are the same so turn 8 into 0 */
     return b;
 }
 /*  Astronomical constants  */
@@ -5899,7 +5899,7 @@ int moon_phase(int y, int m, int d)
 #define TORAD(d) ((d) * (PI / 180.0))                     /* Deg->Rad     */
 #define TODEG(d) ((d) * (180.0 / PI))                     /* Rad->Deg     */
 
-#define abs(a)	   (((a) < 0) ? -(a) : (a))
+#define abs(a)           (((a) < 0) ? -(a) : (a))
 double sin(double x) //not the most precision. too lazy to find a great one (even if it's slower)
 {
     const double B = 4/PI;
@@ -5948,8 +5948,8 @@ double jtime(int year, int month, int day, int hour, int minute, int second)
           The  argument  is  the  time  for  which  the  phase is 
           requested, expressed as a Julian date and fraction.  Returns  the  terminator
           phase  angle  as a percentage of a full circle (i.e., 0 to 1), and 
-	  stores into pointer arguments  the  illuminated  fraction  of the 
-	  Moon's  disc, the Moon's age in days and fraction, the distance 
+          stores into pointer arguments  the  illuminated  fraction  of the 
+          Moon's  disc, the Moon's age in days and fraction, the distance 
           of the Moon from the centre of the Earth, and  the  angular  
           diameter subtended  by the Moon as seen by an observer at the centre of 
           the Earth.
@@ -5974,25 +5974,25 @@ double moon_phase(
        
           /* Calculation of the Sun's position */
        
-    Day = pdate - EPOCH; 		   /* Date within epoch */
+    Day = pdate - EPOCH;                    /* Date within epoch */
     N = FIXANGLE((360 / 365.2422) * Day);   /* Mean anomaly of the Sun */
-    M = FIXANGLE(N + ELONGE - ELONGP);	   /* Convert from perigee
-					      co-ordinates to epoch 1980.0 */
+    M = FIXANGLE(N + ELONGE - ELONGP);           /* Convert from perigee
+                                              co-ordinates to epoch 1980.0 */
     Mrad=TORAD(M);
     Ec = Mrad+2*ECCENT*sin(Mrad)+
- 	1.25*ECCENT*ECCENT*sin(2*Mrad)+
- 	ECCENT*ECCENT*ECCENT*sin(3*Mrad);    /* gives true anomaly accurate to ~arcsec
-	                                      (compared to usual formula,
-					      that is) */
-/*	  if(Mrad > PI) Ec=Ec-2*PI; */
+         1.25*ECCENT*ECCENT*sin(2*Mrad)+
+         ECCENT*ECCENT*ECCENT*sin(3*Mrad);    /* gives true anomaly accurate to ~arcsec
+                                              (compared to usual formula,
+                                              that is) */
+/*          if(Mrad > PI) Ec=Ec-2*PI; */
     Ec = TODEG(Ec);
     
     Lambdasun = FIXANGLE(Ec + ELONGP);      /* Sun's geocentric ecliptic
-					       longitude */
+                                               longitude */
     /* Orbital distance factor */
     F = (1 + ECCENT * dcos(Ec)) / (1 - ECCENT * ECCENT);
-    SunDist = SUNSMAX / F;		    /* Distance to Sun in km */
-    SunAng = F * SUNANGSIZ;		    /* Sun's angular size in degrees */
+    SunDist = SUNSMAX / F;                    /* Distance to Sun in km */
+    SunAng = F * SUNANGSIZ;                    /* Sun's angular size in degrees */
  
     /* Calculation of the Moon's position */
  
@@ -6059,7 +6059,7 @@ double moon_phase(
      /* Calculate distance of moon from the centre of the Earth */
   
      MoonDist = (MSMAX * (1 - MECC * MECC)) /
-		(1 + MECC * dcos(MmP + mEc));
+                (1 + MECC * dcos(MmP + mEc));
   
      /* Calculate Moon's angular diameter */
   
@@ -6290,7 +6290,7 @@ void timeMenu() {
 //////////////////////////////////////////
 //Syscall test findings (don't belong here and should be taken out of here and saved in a safe location ASAP):
 //with syscall == 0x1E77, no effect (may be EnableGetkeyToMain...)
-//THIS MAY BE "	CallbackAtQuitMainFunction"!!: with syscall == 0x1E78, once you press Menu you're taken to the Link app, and there pressing Menu results in a brief spinning icon but no Menu. Pressing Menu in one of the submenus of the Link screen results in you being taken to the main Link screen. Conclusion: Menu became Link.
+//THIS MAY BE "        CallbackAtQuitMainFunction"!!: with syscall == 0x1E78, once you press Menu you're taken to the Link app, and there pressing Menu results in a brief spinning icon but no Menu. Pressing Menu in one of the submenus of the Link screen results in you being taken to the main Link screen. Conclusion: Menu became Link.
 //with syscall == 0x1E79,0x1E7A,0x1E7B,0x1E7C,0x1E7E,0x1E7F, no effect.
 /*void ruler() {
   Bdisp_AllClr_VRAM();
@@ -6328,40 +6328,40 @@ typedef struct
 
 typedef struct
 {
-	unsigned short id, type;
-	unsigned long fsize, dsize;
-	unsigned int property;
-	unsigned long address;
+        unsigned short id, type;
+        unsigned long fsize, dsize;
+        unsigned int property;
+        unsigned long address;
 } file_type_t;
 
 int GetAnyFiles(File files[], char* basepath, int sort=1) {
   /*searches storage memory for folders and files, returns their count*/
   /*basepath should start with \\fls0\ and should always have a slash (\) at the end */
-	unsigned short path[MAX_FILENAME_SIZE], found[MAX_FILENAME_SIZE];
-	unsigned char buffer[MAX_FILENAME_SIZE];
+        unsigned short path[MAX_FILENAME_SIZE], found[MAX_FILENAME_SIZE];
+        unsigned char buffer[MAX_FILENAME_SIZE];
 
-	// make the buffer
-	strcpy((char*)buffer, basepath);
-	strcat((char*)buffer, "*");
-	
-	int curitem = 0;
-	file_type_t fileinfo;
-	int findhandle;
-	Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE);
-	int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
-	while(!ret) {
-		Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE);
-		if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || \
-		strcmp((char*)buffer, "@MainMem") == 0 || strcmp((char*)buffer, "utilities.g3a") == 0
-		|| strcmp((char*)buffer, SMEM_CALENDAR_FOLDER) == 0))
-		{
-			strcpy(files[curitem].name, (char*)buffer);
-			strcpy(files[curitem].filename, basepath);
-			strcat(files[curitem].filename, (char*)buffer);
-			if(fileinfo.fsize == 0) files[curitem].isfolder = 1; else files[curitem].isfolder = 0;
-			files[curitem].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
-			curitem++;
-		}
+        // make the buffer
+        strcpy((char*)buffer, basepath);
+        strcat((char*)buffer, "*");
+        
+        int curitem = 0;
+        file_type_t fileinfo;
+        int findhandle;
+        Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE);
+        int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
+        while(!ret) {
+                Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE);
+                if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || \
+                strcmp((char*)buffer, "@MainMem") == 0 || strcmp((char*)buffer, "utilities.g3a") == 0
+                || strcmp((char*)buffer, SMEM_CALENDAR_FOLDER) == 0))
+                {
+                        strcpy(files[curitem].name, (char*)buffer);
+                        strcpy(files[curitem].filename, basepath);
+                        strcat(files[curitem].filename, (char*)buffer);
+                        if(fileinfo.fsize == 0) files[curitem].isfolder = 1; else files[curitem].isfolder = 0;
+                        files[curitem].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
+                        curitem++;
+                }
     if (curitem>MAX_ITEMS_IN_DIR) { 
       MsgBoxPush(5);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 2, 1833, TEXT_COLOR_BLACK); //over 200 files
@@ -6383,10 +6383,10 @@ int GetAnyFiles(File files[], char* basepath, int sort=1) {
       MsgBoxPop(); 
       break; // Don't find more files, the array is full. 
     } 
-		ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
-	}
-	Bfile_FindClose(findhandle);
-	return curitem;
+                ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
+        }
+        Bfile_FindClose(findhandle);
+        return curitem;
 }
 void fileDeleteSelected(File* files, int numfiles, int todelfiles) {
   //files: the array (list) of files to perform operations in. NOT files to delete (this will only delete selected files)
@@ -6628,6 +6628,10 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
               Bfile_CloseFile_OS(hOldFile);
               Bfile_CloseFile_OS(hNewFile);
             }
+          } else {
+            //destination file exists and is now open. Close open files and skip.
+            Bfile_CloseFile_OS(hNewFile);
+            Bfile_CloseFile_OS(hOldFile);
           }
         }
         
@@ -6794,8 +6798,10 @@ void fileBrowser() {
         if(selfiles>0) {
           GetFKeyPtr(0x0069, &iresult); // CUT (white)
           FKey_Display(1, (int*)iresult);
-          GetFKeyPtr(0x0034, &iresult); // COPY (white)
-          FKey_Display(2, (int*)iresult);
+          if(setting_show_advanced) {
+            GetFKeyPtr(0x0034, &iresult); // COPY (white)
+            FKey_Display(2, (int*)iresult);
+          }
           GetFKeyPtr(0x0038, &iresult); // DELETE
           FKey_Display(5, (int*)iresult);
         }
@@ -6845,6 +6851,7 @@ void fileBrowser() {
           break;
         case KEY_CTRL_F2:
         case KEY_CTRL_F3:
+          if(!setting_show_advanced && key == KEY_CTRL_F3) break; //user didn't enable copy tool
           if (selfiles>0 && fkeymenu==0) {
             if((!(itemsInClipboard >= MAX_ITEMS_IN_CLIPBOARD)) && selfiles <= MAX_ITEMS_IN_CLIPBOARD-itemsInClipboard) {
               int ifile = 0; int hasShownFolderCopyWarning = 0;
@@ -6874,7 +6881,7 @@ void fileBrowser() {
                           mGetKey(&key);
                           switch(key)
                           {
-                            case KEY_CTRL_EXIT:
+                      case KEY_CTRL_EXIT:
                             case KEY_CTRL_AC:
                               inscreen=0;
                               break;
@@ -6945,19 +6952,19 @@ void fileBrowser() {
           inscreen = 0; //reload file list
           break;
         case KEY_CTRL_EXIT:
-        	if(!strcmp(browserbasepath,"\\\\fls0\\")) { //check that we aren't already in the root folder
-        	  //we are, return
+                if(!strcmp(browserbasepath,"\\\\fls0\\")) { //check that we aren't already in the root folder
+                  //we are, return
             return;
           } else {
-        	  int i=strlen(browserbasepath)-2;
-        	  while (i>=0 && browserbasepath[i] != '\\')
-        		  i--;
-        	  if (browserbasepath[i] == '\\') {
+                  int i=strlen(browserbasepath)-2;
+                  while (i>=0 && browserbasepath[i] != '\\')
+                          i--;
+                  if (browserbasepath[i] == '\\') {
               char tmp[MAX_FILENAME_SIZE] = "";
               memcpy(tmp,browserbasepath,i+1);
               tmp[i+1] = '\0';
               strcpy(browserbasepath, tmp);
-        	  }
+                  }
             inscreen = 0; //reload at new folder
           }
           break;
@@ -7067,40 +7074,40 @@ typedef struct
 } AddIn;
 int GetAddins(AddIn addins[]) {
   /*searches storage memory for active and inactive add-ins, returns their count*/
-	unsigned short path[0x10A], path2[0x10A], found[0x10A];
-	unsigned char buffer[0x10A], buffer2[0x10A];
+        unsigned short path[0x10A], path2[0x10A], found[0x10A];
+        unsigned char buffer[0x10A], buffer2[0x10A];
 
-	// make the buffer
-	strcpy((char*)buffer, "\\\\fls0\\*");
-	strcpy((char*)buffer2, "\\\\fls0\\*");
-	//     strcat((char*)buffer, filter);
-	
-	int curitem = 0;
-	file_type_t fileinfo;
-	int findhandle;
-	Bfile_StrToName_ncpy(path, buffer, 0x10A);
-	Bfile_StrToName_ncpy(path2, buffer2, 0x10A);
-	int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
-	Bfile_StrToName_ncpy(path, (unsigned char*)"*.g3a", 0x10A);
-	Bfile_StrToName_ncpy(path2, (unsigned char*)"*.h3a", 0x10A);
-	while(!ret) {
-		Bfile_NameToStr_ncpy(buffer, found, 0x10A);
-		if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "utilities.g3a") == 0) &&
-		   ((Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) || (Bfile_Name_MatchMask((const short int*)path2, (const short int*)found))))
-		{
-			strcpy(addins[curitem].filename, (char*)buffer);
-			//TODO: get friendly add-in name from system add-in table
-			strcpy(addins[curitem].name, (char*)buffer);
-			addins[curitem].name[strlen((char*)buffer)-4] = '\0';
-			addins[curitem].active= (Bfile_Name_MatchMask((const short int*)path, (const short int*)found) ? 1 : 0);
-			curitem++;
-		}
-		ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
-	}
+        // make the buffer
+        strcpy((char*)buffer, "\\\\fls0\\*");
+        strcpy((char*)buffer2, "\\\\fls0\\*");
+        //     strcat((char*)buffer, filter);
+        
+        int curitem = 0;
+        file_type_t fileinfo;
+        int findhandle;
+        Bfile_StrToName_ncpy(path, buffer, 0x10A);
+        Bfile_StrToName_ncpy(path2, buffer2, 0x10A);
+        int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
+        Bfile_StrToName_ncpy(path, (unsigned char*)"*.g3a", 0x10A);
+        Bfile_StrToName_ncpy(path2, (unsigned char*)"*.h3a", 0x10A);
+        while(!ret) {
+                Bfile_NameToStr_ncpy(buffer, found, 0x10A);
+                if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "utilities.g3a") == 0) &&
+                   ((Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) || (Bfile_Name_MatchMask((const short int*)path2, (const short int*)found))))
+                {
+                        strcpy(addins[curitem].filename, (char*)buffer);
+                        //TODO: get friendly add-in name from system add-in table
+                        strcpy(addins[curitem].name, (char*)buffer);
+                        addins[curitem].name[strlen((char*)buffer)-4] = '\0';
+                        addins[curitem].active= (Bfile_Name_MatchMask((const short int*)path, (const short int*)found) ? 1 : 0);
+                        curitem++;
+                }
+                ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
+        }
 
-	Bfile_FindClose(findhandle);
-	
-	return curitem;
+        Bfile_FindClose(findhandle);
+        
+        return curitem;
 }
 int curSelAddin = 1;
 int addinManager() {
