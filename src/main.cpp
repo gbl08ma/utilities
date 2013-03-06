@@ -755,6 +755,27 @@ void CopySpriteMasked(const unsigned char* data, int x, int y, int width, int he
       VRAM += 2*(LCD_WIDTH_PX-width); 
    } 
 }
+void CopySpriteNbit(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, unsigned int bitwidth) {
+   color_t* VRAM = (color_t*)0xA8000000;
+   VRAM += (LCD_WIDTH_PX*y + x);
+   int offset = 0;
+   unsigned char buf = 0;
+   for(int j=y; j<y+height; j++) {
+      int availbits = 0;
+      for(int i=x; i<x+width;  i++) {
+         if (!availbits) {
+            buf = data[offset++];
+            availbits = 8;
+         }
+         color_t thisthis = ((color_t)buf>>(8-bitwidth));
+         *VRAM = palette[(color_t)thisthis];
+         VRAM++;
+         buf<<=bitwidth;
+         availbits-=bitwidth;
+      }
+      VRAM += (LCD_WIDTH_PX-width);
+   }
+} 
 int drawRGB24toRGB565(int r, int g, int b)  
 {  
   return ((r / 8) << 11) | ((g / 4) << 5) | (b / 8);  
@@ -948,7 +969,7 @@ void setCPUclock() {
     if (setting_display_statusbar == 1) DisplayStatusArea();
 
     PrintXY(1, 1, (char*)"  CPU speed", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-    CopySprite(selector, 10, 85, 364, 43);
+    CopySpriteNbit(selector, 10, 85, 364, 43, selector_palette, 1);
     
     textX=0; textY=118;
     PrintMiniMini( &textX, &textY, (unsigned char*)"USE AT YOUR OWN RISK! NO WARRANTY PROVIDED.", 0, TEXT_COLOR_RED, 0 );
