@@ -8090,16 +8090,16 @@ void managedLockCalc() {
 // MAIN SCREEN PANES
 //////////////////////////////////////////
 void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
-  color_t color_fg, color_bg;
-  if (setting_black_theme) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; } else
-  { color_fg = COLOR_BLACK; color_bg = COLOR_WHITE; }
+  color_t color_fg, color_bg, color_title;
+  if (setting_black_theme) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; color_title = COLOR_ORANGE; } else
+  { color_fg = COLOR_BLACK; color_bg = COLOR_WHITE; color_title = COLOR_BLUE; }
   
   int textX = startx;
   int textY = starty;
   int curevent = 0; //current processing event
   if (numevents>0) {
     unsigned char itemtext[25] = "";
-    PrintMini(&textX, &textY, (unsigned char*)"Events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
+    PrintMini(&textX, &textY, (unsigned char*)"Events starting today", 0, 0xFFFFFFFF, 0, 0, color_title, color_bg, 1, 0); //draw
     while(curevent < numevents && curevent < maxevents) {
       textX = startx + 5;
       textY = textY + 18;
@@ -8141,15 +8141,20 @@ void eventsPane(int textmode)
     calevents = NULL;
   }
   int inscreen = 1;
+  if (setting_black_theme) {
+    Bdisp_Fill_VRAM( COLOR_BLACK, 2 ); //fill between the status area and f-key area
+    if (setting_display_statusbar) { DisplayStatusArea(); darkenStatusbar(); }
+    DrawFrame( 0x000000  );
+  } else {
+    Bdisp_Fill_VRAM( COLOR_WHITE, 2 ); //fill between the status area and f-key area
+    DrawFrame( 0xfffff  );
+  }
   while (inscreen) {
-    if (setting_black_theme) {
-      Bdisp_Fill_VRAM( COLOR_BLACK, 2 ); //fill between the status area and f-key area 
-      DrawFrame( 0x000000  );
-    } else {
-      Bdisp_Fill_VRAM( COLOR_WHITE, 2 ); //fill between the status area and f-key area
-      DrawFrame( 0xfffff  );
-    }
     pane_drawTodayEvents(calevents, 0, 0, numevents, 6);
+    if (setting_black_theme) {
+      if (setting_display_statusbar) { DisplayStatusArea(); darkenStatusbar(); }
+      DrawFrame( 0x000000  );
+    }
     mGetKey(&key);
     switch(key) {
       case KEY_CTRL_F1:
