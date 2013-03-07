@@ -2,6 +2,7 @@
 #include <fxcg/file.h>
 #include <fxcg/misc.h>
 #include <fxcg/keyboard.h>
+#include <fxcg/system.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,6 +20,16 @@
 #define FIELD_SEPARATOR '\x1D'
 #define EVENT_SEPARATOR '\x1E'
 
+/*void debugpause(char* message) {
+  char buffer[100] = "";
+  strcpy(buffer, "  ");
+  strcat(buffer, message);
+  strcat(buffer, "                      ");
+  PrintXY(1, 1, (char*)buffer, TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
+  int key;
+  GetKey(&key);
+}
+*/
 //calendar and calendar event management
 void append(unsigned char* s, char c) //beacuse strcat seems to have problems with 1-byte non-null-terminated chars like the field and event separators
 {
@@ -154,7 +165,7 @@ int AddSMEMEvent(CalendarEvent calEvent, const char* folder) {
   Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
   Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
   char filename[128] = "";
-  char buffer[8] = "";
+  char buffer[10] = "";
   strcpy(filename, "\\\\fls0\\");
   strcat(filename, folder);
   strcat(filename, "\\");
@@ -246,19 +257,6 @@ int AddSMEMEvent(CalendarEvent calEvent, const char* folder) {
   }
   return 0;
 }
-void deleteElement(CalendarEvent arr[], int& size, int position)
-{
-	int k;
-
-	if (position >= size) {}
-		
-	else
-	{
-		for (k = position; k < size - 1; k++)
-			arr[k] = arr[k+1];
-		--size;
-	}
-}
 int GetSMEMeventsForDate(EventDate startdate, const char* folder, CalendarEvent calEvents[]);
 int RemoveSMEMDay(EventDate date, const char* folder);
 
@@ -275,7 +273,7 @@ Bdisp_PutDisp_DD();
   Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
   Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
   char filename[128] = "";
-  char buffer[8] = "";
+  char buffer[10] = "";
   strcpy(filename, "\\\\fls0\\");
   strcat(filename, folder);
   strcat(filename, "\\");
@@ -308,21 +306,27 @@ Bdisp_PutDisp_DD();
 
     //parse the old contents before deleting.
     CalendarEvent oldcalevents[MAX_DAY_EVENTS];
-    int numarrayitems = GetSMEMeventsForDate(startdate, folder, oldcalevents);
+    int numevents = GetSMEMeventsForDate(startdate, folder, oldcalevents);
     // we already read the previous contents and size, and parsed the contents, then closed the file.
     // safety check: see if GetSMEMevents didn't return error/no events
-    if (numarrayitems <= 0) {
+    if (numevents <= 0) {
       return 2;
     }
-    if (numarrayitems == 1) {
+    if (numevents == 1) {
       //if there's only one event on this day, RemoveSMEMDay works much better (it removes file header).
       PrintXY(1,8,(char*)"  Please wait..         ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
       RemoveSMEMDay(startdate, folder);
       return 0; //stop now
     }
-    deleteElement(oldcalevents, numarrayitems, calEventPos);
-    const int numevents = numarrayitems; //put this in a const int so it isn't polluted when there are lots of calendar events/very big events.
+    int k;
+    if (calEventPos >= numevents) {} // safety check
+    else
+    {
+            for (k = calEventPos; k < numevents - 1; k++)
+                    oldcalevents[k] = oldcalevents[k+1];
+            numevents = numevents - 1; //this "deletes" the event
+    }
     // GetSMEMEvents closed the file, so we can now delete it
     PrintXY(1,8,(char*)"  Please wait..         ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
     Bdisp_PutDisp_DD();
@@ -426,7 +430,7 @@ Bdisp_PutDisp_DD();
     Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
     Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
     char filename[128] = "";
-    char buffer[8] = "";
+    char buffer[10] = "";
     strcpy(filename, "\\\\fls0\\");
     strcat(filename, folder);
     strcat(filename, "\\");
@@ -533,7 +537,7 @@ Bdisp_PutDisp_DD();
 int RemoveSMEMDay(EventDate date, const char* folder) {
   //remove all SMEM events for the day
   char filename[128] = "";
-  char buffer[8] = "";
+  char buffer[10] = "";
   strcpy(filename, "\\\\fls0\\");
   strcat(filename, folder);
   strcat(filename, "\\");
@@ -565,7 +569,7 @@ int GetSMEMeventsForDate(EventDate startdate, const char* folder, CalendarEvent 
   returns number of events found for the specified day, 0 if error or no events. */
   // Generate filename from given date
   char filename[128] = "";
-  char buffer[8] = "";
+  char buffer[10] = "";
   strcpy(filename, "\\\\fls0\\");
   strcat(filename, folder);
   strcat(filename, "\\");
@@ -576,7 +580,6 @@ int GetSMEMeventsForDate(EventDate startdate, const char* folder, CalendarEvent 
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
-
   // Check for file existence
   if(hFile >= 0) // Check if it opened
   {
@@ -619,7 +622,7 @@ int GetSMEMeventsForDate(EventDate startdate, const char* folder, CalendarEvent 
 
 void filenameFromDate(EventDate date, char* filename) {
   char smallbuf[8] = "";
-  itoa(date.year, (unsigned char*)smallbuf); strcat(filename, smallbuf);
+  itoa(date.year, (unsigned char*)smallbuf); strcpy(filename, smallbuf);
   itoa(date.month, (unsigned char*)smallbuf);
   if (date.month < 10) strcat(filename, "0");  //if month below 10, add leading 0
   strcat(filename, smallbuf);

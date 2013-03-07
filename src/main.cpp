@@ -2457,16 +2457,25 @@ void lightMenu() {
 //////////////////////////////////////////
 // TIME TOOLS
 //////////////////////////////////////////
-int eventsfordayofcurmonth[31]; //buffer for telling which days in the currently-being-worked-on month have events
+int eventsfordayofcurmonth[31] = {}; //buffer for telling which days in the currently-being-worked-on month have events
 int curbufmonth = 0; //buffer for telling which is the month that is in the buffer, so that the buffer can be updated when needed.
                  //it's not zero-based but its initial value is zero so that an update is forced.
 int curbufyear = 0;
+/*void adebugpause(char* message) {
+  char buffer[100] = "";
+  strcpy(buffer, "  ");
+  strcat(buffer, message);
+  strcat(buffer, "                      ");
+  PrintXY(1, 1, (char*)buffer, TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
+  int key;
+  GetKey(&key);
+}*/
 void loadEventsForMonth(int year, int month) {
   int day = 1;
   while (day <= monthDays[month-1] + (month == 2 && isLeap(year)) ? 1 : 0)
   {
     EventDate thisday;
-    thisday.day = day; thisday.month = month; thisday.year = year;  
+    thisday.day = day; thisday.month = month; thisday.year = year;
     eventsfordayofcurmonth[day] = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, NULL); //NULL means it will only count and not parse
     day++;
   }
@@ -3620,8 +3629,6 @@ void viewEvents(int y, int m, int d) {
   
   char title[21] = "";
   char buffer[21] = "";
-  Bdisp_AllClr_VRAM();
-  if (setting_display_statusbar == 1) DisplayStatusArea();
   numevents = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, calevents);
   int menu = 0;
   while(inscreen) {
@@ -3877,6 +3884,7 @@ void calendarScreen() {
   int today_y = ((*RYRCNT >> 12) & 0b1111)*1000 + ((*RYRCNT >> 8) & 0b1111)*100 + ((*RYRCNT >> 4) & 0b1111)*10 + (*RYRCNT & 0b1111);
   int today_m = ((*RMONCNT >> 4) & 0b1)*10 + (*RMONCNT & 0b1111);
   int today_d = ((*RDAYCNT >> 4) & 0b11)*10 + (*RDAYCNT & 0b1111);
+
   int y = today_y;
   int m = today_m;
   int d = today_d;
@@ -8078,6 +8086,79 @@ void managedLockCalc() {
     } 
   }
 }
+//////////////////////////////////////////
+// MAIN SCREEN PANES
+//////////////////////////////////////////
+void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
+  color_t color_fg, color_bg;
+  if (setting_black_theme) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; } else
+  { color_fg = COLOR_BLACK; color_bg = COLOR_WHITE; }
+  
+  int textX = startx;
+  int textY = starty;
+  int curevent = 0; //current processing event
+  if (numevents>0) {
+    unsigned char itemtext[25] = "";
+    PrintMini(&textX, &textY, (unsigned char*)"Events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
+    textX = startx + 5;
+    textY = textY + 20;
+    while(curevent < numevents && curevent < maxevents) {
+      textX = startx + 5;
+      textY = textY + 20;
+      strcpy((char*)itemtext, "- ");
+      strcat((char*)itemtext, (char*)calevents[curevent].title);
+      PrintMini(&textX, &textY, (unsigned char*)calevents[curevent].title, 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
+      curevent++;
+    }
+  } else {
+    PrintMini(&textX, &textY, (unsigned char*)"  No events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
+  } 
+}
+int pane_keycache = 0; //so that when user presses f-keys on a pane, that Fkey takes effect on the main pane
+void eventsPane(int textmode)
+{
+  int key;
+  EventDate thisday;
+  int today_y = ((*RYRCNT >> 12) & 0b1111)*1000 + ((*RYRCNT >> 8) & 0b1111)*100 + ((*RYRCNT >> 4) & 0b1111)*10 + (*RYRCNT & 0b1111);
+  int today_m = ((*RMONCNT >> 4) & 0b1)*10 + (*RMONCNT & 0b1111);
+  int today_d = ((*RDAYCNT >> 4) & 0b11)*10 + (*RDAYCNT & 0b1111);
+  
+  thisday.day = today_d; thisday.month = today_m; thisday.year = today_y;
+  int numevents = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, NULL); //get event count only so we know how much to alloc
+  CalendarEvent* calevents;
+  if (numevents > 0) {
+    calevents = (CalendarEvent*)alloca(numevents*sizeof(CalendarEvent));
+    numevents = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, calevents);
+  } else {
+    calevents = NULL;
+  }
+  int inscreen = 1;
+  while (inscreen) {
+    if (setting_black_theme) {
+      Bdisp_Fill_VRAM( COLOR_BLACK, 2 ); //fill between the status area and f-key area 
+      DrawFrame( 0x000000  );
+    } else {
+      Bdisp_Fill_VRAM( COLOR_WHITE, 2 ); //fill between the status area and f-key area
+      DrawFrame( 0xfffff  );
+    }
+    pane_drawTodayEvents(calevents, 0, 0, numevents, 5);
+    mGetKey(&key);
+    switch(key) {
+      case KEY_CTRL_F1:
+      case KEY_CTRL_F2:
+      case KEY_CTRL_F3:
+      case KEY_CTRL_F4:
+        pane_keycache = key;
+        return; //exit to main pane
+      case KEY_CTRL_F5:
+        if(setting_enable_lock_func) { pane_keycache = key; return; }
+        break;
+      case KEY_CTRL_LEFT:
+        return; //return to the pane to the left (main)
+    }
+  }
+}
+
 int main()
 {
   unsigned short key = 0;
@@ -8174,9 +8255,25 @@ int main()
     }
 
     Bdisp_PutDisp_DD();
-    if (0 != GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key) ) {
+    if (0 != GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key) || pane_keycache ) {
       passiveTimerEndedMessage = 1; //key was pressed and we may go out of this screen, so turn on passive messages
-      key = PRGM_GetKey();
+      if(!pane_keycache) {
+        key = PRGM_GetKey();
+      } else {
+        switch(pane_keycache) {
+          case KEY_CTRL_F1:
+            key = KEY_PRGM_F1; break;
+          case KEY_CTRL_F2:
+            key = KEY_PRGM_F2; break;
+          case KEY_CTRL_F3:
+            key = KEY_PRGM_F3; break;
+          case KEY_CTRL_F4:
+            key = KEY_PRGM_F4; break;
+          case KEY_CTRL_F5:
+            key = KEY_PRGM_F5; break;
+        }
+        pane_keycache = 0;
+      }
       switch (key) {
         case KEY_PRGM_SHIFT:
           //turn on/off shift manually because getkeywait doesn't do it
@@ -8229,6 +8326,9 @@ int main()
           if(setting_lock_on_exe) {
             managedLockCalc();
           }
+          break;
+        case KEY_PRGM_RIGHT:
+          eventsPane(textmode);
           break;
         default:
           break;

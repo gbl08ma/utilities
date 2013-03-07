@@ -2,27 +2,27 @@
 #define MAX_EVENT_FILESIZE 50000
 typedef struct // Event date definition
 {
-  unsigned day;
-  unsigned month;
-  unsigned year;
+  unsigned int day;
+  unsigned int month;
+  unsigned int year;
 } EventDate;
 
 typedef struct // Event time definition
 {
-  unsigned hour;
-  unsigned minute;
-  unsigned second;
+  unsigned int hour;
+  unsigned int minute;
+  unsigned int second;
 } EventTime;
 
 typedef struct // Defines what a calendar event contains
 {
-  unsigned category;
-  unsigned daterange;
+  unsigned int category;
+  unsigned int daterange;
   EventDate startdate;
   EventDate enddate;
-  unsigned dayofweek;
-  unsigned repeat;
-  unsigned timed; //full-day = 0, timed = 1
+  unsigned int dayofweek;
+  unsigned int repeat;
+  unsigned int timed; //full-day = 0, timed = 1
   EventTime starttime;
   EventTime endtime;
   unsigned char title[25]; //can't be 21, because otherwise somehow the location will replace the last chars of title
@@ -30,7 +30,7 @@ typedef struct // Defines what a calendar event contains
   unsigned char description[1030]; //orig 1024
 } CalendarEvent;
 // end of type definitions
-extern CalendarEvent charToCalEvent(unsigned char *src,int leadingTwoBytes);
+extern CalendarEvent charToCalEvent(unsigned char *src);
 void calEventToChar(unsigned char *buf,CalendarEvent calEvent);
 void filenameFromDate(EventDate date, char* filename);
 int AddSMEMEvent(CalendarEvent calEvent, const char* filename);
