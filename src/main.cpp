@@ -8100,15 +8100,23 @@ void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int 
   if (numevents>0) {
     unsigned char itemtext[25] = "";
     PrintMini(&textX, &textY, (unsigned char*)"Events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
-    textX = startx + 5;
-    textY = textY + 20;
     while(curevent < numevents && curevent < maxevents) {
       textX = startx + 5;
-      textY = textY + 20;
+      textY = textY + 18;
       strcpy((char*)itemtext, "- ");
       strcat((char*)itemtext, (char*)calevents[curevent].title);
-      PrintMini(&textX, &textY, (unsigned char*)calevents[curevent].title, 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
+      PrintMini(&textX, &textY, (unsigned char*)itemtext, 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
       curevent++;
+    }
+    if(numevents>maxevents) {
+      textX = startx + 5;
+      textY = textY + 20;
+      strcpy((char*)itemtext, (char*)"  ...and ");
+      unsigned char buffer[10] = "";
+      itoa(numevents-maxevents, buffer);
+      strcat((char*)itemtext, (char*)buffer);
+      (numevents-maxevents) == 1 ? strcat((char*)itemtext, (char*)" more event") : strcat((char*)itemtext, (char*)" more events");
+      PrintMini(&textX, &textY, (unsigned char*)itemtext, 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
     }
   } else {
     PrintMini(&textX, &textY, (unsigned char*)"  No events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
@@ -8141,7 +8149,7 @@ void eventsPane(int textmode)
       Bdisp_Fill_VRAM( COLOR_WHITE, 2 ); //fill between the status area and f-key area
       DrawFrame( 0xfffff  );
     }
-    pane_drawTodayEvents(calevents, 0, 0, numevents, 5);
+    pane_drawTodayEvents(calevents, 0, 0, numevents, 6);
     mGetKey(&key);
     switch(key) {
       case KEY_CTRL_F1:
@@ -8154,6 +8162,7 @@ void eventsPane(int textmode)
         if(setting_enable_lock_func) { pane_keycache = key; return; }
         break;
       case KEY_CTRL_LEFT:
+      case KEY_CTRL_EXIT:
         return; //return to the pane to the left (main)
     }
   }
