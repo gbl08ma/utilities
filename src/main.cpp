@@ -16,6 +16,7 @@
 #include "lock.hpp"
 #include "toksplit.h"
 #include "ftoa.c"
+#include "tbcd.hpp"
 #include "sprites.h"
 #include "version.h"
 #define CALENDAR_FOLDER (const char*)"@CALNDAR"
@@ -3689,7 +3690,7 @@ void viewEvents(int y, int m, int d) {
         FKey_Display(0, (int*)iresult);
         GetFKeyPtr(0x04D2, &iresult); // MOVE
         FKey_Display(1, (int*)iresult);
-      }
+      } else { menu = 0; } //because if there are no events, 2nd menu is empty.
     }
     if(numevents>0) {
       GetFKeyPtr(0x0006, &iresult); // Rotate FKey menu arrow
@@ -8179,6 +8180,7 @@ int main()
   unsigned short prevkey = 0;
   int keyCol; int keyRow; unsigned short wkey; //these aren't actually used, but they are needed to hold different getkey-like results
   int textmode = TEXT_MODE_TRANSPARENT_BACKGROUND;
+  double hourfraction = 0; unsigned int fhour=0,fminute=0,fsecond=0,millisecond=0;
   //Load settings
   LoadSettings(SETTINGSFILE);
   if (setting_display_statusbar == 1) {
@@ -8343,6 +8345,18 @@ int main()
           break;
         case KEY_PRGM_RIGHT:
           eventsPane(textmode);
+          break;
+        case 76: //x-0-theta key
+          TBCD Src;
+          RTC_GetTime( &fhour, &fminute, &fsecond, &millisecond );
+          dbgPrint((unsigned char*)"got time");
+          //hourfraction = fhour+fminute/60+fsecond/(60*60);
+          hourfraction = (double)fhour;
+          dbgPrint((unsigned char*)"converted");
+          Src.Set( hourfraction );
+          dbgPrint((unsigned char*)"set src");
+          Alpha_SetData( 'A', &Src );
+          dbgPrint((unsigned char*)"set alpha data");
           break;
         default:
           break;
