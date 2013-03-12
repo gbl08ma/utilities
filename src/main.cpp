@@ -8290,6 +8290,7 @@ int main()
         }
         pane_keycache = 0;
       }
+      int gkey,inscreen=1;
       switch (key) {
         case KEY_PRGM_SHIFT:
           //turn on/off shift manually because getkeywait doesn't do it
@@ -8349,14 +8350,25 @@ int main()
         case 76: //x-0-theta key
           TBCD Src;
           RTC_GetTime( &fhour, &fminute, &fsecond, &millisecond );
-          dbgPrint((unsigned char*)"got time");
-          //hourfraction = fhour+fminute/60+fsecond/(60*60);
-          hourfraction = (double)fhour;
-          dbgPrint((unsigned char*)"converted");
+          hourfraction = (double)((double)fhour+(double)fminute/60.0+(double)fsecond/(double)(60.0*60.0));
           Src.Set( hourfraction );
-          dbgPrint((unsigned char*)"set src");
-          Alpha_SetData( 'A', &Src );
-          dbgPrint((unsigned char*)"set alpha data");
+          Alpha_SetData( 'T', &Src );
+          MsgBoxPush(4);
+          PrintXY(3, 2, (char*)"  Time fraction", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          PrintXY(3, 3, (char*)"  saved to alpha", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          PrintXY(3, 4, (char*)"  variable T.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          PrintXY(3, 5, (char*)"     Press:[EXIT]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          while(inscreen) {
+            mGetKey(&gkey);
+            switch(gkey)
+            {
+              case KEY_CTRL_EXIT:
+              case KEY_CTRL_AC:
+                inscreen=0;
+                break;
+            }
+          }
+          MsgBoxPop();
           break;
         default:
           break;
