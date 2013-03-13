@@ -6348,6 +6348,7 @@ void timeMenu() {
 #define MAX_NAME_SIZE 256 //friendly name (in "//fls0/folder/file.txt", this would be "file.txt")
 #define MAX_ITEMS_IN_DIR 201 //this turns to be 201 because arrays start at 0
 #define MAX_ITEMS_IN_CLIPBOARD 51 //this turns to be 51...
+#define MAX_TEXTVIEWER_FILESIZE 64*1024
 typedef struct
 {
   char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
@@ -6691,6 +6692,158 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
   }
   PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
 }
+
+void fileViewAsText(char* filename, char* name) { //name is the "nice" name of the file, i.e. not full path
+  int key, inscreen = 1;
+  int textX=0, textY=0;
+  int scroll = 0;
+  
+  unsigned char asrc[MAX_TEXTVIEWER_FILESIZE] = ""; //buffer containing first 64 KB of file
+  //Get file contents
+  unsigned short pFile[MAX_FILENAME_SIZE];
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  if(hFile >= 0) // Check if it opened
+  { //opened
+    int filesize = Bfile_GetFileSize_OS(hFile, Bfile_TellFile_OS( hFile ));
+    if(filesize && filesize < MAX_TEXTVIEWER_FILESIZE) {
+      Bfile_ReadFile_OS(hFile, asrc, filesize, 0);
+    } else {
+      Bfile_ReadFile_OS(hFile, asrc, MAX_TEXTVIEWER_FILESIZE, 0);
+    }
+    Bfile_CloseFile_OS(hFile);
+  } else {
+    //Error opening file, abort
+    MsgBoxPush(4);
+    PrintXY(3, 2, (char*)"  Error opening", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    PrintXY(3, 3, (char*)"  file to read.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    PrintXY(3, 5, (char*)"     Press:[EXIT]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    int gkey = 0, inscreen = 1;
+    while(inscreen) {
+      mGetKey(&gkey);
+      switch(gkey)
+      {
+        case KEY_CTRL_EXIT:
+        case KEY_CTRL_AC:
+          inscreen=0;
+          break;
+      }
+    }
+    MsgBoxPop();
+    return;
+  }
+  //linebreak detection is done outside of any loops for better speed:
+  int newlinemode = 0;
+  if(strstr((char*)asrc, "\r\n")) {
+    newlinemode = 1; //Windows
+  } else if (strstr((char*)asrc, "\r")) {
+    newlinemode = 2; //Mac
+  } else if (strstr((char*)asrc, "\n")) {
+    newlinemode = 3; //Unix
+  }
+  char titlebuf[MAX_NAME_SIZE+20] ="";
+  strcpy((char*)titlebuf, "Viewing ");
+  strcat((char*)titlebuf, (char*)name);
+  strcat((char*)titlebuf, " as text");
+  DefineStatusMessage((char*)titlebuf, 1, 0, 0);
+  while(inscreen)
+  {
+    Bdisp_AllClr_VRAM();
+    if (setting_display_statusbar == 1) DisplayStatusArea();
+
+    textX=0; textY=scroll;
+    int temptextY = 0;
+    int temptextX = 0;
+    unsigned char singleword[1030] = ""; //buffer that will hold a single word, for use in multi-line.
+    unsigned char singleline[5130] = ""; //buffer that will hold a single line (because \n is not respected by PrintMini or anything in the Casio OS), so we must do line breaking manually
+    unsigned char* src = asrc;
+    while(*src)
+    {
+      //break into newlines
+      switch(newlinemode) {
+        case 1:
+        default:
+          //the two together take care of Windows newlines
+          src = toksplit(src, '\n', (unsigned char*)singleline, 5120);
+          //src = toksplit(src, '\r', (unsigned char*)singleline, 5120);
+          singleline[strlen((char*)singleline)-1] = '\0'; //set the last char to \0 because it is \n
+          break;
+        case 2:
+          src = toksplit(src, '\r', (unsigned char*)singleline, 5120); //break in Mac newlines
+          break;
+        case 3:
+          src = toksplit(src, '\n', (unsigned char*)singleline, 5120); //break in Unix newlines
+          break;
+      }
+      unsigned char* linesrc = singleline;
+      //print this line, breaking in spaces and measuring words
+      while(*linesrc)
+      {
+        temptextX = 0;
+        linesrc = toksplit(linesrc, ' ', (unsigned char*)singleword, 1000); //break into words; next word
+        //check if printing this word would go off the screen, with fake PrintMini drawing:
+        PrintMini(&temptextX, &temptextY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0);
+        if(temptextX + textX > LCD_WIDTH_PX-6) {
+          //time for a new line
+          textX=0;
+          textY=textY+17;
+          PrintMini(&textX, &textY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        } else {
+          //still fits, print new word normally
+          PrintMini(&textX, &textY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        }
+        //add a space, since it was removed from token
+        PrintMini(&textX, &textY, (unsigned char*)" ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+      }
+      textY = textY + 17; textX = 0; //do a line break
+    }
+    
+    //draw a scrollbar:
+    TScrollbar sb;
+    sb.I1 = 0;
+    sb.I5 = 0;
+    sb.indicatormaximum = (textY-scroll);
+    sb.indicatorheight = LCD_HEIGHT_PX-24;
+    sb.indicatorpos = -scroll;
+    sb.barheight = LCD_HEIGHT_PX-24;
+    sb.bartop = 0;
+    sb.barleft = LCD_WIDTH_PX - 6;
+    sb.barwidth = 6;
+
+    Scrollbar(&sb);
+    mGetKey(&key);
+    switch(key)
+    {
+      case KEY_CTRL_UP:
+        if (scroll < 0) {
+          scroll = scroll + 17;
+        }
+        break;
+      case KEY_CTRL_DOWN:
+        if (textY > LCD_HEIGHT_PX-24) {
+          scroll = scroll - 17;
+        }
+        break;
+      case KEY_CTRL_PAGEDOWN:
+        if (textY > LCD_HEIGHT_PX-24) {
+          scroll = scroll - 11*17;
+        }
+        break;
+      case KEY_CTRL_PAGEUP:
+        if (scroll < -(11*17)) {
+          scroll = scroll + 11*17;
+        } else {
+          scroll = 0;
+        }
+        break;
+      case KEY_CTRL_EXIT:
+        inscreen = 0;
+        break;
+    }
+  }
+}
+
+
 void fileInformation(File* files, int index) {
   int key;
   Bdisp_AllClr_VRAM();
@@ -6722,9 +6875,15 @@ void fileInformation(File* files, int index) {
   }
   while (1) {
     mGetKey(&key);
-    if (key == KEY_CTRL_EXIT ) {
-      return;
-      break;
+    switch(key) {
+      case KEY_CTRL_EXIT:
+      case KEY_CTRL_LEFT:
+        return;
+        break;
+      case KEY_CTRL_F1:
+        fileViewAsText(files[index].filename, files[index].name);
+        return;
+        break;
     }
   }
   
@@ -8180,7 +8339,8 @@ int main()
   unsigned short prevkey = 0;
   int keyCol; int keyRow; unsigned short wkey; //these aren't actually used, but they are needed to hold different getkey-like results
   int textmode = TEXT_MODE_TRANSPARENT_BACKGROUND;
-  double hourfraction = 0; unsigned int fhour=0,fminute=0,fsecond=0,millisecond=0;
+  double hourfraction = 0; unsigned int ihour=0,iminute=0,isecond=0,imillisecond=0;
+  double fhour=0.0,fminute=0.0,fsecond=0.0,fmillisecond=0.0;
   //Load settings
   LoadSettings(SETTINGSFILE);
   if (setting_display_statusbar == 1) {
@@ -8349,8 +8509,10 @@ int main()
           break;
         case 76: //x-0-theta key
           TBCD Src;
-          RTC_GetTime( &fhour, &fminute, &fsecond, &millisecond );
-          hourfraction = (double)((double)fhour+(double)fminute/60.0+(double)fsecond/(double)(60.0*60.0));
+          RTC_GetTime( &ihour, &iminute, &isecond, &imillisecond );
+          fhour = ihour; fminute = iminute; fsecond = isecond; fmillisecond = imillisecond;
+          //hourfraction = (double)((double)fhour+(double)((double)fminute/60.0)+(double)((double)fsecond/(double)(60.0*60.0)));
+          hourfraction = fhour+fminute/60.0+fsecond/(60.0*60.0);
           Src.Set( hourfraction );
           Alpha_SetData( 'T', &Src );
           MsgBoxPush(4);
