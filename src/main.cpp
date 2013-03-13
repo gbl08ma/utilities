@@ -6923,7 +6923,7 @@ void fileBrowser() {
         if(itemsInClipboard == 1) { strcat((char*)titlebuf, " item (Shift\xe6\x91"); strcat((char*)titlebuf, "9=Paste)"); }
         else { strcat((char*)titlebuf, " items (Shift\xe6\x91"); strcat((char*)titlebuf, "9=Paste)"); }
       }
-      DefineStatusMessage((char*)titlebuf, 1, 0, 0);
+      if (setting_display_statusbar == 1) DefineStatusMessage((char*)titlebuf, 1, 0, 0);
       int curfile = 0; //current processing file
       selfiles = 0;
       if (numfiles>0) {
@@ -6967,7 +6967,7 @@ void fileBrowser() {
       } else {
         PrintXY(8,4,(char*)"  No Data", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       }
-      DisplayStatusArea();
+      if (setting_display_statusbar == 1) DisplayStatusArea();
       strcpy(titleBuffer, "  ");
       strcat(titleBuffer, title);
       PrintXY(1, 1, titleBuffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
