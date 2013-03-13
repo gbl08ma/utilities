@@ -6763,9 +6763,8 @@ void fileViewAsText(char* filename, char* name) { //name is the "nice" name of t
       switch(newlinemode) {
         case 1:
         default:
-          //the two together take care of Windows newlines
+          //take care of Windows newlines
           src = toksplit(src, '\n', (unsigned char*)singleline, 5120);
-          //src = toksplit(src, '\r', (unsigned char*)singleline, 5120);
           singleline[strlen((char*)singleline)-1] = '\0'; //set the last char to \0 because it is \n
           break;
         case 2:
@@ -6873,6 +6872,9 @@ void fileInformation(File* files, int index) {
     PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     PrintMini(&textX, &textY, (unsigned char*)" bytes", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   }
+  int iresult;
+  GetFKeyPtr(0x03B1, &iresult); // OPEN
+  FKey_Display(0, (int*)iresult);
   while (1) {
     mGetKey(&key);
     switch(key) {

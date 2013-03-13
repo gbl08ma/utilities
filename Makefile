@@ -37,10 +37,10 @@ GIT_TIMESTAMP += "$(shell git log --pretty=format:'%aD' -1)"
 
 MKG3AFLAGS := -n basic:Utilities -i uns:../unselected.bmp -i sel:../selected.bmp
 
-CFLAGS	= -std=c99 -Os -Wall $(MACHDEP) $(INCLUDE) -D__GIT_VERSION=\"$(GIT_VERSION)\" -D__GIT_TIMESTAMP=\"$(GIT_TIMESTAMP)\" 
-CXXFLAGS	= -Os -Wall $(MACHDEP) $(INCLUDE) -D__GIT_VERSION=\"$(GIT_VERSION)\" -D__GIT_TIMESTAMP=\"$(GIT_TIMESTAMP)\" 
+CFLAGS	= -std=c99 -Os -Wall $(MACHDEP) $(INCLUDE) -D__GIT_VERSION=\"$(GIT_VERSION)\" -D__GIT_TIMESTAMP=\"$(GIT_TIMESTAMP)\" -fno-strict-aliasing -ffunction-sections -fdata-sections
+CXXFLAGS	= -Os -Wall $(MACHDEP) $(INCLUDE) -D__GIT_VERSION=\"$(GIT_VERSION)\" -D__GIT_TIMESTAMP=\"$(GIT_TIMESTAMP)\" -fno-strict-aliasing -ffunction-sections -fdata-sections
 
-LDFLAGS	= $(MACHDEP) -T$(FXCGSDK)/common/prizm.ld -Wl,-static -Wl,-gc-sections
+LDFLAGS	= $(MACHDEP) -T$(FXCGSDK)/common/prizm.ld -Wl,-static -Wl,-gc-sections -nostartfiles -lc -lgcc -lm
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
@@ -109,6 +109,10 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 $(BUILD):
 	@[ -d $@ ] || mkdir $@
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@echo "Flags:"
+	@echo "$(CFLAGS)"
+	@echo "$(CXXFLAGS)"
+	@echo "$(LDFLAGS)"
 
 #---------------------------------------------------------------------------------
 export CYGWIN := nodosfilewarning
