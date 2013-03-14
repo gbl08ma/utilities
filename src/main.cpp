@@ -8512,9 +8512,11 @@ int main()
         case 76: //x-0-theta key
           TBCD Src;
           RTC_GetTime( &ihour, &iminute, &isecond, &imillisecond );
+          ihour = bcd_to_2digit(RHRCNT);
+          iminute = bcd_to_2digit(RMINCNT);
+          isecond = bcd_to_2digit(RSECCNT);
           fhour = ihour; fminute = iminute; fsecond = isecond; fmillisecond = imillisecond;
-          //hourfraction = (double)((double)fhour+(double)((double)fminute/60.0)+(double)((double)fsecond/(double)(60.0*60.0)));
-          hourfraction = fhour+fminute/60.0+fsecond/(60.0*60.0);
+          hourfraction = fhour+fminute/60.0+fsecond/(60.0*60.0)+fmillisecond/(60.0*60.0*1000.0);
           Src.Set( hourfraction );
           Alpha_SetData( 'T', &Src );
           MsgBoxPush(4);

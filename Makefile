@@ -109,10 +109,6 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 $(BUILD):
 	@[ -d $@ ] || mkdir $@
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-	@echo "Flags:"
-	@echo "$(CFLAGS)"
-	@echo "$(CXXFLAGS)"
-	@echo "$(LDFLAGS)"
 
 #---------------------------------------------------------------------------------
 export CYGWIN := nodosfilewarning
