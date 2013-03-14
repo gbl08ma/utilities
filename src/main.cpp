@@ -3561,10 +3561,10 @@ void viewEvent(CalendarEvent calevent, int istask=0) {
     textY = textY + 17; textX=0;
     
     //description line breaking:
-    strcpy((char*)src, (char*)calevent.description); 
+    strcpy((char*)asrc, (char*)calevent.description); 
     temptextY = 0;
     temptextX = 0;
-
+    src = asrc;
     while(*src)
     {
       temptextX = 0;
