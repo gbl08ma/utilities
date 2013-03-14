@@ -2904,7 +2904,7 @@ void delAllEventUI(int y, int m, int d, int istask=0) {
     switch(key)
     {
       case KEY_CTRL_F1:
-        RemoveSMEMDay(date, CALENDAR_FOLDER);
+        RemoveSMEMDay(date, SMEM_CALENDAR_FOLDER);
         curbufmonth = 0; //force calendar event counts to refresh
         inscreen=0;
         break;
@@ -2942,7 +2942,7 @@ void delEventUI(int y, int m, int d, int pos, int istask=0) {
     switch(key)
     {
       case KEY_CTRL_F1:
-        delres = RemoveSMEMEvent(date, pos, CALENDAR_FOLDER);
+        delres = RemoveSMEMEvent(date, pos, SMEM_CALENDAR_FOLDER);
         if(delres!=0) {
           unsigned char res[10] = "";
           itoa(delres, (unsigned char*)res);
@@ -3249,7 +3249,7 @@ addEventEndTimeScreen:
   event.daterange = 0;
   event.repeat = 0;
   event.dayofweek = dow(startdate.day, startdate.month, startdate.year);
-  res = AddSMEMEvent(event, CALENDAR_FOLDER);
+  res = AddSMEMEvent(event, SMEM_CALENDAR_FOLDER);
   if(res > 0) {
     MsgBoxPush(4);
     if (res == 4) {
@@ -3444,7 +3444,7 @@ editEventEndTimeScreen:
   event.daterange = 0;
   event.repeat = 0;
   event.dayofweek = dow(event.startdate.day, event.startdate.month, event.startdate.year);
-  EditSMEMEvent(oldstartdate, pos, CALENDAR_FOLDER, event);
+  EditSMEMEvent(oldstartdate, pos, SMEM_CALENDAR_FOLDER, event);
   curbufmonth = 0; //force calendar event counts to refresh
 }
 
@@ -3455,7 +3455,7 @@ void changeEventCategory(CalendarEvent event, int pos) {
   if(selcolor != (unsigned char)0xFF) {
     //user didn't press EXIT, QUIT or AC/ON. input is validated.
     selcolor != 7 ? event.category = selcolor+1 : event.category = 0;
-    EditSMEMEvent(event.startdate, pos, CALENDAR_FOLDER, event);
+    EditSMEMEvent(event.startdate, pos, SMEM_CALENDAR_FOLDER, event);
   }
 }
 
@@ -3749,7 +3749,7 @@ void viewEvents(int y, int m, int d) {
                   AUX_DisplayErrorMessage( 0x2E );
                 } else {
                   //already checked if passes num limit
-                  int res = AddSMEMEvent(calevents[pos-1], CALENDAR_FOLDER);
+                  int res = AddSMEMEvent(calevents[pos-1], SMEM_CALENDAR_FOLDER);
                   if(res > 0) {
                     MsgBoxPush(4);
                     if (res == 4) { //error on size check
@@ -3775,7 +3775,7 @@ void viewEvents(int y, int m, int d) {
                 }
                 //reload events, because we modified calevents[pos-1] startdate.
                 numevents = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, calevents);
-                pos = 1; //we don't know if current menu position is still valid as event count was changed.
+                //current menu position is still valid because event count was not changed.
                 curbufmonth = 0; //force calendar event counts to refresh
                 break;
             }
@@ -3810,10 +3810,11 @@ void viewEvents(int y, int m, int d) {
                 if(GetSMEMeventsForDate(calevents[pos-1].startdate, SMEM_CALENDAR_FOLDER, calevents)+1 > MAX_DAY_EVENTS) {
                   AUX_DisplayErrorMessage( 0x2E );
                 } else {
-                  EditSMEMEvent(oldstartdate, pos-1, CALENDAR_FOLDER, calevents[pos-1]);
+                  EditSMEMEvent(oldstartdate, pos-1, SMEM_CALENDAR_FOLDER, calevents[pos-1]);
                 }
-                //reload events, because we modified calevents[pos-1] startdate. EDIT: NO NEED TO, because we're going to return.
+                //reload events, because we modified calevents[pos-1] startdate.
                 numevents = GetSMEMeventsForDate(thisday, SMEM_CALENDAR_FOLDER, calevents);
+                pos = 1; //we don't know if current menu position is still valid as event count was changed.
                 curbufmonth = 0; //force calendar event counts to refresh
                 break;
             }
@@ -5531,7 +5532,7 @@ addTaskDescriptionScreen:
   event.daterange = 0;
   event.repeat = 0;
   event.dayofweek = dow(startdate.day, startdate.month, startdate.year);
-  res = AddSMEMEvent(event, CALENDAR_FOLDER);
+  res = AddSMEMEvent(event, SMEM_CALENDAR_FOLDER);
   if(res > 0) {
     MsgBoxPush(4);
     if (res == 4) {
@@ -5651,7 +5652,7 @@ editTaskDescriptionScreen:
 
   event.daterange = 0;
   event.dayofweek = dow(event.startdate.day, event.startdate.month, event.startdate.year);
-  EditSMEMEvent(event.startdate, pos, CALENDAR_FOLDER, event);
+  EditSMEMEvent(event.startdate, pos, SMEM_CALENDAR_FOLDER, event);
 }
 void toggleTaskActivity(CalendarEvent event, int pos) {  
   //use the repeat setting as a task activity indicator. 1 is active/done (check), 0 is unchecked.
@@ -5660,7 +5661,7 @@ void toggleTaskActivity(CalendarEvent event, int pos) {
   } else {
     event.repeat = 1;
   }
-  EditSMEMEvent(event.startdate, pos, CALENDAR_FOLDER, event);
+  EditSMEMEvent(event.startdate, pos, SMEM_CALENDAR_FOLDER, event);
 }
 int curSelTask = 1;
 int viewTasks() {

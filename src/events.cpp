@@ -590,12 +590,12 @@ int GetSMEMeventsForDate(EventDate startdate, const char* folder, CalendarEvent 
     // These event strings are then turned into a CalendarEvent.
     if ((unsigned int)size > MAX_EVENT_FILESIZE) { Bfile_CloseFile_OS(hFile); return -1; } //file too big, return error.
     unsigned char asrc[MAX_EVENT_FILESIZE] = "";
-    unsigned char* src = asrc;
-    Bfile_ReadFile_OS(hFile, src, size, 0);
+    Bfile_ReadFile_OS(hFile, asrc, size, 0);
     Bfile_CloseFile_OS(hFile); //we got file contents, close it
     // Parse for events
     int curevent = 0; //current event number/array index (zero based)
     unsigned char token[2048];
+    unsigned char* src = asrc;
     src = toksplit(src, EVENT_SEPARATOR , token, 2048);
 
     int notfinished = 1;
