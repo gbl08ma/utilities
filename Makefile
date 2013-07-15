@@ -12,6 +12,7 @@ endif
 
 include $(FXCGSDK)/common/prizm_rules
 
+
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
@@ -27,20 +28,19 @@ INCLUDES	:=
 #---------------------------------------------------------------------------------
 # git version controlling mechanism
 #---------------------------------------------------------------------------------
-$(shell touch $(FXCGSDK)/projects/utilities/src/version.c) #force version and timestamp defines to update. yes the filepath is more or less hardcoded
+$(shell touch $(FXCGSDK)/projects/utilities/src/versionProvider.cpp) #force version and timestamp defines to update. yes the filepath is more or less hardcoded
 GIT_VERSION = $(shell sh -c 'git describe --abbrev=4 --dirty --always')
 GIT_TIMESTAMP += "$(shell git log --pretty=format:'%aD' -1)"
-
 #---------------------------------------------------------------------------------
 # options for code and add-in generation
 #---------------------------------------------------------------------------------
 
 MKG3AFLAGS := -n basic:Utilities -i uns:../unselected.bmp -i sel:../selected.bmp
 
-CFLAGS	= -std=c99 -Os -Wall $(MACHDEP) $(INCLUDE) -D__GIT_VERSION=\"$(GIT_VERSION)\" -D__GIT_TIMESTAMP=\"$(GIT_TIMESTAMP)\" -fno-strict-aliasing -ffunction-sections -fdata-sections
-CXXFLAGS	= -Os -Wall $(MACHDEP) $(INCLUDE) -D__GIT_VERSION=\"$(GIT_VERSION)\" -D__GIT_TIMESTAMP=\"$(GIT_TIMESTAMP)\" -fno-strict-aliasing -ffunction-sections -fdata-sections
+CFLAGS	= -Os -Wall $(MACHDEP) $(INCLUDE) -D__GIT_VERSION=\"$(GIT_VERSION)\" -D__GIT_TIMESTAMP=\"$(GIT_TIMESTAMP)\"
+CXXFLAGS	=	-std=c++11 $(CFLAGS)
 
-LDFLAGS	= $(MACHDEP) -T$(FXCGSDK)/common/prizm.ld -Wl,-static -Wl,-gc-sections -nostartfiles -lc -lgcc -lm
+LDFLAGS	= $(MACHDEP) -T$(FXCGSDK)/common/prizm.ld -Wl,-static -Wl,-gc-sections
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project

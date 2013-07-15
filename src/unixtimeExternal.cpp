@@ -6,6 +6,7 @@
 //
 // Distributed as GPL, donated to wiki.secondlife.com on 19 sep 2007
 // Modified by gbl08ma for use in the Casio Prizm Utilities add-in
+// Parts were removed by gbl08ma
 //
 // SCRIPT:  Unix2DateTimev1.0.lsl
 //
@@ -13,7 +14,7 @@
 // Perform conversion from return value of llGetUnixTime() to
 // date and time char*s and vice versa.
 /////////////////////////////////////////////////////////////////////
-
+#include "timeProvider.hpp"
 ///////////////////////////// Unix Time conversion //////////////////
 
 long long int DAYS_PER_YEAR        = 365;           // Non leap year
@@ -24,7 +25,7 @@ long long int SECONDS_PER_MINUTE   = 60;
  
 /*list MonthNameList = [  "JAN", "FEB", "MAR", "APR", "MAY", "JUN", 
                         "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ];*/
-const char *umonthNames[] = {"January",
+/*const char *monthNames[] = {"January",
   "February",
   "March",
   "April",
@@ -36,7 +37,7 @@ const char *umonthNames[] = {"January",
   "October",
   "November",
   "December"
- }; 
+ }; */
 typedef struct {
  long long int year;
  long long int month;
@@ -133,6 +134,7 @@ long long int DaysPerYear(long long int year)
 /////////////////////////////// Unix2DataTime() ///////////////////////////////////////
  
 //list Unix2DateTime(unsigned int unixtime)
+// WARNING this still works with seconds and not milliseconds like I modified the function below to do -gbl08ma
 datetime Unix2DateTime(long long int unixtime)
 {
     datetime dt;
@@ -180,45 +182,6 @@ datetime Unix2DateTime(long long int unixtime)
     dt.second = second;
     return dt;
 }
- 
-///////////////////////////////// MonthName() ////////////////////////////
-
-char* MonthName(long long int month)
-{
-    /*if (month >= 0 && month < 12)
-        return llList2char*(MonthNameList, month);
-    else
-        return "";*/
-    return (char*)umonthNames[month];
-}
- 
-///////////////////////////////// Datechar*() ///////////////////////////
- // declared not useful by gbl08ma
-/*char* Datechar(datetime dt)
-{
-    unsigned int year       = dt.year;
-    unsigned int month      = dt.month;
-    unsigned int day        = dt.day;
- 
-    return (char*)day + "-" + MonthName(month - 1) + "-" + (char*)year;
-}*/
- 
-///////////////////////////////// Timechar*() ////////////////////////////
- // declared not useful by gbl08ma
-/*char* Timechar(datetime dt)
-{
-    unsigned int hour        = llList2unsigned int(timelist,3);
-    unsigned int minute      = llList2unsigned int(timelist,4);
-    unsigned int second      = llList2unsigned int(timelist,5);
-    char*  hourstr     = (char*)hour;
-    char*  minutestr   = (char*)minute;
-    char*  secondstr   = (char*)second;
- 
-    if (hour < 10)      hourstr     = "0" + hourstr;
-    if (minute < 10)    minutestr     = "0" + minutestr;
-    if (second < 10)    secondstr    = "0" + secondstr;
-    return hourstr + ":" + minutestr + ":" + secondstr;
-}*/
  
 ///////////////////////////////////////////////////////////////////////////////
 // Convert a date and time to a Unix time unsigned int

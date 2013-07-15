@@ -1,1 +1,0 @@
-unsigned int SetGetkeyToMainFunctionReturnFlag( unsigned int enabled );

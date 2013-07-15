@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "version.h"
+#include "versionProvider.hpp"
 void getVersion(char* buffer) {
   strcpy(buffer, __GIT_VERSION);
 }

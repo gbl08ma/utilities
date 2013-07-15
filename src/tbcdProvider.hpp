@@ -1,3 +1,6 @@
+#ifndef __TBDCPROVIDER_H
+#define __TBDCPROVIDER_H
+
 #include "math.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,3 +42,5 @@ class TBCD{
   private:
         TBCDvalue FValue[2];
 };
+
+#endif
