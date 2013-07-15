@@ -1,5 +1,5 @@
 #ifndef DIRNAME
-#define DIRNAME (unsigned char*)"@UTILS2"
+#define DIRNAME (unsigned char*)"@UTILS"
 #endif
 
 #ifndef SETTINGSFILE
@@ -19,5 +19,5 @@
 #endif
 
 #ifndef SELFFILE
-#define SELFFILE (char*)"utilities2.g3a" // NOTE update this when we get back to utilities.g3a
+#define SELFFILE (char*)"utilities.g3a"
 #endif
