@@ -57,7 +57,7 @@ void append(unsigned char* s, char c);
 void calEventToChar(CalendarEvent* calEvent, unsigned char* buf);
 void charToCalEvent(unsigned char* src, CalendarEvent* calEvent);
 void filenameFromDate(EventDate* date, char* filename);
-int AddEvent(CalendarEvent* calEvent, const char* folder, int open=1, int close=1);
+int AddEvent(CalendarEvent* calEvent, const char* folder);
 //int EditEvent(EventDate* startdate, int calEventPos, const char* folder, CalendarEvent* editedEvent);
 int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char* folder, int count);
 int RemoveEvent(EventDate* startdate, int calEventPos, const char* folder);

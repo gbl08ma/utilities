@@ -149,7 +149,7 @@ void filenameFromDate(EventDate* date, char* filename) {
 }
 
 int hAddFile = 0;
-int AddEvent(CalendarEvent* calEvent, const char* folder, int open, int close) {
+int AddEvent(CalendarEvent* calEvent, const char* folder) {
   //Saves a calendar event on an existing calendar with specified file name.
   //If the specified file doesn't exist, it is created and the event is added to it.
   //Returns 0 on success, other values on error.
@@ -177,7 +177,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int open, int close) {
   int size = strlen(FILE_HEADER) + strlen(newevent);
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
-  if(open) hAddFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  hAddFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
 #ifdef WAITMSG
   PrintXY(1,8,(char*)"  Please wait.          ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
   Bdisp_PutDisp_DD();
@@ -210,7 +210,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int open, int close) {
       PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
 #endif
-      if(close) Bfile_CloseFile_OS(hAddFile);
+      Bfile_CloseFile_OS(hAddFile);
       return 0;
     }
     else
@@ -271,150 +271,13 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int open, int close) {
       PrintXY(1,8,(char*)"  Please wait......     ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
 #endif
-      if(close) Bfile_CloseFile_OS(hAddFile);
+      Bfile_CloseFile_OS(hAddFile);
     } else {
       return 3;
     }
   }
   return 0;
 }
-
-/* NOTE Commented because it isn't needed right now. Use ReplaceEventFile instead.
-int EditEvent(EventDate* startdate, int calEventPos, const char* folder, CalendarEvent* editedEvent) {
-PrintXY(1,8,(char*)"  Please wait           ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-Bdisp_PutDisp_DD();
-  //Edits a calendar event on an existing calendar with specified folder name.
-  //If the specified event doesn't exist, error is returned.
-  //If the startdate of the edited event is different from the startdate, the event is moved into another day.
-  //Because of this, startdate should be the date where the event was located before editing. Of course, calEventPos is also the position in the old file.
-  //If the event needs to be moved, it is first added to another day (with AddSMEMEvent, which will either create a new file or append to a existing one), then
-  //removed from the startdate day (with RemoveSMEMEvent) (removing is done in the end to avoid any data loss - the most that can happen is duplicated events). 
-  //Returns 0 on success, other values on error.
-  
-  //Check if event needs to be moved to another file or not, as the procedure is completely different when it needs:  
-  if(startdate->day != editedEvent->startdate.day || startdate->month != editedEvent->startdate.month || startdate->year != editedEvent->startdate.year) {
-    //Add the event to the new day file.
-    int opresult = AddEvent(editedEvent, folder);
-    if(opresult != 0) { return opresult+100; } //return error if adding returned error
-    
-    //Remove the event from the previous day file.
-    opresult = RemoveEvent(startdate, calEventPos, folder);
-    if(opresult != 0) { return opresult+100; } //return error if deleting returned error
-    return 0;
-  } else {
-    char foldername[128] = "";
-    unsigned short pFolder[256];
-    strcpy(foldername, "\\\\fls0\\");
-    strcat(foldername, folder);
-    Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
-    Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
-    char filename[128] = "";
-    char buffer[10] = "";
-    strcpy(filename, "\\\\fls0\\");
-    strcat(filename, folder);
-    strcat(filename, "\\");
-    filenameFromDate(startdate, buffer);
-    strcat(filename, buffer);
-    strcat(filename, ".pce"); //filenameFromDate does not include file extension, so add it
-    
-    unsigned short pFile[256];
-    Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
-    int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
-    int oldsize = Bfile_GetFileSize_OS(hFile, Bfile_TellFile_OS( hFile ));
-    Bfile_CloseFile_OS(hFile); //close file as we don't care what it has, we just want to check if it exists and get its size
-PrintXY(1,8,(char*)"  Please wait.          ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-Bdisp_PutDisp_DD();
-    if(hFile < 0) // Check if it opened
-    {
-      //returned error, so there're no events on this day, so we return error too
-      return 1;
-    } else {
-      / * File exists and is open.
-        0. Hope there's enough heap to store everything throughout the process.
-        1. Read and parse the file contents, putting their events in an array (all using GetSMEMeventsForDate)
-        2. Close, delete the (old) file.
-        3. Look at the array so we find the event we want to edit. Change each of its fields to the fields of the new event.
-        4. Put the new array (with the modified event) into a char array.
-        5. Create the same file with the size of the char array with the modified event.
-        6. Open the new file.
-        7. Write header and edited contents, from the char we created previously.
-        8. Close file.
-        It must be done this way because once a file is created, its size cannot be changed dynamically...*/
-/*  
-      //parse the old contents.
-      int numarrayitems = GetEventsForDate(startdate, folder, NULL); // first get number of events in filename
-      CalendarEvent* calevents = (CalendarEvent*)alloca(numarrayitems*sizeof(CalendarEvent));
-      GetEventsForDate(startdate, folder, calevents);
-      // we already read the previous contents and size, and parsed the contents, then closed the file.
-      // safety check: see if GetSMEMevents didn't return error/no events
-      if (numarrayitems <= 0) {
-        return 2;
-      }
-      
-      //Edit the event at the specified position:
-      calevents[calEventPos].category = editedEvent->category;
-      calevents[calEventPos].daterange = editedEvent->daterange;
-      calevents[calEventPos].startdate.day = editedEvent->startdate.day;
-      calevents[calEventPos].startdate.month = editedEvent->startdate.month;
-      calevents[calEventPos].startdate.year = editedEvent->startdate.year;
-      calevents[calEventPos].enddate.day = editedEvent->enddate.day;
-      calevents[calEventPos].enddate.month = editedEvent->enddate.month;
-      calevents[calEventPos].enddate.year = editedEvent->enddate.year;
-      calevents[calEventPos].dayofweek = editedEvent->dayofweek;
-      calevents[calEventPos].repeat = editedEvent->repeat;
-      calevents[calEventPos].timed = editedEvent->timed;
-      calevents[calEventPos].starttime.hour = editedEvent->starttime.hour;
-      calevents[calEventPos].starttime.minute = editedEvent->starttime.minute;
-      calevents[calEventPos].starttime.second = editedEvent->starttime.second;
-      calevents[calEventPos].endtime.hour = editedEvent->endtime.hour;
-      calevents[calEventPos].endtime.minute = editedEvent->endtime.minute;
-      calevents[calEventPos].endtime.second = editedEvent->endtime.second;
-      strcpy((char*)calevents[calEventPos].title, (char*)editedEvent->title);
-      strcpy((char*)calevents[calEventPos].location, (char*)editedEvent->location);
-      strcpy((char*)calevents[calEventPos].description, (char*)editedEvent->description);
-      
-      const int numevents = numarrayitems; //put this in a const int so it isn't polluted when there are lots of calendar events/very big events.
-      // GetSMEMEvents closed the file, so we can now delete it
-      PrintXY(1,8,(char*)"  Please wait..         ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-      Bfile_DeleteEntry(pFile);
-      PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-      //convert the calevents back to char
-      unsigned char eventbuf[2048] = ""; 
-      unsigned char* newfilecontents = (unsigned char*)alloca(oldsize+2048); //because the new file size can't be any bigger than the previous size and at most a new event.
-      strcpy((char*)newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
-      for(int j = 0; j < numevents; j++) {
-        strcpy((char*)eventbuf, "");
-        calEventToChar(&calevents[j], eventbuf);
-        strcat((char*)newfilecontents,(char*)eventbuf);
-      }
-      PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-      // now recreate file with new size and write contents to it.
-      int newsize = strlen((char*)newfilecontents);
-      
-      if(newsize < 10) { //too small for a single event == data corruption
-        return 50;
-      }
-      int nBCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize);
-      PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-      if(nBCEres >= 0) // Did it create?
-      {
-        int nFile = Bfile_OpenFile_OS(pFile, READWRITE);
-        Bfile_WriteFile_OS(nFile, newfilecontents, newsize);
-        Bfile_CloseFile_OS(nFile);
-        PrintXY(1,8,(char*)"  Please wait......     ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-        Bdisp_PutDisp_DD();
-      } else {
-        return 3;
-      }
-    }
-    return 0;
-  }
-}
-*/
 
 int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char* folder, int count) {
   // This basically deletes the events of startdate and replaces them with newEvents.
