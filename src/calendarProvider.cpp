@@ -148,7 +148,6 @@ void filenameFromDate(EventDate* date, char* filename) {
   strcat(filename, smallbuf);
 }
 
-int hAddFile = 0;
 int AddEvent(CalendarEvent* calEvent, const char* folder) {
   //Saves a calendar event on an existing calendar with specified file name.
   //If the specified file doesn't exist, it is created and the event is added to it.
@@ -177,7 +176,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
   int size = strlen(FILE_HEADER) + strlen(newevent);
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
-  hAddFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
 #ifdef WAITMSG
   PrintXY(1,8,(char*)"  Please wait.          ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
   Bdisp_PutDisp_DD();
