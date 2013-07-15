@@ -62,10 +62,18 @@ void loadChronoArray(chronometer* chronoarray, int count) { // count is the amou
   long long int buffer[5];
   int size;
   MCSGetDlen2(DIRNAME, CHRONOFILE, &size);
-  if (size == 0) return;
-  // compare read file size to expected file size to detect incompatibility.
+  // check if file exists, and compare read file size to expected file size to detect incompatibility.
   // if there is, delete old file and return
-  if (size != count*(int)sizeof(buffer)) return;
+  if (size == 0 || size != count*(int)sizeof(buffer)) {
+    // doesn't exist or is incompatible. We could return right now, but other code may be expecting a "clean" chronoarray,
+    // so we must clear each chrono manually
+    int cur=0;
+    while(cur <= count-1) {
+      clearChrono(&chronoarray[cur]);
+      cur++;
+    }
+    return;
+  }
 
   unsigned char* finalbuffer = (unsigned char*)alloca(count*sizeof(buffer));
   MCSGetData1(0, count*8*5, finalbuffer);
