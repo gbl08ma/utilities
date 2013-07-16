@@ -134,7 +134,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
           curfile++; continue; //skip this file
         } else {
           //file to copy exists and is open. get its size.
-          int copySize = Bfile_GetFileSize_OS(hOldFile, Bfile_TellFile_OS( hOldFile ));
+          int copySize = Bfile_GetFileSize_OS(hOldFile);
           int hNewFile = Bfile_OpenFile_OS(newfilenameshort, WRITE); // Get handle for the destination file. This should fail because the file shouldn't exist.
           if(hNewFile < 0) {
             // Returned error, dest file does not exist (which is good)

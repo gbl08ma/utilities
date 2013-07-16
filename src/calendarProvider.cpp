@@ -228,7 +228,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
       6. Write new contents (new event).
       7. Close file.
       It must be done this way because once a file is created, its size cannot be changed...*/
-    int oldsize = Bfile_GetFileSize_OS(hAddFile, Bfile_TellFile_OS( hAddFile ));
+    int oldsize = Bfile_GetFileSize_OS(hAddFile);
     int newsize = oldsize + strlen(newevent);
     if (oldsize > MAX_EVENT_FILESIZE || newsize > MAX_EVENT_FILESIZE) { //file bigger than we can handle
       Bfile_CloseFile_OS(hAddFile);
@@ -370,7 +370,7 @@ Bdisp_PutDisp_DD();
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
-  int oldsize = Bfile_GetFileSize_OS(hFile, Bfile_TellFile_OS( hFile ));
+  int oldsize = Bfile_GetFileSize_OS(hFile);
   Bfile_CloseFile_OS(hFile); //close file as we don't care what it has, we just want to check if it exists
 #ifdef WAITMSG
 PrintXY(1,8,(char*)"  Please wait.          ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
@@ -575,7 +575,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
   if(hFile >= 0) // Check if it opened
   {
     // Returned no error, file exists, open it
-    int size = Bfile_GetFileSize_OS(hFile, Bfile_TellFile_OS( hFile ));
+    int size = Bfile_GetFileSize_OS(hFile);
     // File exists and has size 'size'
     // Read file into a buffer which is then parsed and broke in multiple event strings.
     // These event strings are then turned into a CalendarEvent.

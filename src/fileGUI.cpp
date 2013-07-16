@@ -328,7 +328,7 @@ void fileInformation(File* files, Menu* menu) {
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
   if(hFile >= 0) // Check if it opened
   { //opened
-    unsigned int filesize = Bfile_GetFileSize_OS(hFile, Bfile_TellFile_OS( hFile ));  
+    unsigned int filesize = Bfile_GetFileSize_OS(hFile);  
     Bfile_CloseFile_OS(hFile);
     unsigned char buffer[50] = "";
     itoa(filesize, (unsigned char*)buffer);
@@ -367,7 +367,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   unsigned int filesize = 0;
   if(hFile >= 0) // Check if it opened
   { //opened
-    filesize = Bfile_GetFileSize_OS(hFile, Bfile_TellFile_OS( hFile ));
+    filesize = Bfile_GetFileSize_OS(hFile);
     if(filesize && filesize < MAX_TEXTVIEWER_FILESIZE) {
       asrc = (unsigned char*)alloca(filesize*sizeof(unsigned char));
       Bfile_ReadFile_OS(hFile, asrc, filesize, 0);
