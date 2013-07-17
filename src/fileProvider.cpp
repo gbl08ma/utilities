@@ -128,21 +128,21 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)clipboard[curfile].filename, 0x10A);
         Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
         
-        int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READ); // Get handle for the old file
+        int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READ, 0); // Get handle for the old file
         if(hOldFile < 0) {
           //returned error: couldn't open file to copy.
           curfile++; continue; //skip this file
         } else {
           //file to copy exists and is open. get its size.
           int copySize = Bfile_GetFileSize_OS(hOldFile);
-          int hNewFile = Bfile_OpenFile_OS(newfilenameshort, WRITE); // Get handle for the destination file. This should fail because the file shouldn't exist.
+          int hNewFile = Bfile_OpenFile_OS(newfilenameshort, WRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
           if(hNewFile < 0) {
             // Returned error, dest file does not exist (which is good)
             int BCEres = Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &copySize);
             if(BCEres >= 0) // Did it create?
             {
               //created. open newly-created destination file
-              hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE);
+              hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
               if(hNewFile < 0) // Still failing?
               {
                 //skip this copy.

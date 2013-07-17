@@ -176,7 +176,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
   int size = strlen(FILE_HEADER) + strlen(newevent);
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
-  int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
 #ifdef WAITMSG
   PrintXY(1,8,(char*)"  Please wait.          ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
   Bdisp_PutDisp_DD();
@@ -192,7 +192,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
       Bdisp_PutDisp_DD();
 #endif
       //open in order to write header and new event
-      hAddFile = Bfile_OpenFile_OS(pFile, READWRITE); // always open, since file did not exist so it must be closed
+      hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // always open, since file did not exist so it must be closed
       if(hAddFile < 0) // Still failing?
       {
         return 1;
@@ -259,7 +259,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
       PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
 #endif
-      hAddFile = Bfile_OpenFile_OS(pFile, READWRITE); // we always closed above
+      hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // we always closed above
 #ifdef WAITMSG
       PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
@@ -326,7 +326,7 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
     PrintXY(1,8,(char*)"  Please wait..         ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
     Bdisp_PutDisp_DD();
 #endif
-    int hFile = Bfile_OpenFile_OS(pFile, READWRITE);
+    int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0);
 #ifdef WAITMSG
     PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
     Bdisp_PutDisp_DD();
@@ -369,7 +369,7 @@ Bdisp_PutDisp_DD();
   
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   int oldsize = Bfile_GetFileSize_OS(hFile);
   Bfile_CloseFile_OS(hFile); //close file as we don't care what it has, we just want to check if it exists
 #ifdef WAITMSG
@@ -491,7 +491,7 @@ conversionstart:
 #endif
     if(nBCEres >= 0) // Did it create?
     {
-      int nFile = Bfile_OpenFile_OS(pFile, READWRITE);
+      int nFile = Bfile_OpenFile_OS(pFile, READWRITE, 0);
       Bfile_WriteFile_OS(nFile, newfilecontents, newsize);
       Bfile_CloseFile_OS(nFile);
 #ifdef WAITMSG
@@ -528,7 +528,7 @@ int RemoveDay(EventDate* date, const char* folder) {
   PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
 #endif
 
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle to check if exists
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle to check if exists
 #ifdef WAITMSG
   PrintXY(1,8,(char*)"  Please wait......     ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
 #endif
@@ -570,7 +570,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
   
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   // Check for file existence
   if(hFile >= 0) // Check if it opened
   {

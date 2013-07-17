@@ -50,7 +50,7 @@ int comparePasswordHash(unsigned char* inputPassword) {
   unsigned short pFile[sizeof(smemfile)*2]; // Make buffer
   int hFile;
   Bfile_StrToName_ncpy(pFile, (unsigned char*)smemfile, strlen(smemfile)+1); 
-  hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   unsigned char smemHash[32] = "";
   if(hFile < 0) // Check if it opened
   {
@@ -102,7 +102,7 @@ int savePassword(unsigned char* password) {
   unsigned short pFile[sizeof(smemfile)*2]; // Make buffer
   int hFile;
   Bfile_StrToName_ncpy(pFile, (unsigned char*)smemfile, strlen(smemfile)+1); 
-  hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   int size = 32;
   if(hFile < 0) // Check if it opened
   {
@@ -110,7 +110,7 @@ int savePassword(unsigned char* password) {
     int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
     if(BCEres >= 0) // Did it create?
     {
-      hFile = Bfile_OpenFile_OS(pFile, READWRITE);
+      hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0);
       if(hFile < 0) // Still failing?
       {
         return 1; //error: file doesn't exist, was created but still can't be opened.
@@ -128,7 +128,7 @@ int savePassword(unsigned char* password) {
     Bfile_DeleteEntry(pFile);
     if(Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size) >= 0) // Did it create?
     {
-      hFile = Bfile_OpenFile_OS(pFile, READWRITE);
+      hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0);
       if(hFile < 0) // Still failing?
       {
         return 3; //error: file doesn't exist (because it was deleted), was created but still can't be opened.
@@ -166,7 +166,7 @@ int isPasswordSet(void) {
   unsigned short pFile[sizeof(smemfile)*2]; // Make buffer
   int hFile;
   Bfile_StrToName_ncpy(pFile, (unsigned char*)smemfile, strlen(smemfile)+1); 
-  hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hFile < 0) // Check if it opened
   {
     //error, file doesn't exist.

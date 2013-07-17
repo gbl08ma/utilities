@@ -325,7 +325,7 @@ void fileInformation(File* files, Menu* menu) {
   //Get file size
   unsigned short pFile[MAX_FILENAME_SIZE+1];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)files[menu->selection-1].filename, strlen(files[menu->selection-1].filename)+1); 
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hFile >= 0) // Check if it opened
   { //opened
     unsigned int filesize = Bfile_GetFileSize_OS(hFile);  
@@ -363,7 +363,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   //Get file contents
   unsigned short pFile[MAX_FILENAME_SIZE];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE); // Get handle
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   unsigned int filesize = 0;
   if(hFile >= 0) // Check if it opened
   { //opened
