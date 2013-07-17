@@ -435,7 +435,7 @@ Bdisp_PutDisp_DD();
     //convert the calevents back to char
     unsigned char eventbuf[2048] = ""; 
     unsigned char* newfilecontents = (unsigned char*)alloca(oldsize); //because the new file size can't be any bigger than the previous size, since we deleted a event
-conversionstart:
+
     strcpy((char*)newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
     for(int j = 0; j < numevents; j++) {
       strcpy((char*)eventbuf, "");
@@ -449,41 +449,6 @@ conversionstart:
     // now recreate file with new size and write contents to it.
     int newsize = strlen((char*)newfilecontents);
     
-    if(newsize < 10) {
-      //less than 10 bytes is too small for an event, and this means the infamous
-      //bug that results in a file with just the header started to fly.
-      //this is a very ugly approach, but best than no solution at all / data deletion without information
-      //note: doing the conversion again doesn't seem to do anything, most of the time.
-      MsgBoxPush(5);
-      int textX=18*2, textY=18;
-      PrintMini(&textX, &textY, (unsigned char*)"Potential data corruption", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      textY = textY+17; textX=18*2;
-      PrintMini(&textX, &textY, (unsigned char*)"detected. Do you want to try", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      textY = textY+17; textX=18*2;
-      PrintMini(&textX, &textY, (unsigned char*)"saving the events for this day", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      textY = textY+17; textX=18*2;
-      PrintMini(&textX, &textY, (unsigned char*)"again, or do you want to", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      textY = textY+17; textX=18*2;
-      PrintMini(&textX, &textY, (unsigned char*)"continue with potential data", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      textY = textY+17; textX=18*2;
-      PrintMini(&textX, &textY, (unsigned char*)"loss?", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      textY = textY+24; textX=18*2;
-      PrintMini(&textX, &textY, (unsigned char*)"[F1]:Try again   [F6]:Continue", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      int key,inscreen=1;
-      while(inscreen) {
-        GetKey(&key);
-        switch(key)
-        {
-          case KEY_CTRL_F1:
-            goto conversionstart;
-            break;
-          case KEY_CTRL_F6:
-            inscreen=0;
-            break;
-        }
-      }
-      MsgBoxPop();
-    }
     int nBCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize);
 #ifdef WAITMSG
     PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
