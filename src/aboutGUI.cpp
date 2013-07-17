@@ -71,10 +71,10 @@ void showAbout() {
  PrintMini(&textX, &textY, (unsigned char*)"(http://cemetech.net), code by Simon", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
  textY = 56;
  textX = 0;
- PrintMini(&textX, &textY, (unsigned char*)"Lothar and public domain code by", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+ PrintMini(&textX, &textY, (unsigned char*)"Lothar (http://casiopeia.net) and", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
  textY = 73;
  textX = 0;
- PrintMini(&textX, &textY, (unsigned char*)"C.B. Falconer.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+ PrintMini(&textX, &textY, (unsigned char*)"public domain code by C.B. Falconer.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
  textY = 101;
  textX = 0;
  PrintMini(&textX, &textY, (unsigned char*)"This Utilities add-in is licensed", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
