@@ -56,7 +56,6 @@ int main()
   //int ramUsedDbgTimer = Timer_Install(0, showRAMusedStatus, 50);
   //if (ramUsedDbgTimer > 0) { Timer_Start(ramUsedDbgTimer); }
   
-  //App_Optimize();
   while(1) {
     showHome(chrono);
   }

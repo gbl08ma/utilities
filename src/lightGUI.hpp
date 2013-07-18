@@ -16,7 +16,7 @@
 #include <math.h>
 
 void lantern();
-void flashLight();
+void flashLight(int noDraw=0);
 void morseLight();
 void colorLight();
 

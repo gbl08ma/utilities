@@ -24,6 +24,7 @@
 #include "selectorGUI.hpp"
 #include "chronoProvider.hpp"
 #include "chronoGUI.hpp"
+#include "lightGUI.hpp"
 
 void formatChronoString(chronometer* tchrono, int num, unsigned char* string)
 {
@@ -363,8 +364,13 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
   
   strcpy(sel.title, "Set timer");
   strcpy(sel.subtitle, "Seconds");
-  sel.value = 0;
-  sel.min = 0;
+  if(days == 0 && hours == 0 && minutes == 0) {
+    sel.value = 1;
+    sel.min = 1;
+  } else {
+    sel.value = 0;
+    sel.min = 0;
+  }
   sel.max = 59;
   sel.allowMkey = 1;
   sel.cycle = 0;
@@ -396,22 +402,19 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
         //clear this chrono
         clearChrono(&chronoarray[cur]);
         saveChronoArray(chronoarray, NUMBER_OF_CHRONO);
-        // show message TODO: make this message flash, etc.
-        int key;
         MsgBoxPush(4);
         PrintXY(3,2,(char*)"  Timer Complete", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         char buffer1[10] = "";
         itoa(cur+1, (unsigned char*)buffer1);
-        char buffer2[15] = "";
-        strcpy(buffer2, "  Timer: ");
+        char buffer2[25] = "";
+        strcpy(buffer2, "  Chronometer: ");
         strcat(buffer2, buffer1);
         PrintXY(3,3,(char*)buffer2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        while(1) {
-          mGetKey(&key);
-          break;
-        }
+        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+        
+        Bdisp_PutDisp_DD();
+        flashLight(1); // with parameter set to 1, it doesn't change VRAM, and since it returns on pressing EXIT...
         MsgBoxPop();
-        //timerEndedMessage(cur+1); //NOTE: this is commented because it hangs the keyhandling, and it becomes impossible to close the flashing message.
         //and return
         return;
         break;
@@ -421,33 +424,3 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
   }
 }
 
-void timerEndedMessage(int timerno) {
-  unsigned short key; 
-  int keyCol, keyRow; 
-  unsigned int initlevel = GetBacklightSubLevel_RAW();
-  unsigned int prevlevel = 249;
-  char timer[5];
-  char dispstr[15];
-  itoa(timerno, (unsigned char*)timer);
-  strcpy(dispstr, "  Chrono ");
-  strcat(dispstr, timer);
-  strcat(dispstr, " finished");
-  Bdisp_AllClr_VRAM();
-  int previousTicks = RTC_GetTicks();
-  while (1) {
-    PrintXY(1, 4, dispstr, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-    Bdisp_PutDisp_DD();
-    //the following getkeywait does not process MENU so we always have a chance to set the brightness correctly
-    if (0 != GetKeyWait_OS(&keyCol,&keyRow,KEYWAIT_HALTOFF_TIMEROFF,0,1, &key) ) {
-      if(keyCol == 4 && keyRow == 8) {
-        SetBacklightSubLevel_RAW(initlevel); DrawFrame( COLOR_WHITE );
-        return;
-      }
-    }
-    if(getMSdiff(previousTicks, RTC_GetTicks()) >= 500) {
-      if (prevlevel == 249) { SetBacklightSubLevel_RAW(0); prevlevel = 0; Bdisp_Fill_VRAM( COLOR_BLACK, 3 ); DrawFrame( COLOR_BLACK ); }
-      else { SetBacklightSubLevel_RAW(249); prevlevel = 249; Bdisp_Fill_VRAM( COLOR_WHITE, 3 ); DrawFrame( COLOR_WHITE );}
-      previousTicks = RTC_GetTicks();
-    }
-  }
-}

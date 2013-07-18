@@ -40,7 +40,7 @@ void showHome(chronometer* chrono) {
   int fgcolor;
   int bgcolor;
   while (1) {
-    checkChronoComplete();
+    checkDownwardsChronoCompleteGUI(chrono, NUMBER_OF_CHRONO);
     Bdisp_AllClr_VRAM();
     Bdisp_EnableColor(1); 
 

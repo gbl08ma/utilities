@@ -29,25 +29,39 @@ void lantern() {
   return;
 }
 
-void flashLight() {
+void flashLight(int noDraw) { // if noDraw is true, this function will just change the backlight levels without changing VRAM contents
   unsigned short key; 
   int keyCol, keyRow; 
   unsigned int initlevel = GetBacklightSubLevel_RAW();
   unsigned int prevlevel = 249;
-  Bdisp_AllClr_VRAM();
+  if(!noDraw) Bdisp_AllClr_VRAM();
   int previousTicks = RTC_GetTicks();
   while (1) {
-    Bdisp_PutDisp_DD();
+    if(!noDraw) Bdisp_PutDisp_DD();
     //the following getkeywait does not process MENU so we always have a chance to set the brightness correctly
     if (0 != GetKeyWait_OS(&keyCol,&keyRow,KEYWAIT_HALTOFF_TIMEROFF,0,1, &key) ) {
       if(keyCol == 4 && keyRow == 8) {
-        SetBacklightSubLevel_RAW(initlevel); DrawFrame( COLOR_WHITE );
+        SetBacklightSubLevel_RAW(initlevel);
+        if(!noDraw) DrawFrame( COLOR_WHITE );
         return;
       }
     }
     if(getMSdiff(previousTicks, RTC_GetTicks()) >= 500) {
-      if (prevlevel == 249) { SetBacklightSubLevel_RAW(0); prevlevel = 0; Bdisp_Fill_VRAM( COLOR_BLACK, 3 ); DrawFrame( COLOR_BLACK ); }
-      else { SetBacklightSubLevel_RAW(249); prevlevel = 249; Bdisp_Fill_VRAM( COLOR_WHITE, 3 ); DrawFrame( COLOR_WHITE );}
+      if (prevlevel == 249) {
+        SetBacklightSubLevel_RAW(0);
+        prevlevel = 0;
+        if(!noDraw) {
+          Bdisp_Fill_VRAM( COLOR_BLACK, 3 );
+          DrawFrame( COLOR_BLACK );
+        }
+      } else {
+        SetBacklightSubLevel_RAW(249);
+        prevlevel = 249; 
+        if(!noDraw) {
+          Bdisp_Fill_VRAM( COLOR_WHITE, 3 ); 
+          DrawFrame( COLOR_WHITE );
+        }
+      }
       previousTicks = RTC_GetTicks();
     }
   }
