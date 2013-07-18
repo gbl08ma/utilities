@@ -202,9 +202,12 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
       PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
 #endif
-      Bfile_WriteFile_OS(hAddFile, FILE_HEADER, strlen(FILE_HEADER));
+      //Bfile_WriteFile_OS(hAddFile, FILE_HEADER, strlen(FILE_HEADER));
+      char finalcontents[2060] = "";
+      strcpy(finalcontents, FILE_HEADER);
+      strcat(finalcontents, newevent);
       //Write event
-      Bfile_WriteFile_OS(hAddFile, newevent, strlen(newevent));
+      Bfile_WriteFile_OS(hAddFile, finalcontents, strlen(finalcontents));
 #ifdef WAITMSG
       PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
