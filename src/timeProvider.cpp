@@ -13,6 +13,7 @@
 #include <math.h>
 
 #include "timeProvider.hpp"
+#include "constantsProvider.hpp"
 #include "settingsProvider.hpp"
 #include "unixtimeExternal.hpp"
 
@@ -122,7 +123,7 @@ int getRTCisUnadjusted() {
   //   (because that date has passed on all timezones and of course no adjusted clock will have it).
   //this function is only meant to be useful for detecting if the RTC performed a reset, e.g. after taking out the batteries.
   //in that case, the RTC usually resets to some date around 2010. So this function will serve its purpose.
-  if(1356998400000 > currentUnixTime()) {
+  if(KNOWN_PAST_TIMESTAMP > currentUnixTime()) {
     return 1;
   } return 0;
 }
