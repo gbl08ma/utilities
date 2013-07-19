@@ -149,7 +149,7 @@ void firstRunWizard() {
           textY = textY + 12; textX = 0;
           PrintMiniMini( &textX, &textY, (unsigned char*)"this function. You can set a new password in the Settings", 0, TEXT_COLOR_BLACK, 0 );
           textY = textY + 12; textX = 0;
-          PrintMiniMini( &textX, &textY, (unsigned char*)"screen (you'll learn how to get there after the jump).", 0, TEXT_COLOR_BLACK, 0 );
+          PrintMiniMini( &textX, &textY, (unsigned char*)"menu.", 0, TEXT_COLOR_BLACK, 0 );
           
           GetKey(&key);
           switch(key)
@@ -188,7 +188,7 @@ void firstRunWizard() {
           textY = textY + 17; textX = 0;
           PrintMini(&textX, &textY, (unsigned char*)"\"About\" screen, to which you can get", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
           textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"from the settings menu.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+          PrintMini(&textX, &textY, (unsigned char*)"from the Settings menu.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
           mGetKey(&key); //do a managed GetKey now so that users can go into Settings.
           switch(key)
           {
