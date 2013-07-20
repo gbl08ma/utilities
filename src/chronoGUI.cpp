@@ -175,6 +175,13 @@ void chronoScreen(chronometer* chrono) {
           if (GetSetupSetting( (unsigned int)0x14) == 0) { SetSetupSetting( (unsigned int)0x14, 1); }
           else { SetSetupSetting( (unsigned int)0x14, 0); }
           break;
+        case KEY_PRGM_MENU:
+          if (GetSetupSetting( (unsigned int)0x14) == 1) {
+            SetSetupSetting( (unsigned int)0x14, 0);
+            settingsMenu();
+            Bdisp_AllClr_VRAM();
+          }
+          break;
         case KEY_PRGM_DOWN:
           if(menu.selection == menu.numitems)
           {

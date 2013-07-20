@@ -123,11 +123,7 @@ void showHome(chronometer* chrono) {
           if (GetSetupSetting( (unsigned int)0x14) == 1) {
             SetSetupSetting( (unsigned int)0x14, 0);
             settingsMenu();
-          } else {
-            //trigger Menu manually, as PRGM_GetKey does not do it
-            GetKeyWait_OS(&keyCol, &keyRow, 2, 1, 0, &wkey);
           }
-          break;
         case KEY_PRGM_ACON:
           if (GetSetupSetting( (unsigned int)0x14) == 1) {
             SetSetupSetting( (unsigned int)0x14, 0);
