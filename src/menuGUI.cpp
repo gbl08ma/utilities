@@ -206,6 +206,42 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
         case KEY_CHAR_0:
           if(menu->numitems>=10) {menu->selection = 10; return MENU_RETURN_SELECTION; }
           break;
+        case KEY_CTRL_XTT:
+          if(menu->numitems>=11) {menu->selection = 11; return MENU_RETURN_SELECTION; }
+          break;
+        case KEY_CHAR_LOG:
+          if(menu->numitems>=12) {menu->selection = 12; return MENU_RETURN_SELECTION; }
+          break;
+        case KEY_CHAR_LN:
+          if(menu->numitems>=13) {menu->selection = 13; return MENU_RETURN_SELECTION; }
+          break;
+        case KEY_CHAR_SIN:
+          if(menu->numitems>=14) {menu->selection = 14; return MENU_RETURN_SELECTION; }
+          break;
+        case KEY_CHAR_COS:
+          if(menu->numitems>=15) {menu->selection = 15; return MENU_RETURN_SELECTION; }
+          break;
+        case KEY_CHAR_TAN:
+          if(menu->numitems>=16) {menu->selection = 16; return MENU_RETURN_SELECTION; }
+          break;
+        case KEY_CHAR_FRAC:
+          if(menu->numitems>=17) {menu->selection = 17; return MENU_RETURN_SELECTION; }
+          break;
+        case KEY_CTRL_FD:
+          if(menu->numitems>=18) {menu->selection = 18; return MENU_RETURN_SELECTION; }
+          break;
+        case KEY_CHAR_LPAR:
+          if(menu->numitems>=19) {menu->selection = 19; return MENU_RETURN_SELECTION; }
+          break;
+        case KEY_CHAR_RPAR:
+          if(menu->numitems>=20) {menu->selection = 20; return MENU_RETURN_SELECTION; }
+          break;
+        case KEY_CHAR_COMMA:
+          if(menu->numitems>=21) {menu->selection = 21; return MENU_RETURN_SELECTION; }
+          break;
+        case KEY_CHAR_STORE:
+          if(menu->numitems>=22) {menu->selection = 22; return MENU_RETURN_SELECTION; }
+          break;
       }
     } else {
       return MENU_RETURN_INSTANT; // we don't want to handle keys
