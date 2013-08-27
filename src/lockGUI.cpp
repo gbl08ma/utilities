@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "lockGUI.hpp"
+#include "homeGUI.hpp"
 #include "menuGUI.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"

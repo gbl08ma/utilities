@@ -26,9 +26,8 @@
 
 int main()
 {
-  
-  setInitStackPtr((int)GetStackPtr());
   // Add-in entry point
+  setInitStackPtr((int)GetStackPtr()); // set pointer for monitoring stack usage
   //Load settings
   LoadSettings();
   
@@ -50,9 +49,9 @@ int main()
   chrono = (chronometer*)alloca(NUMBER_OF_CHRONO*sizeof(chronometer));
   loadChronoArray(chrono, NUMBER_OF_CHRONO);
   
-  setChronoArrayPtr(chrono);
+  setChronoArrayPtr(chrono); //needed by the checkChronoComplete function
   
-  // NOTE: the following debug timer is disabled because it makes many things become much slower. only enable if needed.
+  // NOTE: the following debug timer is disabled because it makes many things become much slower, and causes system errors on Bfile. only enable if needed.
   //int ramUsedDbgTimer = Timer_Install(0, showRAMusedStatus, 50);
   //if (ramUsedDbgTimer > 0) { Timer_Start(ramUsedDbgTimer); }
   

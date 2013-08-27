@@ -22,6 +22,7 @@
 #include "settingsGUI.hpp"
 #include "powerGUI.hpp"
 #include "lightGUI.hpp"
+#include "chronoProvider.hpp"
 #include "chronoGUI.hpp"
 #include "textGUI.hpp"
 #include "tasksGUI.hpp"
@@ -36,7 +37,7 @@ int pane_keycache = 0; // TODO: see if it's possible not to have this being a gl
 void showHome(chronometer* chrono) {
   unsigned short key = 0;
   unsigned short prevkey = 0;
-  int keyCol; int keyRow; unsigned short wkey; //these aren't actually used, but they are needed to hold different getkey-like results
+  int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
   int fgcolor;
   int bgcolor;
   while (1) {

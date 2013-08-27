@@ -165,81 +165,94 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
 
 void setTimeGUI(int canExit) {
   Selector hour;
-  strcpy(hour.title, "Set time");
-  strcpy(hour.subtitle, "Hour");
-  hour.value = getCurrentHour();
-  hour.min = 0;
-  hour.max = 23;
-  hour.allowMkey = 0;
-  hour.cycle = 1;
-  hour.type = SELECTORTYPE_NORMAL;
-  int res = doSelector(&hour);
-  if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
-  
   Selector minute;
-  strcpy(minute.title, "Set time");
-  strcpy(minute.subtitle, "Minute");
-  minute.value = getCurrentMinute();
-  minute.min = 0;
-  minute.max = 59;
-  minute.allowMkey = 0;
-  minute.cycle = 1;
-  minute.type = SELECTORTYPE_NORMAL;
-  res = doSelector(&minute);
-  if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
-  
   Selector second;
-  strcpy(second.title, "Set time");
-  strcpy(second.subtitle, "Second");
-  second.value = getCurrentSecond();
-  second.min = 0;
-  second.max = 59;
-  second.allowMkey = 0;
-  second.cycle = 1;
-  second.type = SELECTORTYPE_NORMAL;
-  res = doSelector(&second);
-  if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
+  while(1) {
+    strcpy(hour.title, "Set time");
+    strcpy(hour.subtitle, "Hour");
+    hour.value = getCurrentHour();
+    hour.min = 0;
+    hour.max = 23;
+    hour.allowMkey = 0;
+    hour.cycle = 1;
+    hour.type = SELECTORTYPE_NORMAL;
+    int res = doSelector(&hour);
+    if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
+    if (res == SELECTOR_RETURN_SELECTION) break;
+  }
+  while(1) {
+    strcpy(minute.title, "Set time");
+    strcpy(minute.subtitle, "Minute");
+    minute.value = getCurrentMinute();
+    minute.min = 0;
+    minute.max = 59;
+    minute.allowMkey = 0;
+    minute.cycle = 1;
+    minute.type = SELECTORTYPE_NORMAL;
+    int res = doSelector(&minute);
+    if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
+    if (res == SELECTOR_RETURN_SELECTION) break;
+  }  
+  while(1) {
+    strcpy(second.title, "Set time");
+    strcpy(second.subtitle, "Second");
+    second.value = getCurrentSecond();
+    second.min = 0;
+    second.max = 59;
+    second.allowMkey = 0;
+    second.cycle = 1;
+    second.type = SELECTORTYPE_NORMAL;
+    int res = doSelector(&second);
+    if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
+    if (res == SELECTOR_RETURN_SELECTION) break;
+  }  
   setTime(hour.value, minute.value, second.value);
 }
 
 void setDateGUI(int canExit) {
   Selector year;
-  strcpy(year.title, "Set date");
-  strcpy(year.subtitle, "Year");
-  year.value = getCurrentYear();
-  year.min = 1970;
-  year.max = 9999;
-  year.allowMkey = 0;
-  year.cycle = 0;
-  year.type = SELECTORTYPE_NORMAL;
-  int res = doSelector(&year);
-  if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
-  
   Selector month;
-  strcpy(month.title, "Set date");
-  strcpy(month.subtitle, "Month");
-  month.value = getCurrentMonth();
-  month.min = 1;
-  month.max = 12;
-  month.allowMkey = 0;
-  month.cycle = 1;
-  month.type = SELECTORTYPE_MONTH;
-  res = doSelector(&month);
-  if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
-  
   Selector day;
-  strcpy(day.title, "Set date");
-  strcpy(day.subtitle, "Day");
-  day.value = getCurrentDay();
-  day.min = 1;
-  day.max = getMonthDays(month.value);
-  day.allowMkey = 0;
-  day.cycle = 1;
-  day.type = SELECTORTYPE_NORMAL;
-  res = doSelector(&day);
-  if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
+  while(1) {
+    strcpy(year.title, "Set date");
+    strcpy(year.subtitle, "Year");
+    year.value = getCurrentYear();
+    year.min = 1970;
+    year.max = 9999;
+    year.allowMkey = 0;
+    year.cycle = 0;
+    year.type = SELECTORTYPE_NORMAL;
+    int res = doSelector(&year);
+    if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
+    if (res == SELECTOR_RETURN_SELECTION) break;
+  }
+  while(1) {
+    strcpy(month.title, "Set date");
+    strcpy(month.subtitle, "Month");
+    month.value = getCurrentMonth();
+    month.min = 1;
+    month.max = 12;
+    month.allowMkey = 0;
+    month.cycle = 1;
+    month.type = SELECTORTYPE_MONTH;
+    int res = doSelector(&month);
+    if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
+    if (res == SELECTOR_RETURN_SELECTION) break;
+  }
+  while(1) {
+    strcpy(day.title, "Set date");
+    strcpy(day.subtitle, "Day");
+    day.value = getCurrentDay();
+    day.min = 1;
+    day.max = getMonthDays(month.value);
+    day.allowMkey = 0;
+    day.cycle = 1;
+    day.type = SELECTORTYPE_NORMAL;
+    int res = doSelector(&day);
+    if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
+    if (res == SELECTOR_RETURN_SELECTION) break;
+  }
   setDate(year.value, month.value, day.value); 
-  
 }
 
 
