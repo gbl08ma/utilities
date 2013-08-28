@@ -149,6 +149,8 @@ void chronoScreen(chronometer* chrono) {
       FKey_Display(3, (int*)iresult);
       GetFKeyPtr(0x0031, &iresult); // stop icon
       FKey_Display(4, (int*)iresult);
+      // "hack" the stop icon, turning it into a pause icon
+      drawRectangle(286, 197, 4, 14, COLOR_WHITE);
     } else if (menu.fkeypage==1) {
       GetFKeyPtr(0x0037, &iresult); // SELECT (white)
       FKey_Display(0, (int*)iresult);
