@@ -1267,9 +1267,30 @@ void setEventChrono(CalendarEvent* event) {
   long long int duration = estart - currentUnixTime();
   if(duration < 0) {
     // event is in the past, abort
+    MsgBoxPush(3);
+    PrintXY(3, 3, (char*)"  Event starts in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    PrintXY(3, 4, (char*)"  the past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+    int key,inscreen=1;
+    while(inscreen) {
+      mGetKey(&key);
+      switch(key)
+      {
+        case KEY_CTRL_EXIT:
+        case KEY_CTRL_AC:
+          inscreen=0;
+          break;
+      }
+    }
+    MsgBoxPop();
+  } else {
+    // set downwards chrono with the calculated duration
+    res = setChronoExternal(sel.value-1, duration, CHRONO_TYPE_DOWN);
+    if(res) {
+      // success setting a chrono
       MsgBoxPush(3);
-      PrintXY(3, 3, (char*)"  Event starts in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      PrintXY(3, 4, (char*)"  the past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      PrintXY(3, 3, (char*)"  Event reminder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      PrintXY(3, 4, (char*)"  set successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
       int key,inscreen=1;
       while(inscreen) {
@@ -1283,8 +1304,24 @@ void setEventChrono(CalendarEvent* event) {
         }
       }
       MsgBoxPop();
-  } else {
-    // set downwards chrono with the calculated duration
-    setChronoExternal(sel.value-1, duration, CHRONO_TYPE_DOWN);
+    } else {
+      // timer is busy
+      MsgBoxPush(3);
+      PrintXY(3, 3, (char*)"  Selected chrono", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      PrintXY(3, 4, (char*)"  is not clear.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+      int key,inscreen=1;
+      while(inscreen) {
+        mGetKey(&key);
+        switch(key)
+        {
+          case KEY_CTRL_EXIT:
+          case KEY_CTRL_AC:
+            inscreen=0;
+            break;
+        }
+      }
+      MsgBoxPop();
+    }
   }
 }
