@@ -316,8 +316,10 @@ void fileInformation(File* files, Menu* menu) {
   PrintXY(1, 1, (char*)"  File information", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   int textX=0, textY=24;
   PrintMini(&textX, &textY, (unsigned char*)"File name:", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
+  char name[MAX_NAME_SIZE] = "";
+  nameFromFilename(files[menu->selection-1].filename, name);
   textX=0; textY=textY+17;
-  PrintMini(&textX, &textY, (unsigned char*)menu->items[menu->selection-1].text, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, (unsigned char*)name, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   textX=0; textY=textY+25;
   PrintMini(&textX, &textY, (unsigned char*)"Full file path:", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
   textX=0; textY=textY+17;
