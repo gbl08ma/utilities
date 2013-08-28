@@ -16,3 +16,5 @@ This add-in provides many utilities not originally found on the Casio Prizm calc
  - Calculator lock with a numeric code
 
 This add-in is released under the GNU GPL v2, or at your choice, any later version. See the file LICENSE for more information.
+
+For compiling, libfromcasio.a should be copied to your libraries folder. This library file is only used to provide setjmp and longjmp functionality, which is only needed for the Run-Mat returning feature.
