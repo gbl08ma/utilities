@@ -225,6 +225,7 @@ int lockCalc() {
     textX = permanentX;
     int key;
     Bdisp_AllClr_VRAM();
+    Bdisp_EnableColor(1);
     DisplayStatusArea();
     PrintMini(&textX, &textY, (unsigned char*)"Calculator locked", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
     //Handle ALPHA (when user wants to unlock) and Shift+AC for power off
