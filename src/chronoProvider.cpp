@@ -128,3 +128,12 @@ void setChronoArrayPtr(chronometer* achrono) {
 void checkChronoComplete() {
   checkDownwardsChronoCompleteGUI(chrono, NUMBER_OF_CHRONO);
 }
+void setChronoExternal(int index, long long int duration, long long int type) {
+  //function for setting a chrono without access to the main chrono array (as of beta 9, the only one)
+  //chronometer* chrono is used (this is the main one used in the chrono screen)
+  //the chrono that is set is the one specified in index (zero based).
+  setChrono(&chrono[index], duration, type);
+  // since this is "external", most likely the calling function doesn't have access to chrono or a way to save that array to storage
+  // so lets save ourselves
+  saveChronoArray(chrono, NUMBER_OF_CHRONO);
+}

@@ -14,6 +14,7 @@
 
 #include "constantsProvider.hpp"
 #include "timeProvider.hpp"
+#include "chronoGUI.hpp"
 #include "settingsProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "selectorGUI.hpp"
@@ -23,6 +24,8 @@
 #include "inputGUI.hpp"
 #include "calendarProvider.hpp" 
 #include "keyboardProvider.hpp"
+#include "unixtimeExternal.hpp"
+
 int bufmonth = 0; //this is global so that it's easier to make the events count refresh
 void viewCalendar() {
   int y = getCurrentYear();
@@ -259,6 +262,8 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
       FKey_Display(0, (int*)iresult);
       GetFKeyPtr(0x04D2, &iresult); // MOVE
       FKey_Display(1, (int*)iresult);
+      GetFKeyPtr(0x0470, &iresult); // MEMO
+      FKey_Display(2, (int*)iresult);
     } else { menu = 0; } //because if there are no events, 2nd menu is empty.
   }
   if(menu->numitems>0) {
@@ -306,6 +311,8 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
             ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
           }
         }
+      } else if (menu->fkeypage == 1) {
+        setEventChrono(&events[menu->selection-1]);
       }
       break;
     case KEY_CTRL_F4:
@@ -1236,4 +1243,48 @@ void invalidFieldMsg(int istime) {
     }
   }
   MsgBoxPop(); 
+}
+
+void setEventChrono(CalendarEvent* event) {
+  // set a downwards chrono that ends on the start time of the event
+  // like a event reminder
+  
+  // ask user which chrono to set
+  Selector sel;
+  strcpy(sel.title, "Set event reminder");
+  strcpy(sel.subtitle, "Select chrono");
+  sel.value = 1;
+  sel.min = 1;
+  sel.max = NUMBER_OF_CHRONO;
+  sel.cycle = 1;
+  sel.type = SELECTORTYPE_NORMAL;
+  int res = doSelector(&sel);
+  if (res == SELECTOR_RETURN_EXIT) return;
+  // get unix*1000 time of the event's start time/date
+  long long int estart = DateTime2Unix(event->startdate.year, event->startdate.month, event->startdate.day, event->starttime.hour, event->starttime.minute, event->starttime.second, 0);
+  // get chrono duration (difference between event start time and current time)
+  
+  long long int duration = estart - currentUnixTime();
+  if(duration < 0) {
+    // event is in the past, abort
+      MsgBoxPush(3);
+      PrintXY(3, 3, (char*)"  Event starts in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      PrintXY(3, 4, (char*)"  the past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+      int key,inscreen=1;
+      while(inscreen) {
+        mGetKey(&key);
+        switch(key)
+        {
+          case KEY_CTRL_EXIT:
+          case KEY_CTRL_AC:
+            inscreen=0;
+            break;
+        }
+      }
+      MsgBoxPop();
+  } else {
+    // set downwards chrono with the calculated duration
+    setChronoExternal(sel.value-1, duration, CHRONO_TYPE_DOWN);
+  }
 }

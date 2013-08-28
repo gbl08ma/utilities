@@ -37,5 +37,6 @@ void deleteEventUI(int y, int m, int d, int pos, int istask=0);
 void deleteAllEventUI(int y, int m, int d, int istask=0);
 int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2);
 void invalidFieldMsg(int istime);
+void setEventChrono(CalendarEvent* event);
 
 #endif

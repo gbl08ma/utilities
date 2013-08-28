@@ -44,5 +44,6 @@ void clearChrono(chronometer* tchrono);
 void getChronoArrayPtr(chronometer* achrono);
 void setChronoArrayPtr(chronometer* achrono);
 void checkChronoComplete();
+void setChronoExternal(int index, long long int duration, long long int type);
 
 #endif
