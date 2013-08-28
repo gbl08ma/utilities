@@ -14,11 +14,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
+#include "setjmp.h"
 int passwordInput(int x, int y, unsigned char* buffer);
 int setPassword();
 int unlockCalc();
 int lockCalc();
 void lockApp();
-
+extern jmp_buf utilities_return;
+void openRunMat();
+void returnToUtilitiesHandler();
 #endif

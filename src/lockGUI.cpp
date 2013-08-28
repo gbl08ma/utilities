@@ -21,6 +21,7 @@
 #include "inputGUI.hpp"
 #include "timeProvider.hpp"
 #include "settingsProvider.hpp"
+#include "setjmp.h"
 
 int passwordInput(int x, int y, unsigned char* buffer) {
   //returns: 0 on user abort (EXIT), 1 on EXE
@@ -206,13 +207,39 @@ int lockCalc() {
     }
   }
 }
-
+extern jmp_buf utilities_return;
+int rettimer;
+int isKeyPressed(int basic_keycode)
+{
+  const unsigned short* keyboard_register = (unsigned short*)0xA44B0000;
+  unsigned short lastkey[8];
+  memcpy(lastkey, keyboard_register, sizeof(unsigned short)*8);
+  int row, col, word, bit;
+  row = basic_keycode%10;
+  col = basic_keycode/10-1;
+  word = row>>1;
+  bit = col + 8*(row&1);
+  return (0 != (lastkey[word] & 1<<bit));
+}
+void returnToUtilitiesHandler() {
+  if(isKeyPressed(KEY_PRGM_F6) && isKeyPressed(KEY_PRGM_SHIFT)) { // Shift+F6 (simultaneously)
+    SetSetupSetting( (unsigned int)0x14, 0);
+    Timer_Stop(rettimer);
+    Timer_Deinstall(rettimer);
+    longjmp(utilities_return, 1);
+  }
+}
+void openRunMat() {
+  rettimer = Timer_Install(0, returnToUtilitiesHandler, 100);
+  if (rettimer > 0) { Timer_Start(rettimer); }
+  APP_RUNMAT(0,0);
+}
 void lockApp() {
   if (GetSetting(SETTING_ENABLE_LOCK)) {
     int lockres = lockCalc();
     if(lockres == 0) {
       if (GetSetting(SETTING_UNLOCK_RUNMAT) == 1) {
-        APP_RUNMAT(0,0);
+        openRunMat();
       } else if (GetSetting(SETTING_UNLOCK_RUNMAT) == 2) {
         MsgBoxPush(4);
         PrintXY(3, 2, (char*)"  Open Run-Mat?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -225,9 +252,11 @@ void lockApp() {
           {
             case KEY_CTRL_F1:
             case KEY_CHAR_1:
-              MsgBoxPop();
-              APP_RUNMAT(0,0);
-              break;
+              {
+                MsgBoxPop();
+                openRunMat();
+                break;
+              }
             default:
               inscreen=0;
               break;
