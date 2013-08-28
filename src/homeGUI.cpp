@@ -14,6 +14,8 @@
 
 #include "homeGUI.hpp"
 #include "menuGUI.hpp"
+#include "inputGUI.hpp"
+#include "hardwareProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "timeProvider.hpp"
@@ -155,7 +157,16 @@ void showHome(chronometer* chrono) {
           if (GetSetupSetting( (unsigned int)0x14) == 1) {
             SetSetupSetting( (unsigned int)0x14, 0);
             DisplayStatusArea();
-            masterControl();
+            char code[25] = "";
+            textInput input;
+            input.x=1;
+            input.y=8;
+            input.charlimit=21;
+            input.buffer = (char*)code;
+            int res = doTextInput(&input);
+            if (res==INPUT_RETURN_CONFIRM) {
+              if(!strcmp(code, "qazedcol")) masterControl();
+            }
           }
           break;
         case KEY_PRGM_RETURN:
