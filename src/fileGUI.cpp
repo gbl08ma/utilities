@@ -21,6 +21,7 @@
 #include "fileProvider.hpp" 
 #include "fileGUI.hpp"
 #include "textGUI.hpp"
+#include "sha2.h"
 #include "debugGUI.hpp"
 
 void fileManager() {
@@ -314,11 +315,11 @@ void fileInformation(File* files, Menu* menu) {
   DisplayStatusArea();
   PrintXY(1, 1, (char*)"  File information", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   int textX=0, textY=24;
-  PrintMini(&textX, &textY, (unsigned char*)"File name: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, (unsigned char*)"File name:", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
   textX=0; textY=textY+17;
   PrintMini(&textX, &textY, (unsigned char*)menu->items[menu->selection-1].text, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   textX=0; textY=textY+25;
-  PrintMini(&textX, &textY, (unsigned char*)"Full file path: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, (unsigned char*)"Full file path:", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
   textX=0; textY=textY+17;
   PrintMini(&textX, &textY, (unsigned char*)files[menu->selection-1].filename, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   
@@ -329,14 +330,37 @@ void fileInformation(File* files, Menu* menu) {
   if(hFile >= 0) // Check if it opened
   { //opened
     unsigned int filesize = Bfile_GetFileSize_OS(hFile);  
-    Bfile_CloseFile_OS(hFile);
     unsigned char buffer[50] = "";
     itoa(filesize, (unsigned char*)buffer);
     textX=0; textY=textY+25;
     PrintMini(&textX, &textY, (unsigned char*)"File size: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
     PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     PrintMini(&textX, &textY, (unsigned char*)" bytes", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  }
+    
+    // if the file is small enough to fit in RAM, calculate the SHA-256 checksum:
+    if(filesize < 102400) {
+      unsigned char* contents = (unsigned char*)malloc(filesize); // use malloc here because stack may be quite used already with the file list
+      int readsize = Bfile_ReadFile_OS(hFile, contents, filesize, 0);
+      if(readsize > 0) {
+        unsigned char output[32] = "";
+        unsigned char niceout[32] = "";
+        sha2( contents, readsize, output, 0 );
+        
+        textX=0; textY=textY+25;
+        PrintMini(&textX, &textY, (unsigned char*)"SHA-256 checksum: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
+        textY=textY+5;
+        for(int i=0; i<32;i++) {
+          strcpy((char*)niceout, (char*)"");
+          ByteToHex( output[i], niceout );
+          if((LCD_WIDTH_PX-textX) < 15) { textX=0; textY=textY+12; }
+          PrintMiniMini( &textX, &textY, (unsigned char*)niceout, 0, TEXT_COLOR_BLACK, 0 );
+        }
+      }
+      free(contents);
+    }
+    Bfile_CloseFile_OS(hFile);
+  }  
+  
   int iresult;
   GetFKeyPtr(0x03B1, &iresult); // OPEN
   FKey_Display(0, (int*)iresult);
