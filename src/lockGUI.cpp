@@ -14,6 +14,7 @@
 
 #include "homeGUI.hpp"
 #include "menuGUI.hpp"
+#include "textGUI.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "lockProvider.hpp"
@@ -178,7 +179,38 @@ int lockCalc() {
   //returns 0 on "calculator was locked and now is unlocked"
   //returns 1 on "there was no lock code and one was now set"
   if(!isPasswordSet()) {
+    textArea text;
+    strcpy(text.title, (char*)"Calculator lock");
+    
+    textElement elem[10];
+    text.elements = elem;
+    
+    elem[0].text = (char*)"This is probably the first time you're using the calculator lock function. You need to set a password before you can use it.";
+    
+    elem[1].newLine = 1;
+    elem[1].lineSpacing = 8;
+    elem[1].text = (char*)"Press EXIT to close this message and set a new password.";
+    
+    text.numelements = 2;
+    doTextArea(&text);
     setPassword();
+    
+    elem[0].text = (char*)"You successfully set a password for locking your calculator.";
+    
+    elem[1].newLine = 1;
+    elem[1].lineSpacing = 8;
+    elem[1].text = (char*)"Next time you press F5 on the home screen, your calculator will lock. You should then press the ALPHA key to be prompted for the code to unlock it.";
+    
+    elem[2].newLine = 1;
+    elem[2].lineSpacing = 8;
+    elem[2].text = (char*)"You can change settings relative to the calculator lock function on the settings (press Shift then Menu).";
+    
+    elem[3].newLine = 1;
+    elem[3].lineSpacing = 8;
+    elem[3].text = (char*)"Press EXIT to close this message and return to the home screen.";
+    
+    text.numelements = 4;
+    doTextArea(&text);
     return 1;
   }
   int textX, textY;
