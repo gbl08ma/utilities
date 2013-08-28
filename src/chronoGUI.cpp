@@ -119,7 +119,6 @@ void chronoScreen(chronometer* chrono) {
   menu.scrollbar=1;
   menu.scrollout=1;
   menu.showtitle=1;
-  menu.titleColor=TEXT_COLOR_BLACK;
   menu.fkeypage=0;
   strcpy(menu.nodatamsg, "No Data");
   strcpy(menu.title, "Chronometers");
