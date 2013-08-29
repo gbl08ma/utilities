@@ -255,7 +255,7 @@ int isKeyPressed(int basic_keycode)
   return (0 != (lastkey[word] & 1<<bit));
 }
 void returnToUtilitiesHandler() {
-  if(isKeyPressed(KEY_PRGM_F6) && isKeyPressed(KEY_PRGM_SHIFT)) { // Shift+F6 (simultaneously)
+  if(isKeyPressed(KEY_PRGM_EXIT) && isKeyPressed(KEY_PRGM_SHIFT)) { // Shift+Exit (simultaneously)
     SetSetupSetting( (unsigned int)0x14, 0);
     Timer_Stop(rettimer);
     Timer_Deinstall(rettimer);
