@@ -208,7 +208,7 @@ void lockSettingsMenu() {
   menu.selection=1;
   menu.scroll=0;
   menu.allowMkey=0;
-  strcpy(menu.nodatamsg, "No Data");
+  strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "");
   strcpy(menu.statusText, "");
   while(1) {

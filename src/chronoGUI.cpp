@@ -120,7 +120,7 @@ void chronoScreen(chronometer* chrono) {
   menu.scrollout=1;
   menu.showtitle=1;
   menu.fkeypage=0;
-  strcpy(menu.nodatamsg, "No Data");
+  strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "Chronometers");
   strcpy(menu.statusText, ""); 
   
