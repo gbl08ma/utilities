@@ -62,14 +62,9 @@ void showHome(chronometer* chrono) {
     DefineStatusMessage((char*)"", 1, 0, 0);
     
     char timeStr[14] = "";
-    // Print time     
-    if (GetSetting(SETTING_TIMEFORMAT) == 0) { //24 hour
-      currentTimeToString(timeStr,0);
-      printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
-    } else { //12 hour
-      currentTimeToString(timeStr,1);
-      printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
-    }
+    // Print time
+    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
+    printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
     if (GetSetting(SETTING_THEME) == 1) {
       drawLongDate(90, GetSetting(SETTING_LONGDATEFORMAT), COLOR_WHITE, COLOR_BLACK, 1);
       if (GetSetting(SETTING_DISPLAY_STATUSBAR)) darkenStatusbar();
