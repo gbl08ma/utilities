@@ -204,42 +204,46 @@ int addinManagerSub(Menu* menu) {
   switch(res)
   {
     case KEY_CTRL_F1:
-      if(addins[menu->selection-1].active) { //disable
-        strcpy(buffer, "\\\\fls0\\");
-        strcat(buffer, addins[menu->selection-1].filename);
-        Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, 0x10A);
-        buffer[strlen((char*)buffer)-3] = 'h'; //so it goes from g3a to h3a
-        Bfile_StrToName_ncpy(newpath, (unsigned char*)buffer, 0x10A);
-        Bfile_RenameEntry( oldpath , newpath );
-      } else { //enable
-        strcpy(buffer, "\\\\fls0\\");
-        strcat(buffer, addins[menu->selection-1].filename);
-        Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, 0x10A);
-        buffer[strlen((char*)buffer)-3] = 'g'; //so it goes from h3a to g3a
-        Bfile_StrToName_ncpy(newpath, (unsigned char*)buffer, 0x10A);
-        Bfile_RenameEntry( oldpath , newpath );
-      }
-      return 1; //reload list
-      break;
-    case KEY_CTRL_F2:
-      MsgBoxPush(4);
-      while (1) {
-        int key;
-        PrintXY(3, 2, (char*)"  Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY(3, 3, (char*)"  Selected Add-In?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
-        mGetKey(&key);
-        if (key==KEY_CTRL_F1) {
-          MsgBoxPop();
+      if(menu->numitems > 0) {
+        if(addins[menu->selection-1].active) { //disable
           strcpy(buffer, "\\\\fls0\\");
           strcat(buffer, addins[menu->selection-1].filename);
           Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, 0x10A);
-          Bfile_DeleteEntry( oldpath );
-          return 1;
-        } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
-          MsgBoxPop();
-          break;
+          buffer[strlen((char*)buffer)-3] = 'h'; //so it goes from g3a to h3a
+          Bfile_StrToName_ncpy(newpath, (unsigned char*)buffer, 0x10A);
+          Bfile_RenameEntry( oldpath , newpath );
+        } else { //enable
+          strcpy(buffer, "\\\\fls0\\");
+          strcat(buffer, addins[menu->selection-1].filename);
+          Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, 0x10A);
+          buffer[strlen((char*)buffer)-3] = 'g'; //so it goes from h3a to g3a
+          Bfile_StrToName_ncpy(newpath, (unsigned char*)buffer, 0x10A);
+          Bfile_RenameEntry( oldpath , newpath );
+        }
+        return 1; //reload list
+      }
+      break;
+    case KEY_CTRL_F2:
+      if(menu->numitems > 0) {
+        MsgBoxPush(4);
+        while (1) {
+          int key;
+          PrintXY(3, 2, (char*)"  Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          PrintXY(3, 3, (char*)"  Selected Add-In?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
+          PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
+          mGetKey(&key);
+          if (key==KEY_CTRL_F1) {
+            MsgBoxPop();
+            strcpy(buffer, "\\\\fls0\\");
+            strcat(buffer, addins[menu->selection-1].filename);
+            Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, 0x10A);
+            Bfile_DeleteEntry( oldpath );
+            return 1;
+          } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
+            MsgBoxPop();
+            break;
+          }
         }
       }
       break;
