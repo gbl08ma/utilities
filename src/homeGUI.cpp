@@ -66,7 +66,7 @@ void showHome(chronometer* chrono) {
     currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
     printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
     if (GetSetting(SETTING_THEME) == 1) {
-      drawLongDate(90, GetSetting(SETTING_LONGDATEFORMAT), COLOR_WHITE, COLOR_BLACK, 1);
+      drawLongDate(90, NULL, COLOR_WHITE, COLOR_BLACK, 1);
       if (GetSetting(SETTING_DISPLAY_STATUSBAR)) darkenStatusbar();
     } else {
       drawLongDate(90, NULL, COLOR_BLACK, COLOR_WHITE, NULL);
