@@ -150,15 +150,27 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
                 curfile++; continue;
               }
               //File to copy is open, destination file is created and open.
-              //copy 4 KB at a time.
-              unsigned char copybuffer[4096];
+              //copy 4 KB at a time. Write more bytes in the last loop because WriteFile doesn't like writing few bytes.
+              unsigned char copybuffer[4096*2];
               int curpos = 0;
               while(curpos < copySize) {
-                strcpy((char*)copybuffer, "");
+                memset( &copybuffer, 0, sizeof( copybuffer ) );
                 int writesize = 0;
                 if(copySize - curpos > 4096) {
-                  writesize = 4096;
-                } else writesize = copySize - curpos;
+                  // decide on whether to copy 4 KB, or find out if less than 8 KB are yet to be copied
+                  // if less than 8 KB are yet to be written, write them all at once (instead of writing 4 KB then having a write that may be too small, causing problems with WriteFile)
+                  if(copySize - curpos < 4096*2) {
+                    // less than 8 KB are yet to be copied.
+                    // write them all at once.
+                    writesize = copySize - curpos;
+                  } else {
+                    // more than 4 KB are yet to be copied.
+                    // write yet another 4 KB...
+                    writesize = 4096;
+                  }
+                } else {
+                  writesize = copySize - curpos;
+                }
                 Bfile_ReadFile_OS( hOldFile, copybuffer, writesize, -1 );
                 Bfile_WriteFile_OS(hNewFile, copybuffer, writesize);
                 curpos = curpos + writesize;
