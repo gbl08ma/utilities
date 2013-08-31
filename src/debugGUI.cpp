@@ -130,6 +130,25 @@ void masterControl() {
       }
       if(menu.selection == 9) { 
         CallbackAtQuitMainFunction( mycallback );
+        /*char* VRAM = (char*)0xA8000000; 
+        char* flashstart = (char*)0xA0000000;
+        int key;
+        while(1) {
+          memcpy(VRAM, flashstart, 165888);
+          GetKey(&key);
+          if(key==KEY_CTRL_EXE) {
+            for(int i=0; i<0x000287FF;i++) *flashstart++;
+          }
+          if(key==KEY_CTRL_UP) {
+            *flashstart++;
+          }
+          if(key==KEY_CTRL_DOWN) {
+            *flashstart--;
+          }
+          if(key==KEY_CTRL_EXIT) {
+            break;
+          }
+        }*/
       }
       if(menu.selection == 10) { 
         Restart();

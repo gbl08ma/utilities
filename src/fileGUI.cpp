@@ -339,26 +339,30 @@ void fileInformation(File* files, Menu* menu) {
     PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     PrintMini(&textX, &textY, (unsigned char*)" bytes", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     
-    // if the file is small enough to fit in RAM, calculate the SHA-256 checksum:
-    if(filesize < 102400) {
-      unsigned char* contents = (unsigned char*)malloc(filesize); // use malloc here because stack may be quite used already with the file list
-      int readsize = Bfile_ReadFile_OS(hFile, contents, filesize, 0);
-      if(readsize > 0) {
-        unsigned char output[32] = "";
-        unsigned char niceout[32] = "";
-        sha2( contents, readsize, output, 0 );
-        
-        textX=0; textY=textY+25;
-        PrintMini(&textX, &textY, (unsigned char*)"SHA-256 checksum: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
-        textY=textY+5;
-        for(int i=0; i<32;i++) {
-          strcpy((char*)niceout, (char*)"");
-          ByteToHex( output[i], niceout );
-          if((LCD_WIDTH_PX-textX) < 15) { textX=0; textY=textY+12; }
-          PrintMiniMini( &textX, &textY, (unsigned char*)niceout, 0, TEXT_COLOR_BLACK, 0 );
-        }
+    // if the file is not zero-byte, calculate the SHA-256 checksum:
+    if(filesize > 0) {
+      unsigned char output[32] = "";
+      sha2_context ctx;
+      unsigned char buf[4096];
+      int readsize = 1; // not zero so we have the chance to enter the while loop
+      sha2_starts( &ctx, 0 );
+      while( readsize > 0) {
+        readsize = Bfile_ReadFile_OS(hFile, buf, sizeof( buf ), -1);
+        sha2_update( &ctx, buf, readsize );
       }
-      free(contents);
+      sha2_finish( &ctx, output );
+      memset( &ctx, 0, sizeof( sha2_context ) );
+      
+      unsigned char niceout[32] = "";
+      textX=0; textY=textY+25;
+      PrintMini(&textX, &textY, (unsigned char*)"SHA-256 checksum: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
+      textY=textY+5;
+      for(int i=0; i<32;i++) {
+        strcpy((char*)niceout, (char*)"");
+        ByteToHex( output[i], niceout );
+        if((LCD_WIDTH_PX-textX) < 15) { textX=0; textY=textY+12; }
+        PrintMiniMini( &textX, &textY, (unsigned char*)niceout, 0, TEXT_COLOR_BLACK, 0 );
+      }
     }
     Bfile_CloseFile_OS(hFile);
   }  
