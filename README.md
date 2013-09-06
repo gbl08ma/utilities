@@ -40,7 +40,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
   - It's open source (GitHub: [https://github.com/gbl08ma/utilities](https://github.com/gbl08ma/utilities))
   
-# Installation instructions
+## Installation instructions
 If you used a version of Utilities older than Beta 9, please refer to "Update Instructions" instead.
 
 To install, connect the Prizm calculator to the computer with a miniUSB<->USB cable. On the calculator, press F1 when a pop-up appears on the screen. Wait for the USB connection to be established. When it's finished, your Prizm will appear on your computer as if it were a pendisk.
