@@ -2,7 +2,7 @@
 
 The Utilities add-in enhances your Casio Prizm calculator by providing functionality not originally found in the OS, or by providing enhanced alternatives to existing functionality.
 
-# Features:
+## Features
 
   - Clock functionality - see and set the current time and date. Multiple time and date formats supported.
 
@@ -32,15 +32,15 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
   - Many settings to customize the behavior and looks of the add-in to your taste.
   
-# And as a bonus...
+## And as a bonus...
 
   - Weights less than 140 KiB, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
   
   - Really fast to start up - it's usually even faster than the built-in app Run-Mat!
   
-  - It's open source (GitHub: GOES HERE)
+  - It's open source (GitHub: [https://github.com/gbl08ma/utilities](https://github.com/gbl08ma/utilities))
   
-# Installation instructions:
+# Installation instructions
 If you used a version of Utilities older than Beta 9, please refer to "Update Instructions" instead.
 
 To install, connect the Prizm calculator to the computer with a miniUSB<->USB cable. On the calculator, press F1 when a pop-up appears on the screen. Wait for the USB connection to be established. When it's finished, your Prizm will appear on your computer as if it were a pendisk.
@@ -49,8 +49,8 @@ Copy "utilities.g3a" to the root folder of the pendisk (i.e., out of any folders
 
 The first time you run Utilities you'll be presented with the tny. internet media group logo and then a first run wizard with some important notes about the add-in. You should definitely read it. You will then be guided to adjust the clock, something you'll have to do every time you take the batteries off. Don't worry, Utilities will remind you to do it and guide you through the process.
   
-# Update instructions: 
-(only applies if you used Utilities before Beta 9)
+## Update instructions
+(only applies if you used Utilities before Beta 9. If that's not the case, just follow the instalation instructions, copying utilities.g3a over the old one)
  
 This bit is really, really important as there are some folder names that changed with this new release; also, not all files are compatible (calendar events and tasks are compatible, though). You must follow the following instructions for Utilities Beta 9 to work properly: 
 
@@ -61,7 +61,7 @@ This bit is really, really important as there are some folder names that changed
   - Copy utilties.g3a to the root folder of the calculator, overwriting the old one. 
   - Safely disconnect the calculator from the computer. You are ready to use the new version once your calculator finishes updating the Main Memory...
   
-# Usage instructions
+## Usage instructions
 Everything should be pretty much self-explanatory - Utilities is made to dispense the Read-Me :). Because of that, only less obvious things will be detailed here. To open the settings menu, press Shift+Menu while Utilities is running.
 
 The calculator lock function will guide you through the process of setting a password, the first time you use it. You can contact gbl08ma if for some reason you wish to disable this function (be prepared to follow instructions in a very exact way).
@@ -70,20 +70,20 @@ The CPU clock adjustment tool, as well as the file copying tool, only appear whe
 
 The Add-In manager and the file copying function (the latter is not shown by default) are still unstable and may cause system errors. If you see a System Error, you should try pressing Menu and then 1 to try to dismiss it, or you can press EXIT to reboot the calculator. 99% of the times no data is lost or serious damage is done in the event of System Errors.
 
-# Checking for updates
+## Checking for updates
 Utilities, like most software, receives updates from time to time. You should check for updates to Utilities periodically, to ensure you have the greatest feature pack and the most stable version. To check for new versions, you should visit the following page:
 
 [http://gbl08ma.com/casio-prizm-software/](http://http://gbl08ma.com/casio-prizm-software/)
 
 If the above page isn't available, you can try checking for news at the tny. internet media website:
 
-http://i.tny.im/
+[http://i.tny.im/](http://i.tny.im/)
 
 Finally, if none of these websites are available, or if you need to contact the authors, this is the email:
 
 gbl08ma@gmail.com
 
-# License
+## License
 
 The add-in is available under the GNU GPL version 2. A license should have come with this read-me and the utilities.g3a file. If not, the license is available online at https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,7 +93,7 @@ Distributing this Read-Me along with the g3a binary is not mandatory.
 
 Any derivative work based on this software must clearly state it is not the original Utilities add-in by gbl08ma at tny. internet media.
 
-# Last words
+## Last words
 Utilities is the result of over one year of research, work and extensive testing. That said, we can't guarantee you will have no problems using the add-in or that everything will work as described. You are welcome to report problems to the contacts above, as well as modify the source code to your needs as long as you respect the license.
 
 We hope you enjoy using Utilities as much as we did developing it. And if this add-in ever becomes useful, you just found a secret feature ;)
