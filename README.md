@@ -4,29 +4,29 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
 
 ## Features
 
-  - Clock functionality - see and set the current time and date. Multiple time and date formats supported.
+  - **Clock functionality** - see and set the current time and date. Multiple time and date formats supported.
 
-  - Chronometer functionality - 20 timers that can go upwards or downwards, and be paused (accuracy: +/- 7 ms)
+  - **Chronometer functionality** - 20 timers that can go upwards or downwards, and be paused (accuracy: +/- 7 ms)
   
-  - Calendar - besides seeing any calendar month, you can add events on specific days (useful for storing exam dates and assignment due dates). Events can be edited, deleted and copied or moved to other days. You can easily set a stopwatch to remind you about a certain event.
+  - **Calendar** - besides seeing any calendar month, you can add events on specific days (useful for storing exam dates and assignment due dates). Events can be edited, deleted and copied or moved to other days. You can easily set a stopwatch to remind you about a certain event.
   
-  - Task list - like calendar events, but with no set date.
+  - **Task list** - like calendar events, but with no set date.
   
-  - Power management - fine adjustment of the power off and backlight timeouts, as well as brightness level. Advanced users can also set the CPU clock speed (overclock or underclock).
+  - **Power management** - fine adjustment of the power off and backlight timeouts, as well as brightness level. Advanced users can also set the CPU clock speed (overclock or underclock).
   
-  - File manager - more advanced than the one provided by Casio in the Memory menu, with Utilities you can move files between folders, rename files and folders, view text files and calculate the SHA-256 sum of files. Long file names supported.
+  - **File manager** - more advanced than the one provided by Casio in the Memory menu, with Utilities you can move files between folders, rename files and folders, view text files and calculate the SHA-256 sum of files. Long file names supported.
   
-  - Lantern - turn your Prizm into a expensive lantern! Modes supported: steady light, flashing light, morse light (screen lightens up while you press a key) and color light.
+  - **Lantern** - turn your Prizm into a expensive lantern! Modes supported: steady light, flashing light, morse light (screen lightens up while you press a key) and color light.
   
-  - Memory usage viewer - graphic display of the memory usage (main and storage) of the calculator.
+  - **Memory usage viewer** - graphic display of the memory usage (main and storage) of the calculator.
   
-  - Function key color adjuster - change the color of the function key labels throughout the OS.
+  - **Function key color adjuster** - change the color of the function key labels throughout the OS.
   
-  - Calculator lock - "lock" the calculator with a password to avoid having curious people messing around with your calculator. Not suitable as a high-security lock (for now, it's easy to bypass). You can set Utilities to turn off the calculator after locking. And after unlocking, you can set the calculator to open Run-Mat or ask you if you want to do it. To return from Run-Mat back to Utilities, press Shift and Exit simultaneously.
+  - **Calculator lock** - "lock" the calculator with a password to avoid having curious people messing around with your calculator. Not suitable as a high-security lock (for now, it's easy to bypass). You can set Utilities to turn off the calculator after locking. And after unlocking, you can set the calculator to open Run-Mat or ask you if you want to do it. To return from Run-Mat back to Utilities, press Shift and Exit simultaneously.
   
-  If you fear that the lock function may cause problems at some point (e.g. locking yourself out during an exam), contact gbl08ma for instructions on how to disable it.
+    - If you fear that the lock function may cause problems at some point (e.g. locking yourself out during an exam), contact gbl08ma for instructions on how to disable it.
   
-  - Add-in manager - allows for hiding add-ins from the Main Menu without uninstalling them, when they are not necessary. Currently it is an unstable feature due to OS limitations, sometimes causing system errors.
+  - **Add-in manager** - allows for hiding add-ins from the Main Menu without uninstalling them, when they are not necessary. Currently it is an unstable feature due to OS limitations, sometimes causing system errors.
   
   - Save the current time to the alpha/Basic variable T. This is useful for doing calculations around a certain time. Press the XoT key on the home screen to call the functionality.
   
@@ -34,7 +34,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
 ## And as a bonus...
 
-  - Weights less than 140 KiB, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
+  - **Weights less than 140 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
   
   - Really fast to start up - it's usually even faster than the built-in app Run-Mat!
   
@@ -85,7 +85,7 @@ gbl08ma@gmail.com
 
 ## License
 
-The add-in is available under the GNU GPL version 2. A license should have come with this read-me and the utilities.g3a file. If not, the license is available online at https://www.gnu.org/licenses/gpl-2.0.html
+The add-in is available under the GNU GPL version 2. A license should have come with this read-me and the utilities.g3a file. If not, the license is available online at [https://www.gnu.org/licenses/gpl-2.0.html](https://www.gnu.org/licenses/gpl-2.0.html)
 
 See the disclaimer at the end of this file or the messages on the about screen of the add-in (accessible from the Settings screen).
 
