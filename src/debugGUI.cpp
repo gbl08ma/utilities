@@ -15,6 +15,7 @@
 #include "debugGUI.hpp"
 #include "menuGUI.hpp"
 #include "settingsProvider.hpp"
+#include "linkProvider.hpp"
 
 int debugMode = 0; // when 1, debug mode is on
 int GetDebugMode() {
@@ -128,7 +129,10 @@ void masterControl() {
       if(menu.selection == 8) { 
         SetSetting(SETTING_IS_FIRST_RUN, 1, 0); // do not autosave, to allow full control of the operator
       }
-      if(menu.selection == 9) { 
+      if(menu.selection == 9) {
+        /*unsigned char filename[50] = "";
+        strcpy((char*)filename, (char*)"\\\\fls0\\eigensup.txt");
+        SerialFileTransfer( filename );*/
         CallbackAtQuitMainFunction( mycallback );
         /*char* VRAM = (char*)0xA8000000; 
         char* flashstart = (char*)0xA0000000;
