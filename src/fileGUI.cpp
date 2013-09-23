@@ -381,6 +381,9 @@ void fileInformation(File* files, Menu* menu) {
         fileViewAsText(files[menu->selection-1].filename);
         return;
         break;
+      case KEY_CTRL_F2:
+        compressFile(files[menu->selection-1].filename);
+        return;
     }
   }
 }
@@ -513,4 +516,61 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   }
   asrc[filesize] = '\0';
   doTextArea(&text);
+}
+
+void compressFile(char* filename) {
+  /*unsigned char *buf = NULL;
+  unsigned short pFile[MAX_FILENAME_SIZE];
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  unsigned int filesize = 0;
+  if(hFile >= 0) // Check if it opened
+  { //opened
+    filesize = Bfile_GetFileSize_OS(hFile);
+    buf = (unsigned char*)alloca(filesize*sizeof(unsigned char));
+    filesize = Bfile_ReadFile_OS(hFile, buf, filesize, 0);
+    Bfile_CloseFile_OS(hFile);
+  } else return;
+
+  unsigned char *encBuf;
+  lzg_uint32_t encSize, maxEncSize;
+
+  // Determine maximum size of compressed data
+  maxEncSize = LZG_MaxEncodedSize(filesize);
+
+  // Allocate memory for the compressed data
+  encBuf = (unsigned char*) alloca(maxEncSize);
+  if (encBuf)
+  {
+    // Compress
+    encSize = LZG_Encode(buf, filesize, encBuf, maxEncSize, NULL);
+    if (encSize)
+    {
+        // Compressed data is now in encBuf, use it...
+        char nfilename[MAX_FILENAME_SIZE] = "";
+        strcpy(nfilename, filename);
+        strcat(nfilename, (char*)".lzg");
+        Bfile_StrToName_ncpy(pFile, (unsigned char*)nfilename, strlen(nfilename)+1); 
+        int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, (int*)encSize);
+        if(BCEres >= 0) // Did it create?
+        {
+          BCEres = Bfile_OpenFile_OS(pFile, READWRITE, 0);
+          if(BCEres < 0) // Still failing?
+          {
+            return;
+          }
+          //Write contents
+          Bfile_WriteFile_OS(BCEres, encBuf, encSize);
+          Bfile_CloseFile_OS(BCEres);
+          return;
+        }
+    }
+    else
+      //fprintf(stderr, "Compression failed!\n");
+      debugMessage("  Comp failed", "  S:", encSize);
+  }
+  else
+    //fprintf(stderr, "Out of memory!\n");
+    debugMessage("Out of mem", "", 0);*/
+  
 }

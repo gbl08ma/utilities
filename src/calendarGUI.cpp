@@ -25,6 +25,7 @@
 #include "calendarProvider.hpp" 
 #include "keyboardProvider.hpp"
 #include "unixtimeExternal.hpp"
+#include "debugGUI.hpp"
 
 int bufmonth = 0; //this is global so that it's easier to make the events count refresh
 void viewCalendar() {
@@ -1140,9 +1141,23 @@ void copyEvent(CalendarEvent* event) {
     if(ey == (signed)event->startdate.year && em == (signed)event->startdate.month && ed == (signed)event->startdate.day) {
       return; //destination date is same as current event date
     }
+    // backup old date:
+    int od = event->startdate.day;
+    int om = event->startdate.month;
+    int oy = event->startdate.year;
+    // update start date:
     event->startdate.day = ed;
     event->startdate.month = em;
     event->startdate.year = ey;
+    // calculate new end date based on the difference between the old begin date and the new begin date
+    long int datediff = DateToDays(ey, em, ed) - DateToDays(oy, om, od);
+    long int newdatedays = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day) + datediff;
+    //update end date with difference:
+    int nd,nm,ny;
+    DaysToDate(newdatedays, &ny, &nm, &nd);
+    event->enddate.day = nd;
+    event->enddate.month = nm;
+    event->enddate.year = ny;
     if(GetEventsForDate(&event->startdate, CALENDARFOLDER, NULL)+1 > MAX_DAY_EVENTS) {
       AUX_DisplayErrorMessage( 0x2E );
     } else {
@@ -1186,9 +1201,19 @@ void moveEvent(CalendarEvent* event, int pos) {
     oldstartdate.day = event->startdate.day;
     oldstartdate.month = event->startdate.month;
     oldstartdate.year = event->startdate.year;
+    // update start date:
     event->startdate.day = ed;
     event->startdate.month = em;
     event->startdate.year = ey;
+    // calculate new end date based on the difference between the old begin date and the new begin date
+    long long int datediff = DateToDays(ey, em, ed) - DateToDays(oldstartdate.year, oldstartdate.month, oldstartdate.day);
+    long long int newdatedays = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day) + datediff;
+    //update end date with difference:
+    int nd,nm,ny;
+    DaysToDate(newdatedays, &ny, &nm, &nd);
+    event->enddate.day = nd;
+    event->enddate.month = nm;
+    event->enddate.year = ny;
     // add event on new day
     if(GetEventsForDate(&event->startdate, CALENDARFOLDER, NULL)+1 > MAX_DAY_EVENTS) {
       AUX_DisplayErrorMessage( 0x2E );

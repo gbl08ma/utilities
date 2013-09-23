@@ -338,3 +338,36 @@ int isDateValid(int y, int m, int d) {
   if (m > 12 || m <= 0 || d > getMonthDays(m) || m <= 0) return 0;
   else return 1;
 }
+
+// The following two are used to calculate date differences in the calendar event copying/moving function
+
+// converts an amount of days to a date
+// result goes in the three last parameters
+void DaysToDate(long long int d, int* eyear, int* emonth, int* eday)
+{
+  long long int y, ddd, mi;
+
+  y = (10000LL*d + 14780LL)/3652425LL;
+  ddd = d - (y*365LL + y/4LL - y/100LL + y/400LL);
+  if (ddd < 0LL) {
+    y--;
+    ddd = d - (y*365LL + y/4LL - y/100LL + y/400LL);
+    }
+  mi = (52LL + 100LL*ddd)/3060LL;
+  long long int y1 = y + (mi + 2LL)/12LL;
+  long long int m1 = (mi + 2LL)%12LL + 1LL;
+  long long int d1 = ddd - (mi*306LL + 5LL)/10LL + 1LL;
+  *eyear = y1;
+  *emonth = m1;
+  *eday = d1;
+}
+
+// converts a date to an amount of days.
+// returns result. parameters stay untouched
+long long int DateToDays(int y, int m, int d)
+{
+  long long ly,lm;
+  lm = ((long long int)m + 9LL) % 12LL;
+  ly = (long long int)y - (long long int)m/10LL;
+  return ly*365LL + ly/4LL - ly/100LL + ly/400LL + (lm*306LL + 5LL)/10LL + ( (long long int)d - 1LL );
+}
