@@ -357,16 +357,16 @@ void DaysToDate(long long int d, int* eyear, int* emonth, int* eday)
   long long int y1 = y + (mi + 2LL)/12LL;
   long long int m1 = (mi + 2LL)%12LL + 1LL;
   long long int d1 = ddd - (mi*306LL + 5LL)/10LL + 1LL;
-  *eyear = y1;
-  *emonth = m1;
-  *eday = d1;
+  *eyear = (int)y1;
+  *emonth = (int)m1;
+  *eday = (int)d1;
 }
 
 // converts a date to an amount of days.
 // returns result. parameters stay untouched
 long long int DateToDays(int y, int m, int d)
 {
-  long long ly,lm;
+  long long int ly,lm;
   lm = ((long long int)m + 9LL) % 12LL;
   ly = (long long int)y - (long long int)m/10LL;
   return ly*365LL + ly/4LL - ly/100LL + ly/400LL + (lm*306LL + 5LL)/10LL + ( (long long int)d - 1LL );

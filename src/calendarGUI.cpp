@@ -1150,8 +1150,8 @@ void copyEvent(CalendarEvent* event) {
     event->startdate.month = em;
     event->startdate.year = ey;
     // calculate new end date based on the difference between the old begin date and the new begin date
-    long int datediff = DateToDays(ey, em, ed) - DateToDays(oy, om, od);
-    long int newdatedays = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day) + datediff;
+    long long int datediff = DateToDays(ey, em, ed) - DateToDays(oy, om, od);
+    long long int newdatedays = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day) + datediff;
     //update end date with difference:
     int nd,nm,ny;
     DaysToDate(newdatedays, &ny, &nm, &nd);
