@@ -17,6 +17,8 @@
 #include "settingsProvider.hpp"
 #include "unixtimeExternal.hpp"
 
+#include "debugGUI.hpp"
+
 const char *dayofweek[] = {"Sunday",
                            "Monday",
                            "Tuesday",
@@ -343,23 +345,20 @@ int isDateValid(int y, int m, int d) {
 
 // converts an amount of days to a date
 // result goes in the three last parameters
-void DaysToDate(long long int d, int* eyear, int* emonth, int* eday)
-{
-  long long int y, ddd, mi;
-
-  y = (10000LL*d + 14780LL)/3652425LL;
-  ddd = d - (y*365LL + y/4LL - y/100LL + y/400LL);
-  if (ddd < 0LL) {
-    y--;
-    ddd = d - (y*365LL + y/4LL - y/100LL + y/400LL);
-    }
-  mi = (52LL + 100LL*ddd)/3060LL;
-  long long int y1 = y + (mi + 2LL)/12LL;
-  long long int m1 = (mi + 2LL)%12LL + 1LL;
-  long long int d1 = ddd - (mi*306LL + 5LL)/10LL + 1LL;
-  *eyear = (int)y1;
-  *emonth = (int)m1;
-  *eday = (int)d1;
+void DaysToDate(long day_number, long* year, long* month, long* day) {
+  *year = ((long long)10000 * day_number + 14780) / (long long)3652425;
+  long ddd = day_number - (365L * *year + *year / 4L - *year / 100 + *year / 400L);
+  if (ddd < 0) {
+    *year = *year - 1;
+    ddd = day_number - (365L * *year + *year / 4L - *year / 100L + *year / 400L);
+  }
+  long mi = (100L * ddd + 52L) / 3060L;
+  *month = (mi + 2) % 12 + 1;
+  //*year = *year + (mi + 2) / 12;
+  long mi2 = (long)mi+2;
+  long mi3 = (long)mi2/12;
+  *year = *year + mi3;
+  *day = ddd - (mi * 306 + 5) / 10 + 1;
 }
 
 // converts a date to an amount of days.

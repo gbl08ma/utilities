@@ -65,6 +65,6 @@ int getMSdiff(int prevticks, int newticks);
 int isTimeValid(int h, int m, int s);
 int isDateValid(int y, int m, int d);
 
-void DaysToDate(long long int d, int* eyear, int* emonth, int* eday);
+void DaysToDate(long int d, long int* eyear, long int* emonth, long int* eday);
 long long int DateToDays(int y, int m, int d);
 #endif

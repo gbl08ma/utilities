@@ -1150,10 +1150,11 @@ void copyEvent(CalendarEvent* event) {
     event->startdate.month = em;
     event->startdate.year = ey;
     // calculate new end date based on the difference between the old begin date and the new begin date
-    long long int datediff = DateToDays(ey, em, ed) - DateToDays(oy, om, od);
-    long long int newdatedays = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day) + datediff;
+    long int datediff = DateToDays(ey, em, ed) - DateToDays(oy, om, od);
+    long int odatedays = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day);
+    long int newdatedays = odatedays + datediff;
     //update end date with difference:
-    int nd,nm,ny;
+    long int nd,nm,ny;
     DaysToDate(newdatedays, &ny, &nm, &nd);
     event->enddate.day = nd;
     event->enddate.month = nm;
@@ -1207,9 +1208,10 @@ void moveEvent(CalendarEvent* event, int pos) {
     event->startdate.year = ey;
     // calculate new end date based on the difference between the old begin date and the new begin date
     long long int datediff = DateToDays(ey, em, ed) - DateToDays(oldstartdate.year, oldstartdate.month, oldstartdate.day);
-    long long int newdatedays = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day) + datediff;
+    long int odatedays = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day);
+    long int newdatedays = odatedays + datediff;
     //update end date with difference:
-    int nd,nm,ny;
+    long int nd,nm,ny;
     DaysToDate(newdatedays, &ny, &nm, &nd);
     event->enddate.day = nd;
     event->enddate.month = nm;
