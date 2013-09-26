@@ -51,7 +51,7 @@ int getRTCisUnadjusted();
 void currentDateToString(char *buffer, int format); // usually one just specifies GetSetting(SETTING_DATEFORMAT) for the format
 void dateToString(char *buffer, int y, int m, int d, int format); // same here
 void currentTimeToString(char *buffer, int format); // usually one just specifies GetSetting(SETTING_TIMEFORMAT) for the format
-void timeToString(char *buffer, int h, int min, int sec, int format); // same here
+void timeToString(char *buffer, int h, int min, int sec, int format, int showSeconds=1); // same here
 
 long long int currentUnixTime(); // please note, this is milliseconds from epoch and not seconds
 

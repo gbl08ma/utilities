@@ -178,9 +178,9 @@ void dateToString(char *buffer, int y, int m, int d, int format)
 
 void currentTimeToString(char *buffer, int format)
 {
-  timeToString(buffer, getCurrentHour(), getCurrentMinute(), getCurrentSecond(), format);
+  timeToString(buffer, getCurrentHour(), getCurrentMinute(), getCurrentSecond(), format, GetSetting(SETTING_CLOCK_SECONDS));
 }
-void timeToString(char *buffer, int h, int min, int sec, int format)
+void timeToString(char *buffer, int h, int min, int sec, int format, int showSeconds)
 {
   char hour[2];
   char minute[2];
@@ -198,10 +198,12 @@ void timeToString(char *buffer, int h, int min, int sec, int format)
       
       if (min < 10) { strcat(buffer, "0"); }
       strcat(buffer, minute);
-      strcat(buffer, ":");
-      
-      if (sec < 10) { strcat(buffer, "0"); }
-      strcat(buffer, second);
+      if(showSeconds) {
+        strcat(buffer, ":");
+        
+        if (sec < 10) { strcat(buffer, "0"); }
+        strcat(buffer, second);
+      }
       break;
     case 1: // HH:MM:SS AM/PM 12-hour
       int pm = 0;
@@ -217,10 +219,12 @@ void timeToString(char *buffer, int h, int min, int sec, int format)
       
       if (min < 10) { strcat(buffer, "0"); }
       strcat(buffer, minute);
-      strcat(buffer, ":");
-      
-      if (sec < 10) { strcat(buffer, "0"); }
-      strcat(buffer, second);
+      if(showSeconds) {
+        strcat(buffer, ":");
+        
+        if (sec < 10) { strcat(buffer, "0"); }
+        strcat(buffer, second);
+      }
       
       if(pm) {
         strcat(buffer, " PM");
