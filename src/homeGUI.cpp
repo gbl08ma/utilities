@@ -61,16 +61,9 @@ void showHome(chronometer* chrono) {
     DisplayStatusArea();
     DefineStatusMessage((char*)"", 1, 0, 0);
     
-    char timeStr[14] = "";
     // Print time
-    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
-    printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
-    if (GetSetting(SETTING_THEME) == 1) {
-      drawLongDate(90, NULL, COLOR_WHITE, COLOR_BLACK, 1);
-      if (GetSetting(SETTING_DISPLAY_STATUSBAR)) darkenStatusbar();
-    } else {
-      drawLongDate(90, NULL, COLOR_BLACK, COLOR_WHITE, NULL);
-    }
+    drawHomeClock(GetSetting(SETTING_CLOCK_TYPE), fgcolor, bgcolor);
+    if (GetSetting(SETTING_DISPLAY_STATUSBAR) && GetSetting(SETTING_THEME)) darkenStatusbar();
 
     //Show FKeys
     if (GetSetting(SETTING_DISPLAY_FKEYS)) {

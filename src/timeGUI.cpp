@@ -14,10 +14,13 @@
 
 #include "timeProvider.hpp"
 #include "timeGUI.hpp"
+#include "graphicsProvider.hpp"
 #include "settingsProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "tbcdProvider.hpp"
 #include "selectorGUI.hpp"
+
+#include "debugGUI.hpp"
 
 void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminiinvert) {
   if (format==NULL) format = GetSetting(SETTING_LONGDATEFORMAT);
@@ -161,6 +164,90 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
     PrintMiniMini( &textX, &textY, (unsigned char*)buffer2, (miniminiinvert == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
   }
   return;
+}
+
+void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg) {
+  // may be extended in the future
+  drawFilledCircle(cx, cy, radius, colorfg);
+  drawFilledCircle(cx, cy, radius-2, colorbg);
+}
+double sine(double x)
+{
+    // useful to pre-calculate
+    double x2 = x*x;
+    double x4 = x2*x2;
+
+    // Calculate the terms
+    // As long as abs(x) < sqrt(6), which is 2.45, all terms will be positive.
+    // Values outside this range should be reduced to [-pi/2, pi/2] anyway for accuracy.
+    // Some care has to be given to the factorials.
+    // They can be pre-calculated by the compiler,
+    // but the value for the higher ones will exceed the storage capacity of int.
+    // so force the compiler to use unsigned long longs (if available) or doubles.
+    double t1 = x * (1.0 - x2 / (2*3));
+    double x5 = x * x4;
+    double t2 = x5 * (1.0 - x2 / (6*7)) / (1.0* 2*3*4*5);
+    double x9 = x5 * x4;
+    double t3 = x9 * (1.0 - x2 / (10*11)) / (1.0* 2*3*4*5*6*7*8*9);
+    double x13 = x9 * x4;
+    double t4 = x13 * (1.0 - x2 / (14*15)) / (1.0* 2*3*4*5*6*7*8*9*10*11*12*13);
+    
+    double x17 = x13 * x4;
+    double t5 = x17 * (1.0 - x2 / (18*19)) / (1.0* 2*3*4*5*6*7*8*9*10*11*12*13*17*15*16*17);
+    // add some more if your accuracy requires them.
+    // But remember that x is smaller than 2, and the factorial grows very fast
+    // so I doubt that 2^17 / 17! will add anything.
+    // Even t4 might already be too small to matter when compared with t1.
+
+    // Sum backwards
+    double result = t5;
+    result += t4;
+    result += t3;
+    result += t2;
+    result += t1;
+
+    return result;
+}
+double cosine(double x) {
+  return sine(M_PI/2-x);
+}
+void drawAnalogClockSecondNeedle(int s, int cx, int cy, double radius, int colorfg) {
+  double angle=-90.0;
+  double sx,sy;
+  double length = radius - 5.0;
+  sx=cx+length*cosine((angle+s*6.0)*M_PI/180.0);
+  sy=cy+length*sine((angle+s*6.0)*M_PI/180.0);
+  drawLine(cx,cy,sx,sy,colorfg);
+}
+
+void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, int colorfg) {
+  double angle=-90;
+  double sx,sy;
+  double length = radius - 10;
+  sx=cx+length*cosine((angle+m*6)*M_PI/180);
+  sy=cy+length*sine((angle+m*6)*M_PI/180);
+  drawLine(cx,cy,sx,sy, colorfg);
+}
+
+void drawAnalogClockHourNeedle(int h, int m, int s, int cx, int cy, double radius, int colorfg) {
+  double angle=-90;
+  double sx,sy;
+  double length = radius - 20;
+  sx=cx+length*cosine((angle+h*30)*M_PI/180);
+  sy=cy+length*sine((angle+h*30)*M_PI/180);
+  drawLine(cx,cy,sx,sy, colorfg);
+}
+
+
+void drawAnalogClock(int cx, int cy, int radius, int colorbg, int colorfg) {
+  int h = getCurrentHour();
+  if(h>12) h=h-12;
+  int m = getCurrentMinute();
+  int s = getCurrentSecond();
+  drawAnalogClockFace(cx, cy, radius, colorbg, colorfg);
+  drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg);
+  drawAnalogClockMinuteNeedle(m, s, cx, cy, radius, colorfg);
+  drawAnalogClockHourNeedle(h, m, s, cx, cy, radius, colorfg);
 }
 
 void setTimeGUI(int canExit) {
@@ -368,4 +455,107 @@ void currentTimeToBasicVar() {
         break;
     }
   }
+}
+
+void drawHomeClock(int format, int fgcolor, int bgcolor) {
+  char timeStr[14] = "";
+  if(format == 0) {
+    // show digital time and long date
+    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
+    printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
+    if (GetSetting(SETTING_THEME) == 1) {
+      drawLongDate(90, NULL, COLOR_WHITE, COLOR_BLACK, 1);
+    } else {
+      drawLongDate(90, NULL, COLOR_BLACK, COLOR_WHITE, NULL);
+    }
+  } else if (format == 1) {
+    // show digital time only
+    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
+    printCentered((unsigned char*)timeStr, 4*24, fgcolor, bgcolor);
+  } else if (format == 2) {
+    // show digital time and short date
+    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
+    printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
+    currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
+    printCentered((unsigned char*)timeStr, 5*24, fgcolor, bgcolor);
+  } else if (format == 3) {
+    // show long date only
+    if (GetSetting(SETTING_THEME) == 1) {
+      drawLongDate(LCD_HEIGHT_PX/2-30, NULL, COLOR_WHITE, COLOR_BLACK, 1);
+    } else {
+      drawLongDate(LCD_HEIGHT_PX/2-30, NULL, COLOR_BLACK, COLOR_WHITE, NULL);
+    }
+  } else if (format == 4) {
+    // show short date only
+    currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
+    printCentered((unsigned char*)timeStr, 4*24, fgcolor, bgcolor);
+  } else if (format == 5) {
+    // show analog clock only
+    int cx = LCD_WIDTH_PX/2;
+    int cy = LCD_HEIGHT_PX/2;
+    int radius = 70;
+    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+  } else if (format == 6) {
+    // show analog clock with digital time
+    int cx = 80;
+    int cy = LCD_HEIGHT_PX/2;
+    int radius = 70;
+    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
+    char buffer[20] = "";
+    strcpy(buffer, "  ");
+    strcat(buffer, timeStr);
+    PrintXY(10, 4, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+  } else if (format == 7) {
+    // show analog clock with digital time and long date
+    int cx = 89;
+    int cy = 58+24;
+    int radius = 50;
+    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
+    char buffer[20] = "";
+    strcpy(buffer, "  ");
+    strcat(buffer, timeStr);
+    PrintXY(10, 3, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+    if (GetSetting(SETTING_THEME) == 1) {
+      drawLongDate(120, NULL, COLOR_WHITE, COLOR_BLACK, 1);
+    } else {
+      drawLongDate(120, NULL, COLOR_BLACK, COLOR_WHITE, NULL);
+    }
+  } else if (format == 8) {
+    // show analog clock with digital time and short date
+    int cx = 80;
+    int cy = LCD_HEIGHT_PX/2;
+    int radius = 70;
+    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
+    char buffer[20] = "";
+    strcpy(buffer, "  ");
+    strcat(buffer, timeStr);
+    PrintXY(10, 3, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+    currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
+    strcpy(buffer, "  ");
+    strcat(buffer, timeStr);
+    PrintXY(10, 5, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+  } else if (format == 9) {
+    // show analog clock with long date
+    int cx = LCD_WIDTH_PX/2;
+    int cy = 58+24;
+    int radius = 50;
+    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+    if (GetSetting(SETTING_THEME) == 1) {
+      drawLongDate(120, NULL, COLOR_WHITE, COLOR_BLACK, 1);
+    } else {
+      drawLongDate(120, NULL, COLOR_BLACK, COLOR_WHITE, NULL);
+    }
+  } else if (format == 10) {
+    // show analog clock with short date
+    int cx = LCD_WIDTH_PX/2;
+    int cy = 58+24;
+    int radius = 50;
+    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+    currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
+    printCentered((unsigned char*)timeStr, 120+24, fgcolor, bgcolor);
+  }
+  // 11 is for showing nothing at all... so put nothing in VRAM.
 }

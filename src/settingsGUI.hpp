@@ -17,5 +17,6 @@
 
 void settingsMenu();
 void lockSettingsMenu();
+void clockSettingsMenu();
 
 #endif

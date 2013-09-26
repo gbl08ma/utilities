@@ -15,6 +15,8 @@
 #include "settingsProvider.hpp"
 #include "constantsProvider.hpp"
 
+#define SETTINGSFILE_VERSION 3 // NOTE: update this when changing the amount or meaning of settings!
+int setting_self_fileversion = SETTINGSFILE_VERSION; // this is a special setting
 int setting_timeformat = 0; // 0 = 24-hour HH:MM:SS ; 1 = 12-hour HH:MM:SS AM/PM
 int setting_longdateformat = 0;
 /* 0 = "Weekday, Month 12"&mini 4-digits year below
@@ -45,12 +47,30 @@ int setting_enable_lock = 1; //whether lock functionality is available or not. S
 int setting_lock_autooff = 0; //whether to turn off automatically after locking the calc
 int setting_lock_on_exe = 0; //when enabled, calculator is locked when EXE is pressed on the home screen (i.e. legacy support for people used to the old lock add-in).
 int setting_unlock_runmat = 0; //whether to jump to Run-Mat when calculator is unlocked. 2 when user should be asked.
+int setting_clock_type = 0;
+/* what clock to show on home screen.
+   0 = digital time and long date - "traditional", like versions up to 1.0
+   1 = just digital time
+   2 = just digital time and short date
+   3 = just long date
+   4 = just short date
+   5 = analog clock, nothing else
+   6 = analog clock with digital time
+   7 = analog clock with d. time and long date
+   8 = analog clock with d. time and short date
+   9 = analog clock with long date
+   10 = analog clock with short date
+   11 = show nothing at all
+*/
+int setting_clock_seconds = 1; // whether to show seconds in clock
 
 // Routines for accessing and setting settings
 // NOTE: directly accessing setting_* variables is now strictly forbidden!
 
 int GetSetting(int setting) {
   switch(setting) {
+    case SETTING_SELF_FILEVERSION:
+      return setting_self_fileversion;
     case SETTING_TIMEFORMAT:
       return setting_timeformat;
     case SETTING_LONGDATEFORMAT:
@@ -81,6 +101,10 @@ int GetSetting(int setting) {
       return setting_lock_on_exe;
     case SETTING_UNLOCK_RUNMAT:
       return setting_unlock_runmat;
+    case SETTING_CLOCK_TYPE:
+      return setting_clock_type;
+    case SETTING_CLOCK_SECONDS:
+      return setting_clock_seconds;
     default:
       return 0;
   }
@@ -88,6 +112,9 @@ int GetSetting(int setting) {
 
 void SetSetting(int setting, int value, int autosave) {
   switch(setting) {
+    case SETTING_SELF_FILEVERSION:
+      // do nothing. this "setting" is not meant to be changed at runtime.
+      break;
     case SETTING_TIMEFORMAT:
       setting_timeformat = value;
       break;
@@ -141,6 +168,11 @@ void SetSetting(int setting, int value, int autosave) {
     case SETTING_UNLOCK_RUNMAT:
       setting_unlock_runmat = value;
       break;
+    case SETTING_CLOCK_TYPE:
+      setting_clock_type = value;
+      break;
+    case SETTING_CLOCK_SECONDS:
+      setting_clock_seconds = value;
     default:
       break;
   }
@@ -152,18 +184,22 @@ int LoadSettings() { // returns 0 on success, 1 if settings were reset (first ru
   int size;
   MCSGetDlen2(DIRNAME, SETTINGSFILE, &size);
   if (size == 0) return 1;
-  // compare read file size to number of settings to detect if there is an incompatibility (older version).
-  // if there is, delete old file and start fresh (first run again)
-  if (size != NUMBER_OF_SETTINGS+1) return 1; //this will give default values for the settings, including is_first_run
 
-  unsigned char buffer[NUMBER_OF_SETTINGS]; // settings count starts at zero so this already allows for the null char at the end
-  MCSGetData1(0, NUMBER_OF_SETTINGS, buffer);
+  unsigned char buffer[NUMBER_OF_SETTINGS+2];
+  MCSGetData1(0, NUMBER_OF_SETTINGS+1, buffer); // +1 because NUMBER_OF_SETTINGS does not include the file version
+  // detect if the current settings file version is compatible with the one we're expecting.
+  // file version is always the first byte, except for the settings files of versions 1.0 and earlier.
+  // for these, the filesize happened to be equal or smaller than 16. The following is a dirty hack to handle such files.
+  // (later, it was found that the file size doesn't relate directly to the amount of settings, and that's why this code is newly written)
+  if (size <= 16) return 1; // reset settings
+  // looks like the file is a "modern" one, so check the version byte.
+  if (buffer[0] != SETTINGSFILE_VERSION) return 1; //if incompatible, reset settings
   
-  int curupd = 1; //setting count starts at one
+  int curupd = 1; //setting count starts at one (zero is for the file version, which we already took care of)
   // this assumes same setting IDs across files. Also, setting IDs must be consecutive
   // still, if a setting has no correspondence, SetSetting will just ignore the command...
   while(curupd <= NUMBER_OF_SETTINGS) {
-    SetSetting(curupd, buffer[curupd-1], 0); // do not save every time, as we're loading right now...
+    SetSetting(curupd, buffer[curupd], 0); // do not save every time, as we're loading right now...
     curupd++;
   }
   return 0;
@@ -176,11 +212,11 @@ void SaveSettings() {
   { // directory already exists, so delete the exiting file that may be there
     MCSDelVar2(DIRNAME, SETTINGSFILE);
   }
-  unsigned char buffer[NUMBER_OF_SETTINGS]; // settings count starts at zero so this already allows for the null char at the end
-  int curupd = 1; //setting count starts at one
-  while(curupd <= NUMBER_OF_SETTINGS) {
-    buffer[curupd-1] = GetSetting(curupd);
+  unsigned char buffer[NUMBER_OF_SETTINGS+2];
+  int curupd = 0; //setting count starts at one, but we want to retrieve the file version too...
+  while(curupd <= NUMBER_OF_SETTINGS+1) { //+1 because here we want to save the file version too
+    buffer[curupd] = GetSetting(curupd);
     curupd++;
   }
-  MCSPutVar2(DIRNAME, SETTINGSFILE, NUMBER_OF_SETTINGS, buffer);
+  MCSPutVar2(DIRNAME, SETTINGSFILE, NUMBER_OF_SETTINGS+1, buffer); //+1 on purpose again, for the same reason
 }

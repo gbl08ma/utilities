@@ -96,6 +96,39 @@ void drawLine(int x1, int y1, int x2, int y2, int color) {
         } 
     } 
 }
+
+// Wikipedia/Bresenham 
+void drawFilledCircle(int centerx, int centery, int radius, color_t color) { 
+  int f = 1 - radius; 
+  int ddF_x = 1; 
+  int ddF_y = -2 * radius; 
+  int x = 0; 
+  int y = radius; 
+  
+  drawLine(centerx, centery + radius, centerx, centery - radius, color); 
+  drawLine(centerx + radius, centery, centerx - radius, centery, color); 
+  
+  while(x < y) 
+    { 
+      // ddF_x == 2 * x + 1; 
+      // ddF_y == -2 * y; 
+      // f == x*x + y*y - radius*radius + 2*x - y + 1; 
+      if(f >= 0)  
+   { 
+     y--; 
+     ddF_y += 2; 
+     f += ddF_y; 
+   } 
+      x++; 
+      ddF_x += 2; 
+      f += ddF_x;     
+      drawLine(centerx + x, centery + y, centerx - x, centery + y, color); 
+      drawLine(centerx + x, centery - y, centerx - x, centery - y, color); 
+      drawLine(centerx + y, centery + x, centerx - y, centery + x, color); 
+      drawLine(centerx + y, centery - x, centerx - y, centery - x, color); 
+    } 
+} 
+
 //ReplaceColor By Kerm:
 void VRAMReplaceColorInRect(int x, int y, int width, int height, color_t color_old, color_t color_new) { 
    //color_t* VRAM = GetVRAMAddress();

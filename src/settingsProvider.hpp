@@ -20,6 +20,7 @@
 // SETTINGS engine
 /*App settings.*/
 // the default value of the settings goes on settingsProvider.cpp
+#define SETTING_SELF_FILEVERSION 0
 #define SETTING_TIMEFORMAT 1
 #define SETTING_LONGDATEFORMAT 2
 #define SETTING_DATEFORMAT 3
@@ -35,8 +36,10 @@
 #define SETTING_LOCK_AUTOOFF 13
 #define SETTING_LOCK_ON_EXE 14
 #define SETTING_UNLOCK_RUNMAT 15
+#define SETTING_CLOCK_TYPE 16
+#define SETTING_CLOCK_SECONDS 17
 
-#define NUMBER_OF_SETTINGS 15 //NOTE update this when adding settings
+#define NUMBER_OF_SETTINGS 17 //NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
 /*End of settings*/ 
 
 int GetSetting(int setting);

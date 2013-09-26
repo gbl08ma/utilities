@@ -18,6 +18,7 @@ int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short col
 void plot(int x0, int y0, int color);
 void drawRectangle(int x, int y, int width, int height, unsigned short color);
 void drawLine(int x1, int y1, int x2, int y2, int color);
+void drawFilledCircle(int centerx, int centery, int radius, color_t color);
 void VRAMReplaceColorInRect(int x, int y, int width, int height, color_t color_old, color_t color_new);
 void darkenStatusbar();
 void darkenFkeys(int numkeys);

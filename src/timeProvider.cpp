@@ -140,6 +140,7 @@ void dateToString(char *buffer, int y, int m, int d, int format)
   itoa(y, (unsigned char*)year);
   itoa(m, (unsigned char*)month);
   itoa(d, (unsigned char*)day);
+  strcpy(buffer, (char*)"");
   switch(format)
   {
     case 0: // DD/MM/YYYY

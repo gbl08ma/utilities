@@ -24,7 +24,7 @@
 #include "lockGUI.hpp"
 
 void settingsMenu() {
-  MenuItem menuitems[13];
+  MenuItem menuitems[15];
   strcpy(menuitems[0].text, "Set time");
   
   strcpy(menuitems[1].text, "Set date");
@@ -35,30 +35,32 @@ void settingsMenu() {
   
   strcpy(menuitems[4].text, "Date format");
   
-  strcpy(menuitems[5].text, "Dark theme");
-  menuitems[5].type = MENUITEM_CHECKBOX;
+  strcpy(menuitems[5].text, "Clock appearance");
   
-  strcpy(menuitems[6].text, "Display statusbar");
+  strcpy(menuitems[6].text, "Dark theme");
   menuitems[6].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[7].text, "Show advanced tools");
+  strcpy(menuitems[7].text, "Display statusbar");
   menuitems[7].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[8].text, "Show F. keys labels");
+  strcpy(menuitems[8].text, "Show advanced tools");
   menuitems[8].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[9].text, "Startup brightness");
+  strcpy(menuitems[9].text, "Show F. keys labels");
+  menuitems[9].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[10].text, "Calc. lock settings");
+  strcpy(menuitems[10].text, "Startup brightness");
   
-  strcpy(menuitems[11].text, "Show events count");
-  menuitems[11].type = MENUITEM_CHECKBOX;
+  strcpy(menuitems[11].text, "Calc. lock settings");
   
-  strcpy(menuitems[12].text, "About this add-in");
+  strcpy(menuitems[12].text, "Show events count");
+  menuitems[12].type = MENUITEM_CHECKBOX;
+  
+  strcpy(menuitems[13].text, "About this add-in");
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=13;
+  menu.numitems=14;
   menu.scrollbar=1;
   menu.scrollout=1;
   menu.showtitle=0;
@@ -69,40 +71,40 @@ void settingsMenu() {
   strcpy(menu.title, "");
   strcpy(menu.statusText, "");
   while(1) {
-    menuitems[5].value = GetSetting(SETTING_THEME);
-    menuitems[6].value = GetSetting(SETTING_DISPLAY_STATUSBAR);
-    menuitems[7].value = GetSetting(SETTING_SHOW_ADVANCED);
-    menuitems[8].value = GetSetting(SETTING_DISPLAY_FKEYS);
-    menuitems[11].value = GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT);
+    menuitems[6].value = GetSetting(SETTING_THEME);
+    menuitems[7].value = GetSetting(SETTING_DISPLAY_STATUSBAR);
+    menuitems[8].value = GetSetting(SETTING_SHOW_ADVANCED);
+    menuitems[9].value = GetSetting(SETTING_DISPLAY_FKEYS);
+    menuitems[12].value = GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT);
     
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
       // deal with checkboxes first
-      if(menu.selection == 6) {
-        if(menuitems[5].value == MENUITEM_VALUE_CHECKED) menuitems[5].value=MENUITEM_VALUE_NONE;
-        else menuitems[5].value=MENUITEM_VALUE_CHECKED;
-        SetSetting(SETTING_THEME, menuitems[5].value, 1); 
-      }
       if(menu.selection == 7) {
         if(menuitems[6].value == MENUITEM_VALUE_CHECKED) menuitems[6].value=MENUITEM_VALUE_NONE;
         else menuitems[6].value=MENUITEM_VALUE_CHECKED;
-        SetSetting(SETTING_DISPLAY_STATUSBAR, menuitems[6].value, 1); 
+        SetSetting(SETTING_THEME, menuitems[6].value, 1); 
       }
       if(menu.selection == 8) {
         if(menuitems[7].value == MENUITEM_VALUE_CHECKED) menuitems[7].value=MENUITEM_VALUE_NONE;
         else menuitems[7].value=MENUITEM_VALUE_CHECKED;
-        SetSetting(SETTING_SHOW_ADVANCED, menuitems[7].value, 1); 
+        SetSetting(SETTING_DISPLAY_STATUSBAR, menuitems[7].value, 1); 
       }
       if(menu.selection == 9) {
         if(menuitems[8].value == MENUITEM_VALUE_CHECKED) menuitems[8].value=MENUITEM_VALUE_NONE;
         else menuitems[8].value=MENUITEM_VALUE_CHECKED;
-        SetSetting(SETTING_DISPLAY_FKEYS, menuitems[8].value, 1); 
+        SetSetting(SETTING_SHOW_ADVANCED, menuitems[8].value, 1); 
       }
-      if(menu.selection == 12) {
-        if(menuitems[11].value == MENUITEM_VALUE_CHECKED) menuitems[11].value=MENUITEM_VALUE_NONE;
-        else menuitems[11].value=MENUITEM_VALUE_CHECKED;
-        SetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT, menuitems[11].value, 1);
+      if(menu.selection == 10) {
+        if(menuitems[9].value == MENUITEM_VALUE_CHECKED) menuitems[9].value=MENUITEM_VALUE_NONE;
+        else menuitems[9].value=MENUITEM_VALUE_CHECKED;
+        SetSetting(SETTING_DISPLAY_FKEYS, menuitems[9].value, 1); 
+      }
+      if(menu.selection == 13) {
+        if(menuitems[12].value == MENUITEM_VALUE_CHECKED) menuitems[12].value=MENUITEM_VALUE_NONE;
+        else menuitems[12].value=MENUITEM_VALUE_CHECKED;
+        SetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT, menuitems[12].value, 1);
       }
       // deal with other menu items
       if(menu.selection == 1) { // set time
@@ -157,7 +159,11 @@ void settingsMenu() {
         SetSetting(SETTING_DATEFORMAT, format.value, 1);
       }
       
-      if(menu.selection == 10) { // set startup brightness
+      if(menu.selection == 6) { // set homescreen clock type
+        clockSettingsMenu();
+      }
+      
+      if(menu.selection == 11) { // set startup brightness
         Selector sel;
         strcpy(sel.title, "Set start brightness");
         strcpy(sel.subtitle, "");
@@ -171,10 +177,10 @@ void settingsMenu() {
         if (res == SELECTOR_RETURN_EXIT) continue;
         SetSetting(SETTING_STARTUP_BRIGHTNESS, sel.value, 1);
       }
-      if(menu.selection == 11) {
+      if(menu.selection == 12) {
         lockSettingsMenu();
       }
-      if(menu.selection == 13) {
+      if(menu.selection == 14) {
         showAbout();
       }
     }
@@ -275,6 +281,72 @@ void lockSettingsMenu() {
           SetSetting(SETTING_UNLOCK_RUNMAT, smallmenu.selection-1, 1);
         }
         MsgBoxPop();
+      }
+    }
+  }
+}
+
+void clockSettingsMenu() {
+  MenuItem menuitems[5];
+  strcpy(menuitems[0].text, "Set clock type");
+  menuitems[0].type = MENUITEM_NORMAL;
+  
+  strcpy(menuitems[1].text, "Show seconds");
+  menuitems[1].type = MENUITEM_CHECKBOX;
+  
+  Menu menu;
+  menu.items=menuitems;
+  menu.numitems=2;
+  menu.type=MENUTYPE_NORMAL;
+  menu.width=21;
+  menu.height=8;
+  menu.scrollbar=1;
+  menu.scrollout=1;
+  menu.showtitle=0;
+  menu.selection=1;
+  menu.scroll=0;
+  menu.allowMkey=0;
+  strcpy(menu.nodatamsg, "");
+  strcpy(menu.title, "");
+  strcpy(menu.statusText, "");
+  while(1) {
+    menuitems[1].value = GetSetting(SETTING_CLOCK_SECONDS);
+    int res = doMenu(&menu);
+    if(res == MENU_RETURN_EXIT) return;
+    else if(res == MENU_RETURN_SELECTION) {
+      if(menu.selection==1) {
+        int inscreen = 1;
+        int cur = GetSetting(SETTING_CLOCK_TYPE);
+        while(inscreen) {
+          Bdisp_AllClr_VRAM();
+          DisplayStatusArea();
+          int key;
+          drawHomeClock(cur, COLOR_BLACK, COLOR_WHITE);
+          int textX=0, textY=7*24;
+          PrintMini(&textX, &textY, (unsigned char*)"\xe6\x92/\xe6\x93: select; EXE: confirm; EXIT: cancel", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+          GetKey(&key);
+          switch(key) {
+            case KEY_CTRL_UP:
+              cur++;
+              if(cur>11) cur = 0;
+              break;
+            case KEY_CTRL_DOWN:
+              cur--;
+              if(cur<0) cur = 11;
+              break;
+            case KEY_CTRL_EXE:
+              SetSetting(SETTING_CLOCK_TYPE, cur, 1); 
+              //deliberate fallthrough
+            case KEY_CTRL_EXIT:
+              inscreen = 0;
+              break;
+          }
+        }
+      }
+      if(menu.selection == 2) {
+        if(menuitems[1].value == MENUITEM_VALUE_CHECKED) menuitems[1].value=MENUITEM_VALUE_NONE;
+        else menuitems[1].value=MENUITEM_VALUE_CHECKED;
+        SetSetting(SETTING_CLOCK_SECONDS, menuitems[1].value, 1); 
       }
     }
   }
