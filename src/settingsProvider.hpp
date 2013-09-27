@@ -38,8 +38,9 @@
 #define SETTING_UNLOCK_RUNMAT 15
 #define SETTING_CLOCK_TYPE 16
 #define SETTING_CLOCK_SECONDS 17
+#define SETTING_HOME_PANES 18
 
-#define NUMBER_OF_SETTINGS 17 //NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
+#define NUMBER_OF_SETTINGS 18 //NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
 /*End of settings*/ 
 
 int GetSetting(int setting);

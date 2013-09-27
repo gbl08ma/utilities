@@ -35,7 +35,7 @@ void settingsMenu() {
   
   strcpy(menuitems[4].text, "Date format");
   
-  strcpy(menuitems[5].text, "Clock appearance");
+  strcpy(menuitems[5].text, "Home appearance");
   
   strcpy(menuitems[6].text, "Dark theme");
   menuitems[6].type = MENUITEM_CHECKBOX;
@@ -294,9 +294,12 @@ void clockSettingsMenu() {
   strcpy(menuitems[1].text, "Show seconds");
   menuitems[1].type = MENUITEM_CHECKBOX;
   
+  strcpy(menuitems[2].text, "Enable events pane");
+  menuitems[2].type = MENUITEM_CHECKBOX;
+  
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=2;
+  menu.numitems=3;
   menu.type=MENUTYPE_NORMAL;
   menu.width=21;
   menu.height=8;
@@ -311,6 +314,7 @@ void clockSettingsMenu() {
   strcpy(menu.statusText, "");
   while(1) {
     menuitems[1].value = GetSetting(SETTING_CLOCK_SECONDS);
+    menuitems[2].value = GetSetting(SETTING_HOME_PANES);
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
@@ -347,6 +351,11 @@ void clockSettingsMenu() {
         if(menuitems[1].value == MENUITEM_VALUE_CHECKED) menuitems[1].value=MENUITEM_VALUE_NONE;
         else menuitems[1].value=MENUITEM_VALUE_CHECKED;
         SetSetting(SETTING_CLOCK_SECONDS, menuitems[1].value, 1); 
+      }
+      if(menu.selection == 3) {
+        if(menuitems[2].value == MENUITEM_VALUE_CHECKED) menuitems[2].value=MENUITEM_VALUE_NONE;
+        else menuitems[2].value=MENUITEM_VALUE_CHECKED;
+        SetSetting(SETTING_HOME_PANES, menuitems[2].value, 1); 
       }
     }
   }

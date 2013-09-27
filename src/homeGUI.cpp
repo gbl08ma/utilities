@@ -163,7 +163,7 @@ void showHome(chronometer* chrono) {
           }
           break;
         case KEY_PRGM_RIGHT:
-          eventsPane((GetSetting(SETTING_THEME) ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND));
+          if(GetSetting(SETTING_HOME_PANES)) eventsPane((GetSetting(SETTING_THEME) ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND));
           break;
         case 76: //x-0-theta key
           currentTimeToBasicVar();
