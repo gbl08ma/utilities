@@ -224,8 +224,8 @@ void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, in
   double angle=-90;
   double sx,sy;
   double length = radius - 10;
-  sx=cx+length*cosine((angle+m*6)*M_PI/180);
-  sy=cy+length*sine((angle+m*6)*M_PI/180);
+  sx=cx+length*cosine((angle+m*6+(s*6/60))*M_PI/180);
+  sy=cy+length*sine((angle+m*6+(s*6/60))*M_PI/180);
   drawLine(cx,cy,sx,sy, colorfg);
 }
 
