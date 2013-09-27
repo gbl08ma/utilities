@@ -176,8 +176,10 @@ void SetSetting(int setting, int value, int autosave) {
       break;
     case SETTING_CLOCK_SECONDS:
       setting_clock_seconds = value;
+      break;
     case SETTING_HOME_PANES:
       setting_home_panes = value;
+      break;
     default:
       break;
   }
