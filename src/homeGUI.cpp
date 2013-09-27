@@ -63,7 +63,7 @@ void showHome(chronometer* chrono) {
     
     // Print time
     drawHomeClock(GetSetting(SETTING_CLOCK_TYPE), fgcolor, bgcolor);
-    if (GetSetting(SETTING_DISPLAY_STATUSBAR) && GetSetting(SETTING_THEME)) darkenStatusbar();
+    if (GetSetting(SETTING_THEME)) darkenStatusbar();
 
     //Show FKeys
     if (GetSetting(SETTING_DISPLAY_FKEYS)) {
@@ -163,7 +163,7 @@ void showHome(chronometer* chrono) {
           }
           break;
         case KEY_PRGM_RIGHT:
-          //eventsPane(textmode);
+          eventsPane((GetSetting(SETTING_THEME) ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND));
           break;
         case 76: //x-0-theta key
           currentTimeToBasicVar();
@@ -229,7 +229,7 @@ void lightMenu() {
   DisplayStatusArea();
   if(GetSetting(SETTING_THEME) == 1) {
     DrawFrame(COLOR_BLACK);
-    darkenStatusbar(); 
+    darkenStatusbar();
   }
   PrintXY(2, 2, (char*)"  Light tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
@@ -356,5 +356,87 @@ void toolsMenu() {
       }
     }
     return;
+  }
+}
+void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
+  color_t color_fg, color_bg, color_title;
+  if (GetSetting(SETTING_THEME)) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; color_title = COLOR_ORANGE; } else
+  { color_fg = COLOR_BLACK; color_bg = COLOR_WHITE; color_title = COLOR_BLUE; }
+  
+  int textX = startx;
+  int textY = starty;
+  int curevent = 0; //current processing event
+  if (numevents>0) {
+    unsigned char itemtext[25] = "";
+    PrintMini(&textX, &textY, (unsigned char*)"Events starting today", 0, 0xFFFFFFFF, 0, 0, color_title, color_bg, 1, 0); //draw
+    while(curevent < numevents && curevent < maxevents) {
+      textX = startx + 5;
+      textY = textY + 18;
+      strcpy((char*)itemtext, "- ");
+      strcat((char*)itemtext, (char*)calevents[curevent].title);
+      int tcolor = calevents[curevent].category-1;
+      if (GetSetting(SETTING_THEME) && tcolor == TEXT_COLOR_BLACK) tcolor = TEXT_COLOR_WHITE;
+      color_t tfcolor = textColorToFullColor(tcolor);
+      PrintMini(&textX, &textY, (unsigned char*)itemtext, 0, 0xFFFFFFFF, 0, 0, tfcolor, color_bg, 1, 0); //draw
+      curevent++;
+    }
+    if(numevents>maxevents) {
+      textX = startx + 5;
+      textY = textY + 20;
+      strcpy((char*)itemtext, (char*)"  ...and ");
+      unsigned char buffer[10] = "";
+      itoa(numevents-maxevents, buffer);
+      strcat((char*)itemtext, (char*)buffer);
+      (numevents-maxevents) == 1 ? strcat((char*)itemtext, (char*)" more event") : strcat((char*)itemtext, (char*)" more events");
+      PrintMini(&textX, &textY, (unsigned char*)itemtext, 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
+    }
+  } else {
+    PrintMini(&textX, &textY, (unsigned char*)"  No events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
+  } 
+}
+void eventsPane(int textmode) {
+  int key;
+  EventDate thisday;
+  const int eventsToDisplayInFull=6;
+  thisday.day = getCurrentDay(); thisday.month = getCurrentMonth(); thisday.year = getCurrentYear();
+  int numevents = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+  CalendarEvent* calevents;
+  if (numevents > 0) {
+    int getnum = (numevents>eventsToDisplayInFull?eventsToDisplayInFull:numevents); // number of events to parse.
+    calevents = (CalendarEvent*)alloca(getnum*sizeof(CalendarEvent)); // we don't want to allocate more than what we need for the few events we want to display in full.
+    GetEventsForDate(&thisday, CALENDARFOLDER, calevents, eventsToDisplayInFull);
+  } else {
+    calevents = NULL;
+  }
+  int inscreen = 1;
+  if (GetSetting(SETTING_THEME)) {
+    Bdisp_Fill_VRAM( COLOR_BLACK, 2 ); //fill between the status area and f-key area
+    DrawFrame( 0x000000  );
+  } else {
+    Bdisp_Fill_VRAM( COLOR_WHITE, 2 ); //fill between the status area and f-key area
+    DrawFrame( 0xfffff  );
+  }
+  while (inscreen) {
+    pane_drawTodayEvents(calevents, 0, 0, numevents, eventsToDisplayInFull);
+    if (GetSetting(SETTING_THEME)) {
+      DisplayStatusArea();
+      darkenStatusbar();
+      DrawFrame( 0x000000  );
+    }
+    mGetKey(&key);
+    switch(key) {
+      case KEY_CTRL_F1:
+      case KEY_CTRL_F2:
+      case KEY_CTRL_F3:
+      case KEY_CTRL_F4:
+        pane_keycache = key;
+        return; //exit to main pane
+      case KEY_CTRL_F5:
+        if(GetSetting(SETTING_ENABLE_LOCK)) { pane_keycache = key; return; }
+        break;
+      case KEY_CTRL_LEFT:
+      case KEY_CTRL_EXIT:
+        return; //return to the pane to the left (main)
+    }
   }
 }

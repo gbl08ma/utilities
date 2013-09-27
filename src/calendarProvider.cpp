@@ -540,13 +540,15 @@ int RemoveDay(EventDate* date, const char* folder) {
   return 0;
 }
 
-int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents) {
+int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit) {
 /*reads the storage memory searching for events starting on specified date.
   folder is where events will be searched for (useful for multiple calendar support)
   if calEvents is not NULL:
   puts events in the array passed as calEvents, which will be empty on error (no events for the day).
   if calEvents is NULL:
   does not parse the inner of events, only parses to count them.
+  "limit" is the maximum number of events to parse. the number of events "found" will be at maximum this number,
+  even if there are more events in the day. set to zero for no limit.
   returns number of events found for the specified day, 0 if error or no events. */
 
   // Generate filename from given date
@@ -592,7 +594,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
         notfinished = 0;
         break; //force it to stop. strtok can't happen again, otherwise token will be null and a system error is approaching!
       }
-      if (curevent > MAX_DAY_EVENTS) { //check if we aren't going over the limit
+      if (curevent >= MAX_DAY_EVENTS || (limit > 0 && curevent >= limit)) { //check if we aren't going over the limit
         //we are, return now. events past this point will be ignored.
         return curevent;
       }

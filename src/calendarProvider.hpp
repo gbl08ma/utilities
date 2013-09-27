@@ -62,7 +62,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder);
 int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char* folder, int count);
 int RemoveEvent(EventDate* startdate, int calEventPos, const char* folder);
 int RemoveDay(EventDate* date, const char* folder);
-int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents);
+int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit=0);
 void GetEventCountsForMonth(int year, int month, int* buffer);
 void toggleTaskActivity(CalendarEvent* event, int pos, int count);
 

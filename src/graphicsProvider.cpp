@@ -13,6 +13,7 @@
 #include <math.h>
 
 #include "graphicsProvider.hpp"
+#include "settingsProvider.hpp"
 
 const short empty[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short color, const short bcolor )
@@ -141,11 +142,13 @@ void VRAMReplaceColorInRect(int x, int y, int width, int height, color_t color_o
    } 
 } 
 
-void darkenStatusbar() {  
-  VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_BLACK, COLOR_CYAN);
-  VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_WHITE, COLOR_BLACK);
-  VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_CYAN, COLOR_GRAY);
-  VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_BLUE, COLOR_ORANGE);
+void darkenStatusbar() {
+  if(GetSetting(SETTING_DISPLAY_STATUSBAR)) {
+    VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_BLACK, COLOR_CYAN);
+    VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_WHITE, COLOR_BLACK);
+    VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_CYAN, COLOR_GRAY);
+    VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_BLUE, COLOR_ORANGE);
+  }
 }
 void darkenFkeys(int numkeys) {
   VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_BLACK, COLOR_CYAN);
