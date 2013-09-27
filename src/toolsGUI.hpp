@@ -32,5 +32,6 @@ int GetAddins(AddIn addins[]);
 void addinManager();
 int addinManagerSub(Menu* menu);
 void changeFKeyColor();
+void systemInfo();
 
 #endif 

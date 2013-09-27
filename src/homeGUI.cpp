@@ -325,15 +325,16 @@ void toolsMenu() {
   strcpy(menuitems[1].text, "Memory usage");
   strcpy(menuitems[2].text, "Add-In Manager");
   strcpy(menuitems[3].text, "Function key color");
+  strcpy(menuitems[4].text, "System information");
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=4;
+  menu.numitems=5;
   menu.width=19;
   menu.height=4;
   menu.startX=2;
   menu.startY=3;
-  menu.scrollbar=0;
+  menu.scrollbar=1;
   menu.scrollout=0;
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "");
@@ -350,6 +351,8 @@ void toolsMenu() {
         addinManager();
       } else if(menu.selection == 4) {
         changeFKeyColor();
+      } else if(menu.selection == 5) {
+        systemInfo();
       }
     }
     return;

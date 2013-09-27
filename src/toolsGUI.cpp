@@ -17,6 +17,7 @@
 #include "textGUI.hpp"
 #include "settingsProvider.hpp"
 #include "keyboardProvider.hpp"
+#include "hardwareProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
@@ -305,4 +306,78 @@ void changeFKeyColor() {
     //user didn't press EXIT, QUIT or AC/ON. input is validated.
     *keycolor = selcolor;
   }
+}
+
+void systemInfo() {
+  char OSname[12] = "";
+  memcpy(OSname, (void*)0x80020000, 8);
+  OSname[8] = '\0';
+  
+  char OSversion[12] = "";
+  memcpy(OSversion, (void*)0x80020020, 10);
+  OSversion[10] = '\0';
+  
+  char OSdate[20] = "";
+  memcpy(OSdate, (void*)0x80B5FFE0, 14);
+  OSdate[14] = '\0';
+  
+  char hardwareModel[6] = "";
+  memcpy(hardwareModel, (void*)0x80000300, 4);
+  hardwareModel[4] = '\0';
+  
+  char ABSname[12] = "";
+  memcpy(ABSname, (void*)0x80000338, 8);
+  ABSname[8] = '\0';
+  
+  char ABSdate[20] = "";
+  memcpy(ABSdate, (void*)0x8001FFB0, 14);
+  ABSdate[14] = '\0';
+  
+  char devID[10] = "";
+  getHardwareID(devID);
+  devID[8] = '\0';  
+  
+  textArea text;
+  strcpy(text.title, (char*)"System Information");
+  
+  textElement elem[20];
+  text.elements = elem;
+  
+  elem[0].text = (char*)"Operating System:";
+  elem[0].spaceAtEnd=1;
+  elem[1].text = OSname;
+  
+  elem[2].newLine = 1;
+  elem[2].text = (char*)"OS version:";
+  elem[2].spaceAtEnd=1;
+  elem[3].text = OSversion;
+  
+  elem[4].newLine = 1;
+  elem[4].text = (char*)"OS date:";
+  elem[4].spaceAtEnd=1;
+  elem[5].text = OSdate;
+  
+  elem[6].newLine = 1;
+  elem[6].text = (char*)"Hardware model:";
+  elem[6].spaceAtEnd=1;
+  elem[7].text = hardwareModel;
+  
+  elem[8].newLine = 1;
+  elem[8].text = (char*)"ABS:";
+  elem[8].spaceAtEnd=1;
+  elem[9].text = ABSname;
+  
+  elem[10].newLine = 1;
+  elem[10].text = (char*)"ABS date:";
+  elem[10].spaceAtEnd=1;
+  elem[11].text = ABSdate;
+  
+  elem[12].newLine = 1;
+  elem[12].text = (char*)"Device ID:";
+  elem[12].spaceAtEnd=1;
+  elem[13].text = devID;
+  
+  text.scrollbar = 0;
+  text.numelements = 14;
+  doTextArea(&text);
 }

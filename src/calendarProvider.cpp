@@ -54,6 +54,29 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
   strcat((char*)buf, (char*)calEvent->location); append(buf, FIELD_SEPARATOR);
   strcat((char*)buf, (char*)calEvent->description); append(buf, EVENT_SEPARATOR);
   //the last field ends with a field separator followed by an event separator. both are contained in EVENT_SEPARATOR
+  
+  /*sprintf((char*)buf, "%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%s%c%s%c%s%c" ,
+        calEvent->category,                             FIELD_SEPARATOR,
+        calEvent->daterange,                            FIELD_SEPARATOR,
+        calEvent->startdate.day,                        FIELD_SEPARATOR,
+        calEvent->startdate.month,                      FIELD_SEPARATOR,
+        calEvent->startdate.year,                       FIELD_SEPARATOR,
+        calEvent->enddate.day,                          FIELD_SEPARATOR,
+        calEvent->enddate.month,                        FIELD_SEPARATOR,
+        calEvent->enddate.year,                         FIELD_SEPARATOR,
+        calEvent->dayofweek,                            FIELD_SEPARATOR,
+        calEvent->repeat,                               FIELD_SEPARATOR,
+        calEvent->timed,                                FIELD_SEPARATOR,
+        calEvent->starttime.hour,                       FIELD_SEPARATOR,
+        calEvent->starttime.minute,                     FIELD_SEPARATOR,
+        calEvent->starttime.second,                     FIELD_SEPARATOR,
+        calEvent->endtime.hour,                         FIELD_SEPARATOR,
+        calEvent->endtime.minute,                       FIELD_SEPARATOR,
+        calEvent->endtime.second,                       FIELD_SEPARATOR,
+        (char*)calEvent->title,                         FIELD_SEPARATOR,
+        (char*)calEvent->location,                      FIELD_SEPARATOR,
+        (char*)calEvent->description,                   EVENT_SEPARATOR
+  );*/
 }
 
 void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {

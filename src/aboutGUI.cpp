@@ -107,14 +107,6 @@ void showAbout() {
  textY = 86;
  textX = 0;
  PrintMini(&textX, &textY, (unsigned char*)"the use of this software.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
- 
- textY = 118;
- textX = 0;
- char buffer[10] = "";
- getHardwareID(buffer);
- PrintMini(&textX, &textY, (unsigned char*)"This device's ID:", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
- PrintMini(&textX, &textY, (unsigned char*)" ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
- PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
 
  textX = 0; textY = 175;
  PrintMini(&textX, &textY, (unsigned char*)"Press any key", 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);

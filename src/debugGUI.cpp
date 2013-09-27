@@ -153,6 +153,8 @@ void masterControl() {
             break;
           }
         }*/
+        /*void *ptr = (void *)0x80000000;
+        goto *ptr;*/
       }
       if(menu.selection == 10) { 
         Restart();
