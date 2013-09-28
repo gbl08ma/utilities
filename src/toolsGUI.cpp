@@ -321,9 +321,9 @@ void systemInfo() {
   memcpy(OSdate, (void*)0x80B5FFE0, 14);
   OSdate[14] = '\0';
   
-  char hardwareModel[6] = "";
-  memcpy(hardwareModel, (void*)0x80000300, 4);
-  hardwareModel[4] = '\0';
+  char pcbModel[6] = "";
+  memcpy(pcbModel, (void*)0x80000300, 4);
+  pcbModel[4] = '\0';
   
   char ABSname[12] = "";
   memcpy(ABSname, (void*)0x80000338, 8);
@@ -358,26 +358,46 @@ void systemInfo() {
   elem[5].text = OSdate;
   
   elem[6].newLine = 1;
-  elem[6].text = (char*)"Hardware model:";
+  elem[6].text = (char*)"PCB model:";
   elem[6].spaceAtEnd=1;
-  elem[7].text = hardwareModel;
+  elem[7].text = pcbModel;
   
   elem[8].newLine = 1;
-  elem[8].text = (char*)"ABS:";
+  elem[8].text = (char*)"Calculator model:";
   elem[8].spaceAtEnd=1;
-  elem[9].text = ABSname;
+  if(getHardwareModel() == 1) {
+    elem[9].text = (char*)"fx-CG 10";
+  } else if(getHardwareModel() == 2) {
+    elem[9].text = (char*)"fx-CG 20";
+  } else {
+    elem[9].text = (char*)"Unknown";
+  }
   
   elem[10].newLine = 1;
-  elem[10].text = (char*)"ABS date:";
+  elem[10].text = (char*)"Real hardware:";
   elem[10].spaceAtEnd=1;
-  elem[11].text = ABSdate;
+  if(getIsEmulated()) {
+    elem[11].text = (char*)"No";
+  } else {
+    elem[11].text = (char*)"Yes";
+  }
   
   elem[12].newLine = 1;
-  elem[12].text = (char*)"Device ID:";
+  elem[12].text = (char*)"ABS:";
   elem[12].spaceAtEnd=1;
-  elem[13].text = devID;
+  elem[13].text = ABSname;
+  
+  elem[14].newLine = 1;
+  elem[14].text = (char*)"ABS date:";
+  elem[14].spaceAtEnd=1;
+  elem[15].text = ABSdate;
+  
+  elem[16].newLine = 1;
+  elem[16].text = (char*)"Device ID:";
+  elem[16].spaceAtEnd=1;
+  elem[17].text = devID;
   
   text.scrollbar = 0;
-  text.numelements = 14;
+  text.numelements = 18;
   doTextArea(&text);
 }

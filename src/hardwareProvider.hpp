@@ -41,5 +41,7 @@ void CPU_change_freq(int mult);
 int GetBacklightSubLevel_RAW();
 void SetBacklightSubLevel_RAW(int level);
 void getHardwareID(char* buffer);
+int getHardwareModel();
+int getIsEmulated();
 
 #endif

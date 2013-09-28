@@ -35,6 +35,28 @@ void getHardwareID(char* buffer) {
   memcpy(buffer, (void*)0x8001FFD0, 8);
 }
 
+// Get calculator model. There is a syscall for this, but with this we know exactly what we are checking.
+// not to be confused with the "PCB model", which on the Prizm series appears to be always Ly755 or Ly755D or just 755D
+// returns 0 on unknown/inconclusive model, 1 on fx-CG 10 and 2 on fx-CG 20
+int getHardwareModel() {
+  char* byte1 = (char*)0x80000303;
+  char* byte2 = (char*)0x80000305;
+  if((*byte1 == '\x41') && (*byte2 == '\x5A')) return 1;
+  if((*byte1 == '\x44') && (*byte2 == '\xAA')) return 2;
+  return 0;
+}
+
+// returns 1 if the calculator is emulated
+// uses the power source information to detect the emulator
+// obviously, if an emulator comes that emulates this info better, this function will be inaccurate
+int getIsEmulated() {
+  unsigned char hb[15]; int k;
+  k = *(unsigned char*)P11DR;
+  WordToHex( k & 0xFFFF, hb );
+  if (k==0x0000) return 1;
+  else return 0;
+}
+
 // CPU CLOCKING CODE:
 
 void CPU_change_freq(int mult) { 
