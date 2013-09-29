@@ -22,6 +22,7 @@
 #include "chronoProvider.hpp"
 #include "chronoGUI.hpp"
 #include "firstRunGUI.hpp"
+#include "OSmodifierSR.hpp"
 #include "setjmp.h"
 #include "debugGUI.hpp"
 jmp_buf utilities_return;
@@ -70,6 +71,8 @@ int main()
   // NOTE: the following debug timer is disabled because it makes many things become much slower, and causes system errors on Bfile. only enable if needed.
   //int ramUsedDbgTimer = Timer_Install(0, showRAMusedStatus, 50);
   //if (ramUsedDbgTimer > 0) { Timer_Start(ramUsedDbgTimer); }
+  
+  setOSmodifier(); // start services that stay resident, if Prizmed Framework is enabled
   
   while(1) {
     showHome(chrono);

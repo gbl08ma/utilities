@@ -21,6 +21,7 @@
 #include "graphicsProvider.hpp"
 #include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
+#include "OSmodifierSR.hpp"
 
 void memoryCapacityViewer() {
   Bdisp_AllClr_VRAM();
@@ -305,6 +306,115 @@ void changeFKeyColor() {
   if(selcolor != (unsigned char)0xFF) {
     //user didn't press EXIT, QUIT or AC/ON. input is validated.
     *keycolor = selcolor;
+  }
+}
+
+void prizmedFramework() {
+  MenuItem menuitems[5];
+  strcpy(menuitems[0].text, "About the framework");
+  menuitems[0].type = MENUITEM_NORMAL;
+  
+  strcpy(menuitems[1].text, "Enable \x0A\xCD\x7f\x50z\x05\xe5\xb0\x1D");
+  menuitems[1].type = MENUITEM_CHECKBOX;
+  
+  strcpy(menuitems[2].text, "Set statusbar color");
+  menuitems[2].type = MENUITEM_NORMAL;
+
+  Menu menu;
+  menu.items=menuitems;
+  menu.type=MENUTYPE_NORMAL;
+  menu.width=21;
+  menu.height=8;
+  menu.scrollbar=1;
+  menu.scrollout=1;
+  menu.showtitle=1;
+  menu.selection=1;
+  menu.scroll=0;
+  menu.allowMkey=0;
+  strcpy(menu.nodatamsg, "");
+  strcpy(menu.title, "\x0A\xCD\x7f\x50z\x05\xe5\xb0\x1D Framework");
+  strcpy(menu.statusText, "");
+  while(1) {
+    if(GetSetting(SETTING_ENABLE_PRIZMED)) menu.numitems=3;
+    else menu.numitems=2;
+    menuitems[1].value = GetSetting(SETTING_ENABLE_PRIZMED);
+    int res = doMenu(&menu);
+    if(res == MENU_RETURN_EXIT) return;
+    else if(res == MENU_RETURN_SELECTION) {
+      if(menu.selection==1) {
+        textArea text;
+        strcpy(text.title, (char*)"About \x0A\xCD\x7f\x50z\x05\xe5\xb0\x1D");
+        
+        textElement elem[10];
+        text.elements = elem;
+        
+        elem[0].text = (char*)"The \x0A\xCD\x7f\x50z\x05\xe5\xb0\x1D Framework is a system that allows for customization of different parts of your calculator's Operating System.";
+        
+        elem[1].newLine = 1;
+        elem[1].text = (char*)"It works by copying small programs into unused RAM areas, and these programs are then called periodically using a permanently installed timer.";
+        
+        elem[2].newLine = 1;
+        elem[2].text = (char*)"These small programs are responsible for modifying certain aspects of the system when they run, such as the look of the status bar.";
+        
+        elem[3].newLine = 1;
+        elem[3].lineSpacing = 8;
+        elem[3].text = (char*)"The Framework is still in an early development stage and it can harm your calculator.";
+        elem[3].spaceAtEnd=1;
+        
+        elem[4].color = COLOR_RED;
+        elem[4].text = (char*)"It is not recommended that you enable it unless you know what you are doing.";
+        
+        elem[5].newLine = 1;
+        elem[5].text = (char*)"If you observe strange behavior, remove the batteries *without* turning off the calculator first, wait a minute and put the batteries back - the calculator should turn on, and the problem should be gone.";
+        
+        elem[6].newLine = 1;
+        elem[6].text = (char*)"Report the situation to the developer through the email: admin@tny.im. Unless told otherwise, the next time you launch Utilities the first thing you should do is disabling the \x0A\xCD\x7f\x50z\x05\xe5\xb0\x1D Framework.";
+        
+        text.numelements = 7;
+        doTextArea(&text);
+      }
+      if(menu.selection == 2) {
+        if(menuitems[1].value == MENUITEM_VALUE_CHECKED) menuitems[1].value=MENUITEM_VALUE_NONE;
+        else menuitems[1].value=MENUITEM_VALUE_CHECKED;
+        SetSetting(SETTING_ENABLE_PRIZMED, menuitems[1].value, 1); 
+        setOSmodifier(); // if the setting was changed this needs to be called
+      }
+      if(menu.selection == 3) {
+        changeStatusBarColor();
+      }
+    }
+  }
+}
+
+void changeStatusBarColor() {
+  unsigned char selcolor1 = (unsigned char) 0xFF; //just so it isn't uninitialized
+  int curcolor1, curcolor2;
+  int newcolor1, newcolor2;
+  getOSmodStatusBar(&curcolor1, &curcolor2);
+  
+  Bdisp_AllClr_VRAM();
+  DisplayStatusArea();
+  PrintXY(1, 1, (char*)"  Status bar color", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  int textX=0; int textY=132;
+  PrintMiniMini( &textX, &textY, (unsigned char*)"Select the first color of the checkerboard pattern.", 0, TEXT_COLOR_BLACK, 0 );
+  Bdisp_PutDisp_DD();
+  
+  selcolor1 = ColorIndexDialog1( curcolor1, 0 );
+  if(selcolor1 != (unsigned char)0xFF) {
+    //user didn't press EXIT, QUIT or AC/ON. input is validated.
+    newcolor1 = selcolor1;
+    unsigned char selcolor2 = (unsigned char) 0xFF; //just so it isn't uninitialized
+    Bdisp_AllClr_VRAM();
+    DisplayStatusArea();
+    PrintXY(1, 1, (char*)"  Status bar color", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+    int textX=0; int textY=132;
+    PrintMiniMini( &textX, &textY, (unsigned char*)"Select the second color of the checkerboard pattern.", 0, TEXT_COLOR_BLACK, 0 );
+    selcolor2 = ColorIndexDialog1( curcolor2, 0 );
+    if(selcolor2 != (unsigned char)0xFF) {
+      //user didn't press EXIT, QUIT or AC/ON. input is validated.
+      newcolor2 = selcolor2;
+      setOSmodStatusBar(newcolor1, newcolor2);
+    }
   }
 }
 

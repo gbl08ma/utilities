@@ -15,7 +15,6 @@
 #include "settingsProvider.hpp"
 #include "constantsProvider.hpp"
 
-#define SETTINGSFILE_VERSION 4 // NOTE: update this when changing the amount or meaning of settings!
 int setting_self_fileversion = SETTINGSFILE_VERSION; // this is a special setting
 int setting_timeformat = 0; // 0 = 24-hour HH:MM:SS ; 1 = 12-hour HH:MM:SS AM/PM
 int setting_longdateformat = 0;
@@ -48,6 +47,7 @@ int setting_lock_autooff = 0; //whether to turn off automatically after locking 
 int setting_lock_on_exe = 0; //when enabled, calculator is locked when EXE is pressed on the home screen (i.e. legacy support for people used to the old lock add-in).
 int setting_unlock_runmat = 0; //whether to jump to Run-Mat when calculator is unlocked. 2 when user should be asked.
 int setting_clock_type = 0;
+int setting_enable_prizmed = 0; //whether OS modification options through Prizmed Framework are available
 /* what clock to show on home screen.
    0 = digital time and long date - "traditional", like versions up to 1.0
    1 = just digital time
@@ -108,6 +108,8 @@ int GetSetting(int setting) {
       return setting_clock_seconds;
     case SETTING_HOME_PANES:
       return setting_home_panes;
+    case SETTING_ENABLE_PRIZMED:
+      return setting_enable_prizmed;
     default:
       return 0;
   }
@@ -179,6 +181,9 @@ void SetSetting(int setting, int value, int autosave) {
       break;
     case SETTING_HOME_PANES:
       setting_home_panes = value;
+      break;
+    case SETTING_ENABLE_PRIZMED:
+      setting_enable_prizmed = value;
       break;
     default:
       break;
