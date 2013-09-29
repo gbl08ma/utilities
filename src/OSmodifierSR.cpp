@@ -15,7 +15,7 @@
 #include "OSmodifierSR.hpp" // OS modifier code - stay resident after add-in is closed
 #include "settingsProvider.hpp"
 
-char buffer1[20] __attribute__((section(".rsmem.data")));
+//char buffer1[20] __attribute__((section(".rsmem.data")));
 //int OSmod_SBcolor1 __attribute__((section(".rsmem.data"))) = 7; // first statusbar color
 //int OSmod_SBcolor2 __attribute__((section(".rsmem.data"))) = 7; // second statusbar color
 // we can't put the SB color settings on the area of RSMEM that's overwritten when this add-in launches
@@ -24,13 +24,13 @@ char buffer1[20] __attribute__((section(".rsmem.data")));
 #define OSMOD_SBCOLOR1 (unsigned char*)0xFD803198
 #define OSMOD_SBCOLOR2 (unsigned char*)0xFD803199
 
-void strcpy_rs(char dest[], const char source[]) { // in RS memory
+/*void strcpy_rs(char dest[], const char source[]) { // in RS memory
    int i = 0;
    while (1) {
       dest[i] = source[i];
       if (dest[i] == '\0') break;
       i++;
-} }
+} }*/
 
 void OSmodifierTimerHandler() { // in RS memory
   // Handle statusbar colors mod. I'm not yet sure this isn't changeable through the setup.
@@ -42,13 +42,14 @@ void OSmodifierTimerHandler() { // in RS memory
   //*sbcolor2 = OSmod_SBcolor2;
   *sbcolor2 = *OSMOD_SBCOLOR2;
   
-  unsigned char*smsg = (unsigned char*) 0x8804F48E;
-  strcpy_rs((char*)smsg, buffer1);
+  /*unsigned char*smsg = (unsigned char*) 0x8804F48E;
+  strcpy_rs((char*)smsg, buffer1);*/
 }
 
 void setOSmodifier() {
   // setups and starts OS modifier timer, or uninstalls and stops if the Prizmed Framework is disabled
-  if(!GetSetting(SETTING_ENABLE_PRIZMED)) {
+  // the following checks if advanced tools are enabled too (to avoid users enabling the framework then hiding the option to disable it)
+  if(!GetSetting(SETTING_ENABLE_PRIZMED) && !GetSetting(SETTING_SHOW_ADVANCED)) {
     // Prizmed framework is not enabled or was just disabled.
     // Stop and uninstall timer 3 (let's hope it's ours) and return
     Timer_Stop(3);

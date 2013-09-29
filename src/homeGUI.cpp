@@ -325,12 +325,12 @@ void toolsMenu() {
   strcpy(menuitems[1].text, "Memory usage");
   strcpy(menuitems[2].text, "Add-In Manager");
   strcpy(menuitems[3].text, "Function key color");
-  strcpy(menuitems[4].text, "\x0A\xCD\x7f\x50z\x05\xe5\xb0\x1D Framework"); // prizmed framework
-  strcpy(menuitems[5].text, "System information");
+  strcpy(menuitems[4].text, "System information");
+  strcpy(menuitems[5].text, "\x0A\xCD\x7f\x50z\x05\xe5\xb0\x1D Framework"); // prizmed framework
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=6;
+  menu.numitems=(GetSetting(SETTING_SHOW_ADVANCED) ? 6 : 5);
   menu.width=19;
   menu.height=4;
   menu.startX=2;
@@ -353,9 +353,9 @@ void toolsMenu() {
       } else if(menu.selection == 4) {
         changeFKeyColor();
       } else if(menu.selection == 5) {
-        prizmedFramework();
-      } else if(menu.selection == 6) {
         systemInfo();
+      } else if(menu.selection == 6) {
+        prizmedFramework();
       }
     }
     return;
