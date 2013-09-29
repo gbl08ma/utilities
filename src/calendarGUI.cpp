@@ -1243,6 +1243,7 @@ void moveEvent(CalendarEvent* event, int pos) {
           }
         }
         MsgBoxPop();
+        return;
       }
     }
     // delete event on current (old) day
