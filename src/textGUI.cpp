@@ -19,7 +19,7 @@
 #include "graphicsProvider.hpp"
 #include "selectorGUI.hpp" 
 
-void doTextArea(textArea* text) {
+int doTextArea(textArea* text) {
   int scroll = 0;
   int key;
   while(1) {
@@ -94,7 +94,10 @@ void doTextArea(textArea* text) {
           scroll = scroll - 17;
         }
         break;
-      case KEY_CTRL_EXIT: return; break;
+      case KEY_CTRL_EXE:
+        if(text->allowEXE) return 1;
+        break;
+      case KEY_CTRL_EXIT: return 0; break;
     }
   }
 }

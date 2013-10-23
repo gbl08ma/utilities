@@ -177,7 +177,7 @@ int unlockCalc() {
 
 int lockCalc() {
   //returns 0 on "calculator was locked and now is unlocked"
-  //returns 1 on "there was no lock code and one was now set"
+  //returns 1 on "there was no lock code and one was now set, or user aborted before setting one"
   if(!isPasswordSet()) {
     textArea text;
     strcpy(text.title, (char*)"Calculator lock");
@@ -189,10 +189,11 @@ int lockCalc() {
     
     elem[1].newLine = 1;
     elem[1].lineSpacing = 8;
-    elem[1].text = (char*)"Press EXIT to close this message and set a new password.";
+    elem[1].text = (char*)"Press EXE to close this message and proceed, or EXIT to cancel.";
     
     text.numelements = 2;
-    doTextArea(&text);
+    text.allowEXE = 1;
+    if(!doTextArea(&text)) return 1;
     setPassword();
     
     elem[0].text = (char*)"You successfully set a password for locking your calculator.";
