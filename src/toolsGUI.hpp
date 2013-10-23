@@ -32,8 +32,6 @@ int GetAddins(AddIn addins[]);
 void addinManager();
 int addinManagerSub(Menu* menu);
 void changeFKeyColor();
-void prizmedFramework();
-void changeStatusBarColor();
 void systemInfo();
 
 #endif 

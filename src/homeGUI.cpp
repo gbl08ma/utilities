@@ -35,8 +35,8 @@
 #include "debugGUI.hpp"
 
 int pane_keycache = 0; // TODO: see if it's possible not to have this being a global var
+
 void showHome(chronometer* chrono) {
-  pane_keycache = 0;
   unsigned short key = 0;
   unsigned short prevkey = 0;
   int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
@@ -320,17 +320,16 @@ void toolsMenu() {
   }
   PrintXY(2, 2, (char*)"  Tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
-  MenuItem menuitems[10];
+  MenuItem menuitems[5];
   strcpy(menuitems[0].text, "File browser");
   strcpy(menuitems[1].text, "Memory usage");
   strcpy(menuitems[2].text, "Add-In Manager");
   strcpy(menuitems[3].text, "Function key color");
-  strcpy(menuitems[4].text, "\x0A\xCD\x7f\x50z\x05\xe5\xb0\x1D Framework"); // prizmed framework
-  strcpy(menuitems[5].text, "System information");
+  strcpy(menuitems[4].text, "System information");
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=6;
+  menu.numitems=5;
   menu.width=19;
   menu.height=4;
   menu.startX=2;
@@ -353,8 +352,6 @@ void toolsMenu() {
       } else if(menu.selection == 4) {
         changeFKeyColor();
       } else if(menu.selection == 5) {
-        prizmedFramework();
-      } else if(menu.selection == 6) {
         systemInfo();
       }
     }

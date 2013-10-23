@@ -73,10 +73,9 @@ void mycallback() {
   debugMessage((char*)"  My menu", (char*)"  callback", 0);
 }
 
-//void masterControl() __attribute__((section(".ocram2")));
 void masterControl() {
   MenuItem menuitems[10];
-  strcpy(menuitems[0].text, "SaveSettings()");
+  strcpy(menuitems[0].text, "SaveSettings()");;
   strcpy(menuitems[1].text, "LoadSettings()");
   strcpy(menuitems[2].text, "Lock Off");
   strcpy(menuitems[3].text, "Lock On");
@@ -131,12 +130,10 @@ void masterControl() {
         SetSetting(SETTING_IS_FIRST_RUN, 1, 0); // do not autosave, to allow full control of the operator
       }
       if(menu.selection == 9) {
-        CallbackAtQuitMainFunction( mycallback );
-        
         /*unsigned char filename[50] = "";
         strcpy((char*)filename, (char*)"\\\\fls0\\eigensup.txt");
         SerialFileTransfer( filename );*/
-        
+        CallbackAtQuitMainFunction( mycallback );
         /*char* VRAM = (char*)0xA8000000; 
         char* flashstart = (char*)0xA0000000;
         int key;
