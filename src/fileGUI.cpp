@@ -28,7 +28,7 @@ void fileManager() {
   int res = 1;
   int itemsinclip = 0;
   char browserbasepath[MAX_FILENAME_SIZE+1] = "\\\\fls0\\";  
-  File* clipboard = (File*)alloca(MAX_ITEMS_IN_CLIPBOARD*sizeof(File));
+  File* clipboard = (File*)alloca((MAX_ITEMS_IN_CLIPBOARD+1)*sizeof(File));
   while(res) {
     res = fileManagerSub(browserbasepath, &itemsinclip, clipboard);
   }
@@ -76,8 +76,8 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
       strcpy((char*)menu.statusText, "Clipboard: ");
       itoa(*itemsinclip, (unsigned char*)titleBuffer);
       strcat((char*)menu.statusText, titleBuffer);
-      if(*itemsinclip == 1) { strcat((char*)menu.statusText, " item (Shift\xe6\x91"); strcat((char*)menu.statusText, "9=Paste)"); }
-      else { strcat((char*)menu.statusText, " items (Shift\xe6\x91"); strcat((char*)menu.statusText, "9=Paste)"); }
+      if(*itemsinclip == 1) { strcat((char*)menu.statusText, " item, Shift\xe6\x91"); strcat((char*)menu.statusText, "9=Paste"); }
+      else { strcat((char*)menu.statusText, " items, Shift\xe6\x91"); strcat((char*)menu.statusText, "9=Paste"); }
     }
     int iresult;
     if(menu.fkeypage == 0) {
@@ -130,7 +130,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
       case KEY_CTRL_F3:
         if(!GetSetting(SETTING_SHOW_ADVANCED) && res == KEY_CTRL_F3) break; //user didn't enable copy tool
         if (menu.numselitems > 0 && menu.fkeypage==0) {
-          if((!(*itemsinclip >= MAX_ITEMS_IN_CLIPBOARD)) && menu.numselitems <= MAX_ITEMS_IN_CLIPBOARD-*itemsinclip) {
+          if((*itemsinclip < MAX_ITEMS_IN_CLIPBOARD) && menu.numselitems <= MAX_ITEMS_IN_CLIPBOARD-*itemsinclip) {
             int ifile = 0; int hasShownFolderCopyWarning = 0;
             while(ifile < menu.numitems) {  
               if (menu.items[ifile].isselected) {
@@ -194,7 +194,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
         }
         break;
       case KEY_CTRL_F4:
-        if(makeFolderGUI(browserbasepath)) return 1; // if user said yes and files were deleted, reload file list
+        if(makeFolderGUI(browserbasepath)) return 1; // if user said yes and a folder was created, reload file list
         break;
       case KEY_CTRL_F5:
         if(renameFileGUI(files, &menu, browserbasepath)) return 1;
