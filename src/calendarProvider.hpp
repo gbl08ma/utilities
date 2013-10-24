@@ -74,6 +74,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
 void GetEventCountsForMonth(int year, int month, int* buffer);
 void toggleTaskActivity(CalendarEvent* event, int pos, int count);
 int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit);
+int SearchEventsOnMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit);
 
 unsigned char *toksplit(unsigned char *src, char tokchar, unsigned char *token, int lgh);
 #endif

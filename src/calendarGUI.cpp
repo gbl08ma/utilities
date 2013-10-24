@@ -31,17 +31,9 @@ int bufmonth = 0; //this is global so that it's easier to make the events count 
 int searchValid = 0; // whether the last search results are valid or not. Set to zero when modifying events in any way.
 int sy, sm, sd = 0; //date to which to switch the calendar
 void viewCalendar() {
-  int y, m, d;
-  if(!sy || !sm || !sd) {
-    y = getCurrentYear();
-    m = getCurrentMonth();
-    d = getCurrentDay();
-  } else {
-    y = sy;
-    m = sm;
-    d = sd;
-    sy=0; sm=0; sd=0;
-  }
+  int y = getCurrentYear();
+  int m = getCurrentMonth();
+  int d = getCurrentDay();
   
   int menu = 1;
   int iresult;
@@ -137,6 +129,12 @@ void viewCalendar() {
           d = getCurrentDay();
         } else if (menu == 1) {
           searchEventsGUI(y, m, d);
+          if(!sy || !sm || !sd) {} else {
+            y = sy;
+            m = sm;
+            d = sd;
+            sy=0; sm=0; sd=0;
+          }
         }
         break;       
       case KEY_CTRL_F6:
@@ -1369,6 +1367,13 @@ void setEventChrono(CalendarEvent* event) {
   }
 }
 
+void viewNthEventOnDay(EventDate* date, int pos) {
+  int num = GetEventsForDate(date, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+  CalendarEvent* tmpevents = (CalendarEvent*)alloca(num*sizeof(CalendarEvent));
+  num = GetEventsForDate(date, CALENDARFOLDER, tmpevents);
+  viewEvent(&tmpevents[pos]); 
+}
+
 void searchEventsGUI(int y, int m, int d) {
   MsgBoxPush(4);
   MenuItem smallmenuitems[3];
@@ -1428,26 +1433,43 @@ void searchEventsGUI(int y, int m, int d) {
       if (res==INPUT_RETURN_EXIT) return; // user aborted
       else if (res==INPUT_RETURN_CONFIRM) break; // continue to search
     }
+    SimpleCalendarEvent* events;
+    MenuItem* menuitems;
+    
+    Menu menu;
+    menu.scrollbar=1;
+    menu.scrollout=1;
+    menu.showtitle=1;
+    menu.selection=1;
+    menu.scroll=0;
+    menu.height=7;
+    menu.type=MENUTYPE_FKEYS;
+    strcpy(menu.nodatamsg, "No events found");
+    strcpy(menu.title, "Search results");
+    strcpy(menu.statusText, "");
 
-    if(smallmenu.selection == 3) {
+    if(smallmenu.selection == 1) {
+      return;
+    } else if(smallmenu.selection == 2) {
+      menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
+      events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
+      menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
+      menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
+      int curitem = 0;
+      while(curitem <= menu.numitems-1) {
+        strcpy(menuitems[curitem].text, (char*)events[curitem].title);
+        menuitems[curitem].type = MENUITEM_NORMAL;
+        menuitems[curitem].color = events[curitem].category-1;
+        curitem++;
+      }
+      menu.items=menuitems;
+    } else {
       EventDate sday;
       sday.day = d; sday.month = m; sday.year = y;
       
-      Menu menu;
-      menu.scrollbar=1;
-      menu.scrollout=1;
-      menu.showtitle=1;
-      menu.selection=1;
-      menu.scroll=0;
-      menu.height=7;
-      menu.type=MENUTYPE_FKEYS;
-      strcpy(menu.nodatamsg, "No events found");
-      strcpy(menu.title, "Search results");
-      strcpy(menu.statusText, "");
-      
       menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
-      SimpleCalendarEvent* events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
-      MenuItem* menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
+      events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
+      menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
       menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
       int curitem = 0;
       while(curitem <= menu.numitems-1) {
@@ -1457,47 +1479,44 @@ void searchEventsGUI(int y, int m, int d) {
         curitem++;
       }
       menu.items=menuitems;
-      while(1) {
-        Bdisp_AllClr_VRAM();
-        int iresult;
-        if(menu.numitems>0) {
-          GetFKeyPtr(0x049F, &iresult); // VIEW
-          FKey_Display(0, (int*)iresult);
-          GetFKeyPtr(0x015F, &iresult); // DATE
-          FKey_Display(1, (int*)iresult);
-          GetFKeyPtr(0x01FC, &iresult); // JUMP
-          FKey_Display(2, (int*)iresult);
-        }
-        int res = doMenu(&menu);
-        switch(res) {
-          case MENU_RETURN_EXIT:
+    }
+    while(1) {
+      Bdisp_AllClr_VRAM();
+      int iresult;
+      if(menu.numitems>0) {
+        GetFKeyPtr(0x049F, &iresult); // VIEW
+        FKey_Display(0, (int*)iresult);
+        GetFKeyPtr(0x015F, &iresult); // DATE
+        FKey_Display(1, (int*)iresult);
+        GetFKeyPtr(0x01FC, &iresult); // JUMP
+        FKey_Display(2, (int*)iresult);
+      }
+      int res = doMenu(&menu);
+      switch(res) {
+        case MENU_RETURN_EXIT:
+          return;
+          break;
+        case KEY_CTRL_F1:
+        case MENU_RETURN_SELECTION:
+          if(menu.numitems>0) {
+            viewNthEventOnDay(&events[menu.selection-1].startdate, events[menu.selection-1].origpos);
+          }
+          break;
+        case KEY_CTRL_F2:
+          if(menu.numitems>0) {
+            searchValid = 1;
+            viewEvents(events[menu.selection-1].startdate.year, events[menu.selection-1].startdate.month, events[menu.selection-1].startdate.day);
+            if(!searchValid) return;
+          }
+          break;
+        case KEY_CTRL_F3:
+          if(menu.numitems>0) {
+            sy=events[menu.selection-1].startdate.year;
+            sm=events[menu.selection-1].startdate.month;
+            sd=events[menu.selection-1].startdate.day;
             return;
-            break;
-          case KEY_CTRL_F1:
-          case MENU_RETURN_SELECTION:
-            if(menu.numitems>0) {
-            int num = GetEventsForDate(&events[menu.selection-1].startdate, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
-            CalendarEvent* tmpevents = (CalendarEvent*)alloca(num*sizeof(CalendarEvent));
-            num = GetEventsForDate(&events[menu.selection-1].startdate, CALENDARFOLDER, tmpevents);
-            viewEvent(&tmpevents[events[menu.selection-1].origpos]);
-            }
-            break;
-          case KEY_CTRL_F2:
-            if(menu.numitems>0) {
-              searchValid = 1;
-              viewEvents(events[menu.selection-1].startdate.year, events[menu.selection-1].startdate.month, events[menu.selection-1].startdate.day);
-              if(!searchValid) return;
-            }
-            break;
-          case KEY_CTRL_F3:
-            if(menu.numitems>0) {
-              sy=events[menu.selection-1].startdate.year;
-              sm=events[menu.selection-1].startdate.month;
-              sd=events[menu.selection-1].startdate.day;
-              return;
-            }
-            break;
-        }
+          }
+          break;
       }
     }
   }
