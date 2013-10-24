@@ -1449,13 +1449,13 @@ void searchEventsGUI(int y, int m, int d) {
     strcpy(menu.statusText, "");
 
     if(smallmenu.selection == 1) {
-      menu.numitems = SearchEventsOnYear(y, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
+      menu.numitems = SearchEventsOnYear(y, CALENDARFOLDER, NULL, needle, 200); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
-      menu.numitems = SearchEventsOnYear(y, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
+      menu.numitems = SearchEventsOnYear(y, CALENDARFOLDER, events, needle, 200);
     } else if(smallmenu.selection == 2) {
-      menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
+      menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, NULL, needle, 200); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
-      menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
+      menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, events, needle, 200);
     } else {
       EventDate sday;
       sday.day = d; sday.month = m; sday.year = y;
