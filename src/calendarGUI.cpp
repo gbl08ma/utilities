@@ -1449,37 +1449,29 @@ void searchEventsGUI(int y, int m, int d) {
     strcpy(menu.statusText, "");
 
     if(smallmenu.selection == 1) {
-      return;
+      menu.numitems = SearchEventsOnYear(y, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
+      events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
+      menu.numitems = SearchEventsOnYear(y, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
     } else if(smallmenu.selection == 2) {
       menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
-      menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
       menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
-      int curitem = 0;
-      while(curitem <= menu.numitems-1) {
-        strcpy(menuitems[curitem].text, (char*)events[curitem].title);
-        menuitems[curitem].type = MENUITEM_NORMAL;
-        menuitems[curitem].color = events[curitem].category-1;
-        curitem++;
-      }
-      menu.items=menuitems;
     } else {
       EventDate sday;
       sday.day = d; sday.month = m; sday.year = y;
-      
       menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
-      menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
       menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
-      int curitem = 0;
-      while(curitem <= menu.numitems-1) {
-        strcpy(menuitems[curitem].text, (char*)events[curitem].title);
-        menuitems[curitem].type = MENUITEM_NORMAL;
-        menuitems[curitem].color = events[curitem].category-1;
-        curitem++;
-      }
-      menu.items=menuitems;
     }
+    menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
+    int curitem = 0;
+    while(curitem <= menu.numitems-1) {
+      strcpy(menuitems[curitem].text, (char*)events[curitem].title);
+      menuitems[curitem].type = MENUITEM_NORMAL;
+      menuitems[curitem].color = events[curitem].category-1;
+      curitem++;
+    }
+    menu.items=menuitems;
     while(1) {
       Bdisp_AllClr_VRAM();
       int iresult;
