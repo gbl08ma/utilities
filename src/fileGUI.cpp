@@ -134,36 +134,44 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
             int ifile = 0; int hasShownFolderCopyWarning = 0;
             while(ifile < menu.numitems) {  
               if (menu.items[ifile].isselected) {
-                if(res == KEY_CTRL_F2) {
-                  strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
-                  //0=cut file; 1=copy file:
-                  clipboard[*itemsinclip].action = 0;
-                  *itemsinclip = *itemsinclip + 1;
-                } else {
-                  if (!menu.items[ifile].isfolder) {
-                    strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
-                    //0=cut file; 1=copy file:
-                    clipboard[*itemsinclip].action = 1;
-                    *itemsinclip = *itemsinclip + 1;
+                int inclip = 0;
+                for(int i = 0; i<*itemsinclip; i++) {
+                  if(!strcmp(clipboard[i].filename, files[ifile].filename)) {
+                    inclip=1;
+                  }
+                }
+                if(!inclip) {
+                  if(res == KEY_CTRL_F2) {
+                      strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
+                      //0=cut file; 1=copy file:
+                      clipboard[*itemsinclip].action = 0;
+                      *itemsinclip = *itemsinclip + 1;
                   } else {
-                    if (!hasShownFolderCopyWarning) {
-                      MsgBoxPush(4);
-                      PrintXY(3, 2, (char*)"  Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-                      PrintXY(3, 3, (char*)"  not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-                      PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-                      int inscreen=1, key;
-                      while(inscreen) {
-                        mGetKey(&key);
-                        switch(key)
-                        {
-                    case KEY_CTRL_EXIT:
-                          case KEY_CTRL_AC:
-                            inscreen=0;
-                            break;
+                    if (!menu.items[ifile].isfolder) {
+                      strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
+                      //0=cut file; 1=copy file:
+                      clipboard[*itemsinclip].action = 1;
+                      *itemsinclip = *itemsinclip + 1;
+                    } else {
+                      if (!hasShownFolderCopyWarning) {
+                        MsgBoxPush(4);
+                        PrintXY(3, 2, (char*)"  Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+                        PrintXY(3, 3, (char*)"  not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+                        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+                        int inscreen=1, key;
+                        while(inscreen) {
+                          mGetKey(&key);
+                          switch(key)
+                          {
+                      case KEY_CTRL_EXIT:
+                            case KEY_CTRL_AC:
+                              inscreen=0;
+                              break;
+                          }
                         }
+                        MsgBoxPop();
+                        hasShownFolderCopyWarning = 1;
                       }
-                      MsgBoxPop();
-                      hasShownFolderCopyWarning = 1;
                     }
                   }
                 }
