@@ -630,7 +630,42 @@ void toggleTaskActivity(CalendarEvent* events, int pos, int count) {
   sdate.month = events[pos].startdate.month;
   sdate.day = events[pos].startdate.day;
   ReplaceEventFile(&sdate, events, CALENDARFOLDER, count);
-  //EditEvent(&sdate, pos, CALENDARFOLDER, event);
+}
+
+int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
+  /* reads the events on storage memory for a certain day
+   * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)
+   * if calEvents is NULL simply returns the number of results
+   * returns the search results count */
+  int daynumevents = GetEventsForDate(date, folder, NULL); //get event count only so we know how much to alloc
+  CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
+  daynumevents = GetEventsForDate(date, folder, dayEvents);
+  int curitem = 0;
+  int resCount = 0;
+  while(curitem <= daynumevents-1) {
+    int match = 0;
+    if(NULL != strstr((char*)dayEvents[curitem].title, needle)) {
+      match = 1;
+    }
+    if(NULL != strstr((char*)dayEvents[curitem].location, needle)) {
+      match = 1;
+    }
+    if(NULL != strstr((char*)dayEvents[curitem].description, needle)) {
+      match = 1;
+    }
+    if(match) {
+      if(calEvents != NULL) {
+        strcpy((char*)calEvents[resCount].title, (char*)dayEvents[curitem].title);
+        calEvents[resCount].startdate = *date;
+        calEvents[resCount].category = dayEvents[curitem].category;
+        calEvents[resCount].origpos = curitem;
+      }
+      resCount++;
+    }
+    if(resCount == limit) break;
+    curitem++;
+  }
+  return resCount;
 }
 
 

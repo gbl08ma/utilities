@@ -51,6 +51,14 @@ typedef struct // Defines what a calendar event contains
   unsigned char location[135]; //can't be 128, because otherwise somehow the description may flow into the location.
   unsigned char description[1030]; //orig 1024
 } CalendarEvent;
+
+typedef struct // a simplified calendar event, for use when the memory available is little and one needs to show many events
+{
+  unsigned int category=0;
+  EventDate startdate;
+  unsigned char title[25];
+  unsigned int origpos=0; //position in original file (useful for search results). zero based.
+} SimpleCalendarEvent;
 // end of type definitions
 
 void append(unsigned char* s, char c);
@@ -65,6 +73,7 @@ int RemoveDay(EventDate* date, const char* folder);
 int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit=0);
 void GetEventCountsForMonth(int year, int month, int* buffer);
 void toggleTaskActivity(CalendarEvent* event, int pos, int count);
+int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit);
 
 unsigned char *toksplit(unsigned char *src, char tokchar, unsigned char *token, int lgh);
 #endif

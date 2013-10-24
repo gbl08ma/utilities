@@ -28,10 +28,20 @@
 #include "debugGUI.hpp"
 
 int bufmonth = 0; //this is global so that it's easier to make the events count refresh
+int searchValid = 0; // whether the last search results are valid or not. Set to zero when modifying events in any way.
+int sy, sm, sd = 0; //date to which to switch the calendar
 void viewCalendar() {
-  int y = getCurrentYear();
-  int m = getCurrentMonth();
-  int d = getCurrentDay();
+  int y, m, d;
+  if(!sy || !sm || !sd) {
+    y = getCurrentYear();
+    m = getCurrentMonth();
+    d = getCurrentDay();
+  } else {
+    y = sy;
+    m = sm;
+    d = sd;
+    sy=0; sm=0; sd=0;
+  }
   
   int menu = 1;
   int iresult;
@@ -53,6 +63,8 @@ void viewCalendar() {
         FKey_Display(2, (int*)iresult);
         GetFKeyPtr(0x0104, &iresult); // DEL-ALL
         FKey_Display(3, (int*)iresult);
+        GetFKeyPtr(0x0187, &iresult); // SEARCH
+        FKey_Display(4, (int*)iresult);
         break;
     case 2:
         GetFKeyPtr(0x0408, &iresult); // |<<
@@ -123,6 +135,8 @@ void viewCalendar() {
           y = getCurrentYear();
           m = getCurrentMonth();
           d = getCurrentDay();
+        } else if (menu == 1) {
+          searchEventsGUI(y, m, d);
         }
         break;       
       case KEY_CTRL_F6:
@@ -282,7 +296,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
       if(menu->fkeypage == 0) { if(menu->numitems > 0) viewEvent(&events[menu->selection-1]); }
       else if (menu->fkeypage == 1) {
         copyEvent(&events[menu->selection-1]);
-        bufmonth = 0;
+        bufmonth = 0; searchValid = 0;
       }
       break;
     case MENU_RETURN_SELECTION:
@@ -294,14 +308,14 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
           AUX_DisplayErrorMessage( 0x2E );
         } else {
           eventEditor(y, m, d);
-          bufmonth=0;
+          bufmonth=0; searchValid = 0;
         }
       } else if (menu->fkeypage == 1) {
         moveEvent(&events[menu->selection-1], menu->selection-1);
 #ifdef WAITMSG
         PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
 #endif
-        bufmonth=0;
+        bufmonth=0; searchValid = 0;
         return 0;
       }
       break;
@@ -310,6 +324,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         if(menu->numitems > 0) {
           if(eventEditor(y, m, d, EVENTEDITORTYPE_EDIT, &events[menu->selection-1]) == EVENTEDITOR_RETURN_CONFIRM) {
             ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
+            searchValid = 0;
           }
         }
       } else if (menu->fkeypage == 1) {
@@ -318,12 +333,12 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
       break;
     case KEY_CTRL_F4:
       if(menu->fkeypage == 0) {
-        if(menu->numitems > 0) { deleteEventUI(y,m,d,menu->selection-1, 0); bufmonth=0; }
+        if(menu->numitems > 0) { deleteEventUI(y,m,d,menu->selection-1, 0); bufmonth=0; searchValid = 0; }
       }
       break;
     case KEY_CTRL_F5:
       if(menu->fkeypage == 0) {
-        if(menu->numitems > 0) { deleteAllEventUI(y, m, d, 0); bufmonth=0; }
+        if(menu->numitems > 0) { deleteAllEventUI(y, m, d, 0); bufmonth=0; searchValid = 0; }
       }
       break;
     case KEY_CTRL_F6:
@@ -1350,6 +1365,140 @@ void setEventChrono(CalendarEvent* event) {
         }
       }
       MsgBoxPop();
+    }
+  }
+}
+
+void searchEventsGUI(int y, int m, int d) {
+  MsgBoxPush(4);
+  MenuItem smallmenuitems[3];
+  strcpy(smallmenuitems[0].text, "Selected year");
+  smallmenuitems[0].type = MENUITEM_NORMAL;
+  smallmenuitems[0].color = TEXT_COLOR_BLACK;
+  
+  strcpy(smallmenuitems[1].text, "Selected month");
+  smallmenuitems[1].type = MENUITEM_NORMAL;
+  smallmenuitems[1].color = TEXT_COLOR_BLACK;
+  
+  strcpy(smallmenuitems[2].text, "Selected day");
+  smallmenuitems[2].type = MENUITEM_NORMAL;
+  smallmenuitems[2].color = TEXT_COLOR_BLACK;
+  
+  Menu smallmenu;
+  smallmenu.items=smallmenuitems;
+  smallmenu.numitems=3;
+  smallmenu.type=MENUTYPE_NORMAL;
+  smallmenu.width=17;
+  smallmenu.height=4;
+  smallmenu.startX=3;
+  smallmenu.startY=2;
+  smallmenu.scrollbar=0;
+  smallmenu.scrollout=1;
+  smallmenu.showtitle=1;
+  smallmenu.selection=1;
+  smallmenu.scroll=0;
+  strcpy(smallmenu.nodatamsg, "");
+  strcpy(smallmenu.title, "Search on:");
+  strcpy(smallmenu.statusText, "");
+  int sres = doMenu(&smallmenu);
+  MsgBoxPop();
+  
+  if(sres == MENU_RETURN_SELECTION) {
+    char needle[55] = "";
+    
+    Bdisp_AllClr_VRAM();
+    PrintXY(1, 1, (char*)"  Event Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+    DisplayStatusArea();
+    PrintXY(1, 2, (char*)"  Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    int iresult;
+    GetFKeyPtr(0x04A3, &iresult); // Next
+    FKey_Display(5, (int*)iresult);
+    PrintXY(1, 3, (char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); // remove aestethically unpleasing bit of background at the end of the field
+    
+    textInput input;
+    input.x=1;
+    input.y=3;
+    input.forcetext=1; //force text so title must be at least one char.
+    input.charlimit=50;
+    input.acceptF6=1;
+    input.buffer = needle;
+    while(1) {
+      input.key=0;
+      int res = doTextInput(&input);
+      if (res==INPUT_RETURN_EXIT) return; // user aborted
+      else if (res==INPUT_RETURN_CONFIRM) break; // continue to search
+    }
+
+    if(smallmenu.selection == 3) {
+      EventDate sday;
+      sday.day = d; sday.month = m; sday.year = y;
+      
+      Menu menu;
+      menu.scrollbar=1;
+      menu.scrollout=1;
+      menu.showtitle=1;
+      menu.selection=1;
+      menu.scroll=0;
+      menu.height=7;
+      menu.type=MENUTYPE_FKEYS;
+      strcpy(menu.nodatamsg, "No events found");
+      strcpy(menu.title, "Search results");
+      strcpy(menu.statusText, "");
+      
+      menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
+      SimpleCalendarEvent* events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
+      MenuItem* menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
+      menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
+      int curitem = 0;
+      while(curitem <= menu.numitems-1) {
+        strcpy(menuitems[curitem].text, (char*)events[curitem].title);
+        menuitems[curitem].type = MENUITEM_NORMAL;
+        menuitems[curitem].color = events[curitem].category-1;
+        curitem++;
+      }
+      menu.items=menuitems;
+      while(1) {
+        Bdisp_AllClr_VRAM();
+        int iresult;
+        if(menu.numitems>0) {
+          GetFKeyPtr(0x049F, &iresult); // VIEW
+          FKey_Display(0, (int*)iresult);
+          GetFKeyPtr(0x015F, &iresult); // DATE
+          FKey_Display(1, (int*)iresult);
+          GetFKeyPtr(0x01FC, &iresult); // JUMP
+          FKey_Display(2, (int*)iresult);
+        }
+        int res = doMenu(&menu);
+        switch(res) {
+          case MENU_RETURN_EXIT:
+            return;
+            break;
+          case KEY_CTRL_F1:
+          case MENU_RETURN_SELECTION:
+            if(menu.numitems>0) {
+            int num = GetEventsForDate(&events[menu.selection-1].startdate, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+            CalendarEvent* tmpevents = (CalendarEvent*)alloca(num*sizeof(CalendarEvent));
+            num = GetEventsForDate(&events[menu.selection-1].startdate, CALENDARFOLDER, tmpevents);
+            viewEvent(&tmpevents[events[menu.selection-1].origpos]);
+            }
+            break;
+          case KEY_CTRL_F2:
+            if(menu.numitems>0) {
+              searchValid = 1;
+              viewEvents(events[menu.selection-1].startdate.year, events[menu.selection-1].startdate.month, events[menu.selection-1].startdate.day);
+              if(!searchValid) return;
+            }
+            break;
+          case KEY_CTRL_F3:
+            if(menu.numitems>0) {
+              sy=events[menu.selection-1].startdate.year;
+              sm=events[menu.selection-1].startdate.month;
+              sd=events[menu.selection-1].startdate.day;
+              return;
+            }
+            break;
+        }
+      }
     }
   }
 }
