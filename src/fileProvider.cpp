@@ -39,7 +39,7 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
     if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || \
-      strcmp((char*)buffer, "@MainMem") == 0 || strcmp((char*)buffer, SELFFILE) == 0
+      /*strcmp((char*)buffer, "@MainMem") == 0 ||*/ strcmp((char*)buffer, SELFFILE) == 0
       || strcmp((char*)buffer, CALENDARFOLDER) == 0))
     {
       if(files != NULL) {

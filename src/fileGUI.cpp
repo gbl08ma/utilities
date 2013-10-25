@@ -121,6 +121,25 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
         if(menuitems[menu.selection-1].isfolder) {
           strcpy(browserbasepath, files[menu.selection-1].filename); //switch to selected folder
           strcat(browserbasepath, "\\");
+          if(!strcmp(browserbasepath, "\\\\fls0\\@MainMem\\")) {
+            MsgBoxPush(4);
+            PrintXY(3, 2, (char*)"  Note that this is", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            PrintXY(3, 3, (char*)"  not the Main", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            PrintXY(3, 4, (char*)"  Memory.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+            int inscreen=1, key;
+            while(inscreen) {
+              mGetKey(&key);
+              switch(key)
+              {
+                case KEY_CTRL_EXIT:
+                case KEY_CTRL_AC:
+                  inscreen=0;
+                  break;
+              }
+            }
+            MsgBoxPop();
+          }
           return 1; //reload at new folder
         } else {
           fileInformation(files, &menu);
@@ -163,7 +182,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
                           mGetKey(&key);
                           switch(key)
                           {
-                      case KEY_CTRL_EXIT:
+                            case KEY_CTRL_EXIT:
                             case KEY_CTRL_AC:
                               inscreen=0;
                               break;
@@ -205,7 +224,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
         if(makeFolderGUI(browserbasepath)) return 1; // if user said yes and a folder was created, reload file list
         break;
       case KEY_CTRL_F5:
-        if(renameFileGUI(files, &menu, browserbasepath)) return 1;
+        if(menu.numitems>0) { if(renameFileGUI(files, &menu, browserbasepath)) return 1; }
         break;
       case KEY_CTRL_F6:
         if(menu.numselitems>0) if(deleteFilesGUI(files, &menu)) return 1; // if user said yes and files were deleted, reload file list
