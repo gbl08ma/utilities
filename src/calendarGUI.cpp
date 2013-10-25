@@ -1380,8 +1380,8 @@ void viewNthEventOnDay(EventDate* date, int pos) {
 }
 
 void searchEventsGUI(int y, int m, int d) {
-  MsgBoxPush(4);
-  MenuItem smallmenuitems[3];
+  MsgBoxPush(5);
+  MenuItem smallmenuitems[5];
   strcpy(smallmenuitems[0].text, "Selected year");
   smallmenuitems[0].type = MENUITEM_NORMAL;
   smallmenuitems[0].color = TEXT_COLOR_BLACK;
@@ -1394,12 +1394,16 @@ void searchEventsGUI(int y, int m, int d) {
   smallmenuitems[2].type = MENUITEM_NORMAL;
   smallmenuitems[2].color = TEXT_COLOR_BLACK;
   
+  strcpy(smallmenuitems[3].text, "Year range");
+  smallmenuitems[3].type = MENUITEM_NORMAL;
+  smallmenuitems[3].color = TEXT_COLOR_BLACK;
+  
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
-  smallmenu.numitems=3;
+  smallmenu.numitems=4;
   smallmenu.type=MENUTYPE_NORMAL;
   smallmenu.width=17;
-  smallmenu.height=4;
+  smallmenu.height=5;
   smallmenu.startX=3;
   smallmenu.startY=2;
   smallmenu.scrollbar=0;
@@ -1461,12 +1465,63 @@ void searchEventsGUI(int y, int m, int d) {
       menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, NULL, needle, 200); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
       menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, events, needle, 200);
-    } else {
+    } else if(smallmenu.selection == 3) {
       EventDate sday;
       sday.day = d; sday.month = m; sday.year = y;
       menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
       menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
+    } else {
+      int userStartYear = getCurrentYear()-2;
+      int userEndYear = getCurrentYear()+2;
+      int res;
+      Selector sel;
+      strcpy(sel.title, "Search on year range");
+      strcpy(sel.subtitle, "Start year");
+      sel.value = userStartYear;
+      sel.min = 1;
+      sel.max = 9999;
+      sel.cycle = 1;
+      sel.type = SELECTORTYPE_NORMAL;
+      res = doSelector(&sel);
+      if (res == SELECTOR_RETURN_EXIT) return;
+      userStartYear = sel.value;
+      
+      strcpy(sel.subtitle, "End year");
+      sel.value = userEndYear;
+      sel.min = userStartYear;
+      sel.max = 9999;
+      sel.cycle = 0;
+      sel.type = SELECTORTYPE_NORMAL;
+      res = doSelector(&sel);
+      if (res == SELECTOR_RETURN_EXIT) return;
+      userEndYear = sel.value;
+      
+      int yc = userEndYear-userStartYear+1;
+      int pc = 0; // this and yc are just for progress display purposes
+      int ic = 0, firstYwithEvents = 0, lastYwithEvents = 0, c = 0;
+      ProgressBar( 0, yc );
+      for(int i=userStartYear; i<=userEndYear; i++) {
+        c = SearchEventsOnYear(i, CALENDARFOLDER, NULL, needle, 200, ic); //get event count
+        if(!firstYwithEvents && c>0) firstYwithEvents = i;
+        if(c>0) lastYwithEvents = i;
+        pc++;
+        if(pc <= yc) ProgressBar( pc, yc );
+        ic += c;
+      }
+      MsgBoxPop(); //to close progress bar
+      events = (SimpleCalendarEvent*)alloca(ic*sizeof(SimpleCalendarEvent));
+      ic=0;
+      yc = lastYwithEvents-firstYwithEvents+1;
+      pc=0;
+      ProgressBar( 0, yc );
+      for(int i=firstYwithEvents; i<=lastYwithEvents; i++) {
+        ic += SearchEventsOnYear(i, CALENDARFOLDER, events, needle, 200, ic);
+        pc++;
+        if(pc <= yc) ProgressBar( pc, yc );
+      }
+      MsgBoxPop(); //to close progress bar
+      menu.numitems = ic;
     }
     menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
     int curitem = 0;

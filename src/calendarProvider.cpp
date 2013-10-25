@@ -713,13 +713,14 @@ int SearchEventsOnMonth(int y, int m, const char* folder, SimpleCalendarEvent* c
   return resCount;
 }
 
-int SearchEventsOnYear(int y, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
+int SearchEventsOnYear(int y, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int arraystart) {
   /* goes through the events on storage memory for a certain month
    * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)
    * if calEvents is NULL simply returns the number of results
    * returns the search results count */
   int m = 1;
   int resCount = 0;
+  int curfpos = arraystart;
   while(m<=12) {
     int d = 1;
     int mdays = getMonthDays(m);
@@ -745,12 +746,13 @@ int SearchEventsOnYear(int y, const char* folder, SimpleCalendarEvent* calEvents
         }
         if(match) {
           if(calEvents != NULL) {
-            strcpy((char*)calEvents[resCount].title, (char*)dayEvents[curitem].title);
-            calEvents[resCount].startdate = date;
-            calEvents[resCount].category = dayEvents[curitem].category;
-            calEvents[resCount].origpos = curitem;
+            strcpy((char*)calEvents[curfpos].title, (char*)dayEvents[curitem].title);
+            calEvents[curfpos].startdate = date;
+            calEvents[curfpos].category = dayEvents[curitem].category;
+            calEvents[curfpos].origpos = curitem;
           }
           resCount++;
+          curfpos++;
         }
         if(resCount == limit) return resCount;
         curitem++;
