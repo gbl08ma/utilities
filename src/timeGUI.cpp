@@ -166,11 +166,6 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
   return;
 }
 
-void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg) {
-  // may be extended in the future
-  drawFilledCircle(cx, cy, radius, colorfg);
-  drawFilledCircle(cx, cy, radius-2, colorbg);
-}
 double sine(double x)
 {
     // useful to pre-calculate
@@ -210,6 +205,23 @@ double sine(double x)
 }
 double cosine(double x) {
   return sine(M_PI/2-x);
+}
+void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg) {
+  // may be extended in the future
+  drawFilledCircle(cx, cy, radius, colorfg);
+  drawFilledCircle(cx, cy, radius-2, colorbg);
+  int theta=0,i=0;
+  double x,y;
+  do{
+    x=cx+(radius-3)*cosine(theta*M_PI/180);
+    y=cy+(radius-3)*sine(theta*M_PI/180);
+    // Draw Numeric Point
+    plot(x,y,COLOR_GRAY);
+    // Increase angle by 30 degrees, which is the circular distance between each numeric point:
+    theta+=30;
+    i++;
+
+  } while(i!=12); //LIMIT NUMERIC POINTS UPTO =12= Numbers.
 }
 void drawAnalogClockSecondNeedle(int s, int cx, int cy, double radius, int colorfg) {
   double angle=-90.0;
