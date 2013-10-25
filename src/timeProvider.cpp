@@ -350,6 +350,8 @@ int isDateValid(int y, int m, int d) {
 
 // converts an amount of days to a date
 // result goes in the three last parameters
+// converts an amount of days to a date
+// result goes in the three last parameters
 void DaysToDate(long day_number, long* year, long* month, long* day) {
   *year = ((long long)10000 * day_number + 14780) / (long long)3652425;
   long ddd = day_number - (365L * *year + *year / 4L - *year / 100 + *year / 400L);
@@ -359,19 +361,16 @@ void DaysToDate(long day_number, long* year, long* month, long* day) {
   }
   long mi = (100L * ddd + 52L) / 3060L;
   *month = (mi + 2) % 12 + 1;
-  //*year = *year + (mi + 2) / 12;
-  long mi2 = (long)mi+2;
-  long mi3 = (long)mi2/12;
-  *year = *year + mi3;
+  *year = *year + (mi + 2) / 12;
   *day = ddd - (mi * 306 + 5) / 10 + 1;
 }
 
 // converts a date to an amount of days.
 // returns result. parameters stay untouched
-long long int DateToDays(int y, int m, int d)
+long int DateToDays(int y, int m, int d)
 {
-  long long int ly,lm;
-  lm = ((long long int)m + 9LL) % 12LL;
-  ly = (long long int)y - (long long int)m/10LL;
-  return ly*365LL + ly/4LL - ly/100LL + ly/400LL + (lm*306LL + 5LL)/10LL + ( (long long int)d - 1LL );
+  long int ly,lm;
+  lm = ((long int)m + 9LL) % 12LL;
+  ly = (long int)y - (long int)lm/10LL;
+  return ly*365LL + ly/4LL - ly/100LL + ly/400LL + (lm*306LL + 5LL)/10LL + ( (long int)d - 1LL );
 }
