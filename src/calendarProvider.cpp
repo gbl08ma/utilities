@@ -645,13 +645,13 @@ int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* 
   int resCount = 0;
   while(curitem <= daynumevents-1) {
     int match = 0;
-    if(NULL != strstr((char*)dayEvents[curitem].title, needle)) {
+    if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
       match = 1;
     }
-    if(NULL != strstr((char*)dayEvents[curitem].location, needle)) {
+    if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
       match = 1;
     }
-    if(NULL != strstr((char*)dayEvents[curitem].description, needle)) {
+    if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
       match = 1;
     }
     if(match) {
@@ -687,13 +687,13 @@ int SearchEventsOnMonth(int y, int m, const char* folder, SimpleCalendarEvent* c
     int curitem = 0;
     while(curitem <= daynumevents-1) {
       int match = 0;
-      if(NULL != strstr((char*)dayEvents[curitem].title, needle)) {
+      if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
         match = 1;
       }
-      if(NULL != strstr((char*)dayEvents[curitem].location, needle)) {
+      if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
         match = 1;
       }
-      if(NULL != strstr((char*)dayEvents[curitem].description, needle)) {
+      if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
         match = 1;
       }
       if(match) {
@@ -734,13 +734,13 @@ int SearchEventsOnYear(int y, const char* folder, SimpleCalendarEvent* calEvents
       int curitem = 0;
       while(curitem <= daynumevents-1) {
         int match = 0;
-        if(NULL != strstr((char*)dayEvents[curitem].title, needle)) {
+        if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
           match = 1;
         }
-        if(NULL != strstr((char*)dayEvents[curitem].location, needle)) {
+        if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
           match = 1;
         }
-        if(NULL != strstr((char*)dayEvents[curitem].description, needle)) {
+        if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
           match = 1;
         }
         if(match) {
@@ -762,6 +762,45 @@ int SearchEventsOnYear(int y, const char* folder, SimpleCalendarEvent* calEvents
   return resCount;
 }
 
+char tolower(char c)
+{
+  if (c >= 'A' && c <= 'Z')
+          c += 32;
+  return c;
+}
+int strncasecmp(const char *s1, const char *s2, size_t n)
+{
+        if (n != 0) {
+                const unsigned char *us1 = (const unsigned char *)s1;
+                const unsigned char *us2 = (const unsigned char *)s2;
+
+                do {
+                        if (tolower(*us1) != tolower(*us2++))
+                                return (tolower(*us1) - tolower(*--us2));
+                        if (*us1++ == '\0')
+                                break;
+                } while (--n != 0);
+        }
+        return (0);
+}
+char *strcasestr(const char *s, const char *find)
+{
+        char c, sc;
+        size_t len;
+
+        if ((c = *find++) != 0) {
+                c = tolower((unsigned char)c);
+                len = strlen(find);
+                do {
+                        do {
+                                if ((sc = *s++) == 0)
+                                        return (NULL);
+                        } while ((char)tolower((unsigned char)sc) != c);
+                } while (strncasecmp(s, find, len) != 0);
+                s--;
+        }
+        return ((char *)s);
+}
 
 
 /* copy over the next token from an input string, after
