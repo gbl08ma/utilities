@@ -100,14 +100,14 @@ int doTextInput(textInput* input) {
       Cursor_SetFlashOff(); return INPUT_RETURN_EXIT;
     } else if(input->key == KEY_CTRL_F1 || input->key == KEY_CTRL_F2) {  
       Cursor_SetFlashOff(); return INPUT_RETURN_KEYCODE;
-    } else if(input->key == KEY_CTRL_F4) {
+    } else if(input->key == KEY_CTRL_F4 && input->type == INPUTTYPE_NORMAL) {
       SaveVRAM_1();
       Bkey_ClrAllFlags();
       short character;
       character = CharacterSelectDialog();
       if (character) input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, character);
       LoadVRAM_1();
-    } else if(input->key == KEY_CTRL_F5) {
+    } else if(input->key == KEY_CTRL_F5 && input->type == INPUTTYPE_NORMAL) {
       if (keyflag == 0x04 || keyflag == 0x08 || keyflag == 0x84 || keyflag == 0x88) {
         // ^only applies if some sort of alpha (not locked) is already on
         if (keyflag == 0x08 || keyflag == 0x88) { //if lowercase

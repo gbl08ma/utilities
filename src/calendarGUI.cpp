@@ -612,6 +612,11 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       case 3:
         if(!istask) {
+          // disable keyboard modifiers, as user may have come from a text input field
+          // where alpha-lock was enabled, not being disabled on F6.
+          SetSetupSetting( (unsigned int)0x14, 0);
+          DisplayStatusArea();
+          
           PrintXY(1, 2, (char*)"  Start time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           PrintXY(1, 3, (char*)"  Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           PrintXY(6, 4, (char*)"  HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
