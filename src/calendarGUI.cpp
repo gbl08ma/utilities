@@ -344,6 +344,16 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         if(menu->numitems > 0) menu->fkeypage = 1;
       } else menu->fkeypage = 0;
       break;
+    case KEY_CTRL_FORMAT:
+      if(menu->numitems > 0) {
+        //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
+        //so on this add-in it is used to change the category (color) of a task/calendar event.
+        if(changeEventCategory(&events[menu->selection-1])) {
+          ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
+          searchValid = 0;
+        }
+      }
+      break;
   }
   return 1;
 }
@@ -1370,6 +1380,20 @@ void setEventChrono(CalendarEvent* event) {
       MsgBoxPop();
     }
   }
+}
+
+int changeEventCategory(CalendarEvent* event) {
+  //Allows for changing the category of a event/task with a color select dialog.
+  //Returns 1 on success and 0 on user abort
+  //Does not save the changes to SMEM (like eventEditor)
+  unsigned char selcolor = (unsigned char) 0xFF; //just so it isn't uninitialized
+  selcolor = ColorIndexDialog1( 0, 0 );
+  if(selcolor != (unsigned char)0xFF) {
+    //user didn't press EXIT, QUIT or AC/ON. input is validated.
+    selcolor != 7 ? event->category = selcolor+1 : event->category = 0;
+    return 1;
+  }
+  return 0;
 }
 
 void viewNthEventOnDay(EventDate* date, int pos) {

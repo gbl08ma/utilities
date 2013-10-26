@@ -115,6 +115,15 @@ int viewTasksSub(Menu* menu) {
     case KEY_CTRL_F6:
       if(menu->numitems > 0) toggleTaskActivity(tasks, menu->selection-1, menu->numitems);
       break;
+    case KEY_CTRL_FORMAT:
+      if(menu->numitems > 0) {
+        //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
+        //so on this add-in it is used to change the category (color) of a task/calendar event.
+        if(changeEventCategory(&tasks[menu->selection-1])) {
+          ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
+        }
+      }
+      break;
   }
   return 1;
 }

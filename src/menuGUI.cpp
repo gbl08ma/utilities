@@ -171,6 +171,9 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
         case KEY_CTRL_PASTE:
           if (menu->type==MENUTYPE_MULTISELECT) return key; // MULTISELECT also returns on paste
           break;
+        case KEY_CTRL_FORMAT:
+          if (menu->type==MENUTYPE_FKEYS) return key; // return on the Format key so that event lists can prompt to change event category
+          break;
         case KEY_CTRL_EXE:
           if(menu->numitems>0) { return MENU_RETURN_SELECTION; }
           break;
