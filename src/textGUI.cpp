@@ -97,6 +97,9 @@ int doTextArea(textArea* text) {
       case KEY_CTRL_EXE:
         if(text->allowEXE) return 1;
         break;
+      case KEY_CTRL_F1:
+        if(text->allowF1) return 2;
+        break;
       case KEY_CTRL_EXIT: return 0; break;
     }
   }

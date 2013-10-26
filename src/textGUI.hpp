@@ -36,8 +36,9 @@ typedef struct
   int showtitle = 1;
   int scrollbar=1;
   int allowEXE=0; //whether to allow EXE to exit the screen
+  int allowF1=0; //whether to allow F1 to exit the screen
 } textArea;
 
-int doTextArea(textArea* text); //returns 0 when user EXITs, 1 when allowEXE is true and user presses EXE.
+int doTextArea(textArea* text); //returns 0 when user EXITs, 1 when allowEXE is true and user presses EXE, 2 when allowF1 is true and user presses F1.
 
 #endif 

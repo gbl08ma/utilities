@@ -19,6 +19,7 @@
 #include "keyboardProvider.hpp"
 #include "tbcdProvider.hpp"
 #include "selectorGUI.hpp"
+#include "textGUI.hpp"
 
 #include "debugGUI.hpp"
 
@@ -358,84 +359,69 @@ void setDateGUI(int canExit) {
 void RTCunadjustedWizard(int helpMessage) {
   //first check if RTC is unadjusted. if not, return.
   if(!getRTCisUnadjusted()) return;
-  int textX = 0;
-  int textY = 0;
-  int key;
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
   if(helpMessage) {
-    PrintXY(1, 1, (char*)"  Clock unadjusted", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-    textY = 24; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"Looks like this calculator's clock isn't", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-    textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"set correctly, because it is set to a", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-    textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"date in the past. This may be because", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-    textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"you never set this clock before or", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-    textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"because you took off the batteries.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+    textArea text;
+    strcpy(text.title, (char*)"Clock unadjusted");
     
-    textY = textY + 34; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"Press EXE or F1 to start setting the", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-    textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"time and date, or EXIT to ignore and", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-    textY = textY + 17; textX = 0;
-    PrintMini(&textX, &textY, (unsigned char*)"continue.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-    int inscreen = 1;
-    while(inscreen) {
-      mGetKey(&key);
-      switch(key) {
-        case KEY_CTRL_EXE:
-        case KEY_CTRL_F1:
-          inscreen=0;
-          break;
-        case KEY_CTRL_EXIT:
-          return;
-      }
-    }
+    textElement elem[5];
+    text.elements = elem;
+    text.allowEXE = 1; text.allowF1 = 1;
+    text.scrollbar = 0;
+    
+    elem[0].text = (char*)"Looks like this calculator's clock isn't set correctly, because it is set to a date in the past.";
+    elem[0].spaceAtEnd = 1;
+    elem[1].text = (char*)"This may be because you never set this clock before or because you took off the batteries.";
+    elem[2].newLine = 1;
+    elem[2].lineSpacing = 8;
+    elem[2].text = (char*)"Press EXE or F1 to start setting the time and date, or EXIT to ignore and continue.";
+    
+    text.numelements = 3;
+    int res = doTextArea(&text);
+    if(res == 0) {
+      return;
+    } // else keep with program execution
   }
   
-  Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
-  PrintXY(1, 1, (char*)"  Clock unadjusted", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  textY = 24+17; textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"When setting the date and time, use", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textY = textY + 17; textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"the up/down keys to change the", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textY = textY + 17; textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"displayed value, and EXE to confirm.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textY = textY + 17+17; textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"Press any key to start.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  mGetKey(&key);
+  textArea text;
+  strcpy(text.title, (char*)"Clock unadjusted");
+  
+  textElement elem[5];
+  text.elements = elem;
+  text.allowEXE = 1; text.allowF1 = 1;
+  text.scrollbar = 0;
+  
+  elem[0].text = (char*)"When setting the date and time, use the up/down keys to change the displayed value, and EXE to confirm.";
+  elem[1].newLine = 1;
+  elem[1].lineSpacing = 8;
+  elem[1].text = (char*)"Press EXE to start.";
+  
+  text.numelements = 2;
+  doTextArea(&text);
+  
   setTimeGUI(0);
-  Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
-  PrintXY(1, 1, (char*)"  Clock unadjusted", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  textY = 24+17; textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"Now let's set the date.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textY = textY + 17+17; textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"Press any key to start.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  mGetKey(&key);
+  
+  elem[0].text = (char*)"Now let's set the date.";
+  elem[1].newLine = 1;
+  elem[1].lineSpacing = 8;
+  elem[1].text = (char*)"Press EXE to continue.";
+  
+  text.numelements = 2;
+  doTextArea(&text);
+  
   setDateGUI(0);
-  Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
-  PrintXY(1, 1, (char*)"  Clock adjusted", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  textY = 24+17; textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"We're done!", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textY = textY + 17; textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"If you ever need to adjust the clock", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textY = textY + 17; textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"again press Shift->Menu and choose", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textY = textY + 17; textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"the appropriate options.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textY = textY + 30; textX = 0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"You'll need to set the clock every time you take off the", 0, TEXT_COLOR_BLACK, 0 );
-  textY = textY + 12; textX = 0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"batteries.", 0, TEXT_COLOR_BLACK, 0 );
-  textY = LCD_HEIGHT_PX-17-24; textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"Press any key to continue.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  mGetKey(&key);
+  
+  strcpy(text.title, (char*)"Clock adjusted");
+  elem[0].text = (char*)"We're done!";
+  elem[1].newLine = 1;
+  elem[1].text = (char*)"If you ever need to adjust the clock again press Shift->Menu and choose the appropriate options.";
+  elem[2].newLine = 1;
+  elem[2].lineSpacing = 8;
+  elem[2].text = (char*)"Press EXE or EXIT to close.";
+  
+  text.numelements = 3;
+  doTextArea(&text);
 }
 
 void currentTimeToBasicVar() {
