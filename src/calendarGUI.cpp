@@ -1323,9 +1323,9 @@ void setEventChrono(CalendarEvent* event) {
   long long int duration = estart - currentUnixTime();
   if(duration < 0) {
     // event is in the past, abort
-    MsgBoxPush(3);
-    PrintXY(3, 3, (char*)"  Event starts in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    PrintXY(3, 4, (char*)"  the past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    MsgBoxPush(4);
+    PrintXY(3, 2, (char*)"  Event starts in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    PrintXY(3, 3, (char*)"  the past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
     int key,inscreen=1;
     while(inscreen) {
@@ -1344,9 +1344,9 @@ void setEventChrono(CalendarEvent* event) {
     res = setChronoExternal(sel.value-1, duration, CHRONO_TYPE_DOWN);
     if(res) {
       // success setting a chrono
-      MsgBoxPush(3);
-      PrintXY(3, 3, (char*)"  Event reminder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      PrintXY(3, 4, (char*)"  set successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      MsgBoxPush(4);
+      PrintXY(3, 2, (char*)"  Event reminder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      PrintXY(3, 3, (char*)"  set successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
       int key,inscreen=1;
       while(inscreen) {
@@ -1362,9 +1362,9 @@ void setEventChrono(CalendarEvent* event) {
       MsgBoxPop();
     } else {
       // timer is busy
-      MsgBoxPush(3);
-      PrintXY(3, 3, (char*)"  Selected chrono", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      PrintXY(3, 4, (char*)"  is not clear.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      MsgBoxPush(4);
+      PrintXY(3, 2, (char*)"  Selected chrono", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      PrintXY(3, 3, (char*)"  is not clear.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
       int key,inscreen=1;
       while(inscreen) {
