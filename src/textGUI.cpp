@@ -81,7 +81,9 @@ int doTextArea(textArea* text) {
 
       Scrollbar(&sb);
     }
-    mGetKey(&key);
+    if(text->allowMkey) mGetKey(&key);
+    else GetKey(&key);
+    
     switch(key)
     {
       case KEY_CTRL_UP:

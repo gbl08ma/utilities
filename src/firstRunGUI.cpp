@@ -25,8 +25,7 @@
 
 void firstRunWizard() {
   Bdisp_AllClr_VRAM();
-  int curstep = 0;
-  int textX=0, textY=0, key;
+  int textX=0, textY=0;
 
   drawtnyimLogo( LCD_WIDTH_PX/2-138/2, LCD_HEIGHT_PX/2-42/2, 0);
   PrintMini(&textX, &textY, (unsigned char*)"brought to you by", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); //get length
@@ -49,161 +48,63 @@ void firstRunWizard() {
   PrintMini(&textX, &textY, (unsigned char*)"edia", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   Bdisp_PutDisp_DD();
   blockForMilliseconds(3500);
-  while(1) {
-    Bdisp_AllClr_VRAM();
-    DisplayStatusArea();
-    PrintXY(1, 1, (char*)"  Welcome to Utilities", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-    switch(curstep) {
-      case 0:
-        if(1) {
-          int iresult;
-          GetFKeyPtr(0x04A3, &iresult); // Next
-          FKey_Display(5, (int*)iresult);
-          
-          textY = 24; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"This add-in provides functionality", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"not originally present on Casio Prizm", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"(fx-CG 10/20) calculators:", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 22; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)" - Clock and chronometer", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)" - Calendar with agenda and tasklist", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)" - Fine timeout&backlight adjustment", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)" - File manager", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);    
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)" - CPU clock adjustment", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 5; textX = textX + 40;
-          PrintMiniMini( &textX, &textY, (unsigned char*)"...and more", 0, TEXT_COLOR_BLACK, 0 );
-          textX = 0; textY = LCD_HEIGHT_PX-24-15;
-          PrintMiniMini( &textX, &textY, (unsigned char*)"Press F6 or EXE for next page", 0, TEXT_COLOR_BLACK, 0 );
-          GetKey(&key);
-          switch(key)
-          {
-            case KEY_CTRL_EXE:
-            case KEY_CTRL_F6:
-              curstep = curstep+1;
-              break;
-          }
-        }
-        break;
-      case 1:
-        if(1) {
-          int iresult;
-          GetFKeyPtr(0x036F, &iresult); // <
-          FKey_Display(0, (int*)iresult);
-          GetFKeyPtr(0x04A3, &iresult); // Next
-          FKey_Display(5, (int*)iresult);
-          
-          textY = 24; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"Important notes:", 0, 0xFFFFFFFF, 0, 0, COLOR_ORANGE, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"To set time and date, as well as other", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"settings, press Shift+Menu (Setup) at", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"almost any point in the add-in.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 27; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"The CPU clock adjustment tool is", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"hidden by default. To enable it, turn", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"on the \"Show advanced tools\" setting.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          
-          GetKey(&key);
-          switch(key)
-          {
-            case KEY_CTRL_F1:
-              curstep = curstep-1;
-              break;
-            case KEY_CTRL_EXE:
-            case KEY_CTRL_F6:
-              curstep = curstep+1;
-              break;
-          }
-        }
-        break;
-      case 2:
-        if(1) {
-          int iresult;
-          GetFKeyPtr(0x036F, &iresult); // <
-          FKey_Display(0, (int*)iresult);
-          GetFKeyPtr(0x04A3, &iresult); // Next
-          FKey_Display(5, (int*)iresult);
-          
-          textY = 24; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"Important notes:", 0, 0xFFFFFFFF, 0, 0, COLOR_ORANGE, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"There is a calculator lock function,", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"that allows for locking your", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"calculator with a password.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 20; textX = 0;
-          PrintMiniMini( &textX, &textY, (unsigned char*)"Lock the calculator by pressing F5 on the home screen.", 0, TEXT_COLOR_BLACK, 0 );
-          textY = textY + 12; textX = 0;
-          PrintMiniMini( &textX, &textY, (unsigned char*)"You'll be prompted to set a password the first time you use", 0, TEXT_COLOR_BLACK, 0 );
-          textY = textY + 12; textX = 0;
-          PrintMiniMini( &textX, &textY, (unsigned char*)"this function. You can set a new password in the Settings", 0, TEXT_COLOR_BLACK, 0 );
-          textY = textY + 12; textX = 0;
-          PrintMiniMini( &textX, &textY, (unsigned char*)"menu.", 0, TEXT_COLOR_BLACK, 0 );
-          
-          GetKey(&key);
-          switch(key)
-          {
-            case KEY_CTRL_F1:
-              curstep = curstep-1;
-              break;
-            case KEY_CTRL_EXE:
-            case KEY_CTRL_F6:
-              curstep = curstep+1;
-              break;
-          }
-        }
-        break;
-      case 3:
-        if(1) {
-          int iresult;
-          GetFKeyPtr(0x036F, &iresult); // <
-          FKey_Display(0, (int*)iresult);
-          GetFKeyPtr(0x04A4, &iresult); // Finish
-          FKey_Display(5, (int*)iresult);
-          
-          PrintXY(1, 1, (char*)"  Welcome to Utilities", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-          textY = 24; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"Thanks for reading these notes.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"After pressing F6 or EXE, you will", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"probably be guided to adjust your", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"calculator's clock.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 20; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"In case you need help with this", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"software, contact info is on the", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"\"About\" screen, to which you can get", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textY = textY + 17; textX = 0;
-          PrintMini(&textX, &textY, (unsigned char*)"from the Settings menu.", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          mGetKey(&key); //do a managed GetKey now so that users can go into Settings.
-          switch(key)
-          {
-            case KEY_CTRL_F1:
-              curstep = curstep-1;
-              break;
-            case KEY_CTRL_EXE:
-            case KEY_CTRL_F6:
-              SetSetting(SETTING_IS_FIRST_RUN, 0, 1);
-              return;
-              break;
-          }
-        }
-        break;
-    }
-  }
+  
+  textArea text;
+  strcpy(text.title, (char*)"Welcome to Utilities");
+  
+  textElement elem[20];
+  text.elements = elem;
+  text.allowEXE = 1;
+  text.allowMkey = 0;
+  
+  elem[0].text = (char*)"This add-in provides functionality not originally present on Casio Prizm (fx-CG 10/20) calculators:";
+  elem[1].newLine = 1;
+  elem[1].lineSpacing = 5;
+  elem[1].text = (char*)"- Clock and chronometer";
+  elem[2].newLine = 1;
+  elem[2].text = (char*)"- Calendar with agenda and tasklist";
+  elem[3].newLine = 1;
+  elem[3].text = (char*)"- Fine timeout&backlight adjustment";
+  elem[4].newLine = 1;
+  elem[4].text = (char*)"- File manager";
+  elem[5].newLine = 1;
+  elem[5].text = (char*)"- CPU clock adjustment";
+  elem[6].newLine = 1;
+  elem[6].text = (char*)"...and more";
+  
+  elem[7].newLine = 1;
+  elem[7].lineSpacing = 8;
+  elem[7].color = COLOR_ORANGE;
+  elem[7].text = (char*)"Important notes:";
+  
+  elem[8].newLine = 1;
+  elem[8].text = (char*)"To set time and date, as well as other settings, press Shift+Menu (Setup) at almost any point in the add-in.";
+  
+  elem[9].newLine = 1;
+  elem[9].lineSpacing = 5;
+  elem[9].text = (char*)"The CPU clock adjustment tool is hidden by default. To enable it, turn on the \"Show advanced tools\" setting.";
+  
+  elem[10].newLine = 1;
+  elem[10].lineSpacing = 5;
+  elem[10].text = (char*)"There is a calculator lock function, that allows for locking your calculator with a password.";
+  
+  elem[11].newLine = 1;
+  elem[11].text = (char*)"Lock the calculator by pressing F5 on the home screen. You'll be prompted to set a password the first time you use this function.";
+  elem[11].spaceAtEnd = 1;
+  elem[12].text = (char*)"You can set a new password in the Settings menu.";
+  
+  elem[13].newLine = 1;
+  elem[13].lineSpacing = 8;
+  elem[13].text = (char*)"Thanks for reading these notes.";
+  elem[14].newLine = 1;
+  elem[14].text = (char*)"After pressing EXIT or EXE, you will probably be guided to adjust your calculator's clock.";
+  
+  elem[15].newLine = 1;
+  elem[15].lineSpacing = 3;
+  elem[15].text = (char*)"In case you need help with this software, contact info is on the \"About\" screen, to which you can get from the Settings menu.";
+  
+  text.numelements = 16;
+  doTextArea(&text);
+  SetSetting(SETTING_IS_FIRST_RUN, 0, 1);
 }
  
