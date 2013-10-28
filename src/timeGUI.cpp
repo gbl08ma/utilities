@@ -201,7 +201,7 @@ double sine(double x)
     result += t3;
     result += t2;
     result += t1;
-
+    
     return result;
 }
 double cosine(double x) {
@@ -372,7 +372,7 @@ void RTCunadjustedWizard(int helpMessage) {
     
     elem[0].text = (char*)"Looks like this calculator's clock isn't set correctly, because it is set to a date in the past.";
     elem[0].spaceAtEnd = 1;
-    elem[1].text = (char*)"This may be because you never set this clock before or because you took off the batteries.";
+    elem[1].text = (char*)"This may be because you took off the batteries or restarted the calculator.";
     elem[2].newLine = 1;
     elem[2].lineSpacing = 8;
     elem[2].text = (char*)"Press EXE or F1 to start setting the time and date, or EXIT to ignore and continue.";
