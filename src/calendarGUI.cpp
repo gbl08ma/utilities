@@ -746,7 +746,8 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
               int yr = sys_atoi(year);
               int m = sys_atoi(month);
               int d = sys_atoi(day);
-              if(isDateValid(yr, m, d) && (int)strlen(edbuffer) == input.charlimit) {
+              long int datediff = DateToDays(yr, m, d) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
+              if(isDateValid(yr, m, d) && (int)strlen(edbuffer) == input.charlimit && datediff>=0) {
                 event->enddate.year = yr;
                 event->enddate.month = m;
                 event->enddate.day = d;
