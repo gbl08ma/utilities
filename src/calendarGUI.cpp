@@ -1517,7 +1517,8 @@ void searchEventsGUI(int y, int m, int d) {
       strcpy(sel.subtitle, "End year");
       sel.value = userEndYear;
       sel.min = userStartYear;
-      sel.max = 9999;
+      sel.max = userStartYear+254; //do not allow for more than 255 years, otherwise maximum will be less than an event per year
+      // also, if more than 255 years it would definitely take too much time, and user would certainly reboot the calculator
       sel.cycle = 0;
       sel.type = SELECTORTYPE_NORMAL;
       res = doSelector(&sel);
@@ -1525,11 +1526,12 @@ void searchEventsGUI(int y, int m, int d) {
       userEndYear = sel.value;
       
       int yc = userEndYear-userStartYear+1;
-      int pc = 0; // this and yc are just for progress display purposes
+      int pc = 0;
       int ic = 0, firstYwithEvents = 0, lastYwithEvents = 0, c = 0;
+      int maxPerYear = 250/yc; // calculate maximum number of events we can get on each year
       progressMessage((char*)" Searching...", 0, yc);
       for(int i=userStartYear; i<=userEndYear; i++) {
-        c = SearchEventsOnYear(i, CALENDARFOLDER, NULL, needle, 200, ic); //get event count
+        c = SearchEventsOnYear(i, CALENDARFOLDER, NULL, needle, maxPerYear, ic); //get event count
         if(!firstYwithEvents && c>0) firstYwithEvents = i;
         if(c>0) lastYwithEvents = i;
         pc++;
@@ -1543,7 +1545,7 @@ void searchEventsGUI(int y, int m, int d) {
       pc=0;
       progressMessage((char*)" Searching...", 0, yc);
       for(int i=firstYwithEvents; i<=lastYwithEvents; i++) {
-        ic += SearchEventsOnYear(i, CALENDARFOLDER, events, needle, 200, ic);
+        ic += SearchEventsOnYear(i, CALENDARFOLDER, events, needle, maxPerYear, ic);
         pc++;
         if(pc <= yc) progressMessage((char*)" Searching...", pc, yc);
       }
