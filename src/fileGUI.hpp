@@ -23,6 +23,6 @@ int makeFolderGUI(char* browserbasepath);
 int renameFileGUI(File* files, Menu* menu, char* browserbasepath);
 void fileInformation(File* files, Menu* menu);
 void fileViewAsText(char* filename);
-void compressFile(char* filename);
+void viewFilesInClipboard(File* clipboard, int *itemsinclip);
 
 #endif

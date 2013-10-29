@@ -317,20 +317,6 @@ void progressMessage(char* message, int cur, int total) {
   } else {
     ProgressBar2( (unsigned char*)message, cur, total );
   }
-  /*char buffer[30] = "";
-  char buffer2[5] = "";
-  strcpy(buffer, "  ");
-  strcat(buffer, message);
-  strcat(buffer, " (");
-  itoa(cur, (unsigned char*)buffer2);
-  strcat(buffer, buffer2);
-  strcat(buffer, "/");
-  itoa(total, (unsigned char*)buffer2);
-  strcat(buffer, buffer2);
-  strcat(buffer, ")");
-  PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-  PrintXY(1,8,(char*)buffer, TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-  Bdisp_PutDisp_DD();*/
 }
 void closeProgressMessage() {
   MsgBoxPop(); //closes progressbar

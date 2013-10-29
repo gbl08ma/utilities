@@ -235,6 +235,10 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
         *itemsinclip = 0;
         return 1;
         break;
+      case KEY_CTRL_OPTN:
+        viewFilesInClipboard(clipboard, itemsinclip);
+        return 1; //redraw and everything
+        break;
     }
   }
   return 1;
@@ -409,9 +413,6 @@ void fileInformation(File* files, Menu* menu) {
         fileViewAsText(files[menu->selection-1].filename);
         return;
         break;
-      case KEY_CTRL_F2:
-        compressFile(files[menu->selection-1].filename);
-        return;
     }
   }
 }
@@ -546,59 +547,80 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   doTextArea(&text);
 }
 
-void compressFile(char* filename) {
-  /*unsigned char *buf = NULL;
-  unsigned short pFile[MAX_FILENAME_SIZE];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-  unsigned int filesize = 0;
-  if(hFile >= 0) // Check if it opened
-  { //opened
-    filesize = Bfile_GetFileSize_OS(hFile);
-    buf = (unsigned char*)alloca(filesize*sizeof(unsigned char));
-    filesize = Bfile_ReadFile_OS(hFile, buf, filesize, 0);
-    Bfile_CloseFile_OS(hFile);
-  } else return;
-
-  unsigned char *encBuf;
-  lzg_uint32_t encSize, maxEncSize;
-
-  // Determine maximum size of compressed data
-  maxEncSize = LZG_MaxEncodedSize(filesize);
-
-  // Allocate memory for the compressed data
-  encBuf = (unsigned char*) alloca(maxEncSize);
-  if (encBuf)
-  {
-    // Compress
-    encSize = LZG_Encode(buf, filesize, encBuf, maxEncSize, NULL);
-    if (encSize)
-    {
-        // Compressed data is now in encBuf, use it...
-        char nfilename[MAX_FILENAME_SIZE] = "";
-        strcpy(nfilename, filename);
-        strcat(nfilename, (char*)".lzg");
-        Bfile_StrToName_ncpy(pFile, (unsigned char*)nfilename, strlen(nfilename)+1); 
-        int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, (int*)encSize);
-        if(BCEres >= 0) // Did it create?
-        {
-          BCEres = Bfile_OpenFile_OS(pFile, READWRITE, 0);
-          if(BCEres < 0) // Still failing?
-          {
-            return;
-          }
-          //Write contents
-          Bfile_WriteFile_OS(BCEres, encBuf, encSize);
-          Bfile_CloseFile_OS(BCEres);
-          return;
-        }
+void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
+  Menu menu;
+  menu.height = 7;
+  menu.scrollout = 1;
+  menu.type=MENUTYPE_FKEYS;
+  while(1) {
+    if(*itemsinclip<=0) return;
+    if(menu.selection > *itemsinclip) menu.selection = 1;
+    MenuItem menuitems[MAX_ITEMS_IN_CLIPBOARD];
+    strcpy(menu.title, "Clipboard");
+    menu.showtitle=1;
+    menu.subtitle = (char*)"Black=cut, Red=copy";
+    if(GetSetting(SETTING_SHOW_ADVANCED)) {
+      menu.showsubtitle=1;
     }
-    else
-      //fprintf(stderr, "Compression failed!\n");
-      debugMessage("  Comp failed", "  S:", encSize);
+    menu.items = menuitems;
+    int curitem = 0;
+    while(curitem < *itemsinclip) {
+      char buffer[MAX_FILENAME_SIZE] = "";
+      nameFromFilename(clipboard[curitem].filename, buffer);
+      if(strlen((char*)buffer) > 40) {
+        strcpy(menuitems[curitem].text, (char*)"[Filename too big]");
+      } else {
+        strcpy(menuitems[curitem].text, (char*)buffer);
+      }
+      if(clipboard[curitem].action == 1) menuitems[curitem].color = TEXT_COLOR_RED;
+      curitem++;
+    }
+    menu.numitems = *itemsinclip;
+    PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+    int iresult;
+    GetFKeyPtr(0x0149, &iresult); // CLEAR [white]
+    FKey_Display(0, (int*)iresult);
+    GetFKeyPtr(0x04DB, &iresult); // X symbol [white]
+    FKey_Display(1, (int*)iresult);
+    if(GetSetting(SETTING_SHOW_ADVANCED)) {
+      GetFKeyPtr(0x049D, &iresult); // Switch [white]
+      FKey_Display(2, (int*)iresult);
+    }
+    int res = doMenu(&menu);
+    switch(res) {
+      case MENU_RETURN_EXIT:
+        return;
+        break;
+      case KEY_CTRL_F1:
+        *itemsinclip = 0;
+        return;
+        break;
+      case KEY_CTRL_F2:
+        {
+          int k;
+          if (menu.selection-1 >= *itemsinclip) {} // safety check
+          else
+          {
+            for (k = menu.selection-1; k < *itemsinclip - 1; k++)
+            {
+              menuitems[k] = menuitems[k+1];
+              clipboard[k] = clipboard[k+1];
+            }
+            *itemsinclip = *itemsinclip - 1;
+          }
+        }
+        break;
+      case KEY_CTRL_F3:
+        if(GetSetting(SETTING_SHOW_ADVANCED)) {
+          if(clipboard[menu.selection-1].action == 1) {
+            clipboard[menu.selection-1].action = 0;
+            menuitems[menu.selection-1].color = TEXT_COLOR_BLACK;
+          } else {
+            clipboard[menu.selection-1].action = 1;
+            menuitems[menu.selection-1].color = TEXT_COLOR_RED;
+          }
+        }
+        break;
+    }
   }
-  else
-    //fprintf(stderr, "Out of memory!\n");
-    debugMessage("Out of mem", "", 0);*/
-  
 }
