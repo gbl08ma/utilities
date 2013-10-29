@@ -1387,7 +1387,10 @@ int changeEventCategory(CalendarEvent* event) {
   //Returns 1 on success and 0 on user abort
   //Does not save the changes to SMEM (like eventEditor)
   unsigned char selcolor = (unsigned char) 0xFF; //just so it isn't uninitialized
-  selcolor = ColorIndexDialog1( 0, 0 );
+  int initcolor = 0;
+  if(event->category!=0) initcolor = event->category-1;
+  else initcolor = 7;
+  selcolor = ColorIndexDialog1( initcolor, 0 );
   if(selcolor != (unsigned char)0xFF) {
     //user didn't press EXIT, QUIT or AC/ON. input is validated.
     selcolor != 7 ? event->category = selcolor+1 : event->category = 0;
