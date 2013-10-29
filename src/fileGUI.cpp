@@ -122,11 +122,12 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
           strcpy(browserbasepath, files[menu.selection-1].filename); //switch to selected folder
           strcat(browserbasepath, "\\");
           if(!strcmp(browserbasepath, "\\\\fls0\\@MainMem\\")) {
-            MsgBoxPush(4);
-            PrintXY(3, 2, (char*)"  Note that this is", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 3, (char*)"  not the Main", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 4, (char*)"  Memory.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+            MsgBoxPush(5);
+            PrintXY(3, 2, (char*)"  Note: this is not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            PrintXY(3, 3, (char*)"  the Main Memory,", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            PrintXY(3, 4, (char*)"  just a special", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            PrintXY(3, 5, (char*)"  mirror of it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
             int inscreen=1, key;
             while(inscreen) {
               mGetKey(&key);
