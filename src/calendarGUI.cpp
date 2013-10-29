@@ -746,12 +746,14 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
               int yr = sys_atoi(year);
               int m = sys_atoi(month);
               int d = sys_atoi(day);
-              long int datediff = DateToDays(yr, m, d) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
-              if(isDateValid(yr, m, d) && (int)strlen(edbuffer) == input.charlimit && datediff>=0) {
-                event->enddate.year = yr;
-                event->enddate.month = m;
-                event->enddate.day = d;
-                curstep=curstep+1; break; // continue to next step
+              if(isDateValid(yr, m, d) && (int)strlen(edbuffer) == input.charlimit) {
+                long int datediff = DateToDays(yr, m, d) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
+                if(datediff>=0) {
+                  event->enddate.year = yr;
+                  event->enddate.month = m;
+                  event->enddate.day = d;
+                  curstep=curstep+1; break; // continue to next step
+                } else invalidFieldMsg(0);
               } else {
                 invalidFieldMsg(0);
               }
@@ -807,10 +809,14 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
               int m = sys_atoi(minute);
               int s = sys_atoi(second);
               if(isTimeValid(h, m, s) && (int)strlen(etbuffer) == input.charlimit) {
-                event->endtime.hour = h;
-                event->endtime.minute = m;
-                event->endtime.second = s;
-                curstep=curstep+1; break; // continue to next step
+                long int timediff = (h*60*60+m*60+s) - (event->starttime.hour*60*60+event->starttime.minute*60+event->starttime.second);
+                long int datediff = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
+                if(datediff > 0 || timediff >= 0) {
+                  event->endtime.hour = h;
+                  event->endtime.minute = m;
+                  event->endtime.second = s;
+                  curstep=curstep+1; break; // continue to next step
+                } else invalidFieldMsg(1);
               } else {
                 invalidFieldMsg(1);
               }
