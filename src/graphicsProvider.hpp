@@ -32,6 +32,7 @@ int alphaBlend(int newcc, int oldcc, float alpha);
 void drawtnyimLogo( int x, int y, float alpha);
 int textColorToFullColor(int textcolor);
 void progressMessage(char* message, int cur, int total);
+void closeProgressMessage();
 void printCentered(unsigned char* text, int y, int FGC, int BGC);
 
 #endif

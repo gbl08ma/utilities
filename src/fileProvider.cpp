@@ -77,17 +77,18 @@ void deleteFiles(File* files, Menu* menu) {
   int delfiles = 0; // number of deleted files
   unsigned short path[MAX_FILENAME_SIZE+1];
   if (menu->numitems > 0) {
+    progressMessage((char*)" Deleting...", 0, menu->numselitems);
     while(curfile < menu->numitems  && delfiles < menu->numselitems) {  
       if (menu->items[curfile].isselected) {
         Bfile_StrToName_ncpy(path, (unsigned char*)files[curfile].filename, MAX_FILENAME_SIZE+1);
         Bfile_DeleteEntry( path );
         delfiles++;
       }
-      progressMessage((char*)"Deleting", delfiles, menu->numselitems);
+      progressMessage((char*)" Deleting...", delfiles, menu->numselitems);
       curfile++;
     }
   }
-  PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+  closeProgressMessage();
 }
 
 void nameFromFilename(char* filename, char* name) {
@@ -112,10 +113,9 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
     while(curfile < itemsInClipboard) {
       char name[MAX_NAME_SIZE] = "";
       nameFromFilename(clipboard[curfile].filename, name);
+      progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
       if (clipboard[curfile].action) {
-        //copy file
-        progressMessage((char*)"Copying", curfile+1, itemsInClipboard);
-        
+        //copy file        
         char newfilename[MAX_FILENAME_SIZE] = "";
         strcpy(newfilename, browserbasepath);
         strcat(newfilename, name);
@@ -188,8 +188,6 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         
       } else {
         //move file
-        progressMessage((char*)"Moving", curfile+1, itemsInClipboard);
-        
         char newfilename[MAX_FILENAME_SIZE] = "";
         strcpy(newfilename, browserbasepath);
         strcat(newfilename, name);
@@ -201,5 +199,6 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
       }
       curfile++;
     }
+    closeProgressMessage(); //we opened it, no matter if copying or moving.
   }
 }

@@ -308,7 +308,16 @@ int textColorToFullColor(int textcolor) {
 }
 
 void progressMessage(char* message, int cur, int total) {
-  char buffer[30] = "";
+  // when you're done with this, close with closeProgressMessage!
+  // otherwise, resources won't be freed.
+  // always call with cur==0 and total > 0 first, so that the progressbar is initialized!
+  // if message is empty, the default OS "please wait" message will be used.
+  if(strlen(message) == 0) {
+    ProgressBar( cur, total );
+  } else {
+    ProgressBar2( (unsigned char*)message, cur, total );
+  }
+  /*char buffer[30] = "";
   char buffer2[5] = "";
   strcpy(buffer, "  ");
   strcat(buffer, message);
@@ -321,7 +330,10 @@ void progressMessage(char* message, int cur, int total) {
   strcat(buffer, ")");
   PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
   PrintXY(1,8,(char*)buffer, TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-  Bdisp_PutDisp_DD();
+  Bdisp_PutDisp_DD();*/
+}
+void closeProgressMessage() {
+  MsgBoxPop(); //closes progressbar
 }
 
 void printCentered(unsigned char* text, int y, int FGC, int BGC) {
