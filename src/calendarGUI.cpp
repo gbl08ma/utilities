@@ -646,7 +646,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           input.type=INPUTTYPE_TIME;
           char stbuffer[15] = "";
           strcpy(stbuffer, (char*)"");
-          if(type == EVENTEDITORTYPE_EDIT) fillInputTime(event->starttime.hour, event->starttime.minute, event->starttime.second, stbuffer);
+          fillInputTime(event->starttime.hour, event->starttime.minute, event->starttime.second, stbuffer);
           input.buffer = (char*)stbuffer;
           while(1) {
             input.key=0;
@@ -715,7 +715,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           input.type=INPUTTYPE_DATE;
           char edbuffer[15] = "";
           strcpy(edbuffer, (char*)"");
-          if(type == EVENTEDITORTYPE_EDIT) fillInputDate(event->enddate.year, event->enddate.month, event->enddate.day, edbuffer);
+          fillInputDate(event->enddate.year, event->enddate.month, event->enddate.day, edbuffer);
           input.buffer = (char*)edbuffer;
           while(1) {
             input.key=0;
@@ -788,7 +788,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           input.type=INPUTTYPE_TIME;
           char etbuffer[15] = "";
           strcpy(etbuffer, (char*)"");
-          if(type == EVENTEDITORTYPE_EDIT) fillInputTime(event->endtime.hour, event->endtime.minute, event->endtime.second, etbuffer);
+          fillInputTime(event->endtime.hour, event->endtime.minute, event->endtime.second, etbuffer);
           input.buffer = (char*)etbuffer;
           while(1) {
             input.key=0;
