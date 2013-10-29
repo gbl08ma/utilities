@@ -1527,27 +1527,27 @@ void searchEventsGUI(int y, int m, int d) {
       int yc = userEndYear-userStartYear+1;
       int pc = 0; // this and yc are just for progress display purposes
       int ic = 0, firstYwithEvents = 0, lastYwithEvents = 0, c = 0;
-      ProgressBar( 0, yc );
+      progressMessage((char*)" Searching...", 0, yc);
       for(int i=userStartYear; i<=userEndYear; i++) {
         c = SearchEventsOnYear(i, CALENDARFOLDER, NULL, needle, 200, ic); //get event count
         if(!firstYwithEvents && c>0) firstYwithEvents = i;
         if(c>0) lastYwithEvents = i;
         pc++;
-        if(pc <= yc) ProgressBar( pc, yc );
+        if(pc <= yc) progressMessage((char*)" Searching...", pc, yc);
         ic += c;
       }
-      MsgBoxPop(); //to close progress bar
+      closeProgressMessage();
       events = (SimpleCalendarEvent*)alloca(ic*sizeof(SimpleCalendarEvent));
       ic=0;
       yc = lastYwithEvents-firstYwithEvents+1;
       pc=0;
-      ProgressBar( 0, yc );
+      progressMessage((char*)" Searching...", 0, yc);
       for(int i=firstYwithEvents; i<=lastYwithEvents; i++) {
         ic += SearchEventsOnYear(i, CALENDARFOLDER, events, needle, 200, ic);
         pc++;
-        if(pc <= yc) ProgressBar( pc, yc );
+        if(pc <= yc) progressMessage((char*)" Searching...", pc, yc);
       }
-      MsgBoxPop(); //to close progress bar
+      closeProgressMessage();
       menu.numitems = ic;
     }
     menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
