@@ -84,7 +84,8 @@ void deleteFiles(File* files, Menu* menu) {
         Bfile_DeleteEntry( path );
         delfiles++;
       }
-      progressMessage((char*)" Deleting...", delfiles, menu->numselitems);
+      if(delfiles>0) // do not call progressMessage with 0 as the current value twice, otherwise MsgBox might be pushed twice!
+        progressMessage((char*)" Deleting...", delfiles, menu->numselitems);
       curfile++;
     }
   }

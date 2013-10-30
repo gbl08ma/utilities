@@ -48,14 +48,14 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
     PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 1835, TEXT_COLOR_BLACK); // some will
     PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 1836, TEXT_COLOR_BLACK); // be skipped
     PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
-    int inscreen=1, key;
-    while(inscreen) {
+    int inmsg=1, key;
+    while(inmsg) {
       mGetKey(&key);
       switch(key)
       {
         case KEY_CTRL_EXIT:
         case KEY_CTRL_AC:
-          inscreen=0;
+          inmsg=0;
           break;
       }
     }
