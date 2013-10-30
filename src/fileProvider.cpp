@@ -116,7 +116,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
       nameFromFilename(clipboard[curfile].filename, name);
       progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
       if (clipboard[curfile].action) {
-        //copy file        
+        //copy file
         char newfilename[MAX_FILENAME_SIZE] = "";
         strcpy(newfilename, browserbasepath);
         strcat(newfilename, name);
