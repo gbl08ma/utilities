@@ -27,14 +27,15 @@
 void fileManager() {
   int res = 1;
   int itemsinclip = 0;
+  int shownClipboardHelp = 0;
   char browserbasepath[MAX_FILENAME_SIZE+1] = "\\\\fls0\\";  
   File* clipboard = (File*)alloca((MAX_ITEMS_IN_CLIPBOARD+1)*sizeof(File));
   while(res) {
-    res = fileManagerSub(browserbasepath, &itemsinclip, clipboard);
+    res = fileManagerSub(browserbasepath, &itemsinclip, &shownClipboardHelp, clipboard);
   }
 }
 
-int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
+int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, File* clipboard) {
   Menu menu;
   
   // first get file count so we know how much to alloc
@@ -206,6 +207,26 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
                 menu.numselitems--;
               }
               ifile++;
+            }
+            if(*shownClipboardHelp == 0) {
+              MsgBoxPush(5);
+              PrintXY(3, 2, (char*)"  Hint: press OPTN", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              PrintXY(3, 3, (char*)"  to manage the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              PrintXY(3, 4, (char*)"  clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
+              int inmsg=1, key;
+              while(inmsg) {
+                mGetKey(&key);
+                switch(key)
+                {
+                  case KEY_CTRL_EXIT:
+                  case KEY_CTRL_AC:
+                    inmsg=0;
+                    break;
+                }
+              }
+              MsgBoxPop();
+              *shownClipboardHelp=1;
             }
           } else {
             MsgBoxPush(4);
