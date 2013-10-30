@@ -35,7 +35,6 @@ void fileManager() {
 }
 
 int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
-  int inscreen = 1;
   Menu menu;
   
   // first get file count so we know how much to alloc
@@ -87,7 +86,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
   strcpy(menu.nodatamsg, "No Data");
   strcpy(menu.title, "Files");
   menu.showtitle=1;
-  while(inscreen) {
+  while(1) {
     Bdisp_AllClr_VRAM();
     if(*itemsinclip==0) {
       itoa(smemfree, (unsigned char*)menu.statusText);
@@ -149,14 +148,14 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
             PrintXY(3, 4, (char*)"  just a special", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             PrintXY(3, 5, (char*)"  mirror of it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
-            int inscreen=1, key;
-            while(inscreen) {
+            int inmsg=1, key;
+            while(inmsg) {
               mGetKey(&key);
               switch(key)
               {
                 case KEY_CTRL_EXIT:
                 case KEY_CTRL_AC:
-                  inscreen=0;
+                  inmsg=0;
                   break;
               }
             }
@@ -199,14 +198,14 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
                         PrintXY(3, 2, (char*)"  Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
                         PrintXY(3, 3, (char*)"  not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
                         PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-                        int inscreen=1, key;
-                        while(inscreen) {
+                        int inmsg=1, key;
+                        while(inmsg) {
                           mGetKey(&key);
                           switch(key)
                           {
                             case KEY_CTRL_EXIT:
                             case KEY_CTRL_AC:
-                              inscreen=0;
+                              inmsg=0;
                               break;
                           }
                         }
@@ -227,14 +226,14 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
             PrintXY(3, 3, (char*)"  selected items to", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             PrintXY(3, 4, (char*)"  clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-            int inscreen=1, key;
-            while(inscreen) {
+            int inmsg=1, key;
+            while(inmsg) {
               mGetKey(&key);
               switch(key)
               {
                 case KEY_CTRL_EXIT:
                 case KEY_CTRL_AC:
-                  inscreen=0;
+                  inmsg=0;
                   break;
               }
             }
