@@ -39,7 +39,28 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
   Menu menu;
   
   // first get file count so we know how much to alloc
-  GetAnyFiles(NULL, NULL, browserbasepath, &menu.numitems);
+  int res = GetAnyFiles(NULL, NULL, browserbasepath, &menu.numitems);
+  if(res == GETFILES_MAX_FILES_REACHED) {
+    // show "folder has over 200 items, some will be skipped" message
+    MsgBoxPush(5);
+    PrintXY_2(TEXT_MODE_NORMAL, 1, 2, 1833, TEXT_COLOR_BLACK); // folder has over
+    PrintXY_2(TEXT_MODE_NORMAL, 1, 3, 1834, TEXT_COLOR_BLACK); // 200 files
+    PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 1835, TEXT_COLOR_BLACK); // some will
+    PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 1836, TEXT_COLOR_BLACK); // be skipped
+    PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
+    int inscreen=1, key;
+    while(inscreen) {
+      mGetKey(&key);
+      switch(key)
+      {
+        case KEY_CTRL_EXIT:
+        case KEY_CTRL_AC:
+          inscreen=0;
+          break;
+      }
+    }
+    MsgBoxPop();
+  }
   MenuItem* menuitems = NULL;
   File* files = NULL;
   if(menu.numitems > 0) {
@@ -98,7 +119,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
       GetFKeyPtr(0x038E, &iresult); // MKFLDR
       FKey_Display(3, (int*)iresult);
     }
-    int res = doMenu(&menu);
+    res = doMenu(&menu);
     switch(res) {
       case MENU_RETURN_EXIT:
         if(!strcmp(browserbasepath,"\\\\fls0\\")) { //check that we aren't already in the root folder
