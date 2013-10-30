@@ -16,9 +16,9 @@
 #include "constantsProvider.hpp"
 
 #define SETTINGSFILE_VERSION 4 // NOTE: update this when changing the amount or meaning of settings!
-int setting_self_fileversion = SETTINGSFILE_VERSION; // this is a special setting
-int setting_timeformat = 0; // 0 = 24-hour HH:MM:SS ; 1 = 12-hour HH:MM:SS AM/PM
-int setting_longdateformat = 0;
+static int setting_self_fileversion = SETTINGSFILE_VERSION; // this is a special setting
+static int setting_timeformat = 0; // 0 = 24-hour HH:MM:SS ; 1 = 12-hour HH:MM:SS AM/PM
+static int setting_longdateformat = 0;
 /* 0 = "Weekday, Month 12"&mini 4-digits year below
    1 = "Weekday, 12th Month"&mini 4-digits year below
    2 = "Weekday, 12th Month 2121" (year not mini)
@@ -30,24 +30,24 @@ int setting_longdateformat = 0;
    8 = "12th Month 2012" (year not mini)
    9 = "12th Month" (no year)
 */
-int setting_dateformat = 0;
+static int setting_dateformat = 0;
 /* 0 = DD/MM/YYYY
    1 = MM/DD/YYYY
    2 = YYYY/MM/DD
 */
-int setting_theme = 0; //whether the home screen (and later, possibly other things too) should use a dark/inverted theme. 0: white theme; 1: dark theme
-int setting_display_statusbar = 1; //whether the status bar should be displayed
-int setting_startup_brightness = 250; //screen brightness level to force on add-in startup, 0~249. 250 for no forcing //NOTE: was unsigned int before... why?
-int setting_show_advanced = 0; //whether to show advanced things like CPU clock selection
-int setting_display_fkeys = 1;
-int setting_password_privacy = 1; // 0: show last input character when entering passwords; 1: do not show last char NOTE: this had a different name before and the meaning of the value is now different!
-int setting_show_calendar_events_count = 1; // had a different name before, value meaning is the same
-int setting_is_first_run = 1; //should be 1 for the first time the add-in is run, then it's set to zero and never changed
-int setting_enable_lock = 1; //whether lock functionality is available or not. Should always be on and not changeable on the settings menu, except when a specific code is entered on master-control in order to disable it to make people who don't want the lock, because they accidentally lock their calculators, happier (I'm thinking of you Catarina...)
-int setting_lock_autooff = 0; //whether to turn off automatically after locking the calc
-int setting_lock_on_exe = 0; //when enabled, calculator is locked when EXE is pressed on the home screen (i.e. legacy support for people used to the old lock add-in).
-int setting_unlock_runmat = 0; //whether to jump to Run-Mat when calculator is unlocked. 2 when user should be asked.
-int setting_clock_type = 0;
+static int setting_theme = 0; //whether the home screen (and later, possibly other things too) should use a dark/inverted theme. 0: white theme; 1: dark theme
+static int setting_display_statusbar = 1; //whether the status bar should be displayed
+static int setting_startup_brightness = 250; //screen brightness level to force on add-in startup, 0~249. 250 for no forcing //NOTE: was unsigned int before... why?
+static int setting_show_advanced = 0; //whether to show advanced things like CPU clock selection
+static int setting_display_fkeys = 1;
+static int setting_password_privacy = 1; // 0: show last input character when entering passwords; 1: do not show last char NOTE: this had a different name before and the meaning of the value is now different!
+static int setting_show_calendar_events_count = 1; // had a different name before, value meaning is the same
+static int setting_is_first_run = 1; //should be 1 for the first time the add-in is run, then it's set to zero and never changed
+static int setting_enable_lock = 1; //whether lock functionality is available or not. Should always be on and not changeable on the settings menu, except when a specific code is entered on master-control in order to disable it to make people who don't want the lock, because they accidentally lock their calculators, happier (I'm thinking of you Catarina...)
+static int setting_lock_autooff = 0; //whether to turn off automatically after locking the calc
+static int setting_lock_on_exe = 0; //when enabled, calculator is locked when EXE is pressed on the home screen (i.e. legacy support for people used to the old lock add-in).
+static int setting_unlock_runmat = 0; //whether to jump to Run-Mat when calculator is unlocked. 2 when user should be asked.
+static int setting_clock_type = 0;
 /* what clock to show on home screen.
    0 = digital time and long date - "traditional", like versions up to 1.0
    1 = just digital time
@@ -62,8 +62,8 @@ int setting_clock_type = 0;
    10 = analog clock with short date
    11 = show nothing at all
 */
-int setting_clock_seconds = 1; // whether to show seconds in clock
-int setting_home_panes = 1; // whether to enable panes in home screen
+static int setting_clock_seconds = 1; // whether to show seconds in clock
+static int setting_home_panes = 1; // whether to enable panes in home screen
 
 // Routines for accessing and setting settings
 // NOTE: directly accessing setting_* variables is now strictly forbidden!
