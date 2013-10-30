@@ -185,31 +185,18 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, File* clipboard) {
                       strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
                       //0=cut file; 1=copy file:
                       clipboard[*itemsinclip].action = 0;
+                      clipboard[*itemsinclip].isfolder = menu.items[ifile].isfolder;
                       *itemsinclip = *itemsinclip + 1;
                   } else {
                     if (!menu.items[ifile].isfolder) {
                       strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
                       //0=cut file; 1=copy file:
                       clipboard[*itemsinclip].action = 1;
+                      clipboard[*itemsinclip].isfolder = 0;
                       *itemsinclip = *itemsinclip + 1;
                     } else {
                       if (!hasShownFolderCopyWarning) {
-                        MsgBoxPush(4);
-                        PrintXY(3, 2, (char*)"  Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-                        PrintXY(3, 3, (char*)"  not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-                        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-                        int inmsg=1, key;
-                        while(inmsg) {
-                          mGetKey(&key);
-                          switch(key)
-                          {
-                            case KEY_CTRL_EXIT:
-                            case KEY_CTRL_AC:
-                              inmsg=0;
-                              break;
-                          }
-                        }
-                        MsgBoxPop();
+                        showCopyFolderWarning();
                         hasShownFolderCopyWarning = 1;
                       }
                     }
@@ -636,11 +623,32 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
             clipboard[menu.selection-1].action = 0;
             menuitems[menu.selection-1].color = TEXT_COLOR_BLACK;
           } else {
-            clipboard[menu.selection-1].action = 1;
-            menuitems[menu.selection-1].color = TEXT_COLOR_RED;
+            if(!clipboard[menu.selection-1].isfolder) {
+              clipboard[menu.selection-1].action = 1;
+              menuitems[menu.selection-1].color = TEXT_COLOR_RED;
+            } else showCopyFolderWarning();
           }
         }
         break;
     }
   }
+}
+
+void showCopyFolderWarning() {
+  MsgBoxPush(4);
+  PrintXY(3, 2, (char*)"  Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  PrintXY(3, 3, (char*)"  not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+  int inmsg=1, key;
+  while(inmsg) {
+    mGetKey(&key);
+    switch(key)
+    {
+      case KEY_CTRL_EXIT:
+      case KEY_CTRL_AC:
+        inmsg=0;
+        break;
+    }
+  }
+  MsgBoxPop(); 
 }

@@ -24,5 +24,6 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath);
 void fileInformation(File* files, Menu* menu);
 void fileViewAsText(char* filename);
 void viewFilesInClipboard(File* clipboard, int *itemsinclip);
+void showCopyFolderWarning();
 
 #endif
