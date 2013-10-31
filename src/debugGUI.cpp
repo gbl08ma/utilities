@@ -98,7 +98,7 @@ void masterControl() {
   menu.selection=1;
   menu.scroll=0;
   menu.allowMkey=0;
-  strcpy(menu.nodatamsg, "No Data");
+  strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "UTILITIES CONTROL");
   strcpy(menu.statusText, "");
   while(1) {
@@ -130,31 +130,7 @@ void masterControl() {
         SetSetting(SETTING_IS_FIRST_RUN, 1, 0); // do not autosave, to allow full control of the operator
       }
       if(menu.selection == 9) {
-        /*unsigned char filename[50] = "";
-        strcpy((char*)filename, (char*)"\\\\fls0\\eigensup.txt");
-        SerialFileTransfer( filename );*/
         CallbackAtQuitMainFunction( mycallback );
-        /*char* VRAM = (char*)0xA8000000; 
-        char* flashstart = (char*)0xA0000000;
-        int key;
-        while(1) {
-          memcpy(VRAM, flashstart, 165888);
-          GetKey(&key);
-          if(key==KEY_CTRL_EXE) {
-            for(int i=0; i<0x000287FF;i++) *flashstart++;
-          }
-          if(key==KEY_CTRL_UP) {
-            *flashstart++;
-          }
-          if(key==KEY_CTRL_DOWN) {
-            *flashstart--;
-          }
-          if(key==KEY_CTRL_EXIT) {
-            break;
-          }
-        }*/
-        /*void *ptr = (void *)0x80000000;
-        goto *ptr;*/
       }
       if(menu.selection == 10) { 
         Restart();
