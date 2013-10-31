@@ -25,5 +25,6 @@ void fileInformation(File* files, Menu* menu);
 void fileViewAsText(char* filename);
 void viewFilesInClipboard(File* clipboard, int *itemsinclip);
 void showCopyFolderWarning();
+void shortenDisplayPath(char* longpath, char* shortpath, int jump=1);
 
 #endif

@@ -79,6 +79,28 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   char friendlypath[MAX_FILENAME_SIZE] = "";
   strcpy(friendlypath, browserbasepath+6);
   friendlypath[strlen(friendlypath)-1] = '\0'; //remove ending slash like OS does
+  // test to see if friendlypath is too big
+  int jump4=0;
+  while(1) {
+    int temptextX=5*18+10; // px length of menu title + 10, like menuGUI goes.
+    int temptextY=0;
+    PrintMini(&temptextX, &temptextY, (unsigned char*)friendlypath, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); // fake draw
+    if(temptextX>LCD_WIDTH_PX-6) {
+      char newfriendlypath[MAX_FILENAME_SIZE] = "";
+      shortenDisplayPath(friendlypath, newfriendlypath, (jump4 ? 4 : 1));
+      if(strlen(friendlypath) > strlen(newfriendlypath) && strlen(newfriendlypath) > 3) { // check if len > 3 because shortenDisplayPath may return just "..." when the folder name is too big
+        // shortenDisplayPath still managed to shorten, copy and continue
+        jump4 = 1; //it has been shortened already, so next time jump the first four characters
+        strcpy(friendlypath, newfriendlypath);
+      } else {
+        // shortenDisplayPath can't shorten any more even if it still
+        // doesn't fit in the screen, so give up.
+        break;
+      }
+    } else {
+      break;
+    }
+  }
   menu.subtitle = friendlypath;
   menu.showsubtitle = 1;
   menu.type = MENUTYPE_MULTISELECT;
@@ -672,4 +694,19 @@ void showCopyFolderWarning() {
     }
   }
   MsgBoxPop(); 
+}
+
+void shortenDisplayPath(char* longpath, char* shortpath, int jump) {
+  //this function takes a long path for display, like \myfolder\long\display\path
+  //and shortens it one level, like this: ...\long\display\path
+  //putting the result in shortpath
+  strcpy(shortpath, (char*)"...");
+  int i = jump; // jump the specified amount of characters... by default it jumps the first /
+  // but it can also be made to jump e.g. 4 characters, which would jump ".../" (useful for when the text has been through this function already)
+  int max = strlen(longpath);
+  while (i<max && longpath[i] != '\\')
+          i++;
+  if (longpath[i] == '\\') {
+    strcat(shortpath, longpath+i);
+  }
 }
