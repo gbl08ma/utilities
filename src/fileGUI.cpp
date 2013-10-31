@@ -28,14 +28,15 @@ void fileManager() {
   int res = 1;
   int itemsinclip = 0;
   int shownClipboardHelp = 0;
+  int shownMainMemHelp = 0;
   char browserbasepath[MAX_FILENAME_SIZE+1] = "\\\\fls0\\";  
   File* clipboard = (File*)alloca((MAX_ITEMS_IN_CLIPBOARD+1)*sizeof(File));
   while(res) {
-    res = fileManagerSub(browserbasepath, &itemsinclip, &shownClipboardHelp, clipboard);
+    res = fileManagerSub(browserbasepath, &itemsinclip, &shownClipboardHelp, &shownMainMemHelp, clipboard);
   }
 }
 
-int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, File* clipboard) {
+int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard) {
   Menu menu;
   
   // first get file count so we know how much to alloc
@@ -164,7 +165,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         if(menuitems[menu.selection-1].isfolder) {
           strcpy(browserbasepath, files[menu.selection-1].filename); //switch to selected folder
           strcat(browserbasepath, "\\");
-          if(!strcmp(browserbasepath, "\\\\fls0\\@MainMem\\")) {
+          if(!strcmp(browserbasepath, "\\\\fls0\\@MainMem\\") && !*shownMainMemHelp) {
             MsgBoxPush(5);
             PrintXY(3, 2, (char*)"  Note: this is not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             PrintXY(3, 3, (char*)"  the Main Memory,", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -183,6 +184,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
               }
             }
             MsgBoxPop();
+            *shownMainMemHelp=1;
           }
           return 1; //reload at new folder
         } else {

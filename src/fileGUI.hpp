@@ -17,7 +17,7 @@
 #include "fileProvider.hpp"
 
 void fileManager();
-int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, File* clipboard);
+int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard);
 int deleteFilesGUI(File* files, Menu* menu);
 int makeFolderGUI(char* browserbasepath);
 int renameFileGUI(File* files, Menu* menu, char* browserbasepath);
