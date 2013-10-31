@@ -22,7 +22,7 @@
 typedef struct
 {
   char text[42]; // text to be shown on screen. This shouldn't take more than 21 chars (20 in case of checkboxes) but I'm giving 42 because of multibyte codes...
-  char tag[30]; // internal var of the menu item, may be useful for some thing.
+  //char tag[30]; // internal var of the menu item, may be useful for some thing. NOTE: commented because it is yet to be needed, and so it was wasting memory.
   //void (*handler)(void); // routine to call when user performs an action on this menu item. for normal menuitems, this is when it is selected (press EXE). for checkboxes, this is when the checkbox is toggled.
   int type=MENUITEM_NORMAL; // type of the menu item. use MENUITEM_* to set this
   int value=MENUITEM_VALUE_NONE; // value of the menu item. For example, if type is MENUITEM_CHECKBOX and the checkbox is checked, the value of this var will be MENUITEM_VALUE_CHECKED
