@@ -37,20 +37,27 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
         // print the menu item only when appropriate
         if(menu->scroll < curitem+1 && menu->scroll > curitem-itemsHeight) {
           char menuitem[70] = "";
-          strcpy(menuitem, "  ");
+          if(menu->items[curitem].type != MENUITEM_SEPARATOR) strcpy(menuitem, "  ");
           if(menu->type == MENUTYPE_MULTISELECT) strcat(menuitem, "  "); //allow for the folder and selection icons on MULTISELECT menus (e.g. file browser)
           strcat(menuitem, (char*)menu->items[curitem].text);
-          //make sure we have a string big enough to have background when item is selected:          
-          strcpy(itemBackFiller, "");
-          int fillerSpaces = 0;
-          // MB_ElementCount is used instead of strlen because multibyte chars count as two with strlen, while graphically they are just one char, making fillerRequired become wrong
-          int fillerRequired = menu->width - MB_ElementCount(menu->items[curitem].text) - (menu->type == MENUTYPE_MULTISELECT ? 2 : 0);
-          while (fillerSpaces < fillerRequired) {
-            strcat(itemBackFiller, " ");
-            fillerSpaces++;
+          if(menu->items[curitem].type != MENUITEM_SEPARATOR) {
+            //make sure we have a string big enough to have background when item is selected:          
+            strcpy(itemBackFiller, "");
+            int fillerSpaces = 0;
+            // MB_ElementCount is used instead of strlen because multibyte chars count as two with strlen, while graphically they are just one char, making fillerRequired become wrong
+            int fillerRequired = menu->width - MB_ElementCount(menu->items[curitem].text) - (menu->type == MENUTYPE_MULTISELECT ? 2 : 0);
+            while (fillerSpaces < fillerRequired) {
+              strcat(itemBackFiller, " ");
+              fillerSpaces++;
+            }
+            strcat(menuitem, itemBackFiller);
+            PrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)menuitem, (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
+          } else {
+            int textX = (menu->startX-1) * 18;
+            int textY = curitem*24+itemsStartY*24-menu->scroll*24-24+6;
+            PrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"                          ", (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
+            PrintMini(&textX, &textY, (unsigned char*)menuitem, 0, 0xFFFFFFFF, 0, 0, (menu->selection == curitem+1 ? COLOR_WHITE : textColorToFullColor(menu->items[curitem].color)), (menu->selection == curitem+1 ? textColorToFullColor(menu->items[curitem].color) : COLOR_WHITE), 1, 0);
           }
-          strcat(menuitem, itemBackFiller); 
-          PrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)menuitem, (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
           // deal with menu items of type MENUITEM_CHECKBOX
           if(menu->items[curitem].type == MENUITEM_CHECKBOX) {
             if(menu->items[curitem].value == MENUITEM_VALUE_CHECKED) {
