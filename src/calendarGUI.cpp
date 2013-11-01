@@ -33,7 +33,7 @@ int sy, sm, sd = 0; //date to which to switch the calendar
 
 void viewCalendar() {
   int res = 0;
-  int type = 1;
+  int type = GetSetting(SETTING_DEFAULT_CALENDAR_VIEW);
   while(1) {
     if(type) res = viewMonthCalendar();
     else res = viewWeekCalendar();

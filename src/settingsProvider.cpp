@@ -15,7 +15,7 @@
 #include "settingsProvider.hpp"
 #include "constantsProvider.hpp"
 
-#define SETTINGSFILE_VERSION 4 // NOTE: update this when changing the amount or meaning of settings!
+#define SETTINGSFILE_VERSION 5 // NOTE: update this when changing the amount or meaning of settings!
 static int setting_self_fileversion = SETTINGSFILE_VERSION; // this is a special setting
 static int setting_timeformat = 0; // 0 = 24-hour HH:MM:SS ; 1 = 12-hour HH:MM:SS AM/PM
 static int setting_longdateformat = 0;
@@ -64,6 +64,7 @@ static int setting_clock_type = 0;
 */
 static int setting_clock_seconds = 1; // whether to show seconds in clock
 static int setting_home_panes = 1; // whether to enable panes in home screen
+static int setting_default_calendar_view = 1; // default calendar view. 0 = week, 1 = month
 
 // Routines for accessing and setting settings
 // NOTE: directly accessing setting_* variables is now strictly forbidden!
@@ -108,6 +109,8 @@ int GetSetting(int setting) {
       return setting_clock_seconds;
     case SETTING_HOME_PANES:
       return setting_home_panes;
+    case SETTING_DEFAULT_CALENDAR_VIEW:
+      return setting_default_calendar_view;
     default:
       return 0;
   }
@@ -179,6 +182,9 @@ void SetSetting(int setting, int value, int autosave) {
       break;
     case SETTING_HOME_PANES:
       setting_home_panes = value;
+      break;
+    case SETTING_DEFAULT_CALENDAR_VIEW:
+      setting_default_calendar_view = value;
       break;
     default:
       break;
