@@ -362,9 +362,9 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
         FKey_Display(1, (int*)iresult);
         GetFKeyPtr(0x015F, &iresult); // DATE
         FKey_Display(2, (int*)iresult);
-        GetFKeyPtr(0x0102, &iresult); // SWAP [white]
-        FKey_Display(5, (int*)iresult);
       }
+      GetFKeyPtr(0x0102, &iresult); // SWAP [white]
+      FKey_Display(5, (int*)iresult);
     } else if(menu->fkeypage==1) {
       GetFKeyPtr(0x0408, &iresult); // |<<
       FKey_Display(0, (int*)iresult);
