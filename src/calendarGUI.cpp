@@ -390,6 +390,19 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
       case MENU_RETURN_SELECTION:
         if(menu->numitems > 0) {
           if(msel>0) viewNthEventOnDay(&events[msel-1].startdate, events[msel-1].origpos);
+          else {
+            int ssel = getMenuSelectionOnlySeparators(menu);
+            if(ssel>0) {
+              long int dd = DateToDays(*y, *m, *d) + ssel-1;
+              long int ny, nm, nd;
+              DaysToDate(dd, &ny, &nm, &nd);
+              EventDate date;
+              date.year = ny; date.month = nm; date.day = nd;
+              searchValid = 1;
+              viewEvents(date.year, date.month, date.day);
+              if(!searchValid) return 1;
+            }
+          }
         }
         break;
       case KEY_CTRL_F1:
@@ -409,6 +422,19 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
         if(menu->fkeypage == 0) {
           if(menu->numitems > 0) {
             if(msel>0) viewNthEventOnDay(&events[msel-1].startdate, events[msel-1].origpos);
+            else {
+            int ssel = getMenuSelectionOnlySeparators(menu);
+              if(ssel>0) {
+                long int dd = DateToDays(*y, *m, *d) + ssel-1;
+                long int ny, nm, nd;
+                DaysToDate(dd, &ny, &nm, &nd);
+                EventDate date;
+                date.year = ny; date.month = nm; date.day = nd;
+                searchValid = 1;
+                viewEvents(date.year, date.month, date.day);
+                if(!searchValid) return 1;
+              }
+            }
           } 
         } else if (menu->fkeypage == 1) {
           ddays = DateToDays(*y, *m, *d) - 7; // decrease by one week
@@ -424,6 +450,18 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
             searchValid = 1;
             viewEvents(events[msel-1].startdate.year, events[msel-1].startdate.month, events[msel-1].startdate.day);
             if(!searchValid) return 1;
+          } else {
+            int ssel = getMenuSelectionOnlySeparators(menu);
+            if(ssel>0) {
+              long int dd = DateToDays(*y, *m, *d) + ssel-1;
+              long int ny, nm, nd;
+              DaysToDate(dd, &ny, &nm, &nd);
+              EventDate date;
+              date.year = ny; date.month = nm; date.day = nd;
+              searchValid = 1;
+              viewEvents(date.year, date.month, date.day);
+              if(!searchValid) return 1;
+            }
           }
         } else if (menu->fkeypage == 1) {
           ddays = DateToDays(*y, *m, *d) + 7; // increase by one week
@@ -459,11 +497,15 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
             sm = events[msel-1].startdate.month;
             sd = events[msel-1].startdate.day;
           } else {
-            // user is looking at a week, not a date
-            // do the best we can and put on the first day for that week.
-            sy = *y;
-            sm = *m;
-            sd = *d;
+            int ssel = getMenuSelectionOnlySeparators(menu);
+            if(ssel>0) {
+              long int dd = DateToDays(*y, *m, *d) + ssel-1;
+              long int ny, nm, nd;
+              DaysToDate(dd, &ny, &nm, &nd);
+              sy = ny;
+              sm = nm;
+              sd = nd;
+            }
           }
           return 2;
         } else if (menu->fkeypage == 1) {

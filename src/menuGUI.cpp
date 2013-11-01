@@ -270,3 +270,13 @@ int getMenuSelectionIgnoringSeparators(Menu* menu) {
   }
   return selNS;
 }
+
+int getMenuSelectionOnlySeparators(Menu* menu) {
+  // exact opposite of function above
+  if(menu->items[menu->selection-1].type != MENUITEM_SEPARATOR) return 0; //current selection is not a separator, return invalid position
+  int selS = 0;
+  for(int i = 0; i<=menu->selection-1; i++) {
+    if(menu->items[i].type == MENUITEM_SEPARATOR) selS++;
+  }
+  return selS;
+}

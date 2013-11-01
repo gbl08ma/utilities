@@ -67,5 +67,6 @@ typedef struct {
 #define MENU_RETURN_INSTANT 2
 int doMenu(Menu* menu);
 int getMenuSelectionIgnoringSeparators(Menu* menu);
+int getMenuSelectionOnlySeparators(Menu* menu);
 
 #endif
