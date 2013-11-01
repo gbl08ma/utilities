@@ -265,7 +265,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
     DaysToDate(ddays, &ny, &nm, &nd);
     EventDate date;
     date.year=ny; date.month=nm; date.day=nd;
-    fevcount[curday] = GetEventsForDate(&date, CALENDARFOLDER, NULL, 50); //get event count only. limit to 50 per day
+    fevcount[curday] = GetEventsForDate(&date, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW);
     numevents += fevcount[curday];
     ddays++;
     curday++;
@@ -422,59 +422,18 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
             return 1;
           } 
         }
-      /*case KEY_CTRL_F2:
-        if(menu->fkeypage == 0) {
-          if(menu->numitems >= MAX_DAY_EVENTS) {
-            AUX_DisplayErrorMessage( 0x2E );
-          } else {
-            eventEditor(y, m, d);
-            bufmonth=0; searchValid = 0;
-          }
-        } else if (menu->fkeypage == 1) {
-          moveEvent(&events[menu->selection-1], menu->selection-1);
-  #ifdef WAITMSG
-          PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
-  #endif
-          bufmonth=0; searchValid = 0;
-          return 0;
-        }
-        break;
-      case KEY_CTRL_F3:
-        if(menu->fkeypage == 0) {
-          if(menu->numitems > 0) {
-            if(eventEditor(y, m, d, EVENTEDITORTYPE_EDIT, &events[menu->selection-1]) == EVENTEDITOR_RETURN_CONFIRM) {
-              ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
-              searchValid = 0;
-            }
-          }
-        } else if (menu->fkeypage == 1) {
-          setEventChrono(&events[menu->selection-1]);
-        }
-        break;
-      case KEY_CTRL_F4:
-        if(menu->fkeypage == 0) {
-          if(menu->numitems > 0) { deleteEventUI(y,m,d,menu->selection-1, 0); bufmonth=0; searchValid = 0; }
-        }
-        break;
-      case KEY_CTRL_F5:
-        if(menu->fkeypage == 0) {
-          if(menu->numitems > 0) { deleteAllEventUI(y, m, d, 0); bufmonth=0; searchValid = 0; }
-        }
-        break;
-      case KEY_CTRL_F6:
-        if (menu->fkeypage == 0) {
-          if(menu->numitems > 0) menu->fkeypage = 1;
-        } else menu->fkeypage = 0;
-        break;
       case KEY_CTRL_FORMAT:
-        if(menu->numitems > 0) {
-          //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
-          //so on this add-in it is used to change the category (color) of a task/calendar event.
-          if(changeEventCategory(&events[menu->selection-1])) {
-            ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
+        if(menu->numitems > 0 && msel>0) {
+          int ne = GetEventsForDate(&events[msel-1].startdate, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW);
+          // we can use alloca here, as we're going to return right after
+          CalendarEvent* ce = (CalendarEvent*)alloca(ne*sizeof(CalendarEvent));
+          GetEventsForDate(&events[msel-1].startdate, CALENDARFOLDER, ce, MAX_DAY_EVENTS_WEEKVIEW);
+          if(changeEventCategory(&ce[events[msel-1].origpos])) {
+            ReplaceEventFile(&events[msel-1].startdate, ce, CALENDARFOLDER, ne);
           }
+          return 1; // return even if user aborted, because we used alloca inside a loop (leak waiting to happen)
         }
-        break;*/
+        break;
     }
   }
   return 1;
@@ -489,7 +448,7 @@ void buildWeekCalendarDayMenu(long int ddays, unsigned int numevents, unsigned i
   // allocate enough CalendarEvents for today
   CalendarEvent* dayEvents = (CalendarEvent*)alloca(numevents*sizeof(CalendarEvent));
   // get the events
-  GetEventsForDate(&date, CALENDARFOLDER, dayEvents, 50);
+  GetEventsForDate(&date, CALENDARFOLDER, dayEvents, MAX_DAY_EVENTS_WEEKVIEW);
   
   // process CalendarEvents into SimpleCalendarEvents
   // and build menu at the same time
