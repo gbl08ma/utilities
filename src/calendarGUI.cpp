@@ -30,10 +30,29 @@
 int bufmonth = 0; //this is global so that it's easier to make the events count refresh
 int searchValid = 0; // whether the last search results are valid or not. Set to zero when modifying events in any way.
 int sy, sm, sd = 0; //date to which to switch the calendar
+
 void viewCalendar() {
+  int res = 0;
+  int type = 1;
+  while(1) {
+    if(type) res = viewMonthCalendar();
+    else res = viewWeekCalendar();
+    if(res) type=!type; else return;
+  }
+}
+
+int viewMonthCalendar() {
+  //returns 1 to switch to weekly view
+  //returns 0 to exit calendar
   int y = getCurrentYear();
   int m = getCurrentMonth();
   int d = getCurrentDay();
+  if(!sy || !sm || !sd) {} else {
+    y = sy;
+    m = sm;
+    d = sd;
+    sy=0; sm=0; sd=0;
+  }
   
   int menu = 1;
   int iresult;
@@ -57,6 +76,8 @@ void viewCalendar() {
         FKey_Display(3, (int*)iresult);
         GetFKeyPtr(0x0187, &iresult); // SEARCH
         FKey_Display(4, (int*)iresult);
+        GetFKeyPtr(0x0102, &iresult); // SWAP [white]
+        FKey_Display(5, (int*)iresult);
         break;
     case 2:
         GetFKeyPtr(0x0408, &iresult); // |<<
@@ -139,7 +160,12 @@ void viewCalendar() {
         break;       
       case KEY_CTRL_F6:
         if (menu == 2) { if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"  Jump to specific date", (char*)"")) { y=ny;m=nm;d=nd; } } //only update calendar if selection was clean
-        else if (menu == 1) viewWeekCalendar(y, m, d);
+        else if (menu == 1) {
+          sy = y;
+          sm = m;
+          sd = d;
+          return 1;
+        }
         break;     
       case KEY_CTRL_UP:
         d-=7;
@@ -197,7 +223,7 @@ void viewCalendar() {
         viewEvents(y, m, d);
         break;
       case KEY_CTRL_EXIT:
-        if (menu == 2) { menu = 1; } else { return; }
+        if (menu == 2) { menu = 1; } else { return 0; }
         break;
     }
     if (menu == 2) {
@@ -207,9 +233,12 @@ void viewCalendar() {
       }
     } 
   }
+  return 0;
 }
 
-void viewWeekCalendar(int y, int m, int d) {
+int viewWeekCalendar(int y, int m, int d) {
+  //returns 1 to switch to montly view
+  //returns 0 to exit calendar
   int res=1;
   Menu menu;
   
@@ -223,6 +252,12 @@ void viewWeekCalendar(int y, int m, int d) {
   strcpy(menu.nodatamsg, "No Events");
   strcpy(menu.statusText, "");
   int jumpToSel=1;
+  if(!sy || !sm || !sd) {} else {
+    y = sy;
+    m = sm;
+    d = sd;
+    sy=0; sm=0; sd=0;
+  }
   while(res) {
     if(!y || !m || !d) {
       y = getCurrentYear();
@@ -240,12 +275,15 @@ void viewWeekCalendar(int y, int m, int d) {
     strcat(menu.title, (char*)" of ");
     strcat(menu.title, buffer);
     res = viewWeekCalendarSub(&menu, &y, &m, &d, &jumpToSel);
+    if(res==2) return 1;
   }
+  return 0;
 }
 
 int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
   //returns 1 when it wants to be restarted (refresh tasks)
   //returns 0 if the idea really is to exit the screen
+  //returns 2 to switch to month view
   int oy=*y,om=*m,od=*d; //backup originally requested date before modifying it
   // get first date of the week
   long int ddays=DateToDays(*y, *m, *d);
@@ -324,6 +362,8 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
         FKey_Display(1, (int*)iresult);
         GetFKeyPtr(0x015F, &iresult); // DATE
         FKey_Display(2, (int*)iresult);
+        GetFKeyPtr(0x0102, &iresult); // SWAP [white]
+        FKey_Display(5, (int*)iresult);
       }
     } else if(menu->fkeypage==1) {
       GetFKeyPtr(0x0408, &iresult); // |<<
@@ -413,7 +453,18 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
         break;
       case KEY_CTRL_F6:
         if(menu->fkeypage == 0) {
-          
+          if(msel>0) { // do not lose selection precision if possible
+            sy = events[msel-1].startdate.year;
+            sm = events[msel-1].startdate.month;
+            sd = events[msel-1].startdate.day;
+          } else {
+            // user is looking at a week, not a date
+            // do the best we can and put on the first day for that week.
+            sy = *y;
+            sm = *m;
+            sd = *d;
+          }
+          return 2;
         } else if (menu->fkeypage == 1) {
           int ny=0,nm=0,nd=0;
           if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"  Jump to specific date", (char*)"")) {
