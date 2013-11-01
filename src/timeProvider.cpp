@@ -342,7 +342,7 @@ int isTimeValid(int h, int m, int s) {
 }
 
 int isDateValid(int y, int m, int d) {
-  if (m > 12 || m <= 0 || d > getMonthDays(m) || m <= 0) return 0;
+  if (m > 12 || m <= 0 || d > ( m==2? (isLeap(y)? 29 : 28) : getMonthDays(m))) return 0;
   else return 1;
 }
 
