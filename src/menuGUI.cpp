@@ -56,6 +56,7 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
             int textX = (menu->startX-1) * 18;
             int textY = curitem*24+itemsStartY*24-menu->scroll*24-24+6;
             PrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"                          ", (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
+            drawLine(textX, textY+24-4, LCD_WIDTH_PX-2, textY+24-4, COLOR_GRAY);
             PrintMini(&textX, &textY, (unsigned char*)menuitem, 0, 0xFFFFFFFF, 0, 0, (menu->selection == curitem+1 ? COLOR_WHITE : textColorToFullColor(menu->items[curitem].color)), (menu->selection == curitem+1 ? textColorToFullColor(menu->items[curitem].color) : COLOR_WHITE), 1, 0);
           }
           // deal with menu items of type MENUITEM_CHECKBOX
@@ -259,4 +260,13 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
     }
   }
   return MENU_RETURN_SELECTION;
-} 
+}
+
+int getMenuSelectionIgnoringSeparators(Menu* menu) {
+  if(menu->items[menu->selection-1].type == MENUITEM_SEPARATOR) return 0; //current selection is not a "traditional" menu item, return invalid position
+  int selNS = 0;
+  for(int i = 0; i<=menu->selection-1; i++) {
+    if(menu->items[i].type != MENUITEM_SEPARATOR) selNS++;
+  }
+  return selNS;
+}

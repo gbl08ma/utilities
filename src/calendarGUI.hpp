@@ -24,6 +24,9 @@
 #define EVENTEDITOR_RETURN_EXIT 0
 #define EVENTEDITOR_RETURN_CONFIRM 1
 void viewCalendar();
+void viewWeekCalendar(int y, int m, int d);
+int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel);
+void buildWeekCalendarDayMenu(long int ddays, unsigned int numevents, unsigned int* curmenu, MenuItem* menuitems, unsigned int* cursce, SimpleCalendarEvent* events); // helper function
 void viewEvents(int y, int m, int d);
 void viewEvent(CalendarEvent* event);
 int viewEventsSub(Menu* menu, int y, int m, int d);
@@ -39,6 +42,7 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2);
 void invalidFieldMsg(int istime);
 void setEventChrono(CalendarEvent* event);
 int changeEventCategory(CalendarEvent* event);
+void viewNthEventOnDay(EventDate* date, int pos);
 void searchEventsGUI(int y, int m, int d);
 
 

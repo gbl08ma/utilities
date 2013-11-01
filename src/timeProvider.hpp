@@ -37,6 +37,8 @@ const char* getDOWAsShortString(int dow);
 const char* getMonthAsString(int month);
 bool isLeap(int y);
 int dow(int y, int m, int d);
+int getDayOfYear(int y, int m, int d);
+int getWeekNumber(int y, int m, int d);
 
 int getCurrentYear();
 int getCurrentMonth();

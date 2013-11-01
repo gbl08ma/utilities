@@ -139,6 +139,7 @@ void viewCalendar() {
         break;       
       case KEY_CTRL_F6:
         if (menu == 2) { if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"  Jump to specific date", (char*)"")) { y=ny;m=nm;d=nd; } } //only update calendar if selection was clean
+        else if (menu == 1) viewWeekCalendar(y, m, d);
         break;     
       case KEY_CTRL_UP:
         d-=7;
@@ -205,6 +206,308 @@ void viewCalendar() {
           d = getMonthDays(m) +((m == 2 && isLeap(y)) ? 1 : 0);
       }
     } 
+  }
+}
+
+void viewWeekCalendar(int y, int m, int d) {
+  int res=1;
+  Menu menu;
+  
+  menu.scrollbar=1;
+  menu.scrollout=1;
+  menu.showtitle=1;
+  menu.selection=1;
+  menu.scroll=0;
+  menu.height=7;
+  menu.type=MENUTYPE_FKEYS;
+  strcpy(menu.nodatamsg, "No Events");
+  strcpy(menu.statusText, "");
+  int jumpToSel=1;
+  while(res) {
+    if(!y || !m || !d) {
+      y = getCurrentYear();
+      m = getCurrentMonth();
+      d = getCurrentDay();
+      jumpToSel=1;
+    }
+    char buffer[10] = "";
+    int wkn = getWeekNumber(y,m,d);
+    itoa(wkn, (unsigned char*)buffer);
+    strcpy(menu.title, "Week ");
+    strcat(menu.title, buffer);
+    strcpy(buffer, (char*)"");
+    itoa(y, (unsigned char*)buffer);
+    strcat(menu.title, (char*)" of ");
+    strcat(menu.title, buffer);
+    res = viewWeekCalendarSub(&menu, &y, &m, &d, &jumpToSel);
+  }
+}
+
+int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
+  //returns 1 when it wants to be restarted (refresh tasks)
+  //returns 0 if the idea really is to exit the screen
+  int oy=*y,om=*m,od=*d; //backup originally requested date before modifying it
+  // get first date of the week
+  long int ddays=DateToDays(*y, *m, *d);
+  while(dow(*y,*m,*d) != 0) { //find sunday before provided date
+    ddays = DateToDays(*y, *m, *d) - 1; //decrease day by 1
+    long int ny, nm, nd;
+    DaysToDate(ddays, &ny, &nm, &nd);
+    *y=ny; *m=nm; *d=nd;
+  }
+  // y,m,d now has first sunday of week
+  // ddays has the corresponding amount of days
+  unsigned int curday = 0; unsigned int numevents = 0;
+  unsigned int fevcount[7];
+  // get event count only, so we know how many SimpleCalendarEvents to alloc
+  while(curday < 7) {
+    long int ny, nm, nd;
+    DaysToDate(ddays, &ny, &nm, &nd);
+    EventDate date;
+    date.year=ny; date.month=nm; date.day=nd;
+    fevcount[curday] = GetEventsForDate(&date, CALENDARFOLDER, NULL, 50); //get event count only. limit to 50 per day
+    numevents += fevcount[curday];
+    ddays++;
+    curday++;
+  }
+  // allocate SimpleCalendarEvents
+  SimpleCalendarEvent* events = (SimpleCalendarEvent*)alloca(numevents*sizeof(SimpleCalendarEvent));
+  // allocate MenuItems:
+  MenuItem* menuitems = (MenuItem*)alloca((numevents+7)*sizeof(MenuItem));
+  
+  // read events this time
+  curday = 0; unsigned int curmenu = 0;
+  unsigned int cursce = 0; // current SimpleCalendarEvent, in the end it will have the SimpleCalendarEvent count
+  ddays=DateToDays(*y, *m, *d);
+  while(curday < 7) {
+    if(fevcount[curday]) {
+      // one menuitem for day header
+      char buffer[15] = "";
+      long int ny, nm, nd;
+      DaysToDate(ddays, &ny, &nm, &nd);
+      dateToString(buffer, ny, nm, nd, GetSetting(SETTING_DATEFORMAT));
+      // the following string only fits in the menuitem.text because:
+      //  1 - graphically, it's printed with PrintMini
+      //  2 - the text variable has a size of 42 bytes, to account for the possibility that all the items are multibyte characters.
+      //  (in this case there are no MB chars, so the full 42 bytes can be used)
+      strcpy(menuitems[curmenu].text, "Events for ");
+      strcat(menuitems[curmenu].text, buffer);
+      strcat(menuitems[curmenu].text, (char*)" (");
+      strcat(menuitems[curmenu].text, getDOWAsString(dow(ny, nm, nd)+1));
+      strcat(menuitems[curmenu].text, (char*)")");
+      menuitems[curmenu].type = MENUITEM_SEPARATOR;
+      menuitems[curmenu].color = TEXT_COLOR_BLACK;
+      if(ny==oy&&nm==om&&nd==od&&*jumpToSel==1) {
+        menu->selection=curmenu+1;
+        menu->scroll = menu->selection -1;
+      }
+      curmenu++;
+      buildWeekCalendarDayMenu(ddays, fevcount[curday], &curmenu, menuitems, &cursce, events); 
+    }
+    ddays++;
+    curday++;
+  }
+  menu->numitems = curmenu;
+  menu->items = menuitems;
+  if(*jumpToSel==0) {
+    menu->selection = 1;
+    menu->scroll = 0;
+  }
+  while(1) {
+    Bdisp_AllClr_VRAM();
+    int iresult;
+    if(menu->fkeypage==0) {
+      GetFKeyPtr(0x01FC, &iresult); // JUMP
+      FKey_Display(0, (int*)iresult);
+      if(numevents>0) {
+        GetFKeyPtr(0x049F, &iresult); // VIEW
+        FKey_Display(1, (int*)iresult);
+        GetFKeyPtr(0x015F, &iresult); // DATE
+        FKey_Display(2, (int*)iresult);
+      }
+    } else if(menu->fkeypage==1) {
+      GetFKeyPtr(0x0408, &iresult); // |<<
+      FKey_Display(0, (int*)iresult);
+      GetFKeyPtr(0x0409, &iresult); // <<
+      FKey_Display(1, (int*)iresult);
+      GetFKeyPtr(0x040B, &iresult); // >>
+      FKey_Display(2, (int*)iresult);
+      GetFKeyPtr(0x040C, &iresult); // >>|
+      FKey_Display(3, (int*)iresult);
+      GetFKeyPtr(0x0238, &iresult); // ORIGINAL
+      FKey_Display(4, (int*)iresult);
+      GetFKeyPtr(0x015F, &iresult); // DATE
+      FKey_Display(5, (int*)iresult);
+    }
+    int res = doMenu(menu);
+    int msel = getMenuSelectionIgnoringSeparators(menu);
+    switch(res) {
+      case MENU_RETURN_EXIT:
+        if(menu->fkeypage == 0) return 0;
+        else menu->fkeypage = 0;
+        break;
+      case MENU_RETURN_SELECTION:
+        if(menu->numitems > 0) {
+          if(msel>0) viewNthEventOnDay(&events[msel-1].startdate, events[msel-1].origpos);
+        }
+        break;
+      case KEY_CTRL_F1:
+        if(menu->fkeypage == 0) {
+          menu->fkeypage = 1;
+        } else if (menu->fkeypage == 1) {
+          ddays = DateToDays(*y, *m, *d) - 23; // decrease by three weeks
+          // do not decrease by one month as we will end up going back 5 weeks instead of four
+          // (the algorithm looks for the latest Sunday before the selected date...)
+          long int ny, nm, nd;
+          DaysToDate(ddays, &ny, &nm, &nd);
+          *y=ny; *m=nm; *d=nd; *jumpToSel=0;
+          return 1;
+        }
+        break;
+      case KEY_CTRL_F2:
+        if(menu->fkeypage == 0) {
+          if(menu->numitems > 0) {
+            if(msel>0) viewNthEventOnDay(&events[msel-1].startdate, events[msel-1].origpos);
+          } 
+        } else if (menu->fkeypage == 1) {
+          ddays = DateToDays(*y, *m, *d) - 7; // decrease by one week
+          long int ny, nm, nd;
+          DaysToDate(ddays, &ny, &nm, &nd);
+          *y=ny; *m=nm; *d=nd; *jumpToSel=0;
+          return 1;
+        }
+        break;
+      case KEY_CTRL_F3:
+        if(menu->fkeypage == 0) {
+          if(msel>0) {
+            searchValid = 1;
+            viewEvents(events[msel-1].startdate.year, events[msel-1].startdate.month, events[msel-1].startdate.day);
+            if(!searchValid) return 1;
+          }
+        } else if (menu->fkeypage == 1) {
+          ddays = DateToDays(*y, *m, *d) + 7; // increase by one week
+          long int ny, nm, nd;
+          DaysToDate(ddays, &ny, &nm, &nd);
+          *y=ny; *m=nm; *d=nd; *jumpToSel=0;
+          return 1;
+        }
+        break;
+      case KEY_CTRL_F4:
+        if(menu->fkeypage == 0) {
+          
+        } else if (menu->fkeypage == 1) {
+          ddays = DateToDays(*y, *m, *d) + 30; // increase by one month.
+          long int ny, nm, nd;
+          DaysToDate(ddays, &ny, &nm, &nd);
+          *y=ny; *m=nm; *d=nd; *jumpToSel=0;
+          return 1;
+        }
+        break;
+      case KEY_CTRL_F5:
+        if(menu->fkeypage == 0) {
+          
+        } else if (menu->fkeypage == 1) {
+          *y=0; // forces a return to today's values
+          return 1;
+        }
+        break;
+      case KEY_CTRL_F6:
+        if(menu->fkeypage == 0) {
+          
+        } else if (menu->fkeypage == 1) {
+          int ny=0,nm=0,nd=0;
+          if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"  Jump to specific date", (char*)"")) {
+            *y=ny;*m=nm;*d=nd;
+            *jumpToSel=1; //if user inserted a specific day, it makes sense to display that day without scrolling.
+            return 1;
+          } 
+        }
+      /*case KEY_CTRL_F2:
+        if(menu->fkeypage == 0) {
+          if(menu->numitems >= MAX_DAY_EVENTS) {
+            AUX_DisplayErrorMessage( 0x2E );
+          } else {
+            eventEditor(y, m, d);
+            bufmonth=0; searchValid = 0;
+          }
+        } else if (menu->fkeypage == 1) {
+          moveEvent(&events[menu->selection-1], menu->selection-1);
+  #ifdef WAITMSG
+          PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
+  #endif
+          bufmonth=0; searchValid = 0;
+          return 0;
+        }
+        break;
+      case KEY_CTRL_F3:
+        if(menu->fkeypage == 0) {
+          if(menu->numitems > 0) {
+            if(eventEditor(y, m, d, EVENTEDITORTYPE_EDIT, &events[menu->selection-1]) == EVENTEDITOR_RETURN_CONFIRM) {
+              ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
+              searchValid = 0;
+            }
+          }
+        } else if (menu->fkeypage == 1) {
+          setEventChrono(&events[menu->selection-1]);
+        }
+        break;
+      case KEY_CTRL_F4:
+        if(menu->fkeypage == 0) {
+          if(menu->numitems > 0) { deleteEventUI(y,m,d,menu->selection-1, 0); bufmonth=0; searchValid = 0; }
+        }
+        break;
+      case KEY_CTRL_F5:
+        if(menu->fkeypage == 0) {
+          if(menu->numitems > 0) { deleteAllEventUI(y, m, d, 0); bufmonth=0; searchValid = 0; }
+        }
+        break;
+      case KEY_CTRL_F6:
+        if (menu->fkeypage == 0) {
+          if(menu->numitems > 0) menu->fkeypage = 1;
+        } else menu->fkeypage = 0;
+        break;
+      case KEY_CTRL_FORMAT:
+        if(menu->numitems > 0) {
+          //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
+          //so on this add-in it is used to change the category (color) of a task/calendar event.
+          if(changeEventCategory(&events[menu->selection-1])) {
+            ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
+          }
+        }
+        break;*/
+    }
+  }
+  return 1;
+}
+
+void buildWeekCalendarDayMenu(long int ddays, unsigned int numevents, unsigned int* curmenu, MenuItem* menuitems, unsigned int* cursce, SimpleCalendarEvent* events) {
+  long int ny, nm, nd;
+  DaysToDate(ddays, &ny, &nm, &nd);
+  EventDate date;
+  date.year=ny; date.month=nm; date.day=nd;
+  
+  // allocate enough CalendarEvents for today
+  CalendarEvent* dayEvents = (CalendarEvent*)alloca(numevents*sizeof(CalendarEvent));
+  // get the events
+  GetEventsForDate(&date, CALENDARFOLDER, dayEvents, 50);
+  
+  // process CalendarEvents into SimpleCalendarEvents
+  // and build menu at the same time
+  unsigned int curevent = 0;
+  while(curevent < numevents) {
+    // build SimpleCalendarEvent
+    strcpy((char*)events[*cursce].title, (char*)dayEvents[curevent].title);
+    events[*cursce].startdate = date;
+    events[*cursce].category = dayEvents[curevent].category;
+    events[*cursce].origpos = curevent;
+    *cursce = *cursce+1;
+    
+    // build MenuItem
+    strcpy(menuitems[*curmenu].text, (char*)dayEvents[curevent].title);
+    menuitems[*curmenu].type = MENUITEM_NORMAL;
+    menuitems[*curmenu].color = dayEvents[curevent].category-1;
+    *curmenu = *curmenu+1;
+    curevent++;
   }
 }
 

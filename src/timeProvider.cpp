@@ -96,6 +96,25 @@ int dow(int y, int m, int d)
     return (y + (y / 4) - (y / 100) + (y / 400) + t[m-1] + d) % 7;
 }
 
+int getDayOfYear(int y, int m, int d) {
+  // year must be provided because of leap years
+  int days = 0;
+  for(int i = 1; i<m; i++) {
+    if(i!=2) days+=getMonthDays(i);
+    else days+=(isLeap(y)? 29 : 28);
+  }
+  return days+d;
+}
+int getWeekNumber(int y, int m, int d) {
+  int julian = getDayOfYear(y,m,d);
+  int dowk = dow(y,m,d);
+  int dowkJan1 = dow(y,1,1);
+  int weekNum = ((julian + 6) / 7);
+  if (dowk < dowkJan1)
+      weekNum++;
+  return weekNum;
+}
+
 int getCurrentYear() {
   return ((*RYRCNT >> 12) & 0b1111)*1000 + ((*RYRCNT >> 8) & 0b1111)*100 + ((*RYRCNT >> 4) & 0b1111)*10 + (*RYRCNT & 0b1111);
 }
