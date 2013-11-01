@@ -318,28 +318,29 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
   unsigned int cursce = 0; // current SimpleCalendarEvent, in the end it will have the SimpleCalendarEvent count
   ddays=DateToDays(*y, *m, *d);
   while(curday < 7) {
+    // one menuitem for day header
+    char buffer[15] = "";
+    long int ny, nm, nd;
+    DaysToDate(ddays, &ny, &nm, &nd);
+    dateToString(buffer, ny, nm, nd, GetSetting(SETTING_DATEFORMAT));
+    // the following string only fits in the menuitem.text because:
+    //  1 - graphically, it's printed with PrintMini
+    //  2 - the text variable has a size of 42 bytes, to account for the possibility that all the items are multibyte characters.
+    //  (in this case there are no MB chars, so the full 42 bytes can be used)
+    if(fevcount[curday]) strcpy(menuitems[curmenu].text, "Events for ");
+    else strcpy(menuitems[curmenu].text, "No events for ");
+    strcat(menuitems[curmenu].text, buffer);
+    strcat(menuitems[curmenu].text, (char*)" (");
+    strcat(menuitems[curmenu].text, getDOWAsString(dow(ny, nm, nd)+1));
+    strcat(menuitems[curmenu].text, (char*)")");
+    menuitems[curmenu].type = MENUITEM_SEPARATOR;
+    menuitems[curmenu].color = TEXT_COLOR_BLACK;
+    if(ny==oy&&nm==om&&nd==od&&*jumpToSel==1) {
+      menu->selection=curmenu+1;
+      menu->scroll = menu->selection -1;
+    }
+    curmenu++;
     if(fevcount[curday]) {
-      // one menuitem for day header
-      char buffer[15] = "";
-      long int ny, nm, nd;
-      DaysToDate(ddays, &ny, &nm, &nd);
-      dateToString(buffer, ny, nm, nd, GetSetting(SETTING_DATEFORMAT));
-      // the following string only fits in the menuitem.text because:
-      //  1 - graphically, it's printed with PrintMini
-      //  2 - the text variable has a size of 42 bytes, to account for the possibility that all the items are multibyte characters.
-      //  (in this case there are no MB chars, so the full 42 bytes can be used)
-      strcpy(menuitems[curmenu].text, "Events for ");
-      strcat(menuitems[curmenu].text, buffer);
-      strcat(menuitems[curmenu].text, (char*)" (");
-      strcat(menuitems[curmenu].text, getDOWAsString(dow(ny, nm, nd)+1));
-      strcat(menuitems[curmenu].text, (char*)")");
-      menuitems[curmenu].type = MENUITEM_SEPARATOR;
-      menuitems[curmenu].color = TEXT_COLOR_BLACK;
-      if(ny==oy&&nm==om&&nd==od&&*jumpToSel==1) {
-        menu->selection=curmenu+1;
-        menu->scroll = menu->selection -1;
-      }
-      curmenu++;
       buildWeekCalendarDayMenu(ddays, fevcount[curday], &curmenu, menuitems, &cursce, events); 
     }
     ddays++;
