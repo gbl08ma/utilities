@@ -56,11 +56,13 @@ void settingsMenu() {
   strcpy(menuitems[12].text, "Show events count");
   menuitems[12].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[13].text, "About this add-in");
+  strcpy(menuitems[13].text, "Default calendar view");
+  
+  strcpy(menuitems[14].text, "About this add-in");
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=14;
+  menu.numitems=15;
   menu.scrollbar=1;
   menu.scrollout=1;
   menu.showtitle=0;
@@ -181,6 +183,40 @@ void settingsMenu() {
         lockSettingsMenu();
       }
       if(menu.selection == 14) {
+        MsgBoxPush(4);
+        MenuItem smallmenuitems[3];
+        strcpy(smallmenuitems[0].text, "Week");
+        smallmenuitems[0].type = MENUITEM_NORMAL;
+        smallmenuitems[0].color = TEXT_COLOR_BLACK;
+        
+        strcpy(smallmenuitems[1].text, "Month");
+        smallmenuitems[1].type = MENUITEM_NORMAL;
+        smallmenuitems[1].color = TEXT_COLOR_BLACK;
+        
+        Menu smallmenu;
+        smallmenu.items=smallmenuitems;
+        smallmenu.numitems=2;
+        smallmenu.type=MENUTYPE_NORMAL;
+        smallmenu.width=17;
+        smallmenu.height=4;
+        smallmenu.startX=3;
+        smallmenu.startY=2;
+        smallmenu.scrollbar=0;
+        smallmenu.scrollout=1;
+        smallmenu.showtitle=1;
+        smallmenu.selection=GetSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;
+        smallmenu.scroll=0;
+        smallmenu.allowMkey=0;
+        strcpy(smallmenu.nodatamsg, "");
+        strcpy(smallmenu.title, "Default Calendar");
+        strcpy(smallmenu.statusText, "");
+        int sres = doMenu(&smallmenu);
+        if(sres == MENU_RETURN_SELECTION) {
+          SetSetting(SETTING_DEFAULT_CALENDAR_VIEW, smallmenu.selection-1, 1);
+        }
+        MsgBoxPop();
+      }
+      if(menu.selection == 15) {
         showAbout();
       }
     }
