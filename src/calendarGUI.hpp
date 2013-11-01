@@ -25,7 +25,7 @@
 #define EVENTEDITOR_RETURN_CONFIRM 1
 void viewCalendar();
 int viewMonthCalendar();
-int viewWeekCalendar(int y=0, int m=0, int d=0);
+int viewWeekCalendar();
 int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel);
 void buildWeekCalendarDayMenu(long int ddays, unsigned int numevents, unsigned int* curmenu, MenuItem* menuitems, unsigned int* cursce, SimpleCalendarEvent* events); // helper function
 void viewEvents(int y, int m, int d);

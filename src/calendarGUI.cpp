@@ -236,10 +236,11 @@ int viewMonthCalendar() {
   return 0;
 }
 
-int viewWeekCalendar(int y, int m, int d) {
+int viewWeekCalendar() {
   //returns 1 to switch to montly view
   //returns 0 to exit calendar
   int res=1;
+  int y=0, m=0, d=0;
   Menu menu;
   
   menu.scrollbar=1;
@@ -249,22 +250,25 @@ int viewWeekCalendar(int y, int m, int d) {
   menu.scroll=0;
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
-  strcpy(menu.nodatamsg, "No Events");
+  strcpy(menu.nodatamsg, ""); // it is never going to be without any items
   strcpy(menu.statusText, "");
   int jumpToSel=1;
-  if(!sy || !sm || !sd) {} else {
-    y = sy;
-    m = sm;
-    d = sd;
-    sy=0; sm=0; sd=0;
-  }
   while(res) {
-    if(!y || !m || !d) {
-      y = getCurrentYear();
-      m = getCurrentMonth();
-      d = getCurrentDay();
+    if(!sy || !sm || !sd) {
+      if(!y || !m || !d) {
+        y = getCurrentYear();
+        m = getCurrentMonth();
+        d = getCurrentDay();
+        jumpToSel=1;
+      }
+    } else {
+      y = sy;
+      m = sm;
+      d = sd;
+      sy=0; sm=0; sd=0;
       jumpToSel=1;
     }
+
     char buffer[10] = "";
     int wkn = getWeekNumber(y,m,d);
     itoa(wkn, (unsigned char*)buffer);
@@ -366,6 +370,8 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
       }
       GetFKeyPtr(0x03B4, &iresult); // INSERT
       FKey_Display(3, (int*)iresult);
+      GetFKeyPtr(0x0187, &iresult); // SEARCH
+      FKey_Display(4, (int*)iresult);
       GetFKeyPtr(0x0102, &iresult); // SWAP [white]
       FKey_Display(5, (int*)iresult);
     } else if(menu->fkeypage==1) {
@@ -495,7 +501,22 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
         break;
       case KEY_CTRL_F5:
         if(menu->fkeypage == 0) {
-          
+          int sey=0,sem=0,sed=0;
+          if(msel>0) {
+            sey=events[msel-1].startdate.year;
+            sem=events[msel-1].startdate.month;
+            sed=events[msel-1].startdate.day;
+          } else if(ssel>0) {
+            long int dd = DateToDays(*y, *m, *d) + ssel-1;
+            long int ny, nm, nd;
+            DaysToDate(dd, &ny, &nm, &nd);
+            sey=ny;
+            sem=nm;
+            sed=nd;
+          } else return 1; //this should never happen
+          searchEventsGUI(sey, sem, sed);
+          *jumpToSel=1;
+          return 1;
         } else if (menu->fkeypage == 1) {
           *y=0; // forces a return to today's values
           return 1;
