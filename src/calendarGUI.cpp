@@ -308,6 +308,10 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
     DaysToDate(ddays, &ny, &nm, &nd);
     EventDate date;
     date.year=ny; date.month=nm; date.day=nd;
+    if(!isDateValid(ny,nm,nd)) {
+      *y=0; // one of the dates we're trying to view is not valid (probably because the year is not valid, i.e. below 0 or above 9999).
+      return 1; // reload with *y==0, this makes it go to today's date.
+    }
     fevcount[curday] = GetEventsForDate(&date, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW);
     numevents += fevcount[curday];
     ddays++;

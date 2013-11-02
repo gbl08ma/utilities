@@ -361,6 +361,7 @@ int isTimeValid(int h, int m, int s) {
 }
 
 int isDateValid(int y, int m, int d) {
+  if(y<=0 || y>9999) return 0; // otherwise we will have problems with calendar events and the like
   if (m > 12 || m <= 0 || d > ( m==2? (isLeap(y)? 29 : 28) : getMonthDays(m))) return 0;
   else return 1;
 }
