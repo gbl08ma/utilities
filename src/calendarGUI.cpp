@@ -366,12 +366,10 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
     if(menu->fkeypage==0) {
       GetFKeyPtr(0x01FC, &iresult); // JUMP
       FKey_Display(0, (int*)iresult);
-      if(numevents>0) {
-        GetFKeyPtr(0x049F, &iresult); // VIEW
-        FKey_Display(1, (int*)iresult);
-        GetFKeyPtr(0x015F, &iresult); // DATE
-        FKey_Display(2, (int*)iresult);
-      }
+      GetFKeyPtr(0x049F, &iresult); // VIEW
+      FKey_Display(1, (int*)iresult);
+      GetFKeyPtr(0x015F, &iresult); // DATE
+      FKey_Display(2, (int*)iresult);
       GetFKeyPtr(0x03B4, &iresult); // INSERT
       FKey_Display(3, (int*)iresult);
       GetFKeyPtr(0x0187, &iresult); // SEARCH
