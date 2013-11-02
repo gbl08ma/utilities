@@ -170,6 +170,15 @@ void filenameFromDate(EventDate* date, char* filename) {
   if (date->day < 10) strcat(filename, "0"); //if day below 10, add leading 0
   strcat(filename, smallbuf);
 }
+void smemFilenameFromDate(EventDate* date, char* filename, const char* folder) {
+  char buffer[10] = "";
+  strcpy(filename, "\\\\fls0\\");
+  strcat(filename, folder);
+  strcat(filename, "\\");
+  filenameFromDate(date, buffer);
+  strcat(filename, buffer);
+  strcat(filename, ".pce"); //filenameFromDate does not include file extension, so add it
+}
 
 int AddEvent(CalendarEvent* calEvent, const char* folder) {
   //Saves a calendar event on an existing calendar with specified file name.
@@ -187,13 +196,8 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
   Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
   Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
   char filename[128] = "";
-  char buffer[10] = "";
-  strcpy(filename, "\\\\fls0\\");
-  strcat(filename, folder);
-  strcat(filename, "\\");
-  filenameFromDate(&calEvent->startdate, buffer);
-  strcat(filename, buffer);
-  strcat(filename, ".pce"); //filenameFromDate does not include file extension, so add it
+  smemFilenameFromDate(&calEvent->startdate, filename, folder);
+  
   char newevent[2048] = "";
   calEventToChar(calEvent, (unsigned char*)newevent);
   int size = strlen(FILE_HEADER) + strlen(newevent);
@@ -220,16 +224,14 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
       {
         return 1;
       }
-      //Write header
 #ifdef WAITMSG
       PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
 #endif
-      //Bfile_WriteFile_OS(hAddFile, FILE_HEADER, strlen(FILE_HEADER));
       char finalcontents[2060] = "";
       strcpy(finalcontents, FILE_HEADER);
       strcat(finalcontents, newevent);
-      //Write event
+      //Write header and event
       Bfile_WriteFile_OS(hAddFile, finalcontents, strlen(finalcontents));
 #ifdef WAITMSG
       PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
@@ -259,8 +261,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
     if (oldsize > MAX_EVENT_FILESIZE || newsize > MAX_EVENT_FILESIZE) { //file bigger than we can handle
       Bfile_CloseFile_OS(hAddFile);
       return 4;
-    } 
-    //unsigned char oldcontents[MAX_EVENT_FILESIZE] = "";
+    }
     unsigned char* oldcontents = (unsigned char*)alloca(newsize);
     if(oldsize) {
           Bfile_ReadFile_OS(hAddFile, oldcontents, oldsize, 0);
@@ -332,13 +333,8 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   }
   
   char filename[128] = "";
-  char buffer[10] = "";
-  strcpy(filename, "\\\\fls0\\");
-  strcat(filename, folder);
-  strcat(filename, "\\");
-  filenameFromDate(startdate, buffer);
-  strcat(filename, buffer);
-  strcat(filename, ".pce"); //filenameFromDate does not include file extension, so add it
+  smemFilenameFromDate(startdate, filename, folder);
+  
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
   
@@ -385,13 +381,7 @@ Bdisp_PutDisp_DD();
   Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
   Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
   char filename[128] = "";
-  char buffer[10] = "";
-  strcpy(filename, "\\\\fls0\\");
-  strcat(filename, folder);
-  strcat(filename, "\\");
-  filenameFromDate(startdate, buffer);
-  strcat(filename, buffer);
-  strcat(filename, ".pce"); //filenameFromDate does not include file extension, so add it
+  smemFilenameFromDate(startdate, filename, folder);
   
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
@@ -503,16 +493,10 @@ int RemoveDay(EventDate* date, const char* folder) {
   PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
 #endif
   char filename[128] = "";
-  char buffer[10] = "";
-  strcpy(filename, "\\\\fls0\\");
-  strcat(filename, folder);
-  strcat(filename, "\\");
+  smemFilenameFromDate(date, filename, folder);
 #ifdef WAITMSG
   PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
 #endif
-  filenameFromDate(date, buffer);
-  strcat(filename, buffer);
-  strcat(filename, ".pce\0"); //filenameFromDate does not include file extension, so add it
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
 #ifdef WAITMSG
@@ -553,13 +537,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
 
   // Generate filename from given date
   char filename[128] = "";
-  char buffer[10] = "";
-  strcpy(filename, "\\\\fls0\\");
-  strcat(filename, folder);
-  strcat(filename, "\\");
-  filenameFromDate(startdate, buffer);
-  strcat(filename, buffer);
-  strcat(filename, ".pce"); //filenameFromDate does not include file extension, so add it
+  smemFilenameFromDate(startdate, filename, folder);
   
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
