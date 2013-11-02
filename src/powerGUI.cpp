@@ -107,6 +107,7 @@ void powerInformation() {
 
   textElement elem[15];
   text.elements = elem;
+  text.scrollbar=0;
   
   elem[0].text = (char*)"Battery voltage:";
   elem[0].spaceAtEnd = 1;
