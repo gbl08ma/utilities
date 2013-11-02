@@ -398,8 +398,8 @@ void calendarSettingsMenu() {
           strcpy(smallmenuitems[0].text, "Week");
           strcpy(smallmenuitems[1].text, "Month");
         } else {
-          strcpy(smallmenuitems[0].text, "Sunday");
-          strcpy(smallmenuitems[1].text, "Monday");
+          strcpy(smallmenuitems[0].text, getDOWAsString(1)); // Sunday
+          strcpy(smallmenuitems[1].text, getDOWAsString(2)); // Monday
         }
         
         Menu smallmenu;
