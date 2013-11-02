@@ -62,7 +62,7 @@ void showAbout() {
   DisplayStatusArea();
   
   textArea text;
-  strcpy(text.title, (char*)"aa");
+  strcpy(text.title, (char*)"");
   text.showtitle=0;
 
   textElement elem[5];

@@ -22,6 +22,7 @@
 #include "settingsProvider.hpp"
 #include "settingsGUI.hpp" 
 #include "selectorGUI.hpp"
+#include "textGUI.hpp"
 #include "sprites.h"
 
 void changePoweroffTimeout() {
@@ -87,7 +88,6 @@ void changeBacklightLevel() {
 }
 
 void powerInformation() {
-  int key, textX=0, textY=24+4;
   unsigned int backlightlevel = GetBacklightSubLevel_RAW();
   volatile unsigned int*FRQCR = (unsigned int*) 0xA4150000;
   unsigned char voltbuffer[20];
@@ -99,79 +99,80 @@ void powerInformation() {
 
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  PrintXY(1, 1, (char*)"  Power information", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  
+  
+  textArea text;
+  strcpy(text.title, (char*)"Power information");
+  text.showtitle=1;
 
-  PrintMini(&textX, &textY, (unsigned char*)"Main battery voltage: ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, &textY, (unsigned char*)voltbuffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-
-  textY=textY+17;
-  textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"Note: battery voltage is inaccurate when the power source", 0, TEXT_COLOR_BLACK, 0 );
-  textY=textY+12;
-  textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"is USB.", 0, TEXT_COLOR_BLACK, 0 );
-  unsigned char hb[15];
-  key = *(unsigned char*)P11DR;
-  WordToHex( key & 0xFFFF, hb );
-  textY=textY+12;
-  textX=0;
-  PrintMini(&textX, &textY, (unsigned char*)"Power source: ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  unsigned char powerSource[10];
+  textElement elem[15];
+  text.elements = elem;
+  
+  elem[0].text = (char*)"Battery voltage:";
+  elem[0].spaceAtEnd = 1;
+  elem[1].text = (char*)voltbuffer;
+  
+  elem[2].newLine = 1;
+  elem[2].color = COLOR_GRAY;
+  elem[2].text = (char*)"Note: battery voltage is inaccurate when the power source is USB.";
+  
+  elem[3].newLine = 1;
+  elem[3].text = (char*)"Power source:";
+  elem[3].spaceAtEnd = 1;
+  int key = *(unsigned char*)P11DR;
   if (key==0x0000) {
-    strcpy((char*)powerSource, "Emulated");
+    elem[4].text = (char*)"Emulated";
   } else if (key==0x0008) {
-    strcpy((char*)powerSource, "Batteries");
+    elem[4].text = (char*)"Batteries";
   } else if (key==0x000A) {
-    strcpy((char*)powerSource, "USB");
+    elem[4].text = (char*)"USB";
   } else {
-    strcpy((char*)powerSource, "Unknown");
+    elem[4].text = (char*)"Unknown";
   }
-  PrintMini(&textX, &textY, powerSource, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   
-  textY=textY+17;
-  textX=0;
-  PrintMini(&textX, &textY, (unsigned char*)"Battery type setting: ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  unsigned char batteryType[15];
+  elem[5].newLine = 1;
+  elem[5].text = (char*)"Battery type setting:";
+  elem[5].spaceAtEnd = 1;
+  
   if (GetBatteryType()==1) {
-    strcpy((char*)batteryType, "Alkaline");
+    elem[6].text = (char*)"Alkaline";
   } else if (GetBatteryType()==2) {
-    strcpy((char*)batteryType, "Ni-MH");
+    elem[6].text = (char*)"Ni-MH";
   } else {
-    strcpy((char*)batteryType, "Not defined");
+    elem[6].text = (char*)"Not defined";
   }
-  PrintMini(&textX, &textY, batteryType, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-
-  textY=textY+17;
-  textX=0;
-  PrintMini(&textX, &textY, (unsigned char*)"Screen backlight level: ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  unsigned char blevel[3];
-  itoa(backlightlevel, blevel);
-  PrintMini(&textX, &textY, (unsigned char*)blevel, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   
-  // Find CPU clock
-  unsigned char* cfreq;
+  elem[7].newLine = 1;
+  elem[7].text = (char*)"Screen backlight level:";
+  elem[7].spaceAtEnd = 1;
+  
+  unsigned char blevel[5];
+  itoa(backlightlevel, blevel);
+  elem[8].text = (char*)blevel;
+  
+  elem[9].newLine = 1;
+  elem[9].text = (char*)"CPU clock:";
+  elem[9].spaceAtEnd = 1;
   switch((*FRQCR & 0x3F000000) >> 24) {
-    case PLL_28x: cfreq = (unsigned char*)"101.5 MHz"; break;
-    case PLL_26x: cfreq = (unsigned char*)"94.3 MHz"; break;
-    case PLL_24x: cfreq = (unsigned char*)"87 MHz"; break;
-    case PLL_20x: cfreq = (unsigned char*)"72.5 MHz"; break;
-    case PLL_18x: cfreq = (unsigned char*)"65.3 MHz"; break;
-    case PLL_16x: cfreq = (unsigned char*)"58 MHz"; break;
-    case PLL_15x: cfreq = (unsigned char*)"54.4 MHz"; break;
-    case PLL_12x: cfreq = (unsigned char*)"43.5 MHz"; break;
-    case PLL_8x: cfreq = (unsigned char*)"29 MHz"; break;
-    case PLL_6x: cfreq = (unsigned char*)"21.7 MHz"; break;
-    case PLL_4x: cfreq = (unsigned char*)"14.5 MHz"; break;
-    case PLL_3x: cfreq = (unsigned char*)"10.8 MHz"; break;
-    case PLL_2x: cfreq = (unsigned char*)"7.25 MHz"; break;
-    case PLL_1x: cfreq = (unsigned char*)"3.6 MHz"; break;
-    default: cfreq = (unsigned char*)"Unknown"; break;
+    case PLL_28x: elem[10].text = (char*)"101.5 MHz"; break;
+    case PLL_26x: elem[10].text = (char*)"94.3 MHz"; break;
+    case PLL_24x: elem[10].text = (char*)"87 MHz"; break;
+    case PLL_20x: elem[10].text = (char*)"72.5 MHz"; break;
+    case PLL_18x: elem[10].text = (char*)"65.3 MHz"; break;
+    case PLL_16x: elem[10].text = (char*)"58 MHz"; break;
+    case PLL_15x: elem[10].text = (char*)"54.4 MHz"; break;
+    case PLL_12x: elem[10].text = (char*)"43.5 MHz"; break;
+    case PLL_8x: elem[10].text = (char*)"29 MHz"; break;
+    case PLL_6x: elem[10].text = (char*)"21.7 MHz"; break;
+    case PLL_4x: elem[10].text = (char*)"14.5 MHz"; break;
+    case PLL_3x: elem[10].text = (char*)"10.8 MHz"; break;
+    case PLL_2x: elem[10].text = (char*)"7.25 MHz"; break;
+    case PLL_1x: elem[10].text = (char*)"3.6 MHz"; break;
+    default: elem[10].text = (char*)"Unknown"; break;
   }
-  textY=textY+17;
-  textX=0;
-  PrintMini(&textX, &textY, (unsigned char*)"CPU clock: ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, &textY, (unsigned char*)cfreq, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  mGetKey(&key);
+  
+  text.numelements = 11;
+  doTextArea(&text);
 }
 const unsigned int PLLs[] = {PLL_1x, PLL_2x, PLL_3x, PLL_4x, PLL_6x, PLL_8x, PLL_12x, PLL_15x, PLL_16x, PLL_18x, PLL_20x, PLL_24x, PLL_26x, PLL_28x};
 void updateCurrentFreq() {
