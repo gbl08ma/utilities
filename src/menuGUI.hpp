@@ -59,12 +59,14 @@ typedef struct {
   int allowMkey=1; // 1: allow for usage of mGetKey to retrieve keyboard input when user is in the selector
   int fkeypage=0; // for MULTISELECT menu if it should allow file selecting and show the fkey label
   int numselitems=0; // number of selected items
+  int returnOnInfiniteScrolling=0; //whether the menu should return when user reaches the last item and presses the down key (or the first item and presses the up key)
   MenuItem* items; // items in menu
 } Menu;
 
 #define MENU_RETURN_EXIT 0
 #define MENU_RETURN_SELECTION 1
 #define MENU_RETURN_INSTANT 2
+#define MENU_RETURN_SCROLLING 3 //for returnOnInfiniteScrolling
 int doMenu(Menu* menu);
 int getMenuSelectionIgnoringSeparators(Menu* menu);
 int getMenuSelectionOnlySeparators(Menu* menu);

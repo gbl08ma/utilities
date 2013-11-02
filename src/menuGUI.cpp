@@ -130,8 +130,12 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
         case KEY_CTRL_DOWN:
           if(menu->selection == menu->numitems)
           {
-            menu->selection = 1;
-            menu->scroll = 0;
+            if(menu->returnOnInfiniteScrolling) {
+              return MENU_RETURN_SCROLLING;
+            } else {
+              menu->selection = 1;
+              menu->scroll = 0;
+            }
           }
           else
           {
@@ -144,8 +148,12 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
         case KEY_CTRL_UP:
           if(menu->selection == 1)
           {
-            menu->selection = menu->numitems;
-            menu->scroll = menu->selection-(menu->numitems>itemsHeight ? itemsHeight : menu->numitems);
+            if(menu->returnOnInfiniteScrolling) {
+              return MENU_RETURN_SCROLLING;
+            } else {
+              menu->selection = menu->numitems;
+              menu->scroll = menu->selection-(menu->numitems>itemsHeight ? itemsHeight : menu->numitems);
+            }
           }
           else
           {

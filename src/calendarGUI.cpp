@@ -250,6 +250,7 @@ int viewWeekCalendar() {
   menu.scroll=0;
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
+  menu.returnOnInfiniteScrolling=1;
   strcpy(menu.nodatamsg, ""); // it is never going to be without any items
   strcpy(menu.statusText, "");
   int jumpToSel=1;
@@ -409,6 +410,21 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
             viewEvents(date.year, date.month, date.day);
             if(!searchValid) return 1;
           }
+        }
+        break;
+      case MENU_RETURN_SCROLLING:
+        if(menu->selection == 1) {
+          ddays = DateToDays(*y, *m, *d) - 1; // decrease by one day (go to another week and jump to menu bottom)
+          long int ny, nm, nd;
+          DaysToDate(ddays, &ny, &nm, &nd);
+          *y=ny; *m=nm; *d=nd; *jumpToSel=1;
+          return 1;
+        } else {
+          ddays = DateToDays(*y, *m, *d) + 7; // increase by one week
+          long int ny, nm, nd;
+          DaysToDate(ddays, &ny, &nm, &nd);
+          *y=ny; *m=nm; *d=nd; *jumpToSel=1;
+          return 1;
         }
         break;
       case KEY_CTRL_F1:
