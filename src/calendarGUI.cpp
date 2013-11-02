@@ -356,6 +356,9 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
   if(*jumpToSel==0) {
     menu->selection = 1;
     menu->scroll = 0;
+  } else {
+    if(menu->scroll > menu->numitems-6) 
+        menu->scroll = menu->numitems-6;
   }
   while(1) {
     Bdisp_AllClr_VRAM();
