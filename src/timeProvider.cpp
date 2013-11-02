@@ -107,6 +107,11 @@ int getDayOfYear(int y, int m, int d) {
 }
 int getWeekNumber(int y, int m, int d) {
   int julian = getDayOfYear(y,m,d);
+  // since this is only for display purposes, we can mix settings here:
+  if(GetSetting(SETTING_WEEK_START_DAY)==1) {
+    if(julian>1) julian--;
+    else { y--; julian = getDayOfYear(y,m,d); }
+  }
   int dowk = dow(y,m,d);
   int dowkJan1 = dow(y,1,1);
   int weekNum = ((julian + 6) / 7);

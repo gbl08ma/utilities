@@ -283,17 +283,15 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
   int oy=*y,om=*m,od=*d; //backup originally requested date before modifying it
   // get first date of the week
   long int ddays=DateToDays(*y, *m, *d);
-  while(dow(*y,*m,*d) != 0) { //find sunday before provided date
+  while(dow(*y,*m,*d) != GetSetting(SETTING_WEEK_START_DAY)) { //find sunday/monday before provided date
     ddays = DateToDays(*y, *m, *d) - 1; //decrease day by 1
     long int ny, nm, nd;
     DaysToDate(ddays, &ny, &nm, &nd);
     *y=ny; *m=nm; *d=nd;
   }
-  // y,m,d now has first sunday of week
+  // y,m,d now has first Sunday/Monday of the week, depending on user setting
   // ddays has the corresponding amount of days
-  // calculate week number for menu title accoring to the Sunday date
-  // this doesn't follow ISO 8601, but making this follow it while nothing else in this code follows
-  // (weeks start on Sunday instead of Monday, etc...), is a lot of work.
+  // calculate week number for menu title accoring to the Sunday/Monday date
   char buffer[10] = "";
   int wkn = getWeekNumber(*y,*m,*d);
   itoa(wkn, (unsigned char*)buffer);
@@ -442,7 +440,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
         } else if (menu->fkeypage == 1) {
           ddays = DateToDays(*y, *m, *d) - 23; // decrease by three weeks
           // do not decrease by one month as we will end up going back 5 weeks instead of four
-          // (the algorithm looks for the latest Sunday before the selected date...)
+          // (the algorithm looks for the latest Sunday/Monday before the selected date...)
           long int ny, nm, nd;
           DaysToDate(ddays, &ny, &nm, &nd);
           *y=ny; *m=nm; *d=nd; *jumpToSel=0;
