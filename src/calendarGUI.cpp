@@ -338,7 +338,18 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
     //  1 - graphically, it's printed with PrintMini
     //  2 - the text variable has a size of 42 bytes, to account for the possibility that all the items are multibyte characters.
     //  (in this case there are no MB chars, so the full 42 bytes can be used)
-    if(fevcount[curday]) strcpy(menuitems[curmenu].text, "Events for ");
+    if(fevcount[curday]) {
+      if(GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT)) {
+        char buffer[10] = "";
+        itoa(fevcount[curday], (unsigned char*)buffer);
+        strcpy(menuitems[curmenu].text, buffer);
+        strcat(menuitems[curmenu].text, " event");
+        if(fevcount[curday]>1) strcat(menuitems[curmenu].text, "s");
+        strcat(menuitems[curmenu].text, " on ");
+      } else {
+        strcpy(menuitems[curmenu].text, "Events for ");
+      }
+    }
     else strcpy(menuitems[curmenu].text, "No events for ");
     strcat(menuitems[curmenu].text, buffer);
     strcat(menuitems[curmenu].text, (char*)" (");
