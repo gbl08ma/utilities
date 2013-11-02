@@ -321,7 +321,7 @@ void toolsMenu() {
   PrintXY(2, 2, (char*)"  Tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
   MenuItem menuitems[5];
-  strcpy(menuitems[0].text, "File browser");
+  strcpy(menuitems[0].text, "File manager");
   strcpy(menuitems[1].text, "Memory usage");
   strcpy(menuitems[2].text, "Add-In Manager");
   strcpy(menuitems[3].text, "Function key color");
