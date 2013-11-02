@@ -270,15 +270,6 @@ int viewWeekCalendar() {
       jumpToSel=1;
     }
 
-    char buffer[10] = "";
-    int wkn = getWeekNumber(y,m,d);
-    itoa(wkn, (unsigned char*)buffer);
-    strcpy(menu.title, "Week ");
-    strcat(menu.title, buffer);
-    strcpy(buffer, (char*)"");
-    itoa(y, (unsigned char*)buffer);
-    strcat(menu.title, (char*)" of ");
-    strcat(menu.title, buffer);
     res = viewWeekCalendarSub(&menu, &y, &m, &d, &jumpToSel);
     if(res==2) return 1;
   }
@@ -300,6 +291,19 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
   }
   // y,m,d now has first sunday of week
   // ddays has the corresponding amount of days
+  // calculate week number for menu title accoring to the Sunday date
+  // this doesn't follow ISO 8601, but making this follow it while nothing else in this code follows
+  // (weeks start on Sunday instead of Monday, etc...), is a lot of work.
+  char buffer[10] = "";
+  int wkn = getWeekNumber(*y,*m,*d);
+  itoa(wkn, (unsigned char*)buffer);
+  strcpy(menu->title, "Week ");
+  strcat(menu->title, buffer);
+  strcpy(buffer, (char*)"");
+  itoa(*y, (unsigned char*)buffer);
+  strcat(menu->title, (char*)" of ");
+  strcat(menu->title, buffer);
+   
   unsigned int curday = 0; unsigned int numevents = 0;
   unsigned int fevcount[7];
   // get event count only, so we know how many SimpleCalendarEvents to alloc
