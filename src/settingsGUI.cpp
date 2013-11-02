@@ -46,23 +46,17 @@ void settingsMenu() {
   strcpy(menuitems[8].text, "Show advanced tools");
   menuitems[8].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[9].text, "Show F. keys labels");
-  menuitems[9].type = MENUITEM_CHECKBOX;
+  strcpy(menuitems[9].text, "Startup brightness");
   
-  strcpy(menuitems[10].text, "Startup brightness");
+  strcpy(menuitems[10].text, "Calc. lock settings");
   
-  strcpy(menuitems[11].text, "Calc. lock settings");
+  strcpy(menuitems[11].text, "Calendar settings");
   
-  strcpy(menuitems[12].text, "Show events count");
-  menuitems[12].type = MENUITEM_CHECKBOX;
-  
-  strcpy(menuitems[13].text, "Default calendar view");
-  
-  strcpy(menuitems[14].text, "About this add-in");
+  strcpy(menuitems[12].text, "About this add-in");
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=15;
+  menu.numitems=13;
   menu.scrollbar=1;
   menu.scrollout=1;
   menu.showtitle=0;
@@ -76,8 +70,6 @@ void settingsMenu() {
     menuitems[6].value = GetSetting(SETTING_THEME);
     menuitems[7].value = GetSetting(SETTING_DISPLAY_STATUSBAR);
     menuitems[8].value = GetSetting(SETTING_SHOW_ADVANCED);
-    menuitems[9].value = GetSetting(SETTING_DISPLAY_FKEYS);
-    menuitems[12].value = GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT);
     
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
@@ -97,16 +89,6 @@ void settingsMenu() {
         if(menuitems[8].value == MENUITEM_VALUE_CHECKED) menuitems[8].value=MENUITEM_VALUE_NONE;
         else menuitems[8].value=MENUITEM_VALUE_CHECKED;
         SetSetting(SETTING_SHOW_ADVANCED, menuitems[8].value, 1); 
-      }
-      if(menu.selection == 10) {
-        if(menuitems[9].value == MENUITEM_VALUE_CHECKED) menuitems[9].value=MENUITEM_VALUE_NONE;
-        else menuitems[9].value=MENUITEM_VALUE_CHECKED;
-        SetSetting(SETTING_DISPLAY_FKEYS, menuitems[9].value, 1); 
-      }
-      if(menu.selection == 13) {
-        if(menuitems[12].value == MENUITEM_VALUE_CHECKED) menuitems[12].value=MENUITEM_VALUE_NONE;
-        else menuitems[12].value=MENUITEM_VALUE_CHECKED;
-        SetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT, menuitems[12].value, 1);
       }
       // deal with other menu items
       if(menu.selection == 1) { // set time
@@ -165,7 +147,7 @@ void settingsMenu() {
         clockSettingsMenu();
       }
       
-      if(menu.selection == 11) { // set startup brightness
+      if(menu.selection == 10) { // set startup brightness
         Selector sel;
         strcpy(sel.title, "Set start brightness");
         strcpy(sel.subtitle, "");
@@ -179,44 +161,13 @@ void settingsMenu() {
         if (res == SELECTOR_RETURN_EXIT) continue;
         SetSetting(SETTING_STARTUP_BRIGHTNESS, sel.value, 1);
       }
-      if(menu.selection == 12) {
+      if(menu.selection == 11) {
         lockSettingsMenu();
       }
-      if(menu.selection == 14) {
-        MsgBoxPush(4);
-        MenuItem smallmenuitems[3];
-        strcpy(smallmenuitems[0].text, "Week");
-        smallmenuitems[0].type = MENUITEM_NORMAL;
-        smallmenuitems[0].color = TEXT_COLOR_BLACK;
-        
-        strcpy(smallmenuitems[1].text, "Month");
-        smallmenuitems[1].type = MENUITEM_NORMAL;
-        smallmenuitems[1].color = TEXT_COLOR_BLACK;
-        
-        Menu smallmenu;
-        smallmenu.items=smallmenuitems;
-        smallmenu.numitems=2;
-        smallmenu.type=MENUTYPE_NORMAL;
-        smallmenu.width=17;
-        smallmenu.height=4;
-        smallmenu.startX=3;
-        smallmenu.startY=2;
-        smallmenu.scrollbar=0;
-        smallmenu.scrollout=1;
-        smallmenu.showtitle=1;
-        smallmenu.selection=GetSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;
-        smallmenu.scroll=0;
-        smallmenu.allowMkey=0;
-        strcpy(smallmenu.nodatamsg, "");
-        strcpy(smallmenu.title, "Default Calendar");
-        strcpy(smallmenu.statusText, "");
-        int sres = doMenu(&smallmenu);
-        if(sres == MENU_RETURN_SELECTION) {
-          SetSetting(SETTING_DEFAULT_CALENDAR_VIEW, smallmenu.selection-1, 1);
-        }
-        MsgBoxPop();
+      if(menu.selection == 12) {
+        calendarSettingsMenu();
       }
-      if(menu.selection == 15) {
+      if(menu.selection == 13) {
         showAbout();
       }
     }
@@ -333,9 +284,12 @@ void clockSettingsMenu() {
   strcpy(menuitems[2].text, "Enable events pane");
   menuitems[2].type = MENUITEM_CHECKBOX;
   
+  strcpy(menuitems[3].text, "Show F. keys labels");
+  menuitems[3].type = MENUITEM_CHECKBOX;
+  
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=3;
+  menu.numitems=4;
   menu.type=MENUTYPE_NORMAL;
   menu.width=21;
   menu.height=8;
@@ -351,6 +305,7 @@ void clockSettingsMenu() {
   while(1) {
     menuitems[1].value = GetSetting(SETTING_CLOCK_SECONDS);
     menuitems[2].value = GetSetting(SETTING_HOME_PANES);
+    menuitems[3].value = GetSetting(SETTING_DISPLAY_FKEYS);
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
@@ -392,6 +347,86 @@ void clockSettingsMenu() {
         if(menuitems[2].value == MENUITEM_VALUE_CHECKED) menuitems[2].value=MENUITEM_VALUE_NONE;
         else menuitems[2].value=MENUITEM_VALUE_CHECKED;
         SetSetting(SETTING_HOME_PANES, menuitems[2].value, 1); 
+      }
+      if(menu.selection == 4) {
+        if(menuitems[3].value == MENUITEM_VALUE_CHECKED) menuitems[3].value=MENUITEM_VALUE_NONE;
+        else menuitems[3].value=MENUITEM_VALUE_CHECKED;
+        SetSetting(SETTING_DISPLAY_FKEYS, menuitems[3].value, 1); 
+      }
+    }
+  }
+}
+
+void calendarSettingsMenu() {
+  MenuItem menuitems[5];
+  strcpy(menuitems[0].text, "Show events count");
+  menuitems[0].type = MENUITEM_CHECKBOX;
+  
+  strcpy(menuitems[1].text, "Default calendar view");
+  
+  strcpy(menuitems[2].text, "First day of week");
+  
+  Menu menu;
+  menu.items=menuitems;
+  menu.numitems=3;
+  menu.type=MENUTYPE_NORMAL;
+  menu.width=21;
+  menu.height=8;
+  menu.scrollbar=1;
+  menu.scrollout=1;
+  menu.showtitle=0;
+  menu.selection=1;
+  menu.scroll=0;
+  menu.allowMkey=0;
+  strcpy(menu.nodatamsg, "");
+  strcpy(menu.title, "");
+  strcpy(menu.statusText, "");
+  while(1) {
+    menuitems[0].value = GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT);
+    int res = doMenu(&menu);
+    if(res == MENU_RETURN_EXIT) return;
+    else if(res == MENU_RETURN_SELECTION) {
+      if(menu.selection==1) {
+        if(menuitems[0].value == MENUITEM_VALUE_CHECKED) menuitems[0].value=MENUITEM_VALUE_NONE;
+        else menuitems[0].value=MENUITEM_VALUE_CHECKED;
+        SetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT, menuitems[0].value, 1); 
+      }
+      if(menu.selection == 2 || menu.selection == 3) {
+        MsgBoxPush(4);
+        MenuItem smallmenuitems[3];
+        if(menu.selection == 2) {
+          strcpy(smallmenuitems[0].text, "Week");
+          strcpy(smallmenuitems[1].text, "Month");
+        } else {
+          strcpy(smallmenuitems[0].text, "Sunday");
+          strcpy(smallmenuitems[1].text, "Monday");
+        }
+        
+        Menu smallmenu;
+        smallmenu.items=smallmenuitems;
+        smallmenu.numitems=2;
+        smallmenu.type=MENUTYPE_NORMAL;
+        smallmenu.width=17;
+        smallmenu.height=4;
+        smallmenu.startX=3;
+        smallmenu.startY=2;
+        smallmenu.scrollbar=0;
+        smallmenu.scrollout=1;
+        smallmenu.showtitle=1;
+        if(menu.selection == 2) smallmenu.selection=GetSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;
+        else smallmenu.selection=GetSetting(SETTING_WEEK_START_DAY)+1;
+        smallmenu.scroll=0;
+        smallmenu.allowMkey=0;
+        strcpy(smallmenu.nodatamsg, "");
+        if(menu.selection == 2) strcpy(smallmenu.title, "Default Calendar");
+        else strcpy(smallmenu.title, "Week starts on");
+        strcpy(smallmenu.statusText, "");
+        int sres = doMenu(&smallmenu);
+        if(sres == MENU_RETURN_SELECTION) {
+          if(menu.selection == 2) SetSetting(SETTING_DEFAULT_CALENDAR_VIEW, smallmenu.selection-1, 1);
+          else SetSetting(SETTING_WEEK_START_DAY, smallmenu.selection-1, 1);
+        }
+        MsgBoxPop();
       }
     }
   }
