@@ -949,6 +949,8 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
     event->endtime.minute = 0;
     event->endtime.second = 0;
     
+    event->timed=0;
+    
     //clean buffers:
     strcpy((char*)event->title, "");
     strcpy((char*)event->location, "");
@@ -1052,7 +1054,11 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           PrintXY(1, 2, (char*)"  Start time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           PrintXY(1, 3, (char*)"  Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           PrintXY(6, 4, (char*)"  HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY(1, 5, (char*)"  F2: All-day event", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          int textX = 0;
+          int textY = 5*24;
+          PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will be a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+          textX=0; textY += 17;
+          PrintMini(&textX, &textY, (unsigned char*)"full-day event.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
           int iresult;
           GetFKeyPtr(0x036F, &iresult); // <
           FKey_Display(0, (int*)iresult);
@@ -1068,7 +1074,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           input.type=INPUTTYPE_TIME;
           char stbuffer[15] = "";
           strcpy(stbuffer, (char*)"");
-          fillInputTime(event->starttime.hour, event->starttime.minute, event->starttime.second, stbuffer);
+          if(event->timed) fillInputTime(event->starttime.hour, event->starttime.minute, event->starttime.second, stbuffer);
           input.buffer = (char*)stbuffer;
           while(1) {
             input.key=0;
@@ -1091,16 +1097,15 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
                 event->starttime.minute = m;
                 event->starttime.second = s;
                 curstep=curstep+1; break; // continue to next step
+              } else if (!strlen(stbuffer)) {
+                // user wants all-day event
+                event->timed = 0;
+                curstep=curstep+1; break; // next step
               } else {
                 invalidFieldMsg(1);
               }
             } 
             else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
-            else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F2) {
-              // user wants all-day event
-              event->timed = 0;
-              curstep=curstep+1; break; // next step
-            }
           }
         } else {
           curstep=curstep+1;
@@ -1121,7 +1126,11 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
               PrintXY(6, 4, (char*)"  YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               break;
           }
-          PrintXY(1, 5, (char*)"  F2:Same as start date", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          int textX = 0;
+          int textY = 5*24;
+          PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will end on", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+          textX=0; textY += 17;
+          PrintMini(&textX, &textY, (unsigned char*)"the same day that it starts.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
           int iresult;
           GetFKeyPtr(0x036F, &iresult); // <
           FKey_Display(0, (int*)iresult);
@@ -1176,18 +1185,17 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
                   event->enddate.day = d;
                   curstep=curstep+1; break; // continue to next step
                 } else invalidFieldMsg(0);
+              } else if (!strlen(edbuffer)) {
+                // user wants end date to be the same as the start date
+                event->enddate.year = event->startdate.year;
+                event->enddate.month = event->startdate.month;
+                event->enddate.day = event->startdate.day;
+                curstep=curstep+1; break; // next step
               } else {
                 invalidFieldMsg(0);
               }
             } 
             else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
-            else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F2) {
-              // user wants end date to be the same as the start date
-              event->enddate.year = event->startdate.year;
-              event->enddate.month = event->startdate.month;
-              event->enddate.day = event->startdate.day;
-              curstep=curstep+1; break; // next step
-            }
           }
         } else {
           curstep=curstep+1;
