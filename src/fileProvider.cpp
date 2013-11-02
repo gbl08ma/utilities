@@ -43,11 +43,7 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
       || strcmp((char*)buffer, CALENDARFOLDER) == 0))
     {
       if(files != NULL) {
-        if(strlen((char*)buffer) > 40) {
-          strcpy(menuitems[*count].text, (char*)"[Filename too big]");
-        } else {
-          strcpy(menuitems[*count].text, (char*)buffer);
-        }
+        strncpy(menuitems[*count].text, (char*)buffer, 40);
         strcpy(files[*count].filename, basepath); 
         strcat(files[*count].filename, (char*)buffer);
         if(fileinfo.fsize == 0) {
