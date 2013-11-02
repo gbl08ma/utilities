@@ -387,7 +387,8 @@ void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int 
       unsigned char buffer[10] = "";
       itoa(numevents-maxevents, buffer);
       strcat((char*)itemtext, (char*)buffer);
-      (numevents-maxevents) == 1 ? strcat((char*)itemtext, (char*)" more event") : strcat((char*)itemtext, (char*)" more events");
+      strcat((char*)itemtext, (char*)" more event");
+      if(numevents-maxevents > 1) strcat((char*)itemtext, (char*)"s");
       PrintMini(&textX, &textY, (unsigned char*)itemtext, 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
     }
   } else {
