@@ -16,6 +16,7 @@
 #include "timeProvider.hpp"
 #include "settingsProvider.hpp"
 #include "keyboardProvider.hpp"
+#include "graphicsProvider.hpp"
 #include "menuGUI.hpp"
 #include "inputGUI.hpp"
 #include "fileProvider.hpp" 
@@ -628,7 +629,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
       curitem++;
     }
     menu.numitems = *itemsinclip;
-    PrintXY(1,8,(char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+    clearLine(1, 8);
     int iresult;
     GetFKeyPtr(0x0149, &iresult); // CLEAR [white]
     FKey_Display(0, (int*)iresult);

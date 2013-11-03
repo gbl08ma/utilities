@@ -16,6 +16,7 @@
 #include "timeGUI.hpp"
 #include "keyboardProvider.hpp"
 #include "timeProvider.hpp"
+#include "graphicsProvider.hpp"
 
 int doSelector(Selector* selector) {
   int key;
@@ -37,8 +38,8 @@ int doSelector(Selector* selector) {
   PrintXY(5, 6, (char*)"  \xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
   while(1)
   {
-    if(selector->type == SELECTORTYPE_LONGDATEFORMAT) PrintXY(1, 4, (char*)"                           ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); //clear line
-    PrintXY(5, 5, (char*)"                       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); //clear line
+    if(selector->type == SELECTORTYPE_LONGDATEFORMAT) clearLine(1,4);
+    clearLine(5,5);
     strcpy(buffer1, "  ");
     if(selector->type != SELECTORTYPE_LONGDATEFORMAT) {
       if(selector->type == SELECTORTYPE_MONTH) {

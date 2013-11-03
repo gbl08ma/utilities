@@ -86,8 +86,6 @@ void formatChronoString(chronometer* tchrono, int num, unsigned char* string)
   strcat((char*)string, ".");
   itoa(milliseconds, (unsigned char*)buffer);
   strcat((char*)string, buffer);
-
-  strcat((char*)string, "                "); //make sure we have enough spaces to have a background when menu item is selected
 }
 void doNothing() {}
 void chronoScreen(chronometer* chrono) {

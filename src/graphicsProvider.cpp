@@ -333,3 +333,11 @@ void printCentered(unsigned char* text, int y, int FGC, int BGC) {
     cur++;
   }
 }
+
+void clearLine(int x, int y, color_t color) {
+  // clear text line. x and y are text cursor coordinates
+  // this is meant to achieve the same effect as using PrintXY with a line full of spaces (except it doesn't waste strings).
+  int width=LCD_WIDTH_PX;
+  if(x>1) width = 24*(21-x);
+  drawRectangle((x-1)*18, y*24, width, 24, color);
+}

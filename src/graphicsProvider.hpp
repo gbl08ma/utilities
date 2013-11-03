@@ -34,5 +34,6 @@ int textColorToFullColor(int textcolor);
 void progressMessage(char* message, int cur, int total);
 void closeProgressMessage();
 void printCentered(unsigned char* text, int y, int FGC, int BGC);
+void clearLine(int x, int y, color_t color=COLOR_WHITE);
 
 #endif

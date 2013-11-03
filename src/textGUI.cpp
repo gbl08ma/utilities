@@ -17,7 +17,7 @@
 #include "calendarProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
-#include "selectorGUI.hpp" 
+#include "selectorGUI.hpp"
 
 int doTextArea(textArea* text) {
   int scroll = 0;
@@ -63,7 +63,7 @@ int doTextArea(textArea* text) {
       strcpy((char*)buffer, "  ");
       strcpy((char*)buffer2, "");
       strcat((char*)buffer, (char*)text->title);
-      PrintXY(1, 1, (char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
+      clearLine(1,1);
       PrintXY(1, 1, (char*)buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     }
     //draw a scrollbar:

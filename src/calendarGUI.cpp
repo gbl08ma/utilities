@@ -987,7 +987,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           int iresult;
           GetFKeyPtr(0x04A3, &iresult); // Next
           FKey_Display(5, (int*)iresult);
-          PrintXY(1, 3, (char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); // remove aestethically unpleasing bit of background at the end of the field
+          clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
           input.x=1;
@@ -1012,7 +1012,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           FKey_Display(0, (int*)iresult);
           GetFKeyPtr(0x04A3, &iresult); // Next
           FKey_Display(5, (int*)iresult);
-          PrintXY(1, 3, (char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+          clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
           input.x=1;
@@ -1037,7 +1037,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           FKey_Display(0, (int*)iresult);
           GetFKeyPtr(0x04A3, &iresult); // Next
           FKey_Display(5, (int*)iresult);
-          PrintXY(1, 3, (char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+          clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
           input.x=1;
@@ -1845,7 +1845,6 @@ void searchEventsGUI(int y, int m, int d) {
     int iresult;
     GetFKeyPtr(0x04A3, &iresult); // Next
     FKey_Display(5, (int*)iresult);
-    PrintXY(1, 3, (char*)"                        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); // remove aestethically unpleasing bit of background at the end of the field
     
     textInput input;
     input.x=1;
