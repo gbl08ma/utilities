@@ -334,7 +334,6 @@ void toolsMenu() {
   menu.height=4;
   menu.startX=2;
   menu.startY=3;
-  menu.scrollbar=1;
   menu.scrollout=0;
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "");

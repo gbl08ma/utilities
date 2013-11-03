@@ -41,7 +41,7 @@ void formatChronoString(chronometer* tchrono, int num, unsigned char* string)
   strcat((char*)string, buffer);
   strcat((char*)string, ":");
   
-  if(tchrono->state == CHRONO_STATE_CLEARED) { strcat((char*)string, "                "); return; } //nothing else to add, chrono is clear
+  if(tchrono->state == CHRONO_STATE_CLEARED) { return; } //nothing else to add, chrono is clear
   else if(tchrono->state == CHRONO_STATE_STOPPED) {
     //diff will be calculated in a different way, so that it is always stopped
     if(tchrono->type == CHRONO_TYPE_DOWN) unixdiff = tchrono->starttime+tchrono->duration-tchrono->laststop;
@@ -114,12 +114,9 @@ void chronoScreen(chronometer* chrono) {
   menu.items=menuitems;
   menu.numitems=NUMBER_OF_CHRONO;
   menu.type=MENUTYPE_NO_KEY_HANDLING; // NOTE doMenu won't handle keys for us!
-  menu.width=21;
   menu.height=7;
-  menu.scrollbar=1;
   menu.scrollout=1;
   menu.showtitle=1;
-  menu.fkeypage=0;
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "Chronometers");
   strcpy(menu.statusText, ""); 

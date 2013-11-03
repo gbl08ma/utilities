@@ -243,11 +243,8 @@ int viewWeekCalendar() {
   int y=0, m=0, d=0;
   Menu menu;
   
-  menu.scrollbar=1;
   menu.scrollout=1;
   menu.showtitle=1;
-  menu.selection=1;
-  menu.scroll=0;
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnInfiniteScrolling=1;
@@ -650,11 +647,8 @@ void viewEvents(int y, int m, int d) {
   int res=1;
   Menu menu;
   
-  menu.scrollbar=1;
   menu.scrollout=1;
   menu.showtitle=1;
-  menu.selection=1;
-  menu.scroll=0;
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   strcpy(menu.nodatamsg, "No Events - press F2");
@@ -1828,7 +1822,6 @@ void searchEventsGUI(int y, int m, int d) {
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
   smallmenu.numitems=4;
-  smallmenu.type=MENUTYPE_NORMAL;
   smallmenu.width=17;
   smallmenu.height=5;
   smallmenu.startX=3;
@@ -1836,8 +1829,6 @@ void searchEventsGUI(int y, int m, int d) {
   smallmenu.scrollbar=0;
   smallmenu.scrollout=1;
   smallmenu.showtitle=1;
-  smallmenu.selection=1;
-  smallmenu.scroll=0;
   strcpy(smallmenu.nodatamsg, "");
   strcpy(smallmenu.title, "Search on:");
   strcpy(smallmenu.statusText, "");
@@ -1873,11 +1864,8 @@ void searchEventsGUI(int y, int m, int d) {
     MenuItem* menuitems;
     
     Menu menu;
-    menu.scrollbar=1;
     menu.scrollout=1;
     menu.showtitle=1;
-    menu.selection=1;
-    menu.scroll=0;
     menu.height=7;
     menu.type=MENUTYPE_FKEYS;
     strcpy(menu.nodatamsg, "No events found");

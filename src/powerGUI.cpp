@@ -102,7 +102,7 @@ void powerInformation() {
   
   
   textArea text;
-  strcpy(text.title, (char*)"Power information");
+  strcpy(text.title, (char*)"Power Information");
   text.showtitle=1;
 
   textElement elem[15];

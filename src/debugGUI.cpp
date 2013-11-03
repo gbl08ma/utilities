@@ -89,14 +89,9 @@ void masterControl() {
   Menu menu;
   menu.items=menuitems;
   menu.numitems=10;
-  menu.type=MENUTYPE_NORMAL;
-  menu.width=21;
-  menu.height=8;
-  menu.scrollbar=1;
   menu.scrollout=1;
   menu.showtitle=1;
   menu.selection=1;
-  menu.scroll=0;
   menu.allowMkey=0;
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "UTILITIES CONTROL");

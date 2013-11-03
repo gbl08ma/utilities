@@ -36,7 +36,7 @@ void getHardwareID(char* buffer) {
 }
 
 // Get calculator model. There is a syscall for this, but with this we know exactly what we are checking.
-// not to be confused with the "PCB model", which on the Prizm series appears to be always Ly755 or Ly755D or just 755D
+// not to be confused with the "PCB model", which on the Prizm series appears to be always 755D for CG 20 or 755A for CG 10.
 // returns 0 on unknown/inconclusive model, 1 on fx-CG 10 and 2 on fx-CG 20
 int getHardwareModel() {
   char* byte1 = (char*)0x80000303;
@@ -50,9 +50,8 @@ int getHardwareModel() {
 // uses the power source information to detect the emulator
 // obviously, if an emulator comes that emulates this info better, this function will be inaccurate
 int getIsEmulated() {
-  unsigned char hb[15]; int k;
+  int k;
   k = *(unsigned char*)P11DR;
-  WordToHex( k & 0xFFFF, hb );
   if (k==0x0000) return 1;
   else return 0;
 }

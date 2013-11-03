@@ -59,17 +59,16 @@ int doSelector(Selector* selector) {
       } else if(selector->type == SELECTORTYPE_BACKLIGHT_DURATION) {
         if(selector->value % 2 == 0) { //even, so timeout is X min 0 sec.
           itoa(selector->value/2, (unsigned char*)buffer2);
-          strcat(buffer1, buffer2);
-          strcat(buffer1, " Minutes ");
         } else { // timeout is X min 30 sec.
           itoa((selector->value-1)/2, (unsigned char*)buffer2);
-          strcat(buffer1, buffer2);
-          strcat(buffer1, " Minutes 30 Sec.");
         }
+        strcat(buffer1, buffer2);
+        strcat(buffer1, " Minutes");
+        if(selector->value % 2 != 0) strcat(buffer1, " 30 Sec.");
       } else if(selector->type == SELECTORTYPE_TIMEOUT_MINUTES) {
         itoa(selector->value, (unsigned char*)buffer2);
         strcat(buffer1, buffer2);
-        strcat(buffer1, " Minutes ");
+        strcat(buffer1, " Minutes");
       } else if(selector->type == SELECTORTYPE_TEXTCOLOR) {
         switch (selector->value) {
           case 0: strcat(buffer1, "Blue"); break;

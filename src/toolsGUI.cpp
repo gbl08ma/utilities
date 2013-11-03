@@ -153,11 +153,8 @@ void addinManager() {
   int res=1;
   Menu menu;
   
-  menu.scrollbar=1;
   menu.scrollout=1;
   menu.showtitle=1;
-  menu.selection=1;
-  menu.scroll=0;
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   strcpy(menu.nodatamsg, "No Add-Ins");

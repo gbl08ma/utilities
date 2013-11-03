@@ -104,7 +104,7 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
     DisplayStatusArea();
     if (GetSetting(SETTING_DISPLAY_STATUSBAR) && GetSetting(SETTING_THEME) == 1) { darkenStatusbar(); DrawFrame( 0x000000  ); }
     if(menu->showtitle) {
-      char title[21] = "";
+      char title[25] = "";
       strcpy(title, "  ");
       strcat(title, menu->title);
       PrintXY(menu->startX, menu->startY, title, TEXT_MODE_TRANSPARENT_BACKGROUND, menu->titleColor);
