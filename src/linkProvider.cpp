@@ -18,6 +18,7 @@
 // send a file through the 3-pin serial. Compatible with Casio's functions.
 // remote calculator should be in receive mode with cable type set to 3-pin
 // pay attention to CPU clock speeds as they affect the baud rate, causing errors
+#ifdef UNUSEDCODE_1234
 int SerialFileTransfer( unsigned char*_filename ) {
   TTransmitBuffer sftb;
   int l = strlen( (char*)_filename );
@@ -106,3 +107,4 @@ int SerialFileTransfer( unsigned char*_filename ) {
   jjj<<=16;
   return phase + jjj + iii;
 }
+#endif
