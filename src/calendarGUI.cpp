@@ -597,10 +597,10 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
         }
       case KEY_CTRL_FORMAT:
         if(menu->numitems > 0 && msel>0) {
-          int ne = GetEventsForDate(&events[msel-1].startdate, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW);
+          int ne = GetEventsForDate(&events[msel-1].startdate, CALENDARFOLDER, NULL);
           // we can use alloca here, as we're going to return right after
           CalendarEvent* ce = (CalendarEvent*)alloca(ne*sizeof(CalendarEvent));
-          GetEventsForDate(&events[msel-1].startdate, CALENDARFOLDER, ce, MAX_DAY_EVENTS_WEEKVIEW);
+          GetEventsForDate(&events[msel-1].startdate, CALENDARFOLDER, ce);
           if(changeEventCategory(&ce[events[msel-1].origpos])) {
             ReplaceEventFile(&events[msel-1].startdate, ce, CALENDARFOLDER, ne);
           }
