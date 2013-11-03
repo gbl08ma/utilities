@@ -426,7 +426,11 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
             date.year = ny; date.month = nm; date.day = nd;
             searchValid = 1;
             viewEvents(date.year, date.month, date.day);
-            if(!searchValid) return 1;
+            if(!searchValid) {
+              *y=ny; *m=nm; *d=nd;
+              *jumpToSel=1;
+              return 1;
+            }
           }
         }
         break;
