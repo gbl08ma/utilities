@@ -185,10 +185,6 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
   //If the specified file doesn't exist, it is created and the event is added to it.
   //Returns 0 on success, other values on error.
   // open and close: should always be 1. If 0, it will be assumed that the file is already open/closed and global var hAddFile will be used as handle
-#ifdef WAITMSG
-  PrintXY(1,8,(char*)"  Please wait           ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-  Bdisp_PutDisp_DD();
-#endif
   char foldername[128] = "";
   unsigned short pFolder[256];
   strcpy(foldername, "\\\\fls0\\");
@@ -204,39 +200,23 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
   int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-#ifdef WAITMSG
-  PrintXY(1,8,(char*)"  Please wait.          ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-  Bdisp_PutDisp_DD();
-#endif
   if(hAddFile < 0) // Check if it opened
   {
     // Returned error, file might not exist, so create it
     int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
     if(BCEres >= 0) // Did it create?
     {
-#ifdef WAITMSG
-      PrintXY(1,8,(char*)"  Please wait..         ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-#endif
       //open in order to write header and new event
       hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // always open, since file did not exist so it must be closed
       if(hAddFile < 0) // Still failing?
       {
         return 1;
       }
-#ifdef WAITMSG
-      PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-#endif
       char finalcontents[2060] = "";
       strcpy(finalcontents, FILE_HEADER);
       strcat(finalcontents, newevent);
       //Write header and event
       Bfile_WriteFile_OS(hAddFile, finalcontents, strlen(finalcontents));
-#ifdef WAITMSG
-      PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-#endif
       Bfile_CloseFile_OS(hAddFile);
       return 0;
     }
@@ -266,37 +246,17 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
     if(oldsize) {
           Bfile_ReadFile_OS(hAddFile, oldcontents, oldsize, 0);
     }
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait..         ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-#endif
     Bfile_CloseFile_OS(hAddFile); // always close even if not openclose, because we're going to recreate next
     Bfile_DeleteEntry(pFile);
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-#endif
     // we already read the previous contents and size, closed the file and deleted it.
     // now recreate it with new size and write new contents to it.
 
     int nBCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize);
     if(nBCEres >= 0) // Did it create?
     {
-#ifdef WAITMSG
-      PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-#endif
       hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // we always closed above
-#ifdef WAITMSG
-      PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-#endif
       Bfile_WriteFile_OS(hAddFile, oldcontents, oldsize);
       Bfile_WriteFile_OS(hAddFile, newevent, strlen(newevent));
-#ifdef WAITMSG
-      PrintXY(1,8,(char*)"  Please wait......     ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-#endif
       Bfile_CloseFile_OS(hAddFile);
     } else {
       return 3;
@@ -310,18 +270,10 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   // Allows for a way to edit an event on a day, when all the events for that day are in memory (including the edited one).
   // count: number of events in newEvents (number of events in old file doesn't matter). starts at 1.
   int res = RemoveDay(startdate, folder);
-#ifdef WAITMSG
-  PrintXY(1,8,(char*)"  Please wait           ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-  Bdisp_PutDisp_DD();
-#endif
   if(res != 0) {
     return 1;
   }
   
-#ifdef WAITMSG
-  PrintXY(1,8,(char*)"  Please wait.          ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-  Bdisp_PutDisp_DD();  
-#endif
   //convert the calevents back to char
   unsigned char eventbuf[2048] = ""; 
   unsigned char* newfilecontents = (unsigned char*)alloca(count*2048); //because the new file size can't be any bigger than the previous size, since we deleted a event
@@ -344,20 +296,8 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   int nBCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize);
   if(nBCEres >= 0) // Did it create?
   {
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait..         ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-#endif
     int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0);
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-#endif
     Bfile_WriteFile_OS(hFile, newfilecontents, newsize);
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-#endif
     Bfile_CloseFile_OS(hFile);
   } else {
     return 2;
@@ -385,36 +325,19 @@ void RemoveEvent(EventDate *startdate, CalendarEvent* events, const char* folder
 
 int RemoveDay(EventDate* date, const char* folder) {
   //remove all SMEM events for the day
-#ifdef WAITMSG
-  PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
-#endif
   char filename[128] = "";
   smemFilenameFromDate(date, filename, folder);
-#ifdef WAITMSG
-  PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
-#endif
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
-#ifdef WAITMSG
-  PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
-#endif
-
+  
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle to check if exists
-#ifdef WAITMSG
-  PrintXY(1,8,(char*)"  Please wait......     ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
-#endif
+
   if(hFile < 0) { //error returned, file doesn't exist
     return 1;
   } else {
     //file exists and is open, close it and delete.
     Bfile_CloseFile_OS(hFile);
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait.......    ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
-#endif
     Bfile_DeleteEntry(pFile);
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait........   ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
-#endif
     return 0;
   }
   return 0;

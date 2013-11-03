@@ -748,9 +748,6 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         }
       } else if (menu->fkeypage == 1) {
         moveEvent(events, menu->numitems, menu->selection-1);
-#ifdef WAITMSG
-        PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
-#endif
         bufmonth=0; searchValid = 0;
         return 0;
       }
@@ -1682,9 +1679,6 @@ void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
     }
     // delete event on current (old) day
     if(!isCopy) RemoveEvent(&oldstartdate, events, CALENDARFOLDER, count, pos);
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
-#endif
   } 
 }
 
