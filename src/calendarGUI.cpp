@@ -1619,65 +1619,14 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2)
 }
 
 void copyEvent(CalendarEvent* event) {
-  int ey=0, em=0, ed=0;
-  int chooseres = chooseCalendarDate(&ey, &em, &ed, (char*) "  Copy Event", (char*)"  To following day:");
-  if(chooseres == 0) {
-    if(ey == (signed)event->startdate.year && em == (signed)event->startdate.month && ed == (signed)event->startdate.day) {
-      return; //destination date is same as current event date
-    }
-    // backup old date:
-    int od = event->startdate.day;
-    int om = event->startdate.month;
-    int oy = event->startdate.year;
-    // update start date:
-    event->startdate.day = ed;
-    event->startdate.month = em;
-    event->startdate.year = ey;
-    // calculate new end date based on the difference between the old begin date and the new begin date
-    long int datediff = DateToDays(ey, em, ed) - DateToDays(oy, om, od);
-    long int odatedays = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day);
-    long int newdatedays = odatedays + datediff;
-    //update end date with difference:
-    long int nd,nm,ny;
-    DaysToDate(newdatedays, &ny, &nm, &nd);
-    event->enddate.day = nd;
-    event->enddate.month = nm;
-    event->enddate.year = ny;
-    if(GetEventsForDate(&event->startdate, CALENDARFOLDER, NULL)+1 > MAX_DAY_EVENTS) {
-      AUX_DisplayErrorMessage( 0x2E );
-    } else {
-      //already checked if passes num limit
-      int res = AddEvent(event, CALENDARFOLDER);
-      if(res > 0) {
-        MsgBoxPush(4);
-        if (res == 4) { //error on size check
-          PrintXY(3, 2, (char*)"  Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        } else {
-          PrintXY(3, 2, (char*)"  Event copy ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        }
-        PrintXY(3, 3, (char*)"  Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY(3, 4, (char*)"  be copied.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-        int key,inscreen=1;
-        while(inscreen) {
-          mGetKey(&key);
-          switch(key)
-          {
-            case KEY_CTRL_EXIT:
-              inscreen=0;
-              break;
-          }
-        }
-        MsgBoxPop();
-      }
-    }
-    return;
-  }  
+  CalendarEvent earray[1];
+  earray[0] = *event;
+  moveEvent(earray, 1, 0, 1);
 }
 
-void moveEvent(CalendarEvent* events, int count, int pos) {
+void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
   int ey=0, em=0, ed=0;
-  int chooseres = chooseCalendarDate(&ey, &em, &ed, (char*) "  Move Event", (char*)"  To following day:");
+  int chooseres = chooseCalendarDate(&ey, &em, &ed, (isCopy ? (char*)"  Copy Event" : (char*)"  Move Event"), (char*)"  To following day:");
   if(chooseres == 0) {
     if(ey == (signed)events[pos].startdate.year && em == (signed)events[pos].startdate.month && ed == (signed)events[pos].startdate.day) {
       return; //destination date is same as current event date
@@ -1714,7 +1663,8 @@ void moveEvent(CalendarEvent* events, int count, int pos) {
           PrintXY(3, 2, (char*)"  Event move ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         }
         PrintXY(3, 3, (char*)"  Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY(3, 4, (char*)"  be moved.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        if(isCopy) PrintXY(3, 4, (char*)"  be copied.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        else PrintXY(3, 4, (char*)"  be moved.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
         int key,inscreen=1;
         while(inscreen) {
@@ -1731,8 +1681,7 @@ void moveEvent(CalendarEvent* events, int count, int pos) {
       }
     }
     // delete event on current (old) day
-    RemoveEvent(&oldstartdate, events, CALENDARFOLDER, count, pos);
-    //RemoveEvent(&oldstartdate, pos, CALENDARFOLDER);
+    if(!isCopy) RemoveEvent(&oldstartdate, events, CALENDARFOLDER, count, pos);
 #ifdef WAITMSG
     PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
 #endif
