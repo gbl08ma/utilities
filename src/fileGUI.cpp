@@ -619,11 +619,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     while(curitem < *itemsinclip) {
       char buffer[MAX_FILENAME_SIZE] = "";
       nameFromFilename(clipboard[curitem].filename, buffer);
-      if(strlen((char*)buffer) > 40) {
-        strcpy(menuitems[curitem].text, (char*)"[Filename too big]");
-      } else {
-        strcpy(menuitems[curitem].text, (char*)buffer);
-      }
+      strncpy(menuitems[curitem].text, (char*)buffer, 40);
       if(clipboard[curitem].action == 1) menuitems[curitem].color = TEXT_COLOR_RED;
       curitem++;
     }
