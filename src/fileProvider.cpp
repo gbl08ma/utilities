@@ -62,8 +62,7 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
       *count=*count+1;
     }
     if (*count-1==MAX_ITEMS_IN_DIR) { 
-      return GETFILES_MAX_FILES_REACHED;
-      break; // Don't find more files, the array is full. 
+      return GETFILES_MAX_FILES_REACHED; // Don't find more files, the array is full. 
     } 
     ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
@@ -75,10 +74,10 @@ void deleteFiles(File* files, Menu* menu) {
   //files: the array (list) of files to perform operations in. NOT files to delete (this will only delete selected files)
   //menu: the menu of the current file manager window. used to check which files are selected, total number of files, etc.
   //REFRESH the files array after calling this!
-  int curfile = 0; //current processing file (not number of deleted files!)
-  int delfiles = 0; // number of deleted files
-  unsigned short path[MAX_FILENAME_SIZE+1];
   if (menu->numitems > 0) {
+    int curfile = 0; //current processing file (not number of deleted files!)
+    int delfiles = 0; // number of deleted files
+    unsigned short path[MAX_FILENAME_SIZE+1];
     progressMessage((char*)" Deleting...", 0, menu->numselitems);
     while(curfile < menu->numitems  && delfiles < menu->numselitems) {  
       if (menu->items[curfile].isselected) {
@@ -111,8 +110,8 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
   //when the isselected field of a clipboard item is 0, the item will be moved.
   //when the isselected field is 1, the item will be copied.
   //don't forget to reload the file list after using this
-  int curfile = 0;
   if (itemsInClipboard>0) {
+    int curfile = 0;
     while(curfile < itemsInClipboard) {
       char name[MAX_NAME_SIZE] = "";
       nameFromFilename(clipboard[curfile].filename, name);

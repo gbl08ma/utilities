@@ -364,8 +364,8 @@ void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int 
   
   int textX = startx;
   int textY = starty;
-  int curevent = 0; //current processing event
   if (numevents>0) {
+    int curevent = 0; //current processing event
     unsigned char itemtext[25] = "";
     PrintMini(&textX, &textY, (unsigned char*)"Events starting today", 0, 0xFFFFFFFF, 0, 0, color_title, color_bg, 1, 0); //draw
     while(curevent < numevents && curevent < maxevents) {

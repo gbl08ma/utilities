@@ -311,7 +311,6 @@ int deleteFilesGUI(File* files, Menu* menu) {
       Bdisp_PutDisp_DD();
       deleteFiles(files, menu);
       return 1;
-      break;
     } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
       MsgBoxPop();
       return 0;
@@ -650,10 +649,10 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
         break;
       case KEY_CTRL_F2:
         {
-          int k;
           if (menu.selection-1 >= *itemsinclip) {} // safety check
           else
           {
+            int k;
             for (k = menu.selection-1; k < *itemsinclip - 1; k++)
             {
               menuitems[k] = menuitems[k+1];

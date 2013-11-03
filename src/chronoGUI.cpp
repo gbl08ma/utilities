@@ -420,7 +420,6 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
         MsgBoxPop();
         //and return
         return;
-        break;
       }
     }
     cur++;

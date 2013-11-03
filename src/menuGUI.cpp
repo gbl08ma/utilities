@@ -31,8 +31,8 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
     // Clear the area of the screen we are going to draw on
     DefineStatusMessage((char*)menu->statusText, 1, 0, 0);
     drawRectangle(18*(menu->startX-1), 24*menu->startY, 18*menu->width, 24*menu->height, COLOR_WHITE);
-    int curitem= 0; //current processing item
     if (menu->numitems>0) {
+      int curitem= 0; //current processing item
       while(curitem < menu->numitems) {
         // print the menu item only when appropriate
         if(menu->scroll < curitem+1 && menu->scroll > curitem-itemsHeight) {

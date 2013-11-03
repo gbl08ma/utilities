@@ -868,9 +868,9 @@ void viewEvent(CalendarEvent* event) {
 }
 
 void fillInputDate(int yr, int m, int d, char* buffer) {
-  buffer[0] = '\0'; // This sets the first character to \0, also represented by "", an empty string
-  char buffer2[8] = "";
   if(yr != 0 || m != 0 || d != 0) {
+    buffer[0] = '\0'; // This sets the first character to \0, also represented by "", an empty string
+    char buffer2[8] = "";
     switch(GetSetting(SETTING_DATEFORMAT)) {
       case 0:
         if (d < 10) { strcat(buffer, "0"); }
