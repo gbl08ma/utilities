@@ -731,7 +731,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
           bufmonth=0; searchValid = 0;
         }
       } else if (menu->fkeypage == 1) {
-        moveEvent(&events[menu->selection-1], menu->selection-1);
+        moveEvent(events, menu->numitems, menu->selection-1);
 #ifdef WAITMSG
         PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
 #endif
@@ -753,7 +753,10 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
       break;
     case KEY_CTRL_F4:
       if(menu->fkeypage == 0) {
-        if(menu->numitems > 0) { deleteEventUI(y,m,d,menu->selection-1, 0); bufmonth=0; searchValid = 0; }
+        if(menu->numitems > 0) {
+          deleteEventUI(y, m, d, events, menu->numitems, menu->selection-1);
+          bufmonth=0; searchValid = 0;
+        }
       }
       break;
     case KEY_CTRL_F5:
@@ -1472,7 +1475,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
 }
 
 
-void deleteEventUI(int y, int m, int d, int pos, int istask) {
+void deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
   MsgBoxPush(4);
   PrintXY(3, 2, (char*)"  Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -1489,7 +1492,7 @@ void deleteEventUI(int y, int m, int d, int pos, int istask) {
     switch(key)
     {
       case KEY_CTRL_F1:
-        RemoveEvent(&date, pos, CALENDARFOLDER);
+        RemoveEvent(&date, events, CALENDARFOLDER, count, pos);
         inscreen=0;
         break;
       case KEY_CTRL_F6:
@@ -1656,37 +1659,37 @@ void copyEvent(CalendarEvent* event) {
   }  
 }
 
-void moveEvent(CalendarEvent* event, int pos) {
+void moveEvent(CalendarEvent* events, int count, int pos) {
   int ey=0, em=0, ed=0;
   int chooseres = chooseCalendarDate(&ey, &em, &ed, (char*) "  Move Event", (char*)"  To following day:");
   if(chooseres == 0) {
-    if(ey == (signed)event->startdate.year && em == (signed)event->startdate.month && ed == (signed)event->startdate.day) {
+    if(ey == (signed)events[pos].startdate.year && em == (signed)events[pos].startdate.month && ed == (signed)events[pos].startdate.day) {
       return; //destination date is same as current event date
     }
     EventDate oldstartdate;
-    oldstartdate.day = event->startdate.day;
-    oldstartdate.month = event->startdate.month;
-    oldstartdate.year = event->startdate.year;
+    oldstartdate.day = events[pos].startdate.day;
+    oldstartdate.month = events[pos].startdate.month;
+    oldstartdate.year = events[pos].startdate.year;
     // update start date:
-    event->startdate.day = ed;
-    event->startdate.month = em;
-    event->startdate.year = ey;
+    events[pos].startdate.day = ed;
+    events[pos].startdate.month = em;
+    events[pos].startdate.year = ey;
     // calculate new end date based on the difference between the old begin date and the new begin date
     long int datediff = DateToDays(ey, em, ed) - DateToDays(oldstartdate.year, oldstartdate.month, oldstartdate.day);
-    long int odatedays = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day);
+    long int odatedays = DateToDays(events[pos].enddate.year, events[pos].enddate.month, events[pos].enddate.day);
     long int newdatedays = odatedays + datediff;
     //update end date with difference:
     long int nd,nm,ny;
     DaysToDate(newdatedays, &ny, &nm, &nd);
-    event->enddate.day = nd;
-    event->enddate.month = nm;
-    event->enddate.year = ny;
+    events[pos].enddate.day = nd;
+    events[pos].enddate.month = nm;
+    events[pos].enddate.year = ny;
     // add event on new day
-    if(GetEventsForDate(&event->startdate, CALENDARFOLDER, NULL)+1 > MAX_DAY_EVENTS) {
+    if(GetEventsForDate(&events[pos].startdate, CALENDARFOLDER, NULL)+1 > MAX_DAY_EVENTS) {
       AUX_DisplayErrorMessage( 0x2E );
     } else {
       //already checked if passes num limit
-      int res = AddEvent(event, CALENDARFOLDER);
+      int res = AddEvent(&events[pos], CALENDARFOLDER);
       if(res > 0) {
         MsgBoxPush(4);
         if (res == 4) { //error on size check
@@ -1712,7 +1715,8 @@ void moveEvent(CalendarEvent* event, int pos) {
       }
     }
     // delete event on current (old) day
-    RemoveEvent(&oldstartdate, pos, CALENDARFOLDER);
+    RemoveEvent(&oldstartdate, events, CALENDARFOLDER, count, pos);
+    //RemoveEvent(&oldstartdate, pos, CALENDARFOLDER);
 #ifdef WAITMSG
     PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
 #endif

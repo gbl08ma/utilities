@@ -365,126 +365,22 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   return 0;
 }
 
-int RemoveEvent(EventDate *startdate, int calEventPos, const char* folder) {
-#ifdef WAITMSG
-PrintXY(1,8,(char*)"  Please wait           ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-Bdisp_PutDisp_DD();
-#endif
-  //Deletes a calendar event on an existing calendar with specified file name.
-  //If the specified event doesn't exist, error is returned.
-  //Returns 0 on success, other values on error.
-  
-  char foldername[128] = "";
-  unsigned short pFolder[256];
-  strcpy(foldername, "\\\\fls0\\");
-  strcat(foldername, folder);
-  Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
-  Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
-  char filename[128] = "";
-  smemFilenameFromDate(startdate, filename, folder);
-  
-  unsigned short pFile[256];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-  int oldsize = Bfile_GetFileSize_OS(hFile);
-  Bfile_CloseFile_OS(hFile); //close file as we don't care what it has, we just want to check if it exists
-#ifdef WAITMSG
-PrintXY(1,8,(char*)"  Please wait.          ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-Bdisp_PutDisp_DD();
-#endif
-  if(hFile < 0) // Check if it opened
+void RemoveEvent(EventDate *startdate, CalendarEvent* events, const char* folder, int count, int calEventPos) {
+  // removes SMEM event starting on startdate.
+  // events: array from where to remove the event
+  // count: current number of events in file (before deletion)
+  // calEventPos: index (zero based) of the event to delete.
+  // after the event is removed from the array, the file for the startdate is replaced with ReplaceEventFile
+  if (count == 1) RemoveDay(startdate, folder);
+  int k;
+  if (calEventPos >= count) {} // safety check
+  else
   {
-    //returned error, so there're no events on this day, so we return error too
-    return 1;
-  } else {
-    /*File exists and is open.
-      0. Hope there's enough heap to store everything throughout the process.
-      1. Read and parse the file contents, putting their events in an array (all using GetSMEMeventsForDate)
-      2. Close, delete the (old) file.
-      3. Look at the array so we find the event we want to delete. Take it off the array.
-      4. Put the new array (without the deleted event) into a char.
-      5. Create the same file with the previous size minus the size of the event that was deleted.
-      6. Open the new file.
-      7. Write header and previous contents minus the deleted event, from the char we created previously.
-      8. Close file.
-      It must be done this way because once a file is created, its size cannot be changed...*/
-
-    //parse the old contents before deleting.
-    int numevents = GetEventsForDate(startdate, folder, NULL); // first get number of events in filename
-    CalendarEvent* oldcalevents = (CalendarEvent*)alloca(numevents*sizeof(CalendarEvent));
-    GetEventsForDate(startdate, folder, oldcalevents);
-    // we already read the previous contents and size, and parsed the contents, then closed the file.
-    // safety check: see if GetSMEMevents didn't return error/no events
-    if (numevents <= 0) {
-      return 2;
-    }
-    if (numevents == 1) {
-      //if there's only one event on this day, RemoveSMEMDay works much better (it removes file header).
-#ifdef WAITMSG
-      PrintXY(1,8,(char*)"  Please wait..         ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-#endif
-      RemoveDay(startdate, folder);
-#ifdef WAITMSG
-      PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); Bdisp_PutDisp_DD();
-#endif
-      return 0; //stop now
-    }
-    int k;
-    if (calEventPos >= numevents) {} // safety check
-    else
-    {
-            for (k = calEventPos; k < numevents - 1; k++)
-                    oldcalevents[k] = oldcalevents[k+1];
-            numevents = numevents - 1; //this "deletes" the event
-    }
-    // GetSMEMEvents closed the file, so we can now delete it
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait..         ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-#endif
-    Bfile_DeleteEntry(pFile);
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait...        ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-#endif
-    //convert the calevents back to char
-    unsigned char eventbuf[2048] = ""; 
-    unsigned char* newfilecontents = (unsigned char*)alloca(oldsize); //because the new file size can't be any bigger than the previous size, since we deleted a event
-
-    strcpy((char*)newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
-    for(int j = 0; j < numevents; j++) {
-      strcpy((char*)eventbuf, "");
-      calEventToChar(&oldcalevents[j], eventbuf);
-      strcat((char*)newfilecontents,(char*)eventbuf);
-    }
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait....       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-#endif
-    // now recreate file with new size and write contents to it.
-    int newsize = strlen((char*)newfilecontents);
-    
-    int nBCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize);
-#ifdef WAITMSG
-    PrintXY(1,8,(char*)"  Please wait.....      ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-    Bdisp_PutDisp_DD();
-#endif
-    if(nBCEres >= 0) // Did it create?
-    {
-      int nFile = Bfile_OpenFile_OS(pFile, READWRITE, 0);
-      Bfile_WriteFile_OS(nFile, newfilecontents, newsize);
-      Bfile_CloseFile_OS(nFile);
-#ifdef WAITMSG
-      PrintXY(1,8,(char*)"  Please wait......     ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
-#endif
-    } else {
-      return 3;
-    }
-
+          for (k = calEventPos; k < count - 1; k++)
+                  events[k] = events[k+1];
+          count = count - 1; //this "deletes" the event
   }
-  return 0;
+  ReplaceEventFile(startdate, events, folder, count);
 }
 
 int RemoveDay(EventDate* date, const char* folder) {

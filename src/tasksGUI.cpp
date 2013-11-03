@@ -107,7 +107,7 @@ int viewTasksSub(Menu* menu) {
         }
       break;
     case KEY_CTRL_F4:
-      if(menu->numitems > 0) deleteEventUI(0,0,0,menu->selection-1, 1);
+      if(menu->numitems > 0) deleteEventUI(0, 0, 0, tasks, menu->numitems, menu->selection-1, 1);
       break;
     case KEY_CTRL_F5:
       if(menu->numitems > 0) deleteAllEventUI(0, 0, 0, 1);
