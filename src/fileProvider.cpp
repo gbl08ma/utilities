@@ -153,7 +153,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
               }
               //File to copy is open, destination file is created and open.
               //copy 4 KB at a time. Write more bytes in the last loop because WriteFile doesn't like writing few bytes.
-              unsigned char copybuffer[4096*2];
+              unsigned char copybuffer[4096*2+5];
               int curpos = 0;
               while(curpos < copySize) {
                 memset( &copybuffer, 0, sizeof( copybuffer ) );
