@@ -334,10 +334,34 @@ void systemInfo() {
   getHardwareID(devID);
   devID[8] = '\0';  
   
+  long pvr = *(long *)0xFF000030;
+  char pvrstr[9];
+  for (int i = 0; i <= 7; i++) {
+    int d = (pvr >> (i * 4)) & 0xF;
+    pvrstr[7 - i] = d + ((d > 9)? 0x37 : 0x30);
+  }
+  pvrstr[8] = '\0';
+  
+  long prr = *(long *)0xFF000044;
+  char prrstr[9];
+  for (int i = 0; i <= 7; i++) {
+    int d = (prr >> (i * 4)) & 0xF;
+    prrstr[7 - i] = d + ((d > 9)? 0x37 : 0x30);
+  }
+  prrstr[8] = '\0';
+  
+  long cvr = *(long *)0xFF000040;
+  char cvrstr[9];
+  for (int i = 0; i <= 7; i++) {
+    int d = (cvr >> (i * 4)) & 0xF;
+    cvrstr[7 - i] = d + ((d > 9)? 0x37 : 0x30);
+  }
+  cvrstr[8] = '\0';
+  
   textArea text;
   strcpy(text.title, (char*)"System Information");
   
-  textElement elem[20];
+  textElement elem[30];
   text.elements = elem;
   
   elem[0].text = (char*)"Operating System:";
@@ -388,13 +412,27 @@ void systemInfo() {
   elem[14].text = (char*)"ABS date:";
   elem[14].spaceAtEnd=1;
   elem[15].text = ABSdate;
-  
+    
   elem[16].newLine = 1;
-  elem[16].text = (char*)"Device ID:";
+  elem[16].text = (char*)"CPU PVR:";
   elem[16].spaceAtEnd=1;
-  elem[17].text = devID;
+  elem[17].text = pvrstr;
   
-  text.scrollbar = 0;
-  text.numelements = 18;
+  elem[18].newLine = 1;
+  elem[18].text = (char*)"CPU PRR:";
+  elem[18].spaceAtEnd=1;
+  elem[19].text = prrstr;
+  
+  elem[20].newLine = 1;
+  elem[20].text = (char*)"CPU CVR:";
+  elem[20].spaceAtEnd=1;
+  elem[21].text = cvrstr;
+  
+  elem[22].newLine = 1;
+  elem[22].text = (char*)"Device ID:";
+  elem[22].spaceAtEnd=1;
+  elem[23].text = devID;
+  
+  text.numelements = 24;
   doTextArea(&text);
 }
