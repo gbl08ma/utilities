@@ -212,12 +212,15 @@ void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg) {
   drawFilledCircle(cx, cy, radius, colorfg);
   drawFilledCircle(cx, cy, radius-2, colorbg);
   int theta=0,i=0;
-  double x,y;
+  double x,y,x1,y1;
   do{
-    x=cx+(radius-3)*cosine(theta*M_PI/180);
-    y=cy+(radius-3)*sine(theta*M_PI/180);
+    x=cx+(radius-radius/10.0)*cosine(theta*M_PI/180);
+    x1=cx+(radius-radius/12.0)*cosine(theta*M_PI/180);
+    y=cy+(radius-radius/10.0)*sine(theta*M_PI/180);
+    y1=cy+(radius-radius/12.0)*sine(theta*M_PI/180);
+    drawLine(x,y,x1,y1,COLOR_GRAY);
     // Draw Numeric Point
-    plot(x,y,COLOR_GRAY);
+    //plot(x,y,COLOR_GRAY);
     // Increase angle by 30 degrees, which is the circular distance between each numeric point:
     theta+=30;
     i++;
@@ -227,7 +230,7 @@ void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg) {
 void drawAnalogClockSecondNeedle(int s, int cx, int cy, double radius, int colorfg) {
   double angle=-90.0;
   double sx,sy;
-  double length = radius - 5.0;
+  double length = radius - radius/8.0;
   sx=cx+length*cosine((angle+s*6.0)*M_PI/180.0);
   sy=cy+length*sine((angle+s*6.0)*M_PI/180.0);
   drawLine(cx,cy,sx,sy,colorfg);
@@ -236,7 +239,7 @@ void drawAnalogClockSecondNeedle(int s, int cx, int cy, double radius, int color
 void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, int colorfg) {
   double angle=-90;
   double sx,sy;
-  double length = radius - 10;
+  double length = radius - radius/5.0;
   sx=cx+length*cosine((angle+m*6+(s*6/60))*M_PI/180);
   sy=cy+length*sine((angle+m*6+(s*6/60))*M_PI/180);
   drawLine(cx,cy,sx,sy, colorfg);
@@ -245,7 +248,7 @@ void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, in
 void drawAnalogClockHourNeedle(int h, int m, int s, int cx, int cy, double radius, int colorfg) {
   double angle=-90;
   double sx,sy;
-  double length = radius - 20;
+  double length = radius - radius/3.0;
   sx=cx+length*cosine((angle+h*30+(m*30/60))*M_PI/180);
   sy=cy+length*sine((angle+h*30+(m*30/60))*M_PI/180);
   drawLine(cx,cy,sx,sy, colorfg);
