@@ -140,7 +140,17 @@ void VRAMReplaceColorInRect(int x, int y, int width, int height, color_t color_o
          if (*VRAM == color_old) *VRAM = color_new; 
       } 
    } 
-} 
+}
+
+void VRAMInvertArea(short x, short y, short width, short height) {
+   color_t* VRAM = (color_t*)0xA8000000; 
+   VRAM += (y*LCD_WIDTH_PX)+x; 
+   for(int j=0; j<height; VRAM += (LCD_WIDTH_PX-width), j++) { 
+      for(int i=0; i<width; VRAM++, i++) { 
+         *VRAM ^= 0xFFFF;
+      } 
+   } 
+}
 
 void darkenStatusbar() {
   if(GetSetting(SETTING_DISPLAY_STATUSBAR)) {
@@ -197,9 +207,9 @@ void drawFkeyPopup(int Fkey, int darktheme, int showclosemessage) {
   if (showclosemessage) {
     int textX = 0;
     int textY = c3y-14-20;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", 0, TEXT_COLOR_BLACK, 1 ); //fake draw
+    PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", (darktheme == 1 ? 4 : 0), TEXT_COLOR_BLACK, 1 ); //fake draw
     textX = c3x-textX-4;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", 0, TEXT_COLOR_BLACK, 0 ); //draw
+    PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", (darktheme == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
   }
 }
 void CopySprite(const void* datar, int x, int y, int width, int height) { 

@@ -101,14 +101,11 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
     } else {
       printCentered((unsigned char*)menu->nodatamsg, (itemsStartY*24)+(itemsHeight*24)/2-12, COLOR_BLACK, COLOR_WHITE);
     }
-    DisplayStatusArea();
-    if (GetSetting(SETTING_DISPLAY_STATUSBAR) && GetSetting(SETTING_THEME) == 1) { darkenStatusbar(); DrawFrame( 0x000000  ); }
     if(menu->showtitle) {
       char title[25] = "";
       strcpy(title, "  ");
       strcat(title, menu->title);
       PrintXY(menu->startX, menu->startY, title, TEXT_MODE_TRANSPARENT_BACKGROUND, menu->titleColor);
-      
     }
     if(menu->showsubtitle && menu->showtitle) { // linker havocs with PrintMini if I put this if inside the one above
       int textX=MB_ElementCount(menu->title)*18+10, textY=6;
@@ -120,6 +117,14 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
         GetFKeyPtr(0x0037, &iresult); // SELECT (white)
         FKey_Display(0, (int*)iresult);
       }
+    }
+    DisplayStatusArea();
+    if(menu->darken) {
+      if (GetSetting(SETTING_DISPLAY_STATUSBAR) == 1) {
+        darkenStatusbar();
+      }
+      DrawFrame(COLOR_BLACK);
+      VRAMInvertArea(menu->startX*18-18, menu->startY*24, menu->width*18-(menu->scrollout || !menu->scrollbar ? 0 : 5), menu->height*24);
     }
     if(menu->type != MENUTYPE_NO_KEY_HANDLING) {
       if(menu->allowMkey) mGetKey(&key);

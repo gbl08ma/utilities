@@ -60,6 +60,7 @@ typedef struct {
   int fkeypage=0; // for MULTISELECT menu if it should allow file selecting and show the fkey label
   int numselitems=0; // number of selected items
   int returnOnInfiniteScrolling=0; //whether the menu should return when user reaches the last item and presses the down key (or the first item and presses the up key)
+  int darken=0; // for dark theme on homeGUI menus
   MenuItem* items; // items in menu
 } Menu;
 

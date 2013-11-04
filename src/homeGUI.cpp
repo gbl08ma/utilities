@@ -178,11 +178,6 @@ void showHome(chronometer* chrono) {
 
 void powerMenu() {
   drawFkeyPopup(0, GetSetting(SETTING_THEME), 1);
-  DisplayStatusArea();
-  if(GetSetting(SETTING_THEME) == 1) {
-    DrawFrame(COLOR_BLACK);
-    darkenStatusbar(); 
-  }
   PrintXY(2, 2, (char*)"  Power options", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
   MenuItem menuitems[5];
@@ -201,6 +196,7 @@ void powerMenu() {
   menu.startY=3;
   menu.scrollbar=(GetSetting(SETTING_SHOW_ADVANCED) ? 1 : 0);
   menu.scrollout=0;
+  menu.darken=1;
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "");
   strcpy(menu.statusText, "");
@@ -208,6 +204,7 @@ void powerMenu() {
   while(1) {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_SELECTION) {
+      DrawFrame(COLOR_WHITE);
       if(menu.selection == 1) {
         changePoweroffTimeout();
       } else if(menu.selection == 2) {
@@ -226,11 +223,6 @@ void powerMenu() {
 
 void lightMenu() {
   drawFkeyPopup(1, GetSetting(SETTING_THEME), 1);
-  DisplayStatusArea();
-  if(GetSetting(SETTING_THEME) == 1) {
-    DrawFrame(COLOR_BLACK);
-    darkenStatusbar();
-  }
   PrintXY(2, 2, (char*)"  Light tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
   MenuItem menuitems[5];
@@ -248,6 +240,7 @@ void lightMenu() {
   menu.startY=3;
   menu.scrollbar=0;
   menu.scrollout=0;
+  menu.darken=1;
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "");
   strcpy(menu.statusText, "");
@@ -255,6 +248,7 @@ void lightMenu() {
   while(1) {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_SELECTION) {
+      DrawFrame(COLOR_WHITE);
       if(menu.selection == 1) {
         lantern();
       } else if(menu.selection == 2) {
@@ -271,11 +265,6 @@ void lightMenu() {
 
 void timeMenu(chronometer* chrono) {
   drawFkeyPopup(2, GetSetting(SETTING_THEME), 1);
-  DisplayStatusArea();
-  if(GetSetting(SETTING_THEME) == 1) {
-    DrawFrame(COLOR_BLACK);
-    darkenStatusbar(); 
-  }
   PrintXY(2, 2, (char*)"  Time tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
   MenuItem menuitems[5];
@@ -292,6 +281,7 @@ void timeMenu(chronometer* chrono) {
   menu.startY=3;
   menu.scrollbar=0;
   menu.scrollout=0;
+  menu.darken=1;
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "");
   strcpy(menu.statusText, "");
@@ -299,6 +289,7 @@ void timeMenu(chronometer* chrono) {
   while(1) {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_SELECTION) {
+      DrawFrame(COLOR_WHITE);
       if(menu.selection == 1) {
         viewCalendar();
       } else if(menu.selection == 2) {
@@ -313,11 +304,6 @@ void timeMenu(chronometer* chrono) {
 
 void toolsMenu() {
   drawFkeyPopup(3, GetSetting(SETTING_THEME), 1);
-  DisplayStatusArea();
-  if(GetSetting(SETTING_THEME) == 1) {
-    DrawFrame(COLOR_BLACK);
-    darkenStatusbar(); 
-  }
   PrintXY(2, 2, (char*)"  Tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
   MenuItem menuitems[5];
@@ -335,6 +321,7 @@ void toolsMenu() {
   menu.startX=2;
   menu.startY=3;
   menu.scrollout=0;
+  menu.darken=1;
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "");
   strcpy(menu.statusText, "");
@@ -342,6 +329,7 @@ void toolsMenu() {
   while(1) {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_SELECTION) {
+      DrawFrame(COLOR_WHITE);
       if(menu.selection == 1) {
         fileManager();
       } else if(menu.selection == 2) {
