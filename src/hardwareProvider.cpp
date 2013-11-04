@@ -13,6 +13,7 @@
 #include <math.h>
 
 #include "hardwareProvider.hpp"
+#include "settingsProvider.hpp"
 
 // START OF POWER MANAGEMENT CODE
 #define LCDC *(unsigned int*)(0xB4000000)
@@ -54,6 +55,12 @@ int getIsEmulated() {
   k = *(unsigned char*)P11DR;
   if (k==0x0000) return 1;
   else return 0;
+}
+
+void setBrightnessToStartupSetting() {
+  if (GetSetting(SETTING_STARTUP_BRIGHTNESS) != 250 && 0 <= GetSetting(SETTING_STARTUP_BRIGHTNESS) && GetSetting(SETTING_STARTUP_BRIGHTNESS) <= 249) {
+    SetBacklightSubLevel_RAW(GetSetting(SETTING_STARTUP_BRIGHTNESS));
+  }
 }
 
 // CPU CLOCKING CODE:

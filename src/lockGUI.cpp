@@ -22,6 +22,7 @@
 #include "inputGUI.hpp"
 #include "timeProvider.hpp"
 #include "settingsProvider.hpp"
+#include "hardwareProvider.hpp"
 #include "setjmp.h"
 
 int passwordInput(int x, int y, unsigned char* buffer) {
@@ -232,6 +233,7 @@ int lockCalc() {
     //Handle ALPHA (when user wants to unlock) and Shift+AC for power off
     Bdisp_PutDisp_DD();
     GetKey(&key); //oh, the pleasure of using GetKey and still have the Menu blocked
+    setBrightnessToStartupSetting();
     if (key == KEY_CTRL_ALPHA) {
       SetSetupSetting( (unsigned int)0x14, 0); //avoid alpha still being triggered at start of text input
       if(1==unlockCalc()) {

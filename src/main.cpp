@@ -49,9 +49,7 @@ int main()
   
   // Adjust UI and HW values according to settings
   // Set brightness if setting is set
-  if (GetSetting(SETTING_STARTUP_BRIGHTNESS) != 250 && 0 <= GetSetting(SETTING_STARTUP_BRIGHTNESS) && GetSetting(SETTING_STARTUP_BRIGHTNESS) <= 249) {
-    SetBacklightSubLevel_RAW(GetSetting(SETTING_STARTUP_BRIGHTNESS));
-  }
+  setBrightnessToStartupSetting();
   Bdisp_EnableColor(1);
   
   if(GetSetting(SETTING_IS_FIRST_RUN)) {

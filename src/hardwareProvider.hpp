@@ -43,5 +43,6 @@ void SetBacklightSubLevel_RAW(int level);
 void getHardwareID(char* buffer);
 int getHardwareModel();
 int getIsEmulated();
+void setBrightnessToStartupSetting();
 
 #endif
