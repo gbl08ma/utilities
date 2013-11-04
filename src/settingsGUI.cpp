@@ -37,26 +37,23 @@ void settingsMenu() {
   
   strcpy(menuitems[5].text, "Home appearance");
   
-  strcpy(menuitems[6].text, "Dark theme");
+  strcpy(menuitems[6].text, "Display statusbar");
   menuitems[6].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[7].text, "Display statusbar");
+  strcpy(menuitems[7].text, "Show advanced tools");
   menuitems[7].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[8].text, "Show advanced tools");
-  menuitems[8].type = MENUITEM_CHECKBOX;
+  strcpy(menuitems[8].text, "Startup brightness");
   
-  strcpy(menuitems[9].text, "Startup brightness");
+  strcpy(menuitems[9].text, "Calc. lock settings");
   
-  strcpy(menuitems[10].text, "Calc. lock settings");
+  strcpy(menuitems[10].text, "Calendar settings");
   
-  strcpy(menuitems[11].text, "Calendar settings");
-  
-  strcpy(menuitems[12].text, "About this add-in");
+  strcpy(menuitems[11].text, "About this add-in");
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=13;
+  menu.numitems=12;
   menu.scrollout=1;
   menu.selection=1;
   menu.allowMkey=0;
@@ -64,9 +61,8 @@ void settingsMenu() {
   strcpy(menu.title, "");
   strcpy(menu.statusText, "");
   while(1) {
-    menuitems[6].value = GetSetting(SETTING_THEME);
-    menuitems[7].value = GetSetting(SETTING_DISPLAY_STATUSBAR);
-    menuitems[8].value = GetSetting(SETTING_SHOW_ADVANCED);
+    menuitems[6].value = GetSetting(SETTING_DISPLAY_STATUSBAR);
+    menuitems[7].value = GetSetting(SETTING_SHOW_ADVANCED);
     
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
@@ -75,17 +71,12 @@ void settingsMenu() {
       if(menu.selection == 7) {
         if(menuitems[6].value == MENUITEM_VALUE_CHECKED) menuitems[6].value=MENUITEM_VALUE_NONE;
         else menuitems[6].value=MENUITEM_VALUE_CHECKED;
-        SetSetting(SETTING_THEME, menuitems[6].value, 1); 
+        SetSetting(SETTING_DISPLAY_STATUSBAR, menuitems[6].value, 1); 
       }
       if(menu.selection == 8) {
         if(menuitems[7].value == MENUITEM_VALUE_CHECKED) menuitems[7].value=MENUITEM_VALUE_NONE;
         else menuitems[7].value=MENUITEM_VALUE_CHECKED;
-        SetSetting(SETTING_DISPLAY_STATUSBAR, menuitems[7].value, 1); 
-      }
-      if(menu.selection == 9) {
-        if(menuitems[8].value == MENUITEM_VALUE_CHECKED) menuitems[8].value=MENUITEM_VALUE_NONE;
-        else menuitems[8].value=MENUITEM_VALUE_CHECKED;
-        SetSetting(SETTING_SHOW_ADVANCED, menuitems[8].value, 1); 
+        SetSetting(SETTING_SHOW_ADVANCED, menuitems[7].value, 1); 
       }
       // deal with other menu items
       if(menu.selection == 1) { // set time
@@ -144,7 +135,7 @@ void settingsMenu() {
         clockSettingsMenu();
       }
       
-      if(menu.selection == 10) { // set startup brightness
+      if(menu.selection == 9) { // set startup brightness
         Selector sel;
         strcpy(sel.title, "Set start brightness");
         strcpy(sel.subtitle, "");
@@ -158,13 +149,13 @@ void settingsMenu() {
         if (res == SELECTOR_RETURN_EXIT) continue;
         SetSetting(SETTING_STARTUP_BRIGHTNESS, sel.value, 1);
       }
-      if(menu.selection == 11) {
+      if(menu.selection == 10) {
         lockSettingsMenu();
       }
-      if(menu.selection == 12) {
+      if(menu.selection == 11) {
         calendarSettingsMenu();
       }
-      if(menu.selection == 13) {
+      if(menu.selection == 12) {
         showAbout();
       }
     }
@@ -276,9 +267,12 @@ void clockSettingsMenu() {
   strcpy(menuitems[3].text, "Show F. keys labels");
   menuitems[3].type = MENUITEM_CHECKBOX;
   
+  strcpy(menuitems[4].text, "Dark theme");
+  menuitems[4].type = MENUITEM_CHECKBOX;
+  
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=4;
+  menu.numitems=5;
   menu.scrollout=1;
   menu.allowMkey=0;
   strcpy(menu.nodatamsg, "");
@@ -288,6 +282,7 @@ void clockSettingsMenu() {
     menuitems[1].value = GetSetting(SETTING_CLOCK_SECONDS);
     menuitems[2].value = GetSetting(SETTING_HOME_PANES);
     menuitems[3].value = GetSetting(SETTING_DISPLAY_FKEYS);
+    menuitems[4].value = GetSetting(SETTING_THEME);
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
@@ -334,6 +329,11 @@ void clockSettingsMenu() {
         if(menuitems[3].value == MENUITEM_VALUE_CHECKED) menuitems[3].value=MENUITEM_VALUE_NONE;
         else menuitems[3].value=MENUITEM_VALUE_CHECKED;
         SetSetting(SETTING_DISPLAY_FKEYS, menuitems[3].value, 1); 
+      }
+      if(menu.selection == 5) {
+        if(menuitems[4].value == MENUITEM_VALUE_CHECKED) menuitems[4].value=MENUITEM_VALUE_NONE;
+        else menuitems[4].value=MENUITEM_VALUE_CHECKED;
+        SetSetting(SETTING_THEME, menuitems[4].value, 1); 
       }
     }
   }

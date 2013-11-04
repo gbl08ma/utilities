@@ -196,7 +196,7 @@ void powerMenu() {
   menu.startY=3;
   menu.scrollbar=(GetSetting(SETTING_SHOW_ADVANCED) ? 1 : 0);
   menu.scrollout=0;
-  menu.darken=1;
+  menu.darken=GetSetting(SETTING_THEME);
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "");
   strcpy(menu.statusText, "");
@@ -240,7 +240,7 @@ void lightMenu() {
   menu.startY=3;
   menu.scrollbar=0;
   menu.scrollout=0;
-  menu.darken=1;
+  menu.darken=GetSetting(SETTING_THEME);
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "");
   strcpy(menu.statusText, "");
@@ -281,7 +281,7 @@ void timeMenu(chronometer* chrono) {
   menu.startY=3;
   menu.scrollbar=0;
   menu.scrollout=0;
-  menu.darken=1;
+  menu.darken=GetSetting(SETTING_THEME);
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "");
   strcpy(menu.statusText, "");
@@ -321,7 +321,7 @@ void toolsMenu() {
   menu.startX=2;
   menu.startY=3;
   menu.scrollout=0;
-  menu.darken=1;
+  menu.darken=GetSetting(SETTING_THEME);
   strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "");
   strcpy(menu.statusText, "");
