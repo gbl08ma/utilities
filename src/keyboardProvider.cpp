@@ -31,6 +31,8 @@ void mGetKey(int* key) {
       LoadVRAM_1();
       break;
     } else if (*key == KEY_CTRL_QUIT) {
+      stopAndUninstallStubTimer(); // in case we were in some timer screen, where the timer has been set
+      // having timers running breaks Bfile functions
       longjmp(utilities_return, 1); // this is also used for returning from Run-Mat. Basically equates to restarting the add-in.
       break;
     } else if (*key == KEY_SHIFT_OPTN && GetDebugMode()) {

@@ -88,9 +88,18 @@ void formatChronoString(chronometer* tchrono, int num, unsigned char* string)
   strcat((char*)string, buffer);
 }
 void doNothing() {}
+static int stubTimer=0;
+// for the mGetKey function to call before longjump, when user presses Shift+Exit
+void stopAndUninstallStubTimer() {
+  if(stubTimer>0) {
+    Timer_Stop(stubTimer);
+    Timer_Deinstall(stubTimer);
+    stubTimer=0;
+  }
+}
 void chronoScreen(chronometer* chrono) {
   // setting a timer is needed to change some aspects of GetKeyWait_OS
-  int stubTimer = Timer_Install(0, doNothing, 50);
+  stubTimer = Timer_Install(0, doNothing, 50);
   if (stubTimer > 0) { Timer_Start(stubTimer); }
   
   // construct menu items
@@ -253,7 +262,10 @@ void chronoScreen(chronometer* chrono) {
           if(menu.fkeypage==0) stopSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
           break;
         case KEY_PRGM_EXIT:
-          if(menu.fkeypage==0) { Timer_Stop(stubTimer); return; }
+          if(menu.fkeypage==0) {
+            stopAndUninstallStubTimer();
+            return;
+          }
           else menu.fkeypage=0;
           break;
       }
