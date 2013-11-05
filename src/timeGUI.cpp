@@ -347,7 +347,7 @@ void setDateGUI(int canExit) {
     strcpy(day.subtitle, "Day");
     day.value = getCurrentDay();
     day.min = 1;
-    day.max = getMonthDays(month.value);
+    day.max = ( month.value==2? (isLeap(year.value)? 29 : 28) : getMonthDays(month.value));
     day.allowMkey = 0;
     day.cycle = 1;
     day.type = SELECTORTYPE_NORMAL;
