@@ -323,12 +323,6 @@ void systemInfo() {
   memcpy(pcbModel, (void*)0x80000300, 4);
   pcbModel[4] = '\0';
   
-  unsigned char*zbyte = (unsigned char*)0x80000305;
-  if(*zbyte != 0xAA) {
-    pcbModel[4] = *zbyte;
-    pcbModel[5] = '\0';
-  }
-  
   char ABSname[12] = "";
   memcpy(ABSname, (void*)0x80000338, 8);
   ABSname[8] = '\0';
