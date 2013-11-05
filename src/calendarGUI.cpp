@@ -1904,7 +1904,7 @@ void searchEventsGUI(int y, int m, int d) {
       strcpy(sel.subtitle, "End year");
       sel.value = userEndYear;
       sel.min = userStartYear;
-      sel.max = userStartYear+254; //do not allow for more than 255 years, otherwise maximum will be less than an event per year
+      sel.max = (userStartYear+254 > 9999 ? 9999 : userStartYear+254); //do not allow for more than 255 years, otherwise maximum will be less than an event per year
       // also, if more than 255 years it would definitely take too much time, and user would certainly reboot the calculator
       sel.cycle = 0;
       sel.type = SELECTORTYPE_NORMAL;
