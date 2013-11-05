@@ -306,6 +306,7 @@ void changeFKeyColor() {
 }
 
 void systemInfo() {
+  DisplayStatusArea();
   char OSname[12] = "";
   memcpy(OSname, (void*)0x80020000, 8);
   OSname[8] = '\0';
