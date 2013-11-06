@@ -16,7 +16,7 @@
 #include <math.h>
 
 #define MAX_DAY_EVENTS 100 //max events in one day
-#define MAX_DAY_EVENTS_WEEKVIEW 50 //max same-day events to load in week view
+#define MAX_DAY_EVENTS_WEEKVIEW 100 //max same-day events to load in week view
 #define MAX_EVENT_FILESIZE 50000
 
 #define FILE_HEADER "PCALEVT" //Prizm CALendar EVenT / Portable CALendar EVenT
