@@ -351,3 +351,11 @@ void clearLine(int x, int y, color_t color) {
   if(x>1) width = 24*(21-x);
   drawRectangle((x-1)*18, y*24, width, 24, color);
 }
+
+void mPrintXY(int x, int y, char*msg, int mode, int color) {
+  char nmsg[50] = "";
+  nmsg[0] = 0x20;
+  nmsg[1] = 0x20;
+  strncat(nmsg, msg, 50);
+  PrintXY(x, y, nmsg, mode, color );
+}

@@ -25,7 +25,7 @@
 void memoryCapacityViewer() {
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  PrintXY(1, 1, (char*)"  Memory usage", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  mPrintXY(1, 1, (char*)"Memory usage", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   int smemfree;
   unsigned char buffer[50] ="";
   unsigned short smemMedia[7]={'\\','\\','f','l','s','0',0};
@@ -226,8 +226,8 @@ int addinManagerSub(Menu* menu) {
         MsgBoxPush(4);
         while (1) {
           int key;
-          PrintXY(3, 2, (char*)"  Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY(3, 3, (char*)"  Selected Add-In?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 3, (char*)"Selected Add-In?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
           PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
           mGetKey(&key);
@@ -286,7 +286,7 @@ void changeFKeyColor() {
   unsigned char selcolor = (unsigned char) 0xFF; //just so it isn't uninitialized
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  PrintXY(1, 1, (char*)"  Function key color", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  mPrintXY(1, 1, (char*)"Function key color", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   int textX=0; int textY=132;
   PrintMiniMini( &textX, &textY, (unsigned char*)"Please note that only the Utilities add-in and an hidden", 0, TEXT_COLOR_BLACK, 0 );
   textY=textY+12; textX=0;

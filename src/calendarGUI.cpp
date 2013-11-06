@@ -159,7 +159,7 @@ int viewMonthCalendar() {
         }
         break;       
       case KEY_CTRL_F6:
-        if (menu == 2) { if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"  Jump to specific date", (char*)"")) { y=ny;m=nm;d=nd; } } //only update calendar if selection was clean
+        if (menu == 2) { if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"Jump to specific date", (char*)"")) { y=ny;m=nm;d=nd; } } //only update calendar if selection was clean
         else if (menu == 1) {
           sy = y;
           sm = m;
@@ -589,7 +589,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
           return 2;
         } else if (menu->fkeypage == 1) {
           int ny=0,nm=0,nd=0;
-          if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"  Jump to specific date", (char*)"")) {
+          if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"Jump to specific date", (char*)"")) {
             *y=ny;*m=nm;*d=nd;
             *jumpToSel=1; //if user inserted a specific day, it makes sense to display that day without scrolling.
             return 1;
@@ -972,18 +972,18 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
     Bdisp_AllClr_VRAM();
     if (type == EVENTEDITORTYPE_ADD) {
       SetBackGround(0x0A);
-      if(istask) PrintXY(1, 1, (char*)"  Add New Task", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-      else PrintXY(1, 1, (char*)"  Add New Event", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+      if(istask) mPrintXY(1, 1, (char*)"Add New Task", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+      else mPrintXY(1, 1, (char*)"Add New Event", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     } else {
       SetBackGround(6);
-      if(istask) PrintXY(1, 1, (char*)"  Edit Task", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-      else PrintXY(1, 1, (char*)"  Edit Event", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+      if(istask) mPrintXY(1, 1, (char*)"Edit Task", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+      else mPrintXY(1, 1, (char*)"Edit Event", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     }
     DisplayStatusArea();
     switch(curstep) {
       case 0:
         if(1) { // this allows for declaring things inside the switch case without the compiler complaining
-          PrintXY(1, 2, (char*)"  Title:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(1, 2, (char*)"Title:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           int iresult;
           GetFKeyPtr(0x04A3, &iresult); // Next
           FKey_Display(5, (int*)iresult);
@@ -1006,7 +1006,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       case 1:
         if(1) {
-          PrintXY(1, 2, (char*)"  Location:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(1, 2, (char*)"Location:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           int iresult;
           GetFKeyPtr(0x036F, &iresult); // <
           FKey_Display(0, (int*)iresult);
@@ -1031,7 +1031,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       case 2:
         if(1) {
-          PrintXY(1, 2, (char*)"  Description:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(1, 2, (char*)"Description:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           int iresult;
           GetFKeyPtr(0x036F, &iresult); // <
           FKey_Display(0, (int*)iresult);
@@ -1061,9 +1061,9 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           SetSetupSetting( (unsigned int)0x14, 0);
           DisplayStatusArea();
           
-          PrintXY(1, 2, (char*)"  Start time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY(1, 3, (char*)"  Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY(6, 4, (char*)"  HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(1, 2, (char*)"Start time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(1, 3, (char*)"Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(6, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           int textX = 0;
           int textY = 5*24;
           PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will be a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
@@ -1123,17 +1123,17 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       case 4:
         if(!istask) {
-          PrintXY(1, 2, (char*)"  End date:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY(1, 3, (char*)"  Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(1, 2, (char*)"End date:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           switch(GetSetting(SETTING_DATEFORMAT)) {
             case 0:
-              PrintXY(6, 4, (char*)"  DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              mPrintXY(6, 4, (char*)"DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               break;
             case 1:
-              PrintXY(6, 4, (char*)"  MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              mPrintXY(6, 4, (char*)"MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               break;
             case 2:
-              PrintXY(6, 4, (char*)"  YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              mPrintXY(6, 4, (char*)"YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               break;
           }
           int textX = 0;
@@ -1213,9 +1213,9 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       case 5:
         if(event->timed) {
-          PrintXY(1, 2, (char*)"  End time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY(1, 3, (char*)"  Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY(6, 4, (char*)"  HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(1, 2, (char*)"End time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(1, 3, (char*)"Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(6, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           int iresult;
           GetFKeyPtr(0x036F, &iresult); // <
           FKey_Display(0, (int*)iresult);
@@ -1267,24 +1267,21 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       case 6:
         if(1) {
-          PrintXY(1, 2, (char*)"  Select category", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY(5, 4, (char*)"  \xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
-          PrintXY(5, 6, (char*)"  \xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
+          mPrintXY(1, 2, (char*)"Select category", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(5, 4, (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
+          mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
           int iresult, inscreen=1; int key = 0;
           GetFKeyPtr(0x036F, &iresult); // <
           FKey_Display(0, (int*)iresult);
           GetFKeyPtr(0x04A4, &iresult); // Finish
           FKey_Display(5, (int*)iresult);
-          char buffer1[20];
-          char buffer2[20];
+          char buffer[20] = "";
           if(type == EVENTEDITORTYPE_ADD) event->category = 1;
           while(inscreen)
           {
-            PrintXY(5, 5, (char*)"   ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); //clear line
-            strcpy(buffer1, "  ");
-            itoa(event->category, (unsigned char*)buffer2);
-            strcat(buffer1, buffer2);
-            PrintXY(5, 5, buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, (event->category <= 6 ? event->category-1 : TEXT_COLOR_YELLOW));
+            mPrintXY(5, 5, (char*)" ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); //clear line
+            itoa(event->category, (unsigned char*)buffer);
+            mPrintXY(5, 5, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, (event->category <= 6 ? event->category-1 : TEXT_COLOR_YELLOW));
             mGetKey(&key);
             switch(key)
             {
@@ -1323,14 +1320,14 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             if(res > 0) {
               MsgBoxPush(4);
               if (res == 4) {
-                PrintXY(3, 2, (char*)"  Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+                mPrintXY(3, 2, (char*)"Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               } else {
-                if(istask) PrintXY(3, 2, (char*)"  Task add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-                else PrintXY(3, 2, (char*)"  Event add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+                if(istask) mPrintXY(3, 2, (char*)"Task add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+                else mPrintXY(3, 2, (char*)"Event add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               }
-              if(istask) PrintXY(3, 3, (char*)"  Task could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              else PrintXY(3, 3, (char*)"  Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              PrintXY(3, 4, (char*)"  be added.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              if(istask) mPrintXY(3, 3, (char*)"Task could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              else mPrintXY(3, 3, (char*)"Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              mPrintXY(3, 4, (char*)"be added.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
               int key,inscreen=1;
               while(inscreen) {
@@ -1485,11 +1482,11 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
 void deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
   MsgBoxPush(4);
-  PrintXY(3, 2, (char*)"  Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(istask) {
-    PrintXY(3, 3, (char*)"  Selected Task?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 3, (char*)"Selected Task?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   } else {
-    PrintXY(3, 3, (char*)"  Selected Event?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 3, (char*)"Selected Event?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   }
   PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
@@ -1515,10 +1512,10 @@ void deleteAllEventUI(int y, int m, int d, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
   MsgBoxPush(4);
   if (istask) {
-    PrintXY(3, 2, (char*)"  Delete All Tasks?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 2, (char*)"Delete All Tasks?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   } else {
-    PrintXY(3, 2, (char*)"  Delete All Events", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    PrintXY(3, 3, (char*)"  on Selected Day?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 2, (char*)"Delete All Events", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 3, (char*)"on Selected Day?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   }
   PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
@@ -1545,18 +1542,18 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2)
   Bdisp_AllClr_VRAM();
   SetSetupSetting( (unsigned int)0x14, 0); //we only accept numbers, so switch off alpha/shift
   DisplayStatusArea();
-  PrintXY(1, 1, (char*)message, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  PrintXY(1, 2, (char*)message2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  PrintXY(1, 3, (char*)"  Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);  
+  mPrintXY(1, 1, (char*)message, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  mPrintXY(1, 2, (char*)message2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);  
   switch(GetSetting(SETTING_DATEFORMAT)) {
     case 0:
-      PrintXY(6, 4, (char*)"  DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(6, 4, (char*)"DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       break;
     case 1:
-      PrintXY(6, 4, (char*)"  MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(6, 4, (char*)"MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       break;
     case 2:
-      PrintXY(6, 4, (char*)"  YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(6, 4, (char*)"YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       break;
   }
   
@@ -1617,7 +1614,7 @@ void copyEvent(CalendarEvent* event) {
 
 void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
   int ey=0, em=0, ed=0;
-  int chooseres = chooseCalendarDate(&ey, &em, &ed, (isCopy ? (char*)"  Copy Event" : (char*)"  Move Event"), (char*)"  To following day:");
+  int chooseres = chooseCalendarDate(&ey, &em, &ed, (isCopy ? (char*)"Copy Event" : (char*)"Move Event"), (char*)"To following day:");
   if(chooseres == 0) {
     if(ey == (signed)events[pos].startdate.year && em == (signed)events[pos].startdate.month && ed == (signed)events[pos].startdate.day) {
       return; //destination date is same as current event date
@@ -1649,13 +1646,13 @@ void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
       if(res > 0) {
         MsgBoxPush(4);
         if (res == 4) { //error on size check
-          PrintXY(3, 2, (char*)"  Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 2, (char*)"Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         } else {
-          PrintXY(3, 2, (char*)"  Event move ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 2, (char*)"Event move ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         }
-        PrintXY(3, 3, (char*)"  Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        if(isCopy) PrintXY(3, 4, (char*)"  be copied.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        else PrintXY(3, 4, (char*)"  be moved.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 3, (char*)"Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        if(isCopy) mPrintXY(3, 4, (char*)"be copied.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        else mPrintXY(3, 4, (char*)"be moved.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
         int key,inscreen=1;
         while(inscreen) {
@@ -1678,8 +1675,8 @@ void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
 
 void invalidFieldMsg(int istime) {
   MsgBoxPush(3);
-  if(istime) PrintXY(3, 3, (char*)"  Invalid time.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  else PrintXY(3, 3, (char*)"  Invalid date.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  if(istime) mPrintXY(3, 3, (char*)"Invalid time.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  else mPrintXY(3, 3, (char*)"Invalid date.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
   int key,inscreen=1;
   while(inscreen) {
@@ -1718,19 +1715,19 @@ void setEventChrono(CalendarEvent* event) {
   MsgBoxPush(4);
   if(duration < 0) {
     // event is in the past, abort
-    PrintXY(3, 2, (char*)"  Event starts in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    PrintXY(3, 3, (char*)"  the past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 2, (char*)"Event starts in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 3, (char*)"the past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   } else {
     // set downwards chrono with the calculated duration
     res = setChronoExternal(sel.value-1, duration, CHRONO_TYPE_DOWN);
     if(res) {
       // success setting a chrono
-      PrintXY(3, 2, (char*)"  Event reminder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      PrintXY(3, 3, (char*)"  set successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 2, (char*)"Event reminder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"set successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     } else {
       // timer is busy
-      PrintXY(3, 2, (char*)"  Selected chrono", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      PrintXY(3, 3, (char*)"  is not clear.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 2, (char*)"Selected chrono", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"is not clear.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     }
   }
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
@@ -1811,9 +1808,9 @@ void searchEventsGUI(int y, int m, int d) {
     char needle[55] = "";
     
     Bdisp_AllClr_VRAM();
-    PrintXY(1, 1, (char*)"  Event Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+    mPrintXY(1, 1, (char*)"Event Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     DisplayStatusArea();
-    PrintXY(1, 2, (char*)"  Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     int iresult;
     GetFKeyPtr(0x04A3, &iresult); // Next
     FKey_Display(5, (int*)iresult);

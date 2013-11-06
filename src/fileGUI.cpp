@@ -168,10 +168,10 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           strcat(browserbasepath, "\\");
           if(!strcmp(browserbasepath, "\\\\fls0\\@MainMem\\") && !*shownMainMemHelp) {
             MsgBoxPush(5);
-            PrintXY(3, 2, (char*)"  Note: this is not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 3, (char*)"  the Main Memory,", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 4, (char*)"  just a special", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 5, (char*)"  mirror of it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(3, 2, (char*)"Note: this is not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(3, 3, (char*)"the Main Memory,", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(3, 4, (char*)"just a special", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(3, 5, (char*)"mirror of it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
             int inmsg=1, key;
             while(inmsg) {
@@ -235,9 +235,9 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             }
             if(*shownClipboardHelp == 0) {
               MsgBoxPush(5);
-              PrintXY(3, 2, (char*)"  Hint: press OPTN", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              PrintXY(3, 3, (char*)"  to manage the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              PrintXY(3, 4, (char*)"  clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              mPrintXY(3, 2, (char*)"Hint: press OPTN", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              mPrintXY(3, 3, (char*)"to manage the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              mPrintXY(3, 4, (char*)"clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
               int inmsg=1, key;
               while(inmsg) {
@@ -255,9 +255,9 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             }
           } else {
             MsgBoxPush(4);
-            PrintXY(3, 2, (char*)"  Can't add", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 3, (char*)"  selected items to", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY(3, 4, (char*)"  clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(3, 2, (char*)"Can't add", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(3, 3, (char*)"selected items to", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(3, 4, (char*)"clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
             int inmsg=1, key;
             while(inmsg) {
@@ -301,8 +301,8 @@ int deleteFilesGUI(File* files, Menu* menu) {
   MsgBoxPush(4);
   int key;
   while (1) {
-    PrintXY(3, 2, (char*)"  Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    PrintXY(3, 3, (char*)"  Selected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 3, (char*)"Selected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
     PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
     mGetKey(&key);
@@ -324,8 +324,8 @@ int makeFolderGUI(char* browserbasepath) {
   //returns 1 if user aborts, 0 if makes folder.
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  PrintXY(1, 1, (char*)"  Create folder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  PrintXY(1, 2, (char*)"  Name:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(1, 1, (char*)"Create folder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  mPrintXY(1, 2, (char*)"Name:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   char newname[MAX_NAME_SIZE] = "";
   textInput input;
   input.x=1;
@@ -344,7 +344,7 @@ int makeFolderGUI(char* browserbasepath) {
       strcat(newfilename, newname);
       unsigned short newfilenameshort[0x10A];
       Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
-      PrintXY(1,8,(char*)"  Creating folder...       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      mPrintXY(1,8,(char*)"Creating folder...       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
       Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FOLDER, 0); //create a folder
       return 1;
@@ -358,12 +358,11 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   //returns 0 if user aborts, 1 if renames.
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  PrintXY(1, 1, (char*)"  Rename item", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  mPrintXY(1, 1, (char*)"Rename item", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   char title[MAX_NAME_SIZE+6] = "";
-  strcpy(title, "  ");
-  strcat(title, (char*)menu->items[menu->selection-1].text);
+  strcpy(title, (char*)menu->items[menu->selection-1].text);
   strcat(title, " to:");
-  PrintXY(1, 2, (char*)title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(1, 2, (char*)title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   char newname[MAX_NAME_SIZE] = "";
   strcpy(newname, (char*)menu->items[menu->selection-1].text);
   textInput input;
@@ -384,7 +383,7 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
       unsigned short oldfilenameshort[0x10A];
       Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)files[menu->selection-1].filename, 0x10A);
       Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
-      PrintXY(1,8,(char*)"  Renaming...           ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      mPrintXY(1,8,(char*)"Renaming...           ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       Bdisp_PutDisp_DD();
       Bfile_RenameEntry(oldfilenameshort , newfilenameshort);
       return 1;
@@ -397,7 +396,7 @@ void fileInformation(File* files, Menu* menu) {
   int key;
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  PrintXY(1, 1, (char*)"  File information", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  mPrintXY(1, 1, (char*)"File information", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   int textX=0, textY=24;
   PrintMini(&textX, &textY, (unsigned char*)"File name:", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
   char name[MAX_NAME_SIZE] = "";
@@ -493,8 +492,8 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   } else {
     //Error opening file, abort
     MsgBoxPush(4);
-    PrintXY(3, 2, (char*)"  Error opening", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    PrintXY(3, 3, (char*)"  file to read.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 2, (char*)"Error opening", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 3, (char*)"file to read.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
     int gkey = 0, inscreen = 1;
     while(inscreen) {
@@ -677,8 +676,8 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
 
 void showCopyFolderWarning() {
   MsgBoxPush(4);
-  PrintXY(3, 2, (char*)"  Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  PrintXY(3, 3, (char*)"  not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 2, (char*)"Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 3, (char*)"not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
   int inmsg=1, key;
   while(inmsg) {

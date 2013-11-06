@@ -440,9 +440,9 @@ void currentTimeToBasicVar() {
   Src.Set( hourfraction );
   Alpha_SetData( 'T', &Src );
   MsgBoxPush(4);
-  PrintXY(3, 2, (char*)"  Time fraction", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  PrintXY(3, 3, (char*)"  saved to alpha", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  PrintXY(3, 4, (char*)"  variable T.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 2, (char*)"Time fraction", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 3, (char*)"saved to alpha", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 4, (char*)"variable T.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
   int gkey;
   while(1) {
@@ -503,10 +503,7 @@ void drawHomeClock(int format, int fgcolor, int bgcolor) {
     int radius = 70;
     drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
     currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
-    char buffer[20] = "";
-    strcpy(buffer, "  ");
-    strcat(buffer, timeStr);
-    PrintXY(10, 4, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+    mPrintXY(10, 4, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
   } else if (format == 7) {
     // show analog clock with digital time and long date
     int cx = 89;
@@ -514,10 +511,7 @@ void drawHomeClock(int format, int fgcolor, int bgcolor) {
     int radius = 50;
     drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
     currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
-    char buffer[20] = "";
-    strcpy(buffer, "  ");
-    strcat(buffer, timeStr);
-    PrintXY(10, 3, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+    mPrintXY(10, 3, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
     if (GetSetting(SETTING_THEME) == 1) {
       drawLongDate(120, NULL, COLOR_WHITE, COLOR_BLACK, 1);
     } else {
@@ -530,14 +524,9 @@ void drawHomeClock(int format, int fgcolor, int bgcolor) {
     int radius = 70;
     drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
     currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
-    char buffer[20] = "";
-    strcpy(buffer, "  ");
-    strcat(buffer, timeStr);
-    PrintXY(10, 3, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+    mPrintXY(10, 3, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
     currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
-    strcpy(buffer, "  ");
-    strcat(buffer, timeStr);
-    PrintXY(10, 5, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+    mPrintXY(10, 5, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
   } else if (format == 9) {
     // show analog clock with long date
     int cx = LCD_WIDTH_PX/2;

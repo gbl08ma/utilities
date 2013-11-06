@@ -98,8 +98,8 @@ int passwordInput(int x, int y, unsigned char* buffer) {
         Cursor_SetFlashOff(); return 1;
       } else {
         MsgBoxPush(3);
-        PrintXY(3, 3, (char*)"  Code can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-        PrintXY(3, 4, (char*)"  empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        mPrintXY(3, 3, (char*)"Code can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        mPrintXY(3, 4, (char*)"empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
         int nkey;
         while(1) { GetKey(&nkey); if (nkey==KEY_CTRL_EXIT) { break; } }
@@ -127,8 +127,8 @@ int setPassword() {
   unsigned char password[256] = "";
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  PrintXY(1, 1, (char*)"  Calculator lock", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
-  PrintXY(1, 2, (char*)"  Set new code:", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+  mPrintXY(1, 1, (char*)"Calculator lock", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
+  mPrintXY(1, 2, (char*)"Set new code:", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
   int res = passwordInput(1, 3, password);
   if (res == 1) savePassword(password);
   return res; //which means this returns 1 if password was set, and 0 if user aborted
@@ -140,8 +140,8 @@ int unlockCalc() {
   
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  PrintXY(1, 1, (char*)"  Calculator lock", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
-  PrintXY(1, 2, (char*)"  Input code:", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+  mPrintXY(1, 1, (char*)"Calculator lock", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
+  mPrintXY(1, 2, (char*)"Input code:", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
   int res = passwordInput(1, 3, password);
   int compareRes=0;
   if (res == 0) { return 0; }
@@ -156,8 +156,8 @@ int unlockCalc() {
     case 2:
     case 3:
       MsgBoxPush(3);
-      PrintXY(3, 3, (char*)"  Data tampering", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      PrintXY(3, 4, (char*)"  detected!", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"Data tampering", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      mPrintXY(3, 4, (char*)"detected!", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
       while(1) { GetKey(&key); if (key==KEY_CTRL_EXIT) { break; } }
       MsgBoxPop();
@@ -165,7 +165,7 @@ int unlockCalc() {
       break;
     case 4:
       MsgBoxPush(3);
-      PrintXY(3, 3, (char*)"  Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
       while(1) { GetKey(&key); if (key==KEY_CTRL_EXIT) { break; } }
       MsgBoxPop();
@@ -278,9 +278,9 @@ void lockApp() {
         openRunMat();
       } else if (GetSetting(SETTING_UNLOCK_RUNMAT) == 2) {
         MsgBoxPush(4);
-        PrintXY(3, 2, (char*)"  Open Run-Mat?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY(3, 4, (char*)"     Yes:[F1]/[1]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY(3, 5, (char*)"     No :Other key", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 2, (char*)"Open Run-Mat?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 4, (char*)"   Yes:[F1]/[1]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 5, (char*)"   No :Other key", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int key,inscreen=1;
         while(inscreen) {
           mGetKey(&key);

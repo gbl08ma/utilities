@@ -58,13 +58,8 @@ int doTextArea(textArea* text) {
       cur++;
     }
     if(text->showtitle) {
-      unsigned char buffer[50] = "";
-      unsigned char buffer2[50] = "";
-      strcpy((char*)buffer, "  ");
-      strcpy((char*)buffer2, "");
-      strcat((char*)buffer, (char*)text->title);
       clearLine(1,1);
-      PrintXY(1, 1, (char*)buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+      mPrintXY(1, 1, (char*)text->title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     }
     //draw a scrollbar:
     if(text->scrollbar) {

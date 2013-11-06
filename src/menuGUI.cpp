@@ -37,7 +37,7 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
         // print the menu item only when appropriate
         if(menu->scroll < curitem+1 && menu->scroll > curitem-itemsHeight) {
           char menuitem[70] = "";
-          if(menu->items[curitem].type != MENUITEM_SEPARATOR) strcpy(menuitem, "  ");
+          strcpy(menuitem, "");
           if(menu->type == MENUTYPE_MULTISELECT) strcat(menuitem, "  "); //allow for the folder and selection icons on MULTISELECT menus (e.g. file browser)
           strcat(menuitem, (char*)menu->items[curitem].text);
           if(menu->items[curitem].type != MENUITEM_SEPARATOR) {
@@ -51,7 +51,7 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
               fillerSpaces++;
             }
             strcat(menuitem, itemBackFiller);
-            PrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)menuitem, (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
+            mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)menuitem, (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
           } else {
             int textX = (menu->startX-1) * 18;
             int textY = curitem*24+itemsStartY*24-menu->scroll*24-24+6;
@@ -62,9 +62,9 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
           // deal with menu items of type MENUITEM_CHECKBOX
           if(menu->items[curitem].type == MENUITEM_CHECKBOX) {
             if(menu->items[curitem].value == MENUITEM_VALUE_CHECKED) {
-              PrintXY(menu->startX+menu->width-1,curitem+itemsStartY-menu->scroll,(char*)"  \xe6\xa9", (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
+              mPrintXY(menu->startX+menu->width-1,curitem+itemsStartY-menu->scroll,(char*)"\xe6\xa9", (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
             } else {
-              PrintXY(menu->startX+menu->width-1,curitem+itemsStartY-menu->scroll,(char*)"  \xe6\xa5", (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
+              mPrintXY(menu->startX+menu->width-1,curitem+itemsStartY-menu->scroll,(char*)"\xe6\xa5", (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
             }
           }
           // deal with multiselect menus
@@ -74,11 +74,11 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
             }
             if (menu->items[curitem].isselected) {
               if (menu->selection == curitem+1) {
-                  PrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"   ", TEXT_MODE_INVERT, menu->items[curitem].color);
-                  PrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"  \xe6\x9b", TEXT_MODE_TRANSPARENT_BACKGROUND, (menu->items[curitem].color ==  TEXT_COLOR_GREEN ? TEXT_COLOR_BLUE : TEXT_COLOR_GREEN));
+                  mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)" ", TEXT_MODE_INVERT, menu->items[curitem].color);
+                  mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"\xe6\x9b", TEXT_MODE_TRANSPARENT_BACKGROUND, (menu->items[curitem].color ==  TEXT_COLOR_GREEN ? TEXT_COLOR_BLUE : TEXT_COLOR_GREEN));
               } else {
-                PrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"   ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-                PrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"  \xe6\x9b", TEXT_MODE_NORMAL, TEXT_COLOR_PURPLE);
+                mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)" ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+                mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"\xe6\x9b", TEXT_MODE_NORMAL, TEXT_COLOR_PURPLE);
               }
             }
           }
@@ -102,10 +102,7 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
       printCentered((unsigned char*)menu->nodatamsg, (itemsStartY*24)+(itemsHeight*24)/2-12, COLOR_BLACK, COLOR_WHITE);
     }
     if(menu->showtitle) {
-      char title[25] = "";
-      strcpy(title, "  ");
-      strcat(title, menu->title);
-      PrintXY(menu->startX, menu->startY, title, TEXT_MODE_TRANSPARENT_BACKGROUND, menu->titleColor);
+      mPrintXY(menu->startX, menu->startY, menu->title, TEXT_MODE_TRANSPARENT_BACKGROUND, menu->titleColor);
     }
     if(menu->showsubtitle && menu->showtitle) { // linker havocs with PrintMini if I put this if inside the one above
       int textX=MB_ElementCount(menu->title)*18+10, textY=6;

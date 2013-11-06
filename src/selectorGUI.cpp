@@ -28,19 +28,15 @@ int doSelector(Selector* selector) {
     Bdisp_AllClr_VRAM();
     DisplayStatusArea();
   }
-  strcpy(buffer1, "  ");
-  strcat(buffer1, selector->title);
-  PrintXY(1, 1, (char*)buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  strcpy(buffer1, "  ");
-  strcat(buffer1, selector->subtitle);
-  PrintXY(3, 2, (char*)buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  PrintXY(5, (selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4), (char*)"  \xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
-  PrintXY(5, 6, (char*)"  \xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
+  mPrintXY(1, 1, (char*)selector->title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  mPrintXY(3, 2, (char*)selector->subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(5, (selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4), (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
+  mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
   while(1)
   {
     if(selector->type == SELECTORTYPE_LONGDATEFORMAT) clearLine(1,4);
     clearLine(5,5);
-    strcpy(buffer1, "  ");
+    strcpy(buffer1, "");
     if(selector->type != SELECTORTYPE_LONGDATEFORMAT) {
       if(selector->type == SELECTORTYPE_MONTH) {
         strcat(buffer1, getMonthAsString(selector->value));
@@ -92,7 +88,7 @@ int doSelector(Selector* selector) {
         itoa(selector->value, (unsigned char*)buffer2);
         strcat(buffer1, buffer2);
       }
-      PrintXY(5, 5, buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(5, 5, buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     } else {
       drawLongDate(82,selector->value, COLOR_BLACK, COLOR_WHITE, NULL);
     }

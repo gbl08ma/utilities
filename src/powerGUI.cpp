@@ -264,10 +264,7 @@ void updateCurrentFreq() {
     }
   int textX = 0; int textY = 145;
   PrintMini(&textX, &textY, (unsigned char*)cur, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  char descbuf[15];
-  strcpy(descbuf, "  ");
-  strcat(descbuf, desc);
-  PrintXY(1, 8, descbuf, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(1, 8, desc, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
 }
 
 void setCPUclock() {
@@ -279,7 +276,7 @@ void setCPUclock() {
     Bdisp_EnableColor(1); 
     DisplayStatusArea();
 
-    PrintXY(1, 1, (char*)"  CPU speed", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+    mPrintXY(1, 1, (char*)"CPU speed", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     CopySpriteNbit(selector, 10, 85, 364, 43, selector_palette, 1);
     
     textX=0; textY=118;
