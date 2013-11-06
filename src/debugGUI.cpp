@@ -69,9 +69,9 @@ void showRAMusedStatus() {
   DisplayStatusArea();
 }
 
-void mycallback() {
+/*void mycallback() {
   debugMessage((char*)"  My menu", (char*)"  callback", 0);
-}
+}*/
 
 void masterControl() {
   MenuItem menuitems[10];
@@ -83,12 +83,11 @@ void masterControl() {
   strcpy(menuitems[5].text, "Debug On");
   strcpy(menuitems[6].text, "First Run Off");
   strcpy(menuitems[7].text, "First Run On");
-  strcpy(menuitems[8].text, "Menu callback");
-  strcpy(menuitems[9].text, "Restart");
+  strcpy(menuitems[8].text, "Restart");
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=10;
+  menu.numitems=9;
   menu.scrollout=1;
   menu.showtitle=1;
   menu.selection=1;
@@ -125,9 +124,7 @@ void masterControl() {
         SetSetting(SETTING_IS_FIRST_RUN, 1, 0); // do not autosave, to allow full control of the operator
       }
       if(menu.selection == 9) {
-        CallbackAtQuitMainFunction( mycallback );
-      }
-      if(menu.selection == 10) { 
+        //CallbackAtQuitMainFunction( mycallback );
         Restart();
       }
     }
