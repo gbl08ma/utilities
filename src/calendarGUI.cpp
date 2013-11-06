@@ -1886,8 +1886,8 @@ void searchEventsGUI(int y, int m, int d) {
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
       menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
     } else {
-      int userStartYear = getCurrentYear()-2;
-      int userEndYear = getCurrentYear()+2;
+      int userStartYear = y-2;
+      int userEndYear = y+2;
       int res;
       Selector sel;
       strcpy(sel.title, "Search on year range");
