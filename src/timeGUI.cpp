@@ -219,8 +219,6 @@ void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg) {
     y=cy+(radius-radius/10.0)*sine(theta*M_PI/180);
     y1=cy+(radius-radius/12.0)*sine(theta*M_PI/180);
     drawLine(x,y,x1,y1,COLOR_GRAY);
-    // Draw Numeric Point
-    //plot(x,y,COLOR_GRAY);
     // Increase angle by 30 degrees, which is the circular distance between each numeric point:
     theta+=30;
     i++;

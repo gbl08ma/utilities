@@ -189,71 +189,71 @@ void updateCurrentFreq() {
   
   switch((*FRQCR & 0x3F000000) >> 24) {
       case PLL_28x:
-        cur = (char*)"Running at 101.5 MHz";
+        cur = (char*)"101.5";
         desc = (char*)"Overclocked";
         break;
       case PLL_26x:
-        cur = (char*)"Running at 94.3 MHz";
+        cur = (char*)"94.3";
         desc = (char*)"Overclocked";
         drawArrowDown(368, arrowBottom, COLOR_ORANGE);
         break;
       case PLL_24x:
-        cur = (char*)"Running at 87 MHz";
+        cur = (char*)"87";
         desc = (char*)"Overclocked";
         drawArrowDown(331, arrowBottom, COLOR_ORANGE);
         break;
       case PLL_20x:
-        cur = (char*)"Running at 72.5 MHz";
+        cur = (char*)"72.5";
         desc = (char*)"Overclocked";
         drawArrowDown(274, arrowBottom, COLOR_ORANGE);
         break;
       case PLL_18x:
-        cur = (char*)"Running at 65.3 MHz";
+        cur = (char*)"65.3";
         desc = (char*)"Overclocked";
         drawArrowDown(246, arrowBottom, COLOR_ORANGE);
         break;
       case PLL_16x:
-        cur = (char*)"Running at 58 MHz";
+        cur = (char*)"58";
         desc = (char*)"Normal speed";
         drawArrowDown(217, arrowBottom, COLOR_LIMEGREEN);
         break;
       case PLL_15x:
-        cur = (char*)"Running at 54.4 MHz";
+        cur = (char*)"54.4";
         desc = (char*)"Underclocked";
         drawArrowDown(203, arrowBottom, COLOR_LIGHTBLUE);
         break;
       case PLL_12x:
-        cur = (char*)"Running at 43.5 MHz";
+        cur = (char*)"43.5";
         desc = (char*)"Underclocked";
         drawArrowDown(169, arrowBottom, COLOR_LIGHTBLUE);
         break;
       case PLL_8x:
-        cur = (char*)"Running at 29 MHz";
+        cur = (char*)"29";
         desc = (char*)"Underclocked";
         drawArrowDown(112, arrowBottom, COLOR_LIGHTBLUE);
         break;
       case PLL_6x:
-        cur = (char*)"Running at 21.7 MHz";
+        cur = (char*)"21.7";
         desc = (char*)"Underclocked";
         drawArrowDown(84, arrowBottom, COLOR_LIGHTBLUE);
         break;
       case PLL_4x:
-        cur = (char*)"Running at 14.5 MHz";
+        cur = (char*)"14.5";
         desc = (char*)"Underclocked";
         drawArrowDown(56, arrowBottom, COLOR_LIGHTBLUE);
         break;
       case PLL_3x:
-        cur = (char*)"Running at 10.8 MHz";
+        cur = (char*)"10.8";
         desc = (char*)"Underclocked";
         drawArrowDown(41, arrowBottom, COLOR_LIGHTBLUE);
         break;
       case PLL_2x:
-        cur = (char*)"Running at 7.25 MHz";
+        cur = (char*)"7.25";
         desc = (char*)"Underclocked";
         drawArrowDown(27, arrowBottom, COLOR_LIGHTBLUE);
         break;
       case PLL_1x:
-        cur = (char*)"Running at 3.6 MHz";
+        cur = (char*)"3.6";
         desc = (char*)"Underclocked";
         drawArrowDown(13, arrowBottom, COLOR_LIGHTBLUE);
         break;
@@ -263,7 +263,11 @@ void updateCurrentFreq() {
         break;
     }
   int textX = 0; int textY = 145;
-  PrintMini(&textX, &textY, (unsigned char*)cur, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  char buffer[50] = "";
+  strcpy(buffer, (char*)"Running at ");
+  strcat(buffer, cur);
+  strcat(buffer, (char*)" MHz");
+  PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   mPrintXY(1, 8, desc, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
 }
 

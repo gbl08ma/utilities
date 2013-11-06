@@ -69,7 +69,6 @@ void filenameFromDate(EventDate* date, char* filename);
 void smemFilenameFromDate(EventDate* date, char* filename, const char* folder);
 int AddEvent(CalendarEvent* calEvent, const char* folder);
 int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char* folder, int count);
-//int RemoveEvent(EventDate* startdate, int calEventPos, const char* folder);
 void RemoveEvent(EventDate *startdate, CalendarEvent* events, const char* folder, int count, int calEventPos);
 int RemoveDay(EventDate* date, const char* folder);
 int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit=0);
