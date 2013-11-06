@@ -347,7 +347,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
   strcpy(sel.subtitle, "Days");
   sel.value = 0;
   sel.min = 0;
-  sel.max = 730;
+  sel.max = -1; // no limit. long long it is big enough to accomodate a chronometer with a duration of over 2 million days.
   sel.cycle = 0;
   sel.type = SELECTORTYPE_NORMAL;
   res = doSelector(&sel);
