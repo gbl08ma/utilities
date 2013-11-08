@@ -85,6 +85,28 @@ Finally, if none of these websites are available, or if you need to contact the 
 
 gbl08ma@gmail.com
 
+## Changelog
+For a detailed changelog, take a look at the commit history on the GitHub page.
+
+Here is a summary of the changes, in no special order:
+
+From v1.0 to v1.1:
+  - Fixed bug where event end date would not be updated when copying or moving;
+  - Added setting for showing or hiding seconds in the home screen clock;
+  - Added system information screen;
+  - Added events home screen pane (press the left key on the home screen) and setting for disabling it;
+  - Added different clock styles to home screen, including some with an analog clock;
+  - Added calendar event search function;
+  - Added a clipboard manager to the file manager;
+  - Added functionality for changing calendar events' and tasks' category with Shift+5;
+  - Use of more scrollable text areas instead of screens split in steps;
+  - Validate time and date input when adding or editing events;
+  - Allow for accessing the @MainMem folder with the file browser, after showing a message;
+  - Added calendar week view;
+  - Changed some of the messages shown in the add-in;
+  - Limited dark theme to the home screen and fixed some of the bugs associated with it;
+  - Changed many other small things in order to improve looks and user experience.
+
 ## License
 
 The add-in is available under the GNU GPL version 2. A license should have come with this read-me and the utilities.g3a file. If not, the license is available online at [https://www.gnu.org/licenses/gpl-2.0.html](https://www.gnu.org/licenses/gpl-2.0.html)
