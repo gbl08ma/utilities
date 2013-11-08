@@ -76,10 +76,10 @@ int doTextArea(textArea* text) {
       TScrollbar sb;
       sb.I1 = 0;
       sb.I5 = 0;
-      sb.indicatormaximum = (totalTextY)-(text->showtitle ? 0 : 24);
-      sb.indicatorheight = 10*17;
+      sb.indicatormaximum = totalTextY;
+      sb.indicatorheight = LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1); //10*17;
       sb.indicatorpos = -scroll;
-      sb.barheight = LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1);
+      sb.barheight = sb.indicatorheight;
       sb.bartop = (text->showtitle ? 24 : 0);
       sb.barleft = text->width - 6;
       sb.barwidth = 6;
