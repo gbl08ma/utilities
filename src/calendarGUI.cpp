@@ -248,8 +248,6 @@ int viewWeekCalendar() {
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnInfiniteScrolling=1;
-  strcpy(menu.nodatamsg, ""); // it is never going to be without any items
-  strcpy(menu.statusText, "");
   int jumpToSel=1;
   while(res) {
     if(!sy || !sm || !sd) {

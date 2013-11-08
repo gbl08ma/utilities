@@ -4,17 +4,17 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
 
 ## Features
 
-  - **Clock functionality** - see and set the current time and date. Multiple time and date formats supported.
+  - **Clock functionality** - see and set the current time and date. Multiple time and date formats supported, and you can choose to show an analog clock.
 
   - **Chronometer functionality** - 20 timers that can go upwards or downwards, and be paused (accuracy: +/- 7 ms)
   
-  - **Calendar** - besides seeing any calendar month, you can add events on specific days (useful for storing exam dates and assignment due dates). Events can be edited, deleted and copied or moved to other days. You can easily set a stopwatch to remind you about a certain event.
+  - **Calendar** - besides seeing any calendar month, you can add events on specific days (useful for storing exam dates and assignment due dates). You can also choose to use the week view, which has the advantage of showing more event details. Events can be edited, deleted and copied or moved to other days. You can easily set a stopwatch to remind you about a certain event. Searching for events is also supported.
   
-  - **Task list** - like calendar events, but with no set date.
+  - **Task list** - like calendar events, but with no set date. You can mark tasks as complete.
   
   - **Power management** - fine adjustment of the power off and backlight timeouts, as well as brightness level. Advanced users can also set the CPU clock speed (overclock or underclock).
   
-  - **File manager** - more advanced than the one provided by Casio in the Memory menu, with Utilities you can move files between folders, rename files and folders, view text files and calculate the SHA-256 sum of files. Long file names supported.
+  - **File manager** - more advanced than the one provided by Casio in the Memory menu, with Utilities you can move files between folders, rename files and folders, calculate the SHA-256 sum of files and view text ones. Long file names supported. Users willing to take some risk can also copy files (still a unstable feature).
   
   - **Lantern** - turn your Prizm into a expensive lantern! Modes supported: steady light, flashing light, morse light (screen lightens up while you press a key) and color light.
   
@@ -22,7 +22,9 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
   - **Function key color adjuster** - change the color of the function key labels throughout the OS.
   
-  - **Calculator lock** - "lock" the calculator with a password to avoid having curious people messing around with your calculator. Not suitable as a high-security lock (for now, it's easy to bypass). You can set Utilities to turn off the calculator after locking. And after unlocking, you can set the calculator to open Run-Mat or ask you if you want to do it. To return from Run-Mat back to Utilities, press Shift and Exit simultaneously.
+  - **System information viewer** - view the OS and bootloader version and timestamps, calculator model information, Renesas CPU version registers and the unique device ID.
+  
+  - **Calculator lock** - "lock" the calculator with a password to avoid having curious people messing around with your calculator. Not suitable as a high-security lock (for now, it's easy to bypass). You can set Utilities to turn off the calculator after locking. And after unlocking, you can set it to open Run-Mat or ask you if you want. To return from Run-Mat back to Utilities, press Shift and Exit at the same time.
   
     - If you fear that the lock function may cause problems at some point (e.g. locking yourself out during an exam), contact gbl08ma for instructions on how to disable it.
   
@@ -34,14 +36,14 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
 ## And as a bonus...
 
-  - **Weights less than 140 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
+  - **Weights less than 160 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
   
   - Really fast to start up - it's usually even faster than the built-in app Run-Mat!
   
   - It's open source (GitHub: [https://github.com/gbl08ma/utilities](https://github.com/gbl08ma/utilities))
   
 ## Installation instructions
-If you used a version of Utilities older than Beta 9, please refer to "Update Instructions" instead.
+If you use a version of Utilities older than Beta 9, please refer to "Update Instructions" instead.
 
 To install, connect the Prizm calculator to the computer with a miniUSB<->USB cable. On the calculator, press F1 when a pop-up appears on the screen. Wait for the USB connection to be established. When it's finished, your Prizm will appear on your computer as if it were a pendisk.
 
@@ -50,15 +52,15 @@ Copy "utilities.g3a" to the root folder of the pendisk (i.e., out of any folders
 The first time you run Utilities you'll be presented with the tny. internet media group logo and then a first run wizard with some important notes about the add-in. You should definitely read it. You will then be guided to adjust the clock, something you'll have to do every time you take the batteries off. Don't worry, Utilities will remind you to do it and guide you through the process.
   
 ## Update instructions
-(only applies if you used Utilities before Beta 9. If that's not the case, just follow the instalation instructions, copying utilities.g3a over the old one)
+(only applies if you are currently using a version Utilities older than Beta 9. If that's not the case, just follow the instalation instructions, copying utilities.g3a over the old one)
  
-This bit is really, really important as there are some folder names that changed with this new release; also, not all files are compatible (calendar events and tasks are compatible, though). You must follow the following instructions for Utilities Beta 9 to work properly: 
+This bit is really, really important as there are some folder names that changed on newer releases; also, not all files are compatible (calendar events and tasks are compatible, though). You must follow the following instructions for new Utilities versions to work properly: 
 
   - Delete the @UTILS folder in Main Memory (Memory app in Main Menu, press F1, scroll down to @UTILS, press F1, F6 and then F1); 
   - Now connect the calculator to your computer through USB, as a flash drive, and perform the following steps: 
-  - Rename the @CALNDAR folder in the storage memory of your calculator to @UTILS (you must do this on the computer because the OS won't accept the @ as a valid character); 
-  - Inside the newly renamed @UTILS storage memory folder, delete the file Hash.plp in case it exists (the new Hash.plp file is no longer compatible with the ones from previous versions). 
-  - Copy utilties.g3a to the root folder of the calculator, overwriting the old one. 
+  - Rename the @CALNDAR folder in the storage memory of your calculator to @UTILS (you must do this on the computer because sometimes the OS won't accept the @ as a valid character); 
+  - Inside the newly renamed @UTILS storage memory folder, delete the file Hash.plp in case it exists (the new Hash.plp file is no longer compatible with the ones from previous versions);
+  - Copy utilties.g3a to the root folder of the calculator, overwriting the old one;
   - Safely disconnect the calculator from the computer. You are ready to use the new version once your calculator finishes updating the Main Memory...
   
 ## Usage instructions
