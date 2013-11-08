@@ -8,7 +8,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
 
   - **Chronometer functionality** - 20 timers that can go upwards or downwards, and be paused (accuracy: +/- 7 ms)
   
-  - **Calendar** - besides seeing any calendar month, you can add events on specific days (useful for storing exam dates and assignment due dates). You can also choose to use the week view, which has the advantage of showing more event details. Events can be edited, deleted and copied or moved to other days. You can easily set a stopwatch to remind you about a certain event. Searching for events is also supported.
+  - **Calendar** - besides seeing any calendar month, you can add events on specific days (useful for storing exam dates and assignment due dates). You can choose to use the week view, which has the advantage of showing more event details. Events can be edited, deleted and copied or moved to other days. You can easily set a stopwatch to remind you about a certain event. Searching for events is also supported.
   
   - **Task list** - like calendar events, but with no set date. You can mark tasks as complete.
   
@@ -36,7 +36,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
 ## And as a bonus...
 
-  - **Weights less than 160 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
+  - **Weights less than 155 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
   
   - Really fast to start up - it's usually even faster than the built-in app Run-Mat!
   
