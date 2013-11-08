@@ -1328,17 +1328,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
               else mPrintXY(3, 3, (char*)"Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               mPrintXY(3, 4, (char*)"be added.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-              int key,inscreen=1;
-              while(inscreen) {
-                mGetKey(&key);
-                switch(key)
-                {
-                  case KEY_CTRL_EXIT:
-                    inscreen=0;
-                    break;
-                }
-              }
-              MsgBoxPop();
+              closeMsgBox();
             }
             return EVENTEDITOR_RETURN_EXIT; // error is like exit
           } else {
@@ -1653,17 +1643,7 @@ void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
         if(isCopy) mPrintXY(3, 4, (char*)"be copied.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         else mPrintXY(3, 4, (char*)"be moved.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-        int key,inscreen=1;
-        while(inscreen) {
-          mGetKey(&key);
-          switch(key)
-          {
-            case KEY_CTRL_EXIT:
-              inscreen=0;
-              break;
-          }
-        }
-        MsgBoxPop();
+        closeMsgBox();
         return;
       }
     }
@@ -1677,18 +1657,7 @@ void invalidFieldMsg(int istime) {
   if(istime) mPrintXY(3, 3, (char*)"Invalid time.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   else mPrintXY(3, 3, (char*)"Invalid date.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-  int key,inscreen=1;
-  while(inscreen) {
-    mGetKey(&key);
-    switch(key)
-    {
-      case KEY_CTRL_EXIT:
-      case KEY_CTRL_AC:
-        inscreen=0;
-        break;
-    }
-  }
-  MsgBoxPop(); 
+  closeMsgBox(); 
 }
 
 void setEventChrono(CalendarEvent* event) {
@@ -1730,18 +1699,7 @@ void setEventChrono(CalendarEvent* event) {
     }
   }
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-  int key,inscreen=1;
-  while(inscreen) {
-    mGetKey(&key);
-    switch(key)
-    {
-      case KEY_CTRL_EXIT:
-      case KEY_CTRL_AC:
-        inscreen=0;
-        break;
-    }
-  }
-  MsgBoxPop();
+  closeMsgBox();
 }
 
 int changeEventCategory(CalendarEvent* event) {

@@ -20,6 +20,7 @@
 #include "tbcdProvider.hpp"
 #include "selectorGUI.hpp"
 #include "textGUI.hpp"
+#include "menuGUI.hpp"
 
 #include "debugGUI.hpp"
 
@@ -442,18 +443,7 @@ void currentTimeToBasicVar() {
   mPrintXY(3, 3, (char*)"saved to alpha", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 4, (char*)"variable T.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-  int gkey;
-  while(1) {
-    mGetKey(&gkey);
-    switch(gkey)
-    {
-      case KEY_CTRL_EXIT:
-      case KEY_CTRL_AC:
-        MsgBoxPop();
-        return;
-        break;
-    }
-  }
+  closeMsgBox();
 }
 
 void drawHomeClock(int format, int fgcolor, int bgcolor) {

@@ -72,4 +72,6 @@ int doMenu(Menu* menu);
 int getMenuSelectionIgnoringSeparators(Menu* menu);
 int getMenuSelectionOnlySeparators(Menu* menu);
 
+void closeMsgBox(int mgetkey=1);
+
 #endif

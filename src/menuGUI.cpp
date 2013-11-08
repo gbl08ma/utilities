@@ -290,3 +290,22 @@ int getMenuSelectionOnlySeparators(Menu* menu) {
   }
   return selS;
 }
+
+// not really related to the menu, but had to go somewhere as a general GUI helper:
+
+void closeMsgBox(int mgetkey) {
+  // waits for user to exit a simple info box, and calls MsgBoxPush for you!
+  int key,inscreen=1;
+  while(inscreen) {
+    if(mgetkey) mGetKey(&key);
+    else GetKey(&key);
+    switch(key)
+    {
+      case KEY_CTRL_EXIT:
+      case KEY_CTRL_AC:
+        inscreen=0;
+        break;
+    }
+  }
+  MsgBoxPop(); 
+}

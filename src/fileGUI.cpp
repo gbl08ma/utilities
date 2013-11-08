@@ -50,18 +50,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
     PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 1835, TEXT_COLOR_BLACK); // some will
     PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 1836, TEXT_COLOR_BLACK); // be skipped
     PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
-    int inmsg=1, key;
-    while(inmsg) {
-      mGetKey(&key);
-      switch(key)
-      {
-        case KEY_CTRL_EXIT:
-        case KEY_CTRL_AC:
-          inmsg=0;
-          break;
-      }
-    }
-    MsgBoxPop();
+    closeMsgBox();
   }
   MenuItem* menuitems = NULL;
   File* files = NULL;
@@ -173,18 +162,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             mPrintXY(3, 4, (char*)"just a special", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 5, (char*)"mirror of it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
-            int inmsg=1, key;
-            while(inmsg) {
-              mGetKey(&key);
-              switch(key)
-              {
-                case KEY_CTRL_EXIT:
-                case KEY_CTRL_AC:
-                  inmsg=0;
-                  break;
-              }
-            }
-            MsgBoxPop();
+            closeMsgBox();
             *shownMainMemHelp=1;
           }
           return 1; //reload at new folder
@@ -239,18 +217,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
               mPrintXY(3, 3, (char*)"to manage the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               mPrintXY(3, 4, (char*)"clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
-              int inmsg=1, key;
-              while(inmsg) {
-                mGetKey(&key);
-                switch(key)
-                {
-                  case KEY_CTRL_EXIT:
-                  case KEY_CTRL_AC:
-                    inmsg=0;
-                    break;
-                }
-              }
-              MsgBoxPop();
+              closeMsgBox();
               *shownClipboardHelp=1;
             }
           } else {
@@ -259,18 +226,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             mPrintXY(3, 3, (char*)"selected items to", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 4, (char*)"clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-            int inmsg=1, key;
-            while(inmsg) {
-              mGetKey(&key);
-              switch(key)
-              {
-                case KEY_CTRL_EXIT:
-                case KEY_CTRL_AC:
-                  inmsg=0;
-                  break;
-              }
-            }
-            MsgBoxPop();
+            closeMsgBox();
           }
         }
         break;
@@ -495,18 +451,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
     mPrintXY(3, 2, (char*)"Error opening", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     mPrintXY(3, 3, (char*)"file to read.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-    int gkey = 0, inscreen = 1;
-    while(inscreen) {
-      mGetKey(&gkey);
-      switch(gkey)
-      {
-        case KEY_CTRL_EXIT:
-        case KEY_CTRL_AC:
-          inscreen=0;
-          break;
-      }
-    }
-    MsgBoxPop();
+    closeMsgBox();
     return;
   }
   //linebreak detection is done outside of any loops for better speed:
@@ -679,18 +624,7 @@ void showCopyFolderWarning() {
   mPrintXY(3, 2, (char*)"Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 3, (char*)"not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-  int inmsg=1, key;
-  while(inmsg) {
-    mGetKey(&key);
-    switch(key)
-    {
-      case KEY_CTRL_EXIT:
-      case KEY_CTRL_AC:
-        inmsg=0;
-        break;
-    }
-  }
-  MsgBoxPop(); 
+  closeMsgBox();
 }
 
 void shortenDisplayPath(char* longpath, char* shortpath, int jump) {

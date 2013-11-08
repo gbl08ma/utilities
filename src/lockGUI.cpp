@@ -101,9 +101,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
         mPrintXY(3, 3, (char*)"Code can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         mPrintXY(3, 4, (char*)"empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-        int nkey;
-        while(1) { GetKey(&nkey); if (nkey==KEY_CTRL_EXIT) { break; } }
-        MsgBoxPop();
+        closeMsgBox(0);
       }
     }
     if(key && key < 30000)
@@ -146,7 +144,6 @@ int unlockCalc() {
   int compareRes=0;
   if (res == 0) { return 0; }
   else if (res == 1) compareRes = comparePasswordHash(password);
-  int key;
   switch(compareRes)
   {
     case 0:
@@ -159,16 +156,14 @@ int unlockCalc() {
       mPrintXY(3, 3, (char*)"Data tampering", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       mPrintXY(3, 4, (char*)"detected!", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-      while(1) { GetKey(&key); if (key==KEY_CTRL_EXIT) { break; } }
-      MsgBoxPop();
+      closeMsgBox(0);
       return 0;
       break;
     case 4:
       MsgBoxPush(3);
       mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-      while(1) { GetKey(&key); if (key==KEY_CTRL_EXIT) { break; } }
-      MsgBoxPop();
+      closeMsgBox(0);
       return 0;
       break;
     default: break;

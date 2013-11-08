@@ -13,6 +13,7 @@
 #include <math.h>
 
 #include "inputGUI.hpp"
+#include "menuGUI.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "settingsProvider.hpp" 
@@ -79,18 +80,7 @@ int doTextInput(textInput* input) {
           mPrintXY(3, 3, (char*)"Field can't be", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(3, 4, (char*)"left blank.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-          int inscreen=1;
-          while(inscreen) {
-            if(input->allowMkey) mGetKey(&input->key); else GetKey(&input->key);
-            switch(input->key)
-            {
-              case KEY_CTRL_EXIT:
-              case KEY_CTRL_AC:
-                inscreen=0;
-                break;
-            }
-          }
-          MsgBoxPop(); 
+          closeMsgBox(input->allowMkey);
         }
       } else {
         Cursor_SetFlashOff(); return INPUT_RETURN_CONFIRM;
