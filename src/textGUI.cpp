@@ -71,15 +71,16 @@ int doTextArea(textArea* text) {
       clearLine(1,1);
       mPrintXY(1, 1, (char*)text->title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     }
+    int scrollableHeight = LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1);
     //draw a scrollbar:
     if(text->scrollbar) {
       TScrollbar sb;
       sb.I1 = 0;
       sb.I5 = 0;
       sb.indicatormaximum = totalTextY;
-      sb.indicatorheight = LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1); //10*17;
+      sb.indicatorheight = scrollableHeight;
       sb.indicatorpos = -scroll;
-      sb.barheight = sb.indicatorheight;
+      sb.barheight = scrollableHeight;
       sb.bartop = (text->showtitle ? 24 : 0);
       sb.barleft = text->width - 6;
       sb.barwidth = 6;
@@ -94,11 +95,13 @@ int doTextArea(textArea* text) {
       case KEY_CTRL_UP:
         if (scroll < 0) {
           scroll = scroll + 17;
+          if(scroll > 0) scroll = 0;
         }
         break;
       case KEY_CTRL_DOWN:
-        if (textY > LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1)) {
+        if (textY > scrollableHeight) {
           scroll = scroll - 17;
+          if(scroll < -totalTextY+scrollableHeight) scroll = -totalTextY+scrollableHeight;
         }
         break;
       case KEY_CTRL_EXE:
