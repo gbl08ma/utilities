@@ -604,6 +604,8 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
           if(changeEventCategory(&ce[events[msel-1].origpos])) {
             ReplaceEventFile(&events[msel-1].startdate, ce, CALENDARFOLDER, ne);
           }
+          *y=events[msel-1].startdate.year; *m=events[msel-1].startdate.month; *d=events[msel-1].startdate.day;
+          *jumpToSel=1;
           return 1; // return even if user aborted, because we used alloca inside a loop (leak waiting to happen)
         }
         break;
