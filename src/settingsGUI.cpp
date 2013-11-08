@@ -57,9 +57,6 @@ void settingsMenu() {
   menu.scrollout=1;
   menu.selection=1;
   menu.allowMkey=0;
-  strcpy(menu.nodatamsg, "");
-  strcpy(menu.title, "");
-  strcpy(menu.statusText, "");
   while(1) {
     menuitems[6].value = GetSetting(SETTING_DISPLAY_STATUSBAR);
     menuitems[7].value = GetSetting(SETTING_SHOW_ADVANCED);
@@ -183,9 +180,6 @@ void lockSettingsMenu() {
   menu.scrollout=1;
   menu.selection=1;
   menu.allowMkey=0;
-  strcpy(menu.nodatamsg, "");
-  strcpy(menu.title, "");
-  strcpy(menu.statusText, "");
   while(1) {
     menuitems[1].value = GetSetting(SETTING_PASSWORD_PRIVACY);
     menuitems[2].value = GetSetting(SETTING_LOCK_AUTOOFF);
@@ -240,9 +234,7 @@ void lockSettingsMenu() {
         smallmenu.showtitle=1;
         smallmenu.selection=GetSetting(SETTING_UNLOCK_RUNMAT)+1;
         smallmenu.allowMkey=0;
-        strcpy(smallmenu.nodatamsg, "");
         strcpy(smallmenu.title, "Run-Mat on unlock");
-        strcpy(smallmenu.statusText, "");
         int sres = doMenu(&smallmenu);
         if(sres == MENU_RETURN_SELECTION) {
           SetSetting(SETTING_UNLOCK_RUNMAT, smallmenu.selection-1, 1);
@@ -275,9 +267,6 @@ void clockSettingsMenu() {
   menu.numitems=5;
   menu.scrollout=1;
   menu.allowMkey=0;
-  strcpy(menu.nodatamsg, "");
-  strcpy(menu.title, "");
-  strcpy(menu.statusText, "");
   while(1) {
     menuitems[1].value = GetSetting(SETTING_CLOCK_SECONDS);
     menuitems[2].value = GetSetting(SETTING_HOME_PANES);
@@ -353,9 +342,6 @@ void calendarSettingsMenu() {
   menu.numitems=3;
   menu.scrollout=1;
   menu.allowMkey=0;
-  strcpy(menu.nodatamsg, "");
-  strcpy(menu.title, "");
-  strcpy(menu.statusText, "");
   while(1) {
     menuitems[0].value = GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT);
     int res = doMenu(&menu);
@@ -391,10 +377,8 @@ void calendarSettingsMenu() {
         else smallmenu.selection=GetSetting(SETTING_WEEK_START_DAY)+1;
         smallmenu.scroll=0;
         smallmenu.allowMkey=0;
-        strcpy(smallmenu.nodatamsg, "");
         if(menu.selection == 2) strcpy(smallmenu.title, "Default Calendar");
         else strcpy(smallmenu.title, "Week starts on");
-        strcpy(smallmenu.statusText, "");
         int sres = doMenu(&smallmenu);
         if(sres == MENU_RETURN_SELECTION) {
           if(menu.selection == 2) SetSetting(SETTING_DEFAULT_CALENDAR_VIEW, smallmenu.selection-1, 1);

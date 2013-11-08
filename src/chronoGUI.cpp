@@ -124,9 +124,7 @@ void chronoScreen(chronometer* chrono) {
   menu.height=7;
   menu.scrollout=1;
   menu.showtitle=1;
-  strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "Chronometers");
-  strcpy(menu.statusText, ""); 
   
   Bdisp_AllClr_VRAM();
   int iresult;

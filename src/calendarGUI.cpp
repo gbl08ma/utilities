@@ -656,7 +656,6 @@ void viewEvents(int y, int m, int d) {
   dateToString(buffer, y, m, d, GetSetting(SETTING_DATEFORMAT));
   strcpy(menu.title, "Events for ");
   strcat(menu.title, buffer);
-  strcpy(menu.statusText, "");
   while(res) {
     res = viewEventsSub(&menu, y, m, d);
   }
@@ -1798,9 +1797,7 @@ void searchEventsGUI(int y, int m, int d) {
   smallmenu.scrollbar=0;
   smallmenu.scrollout=1;
   smallmenu.showtitle=1;
-  strcpy(smallmenu.nodatamsg, "");
   strcpy(smallmenu.title, "Search on:");
-  strcpy(smallmenu.statusText, "");
   int sres = doMenu(&smallmenu);
   MsgBoxPop();
   
@@ -1838,7 +1835,6 @@ void searchEventsGUI(int y, int m, int d) {
     menu.type=MENUTYPE_FKEYS;
     strcpy(menu.nodatamsg, "No events found");
     strcpy(menu.title, "Search results");
-    strcpy(menu.statusText, "");
 
     if(smallmenu.selection == 1) {
       menu.numitems = SearchEventsOnYear(y, CALENDARFOLDER, NULL, needle, 200); //get event count

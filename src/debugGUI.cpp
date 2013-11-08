@@ -92,9 +92,7 @@ void masterControl() {
   menu.showtitle=1;
   menu.selection=1;
   menu.allowMkey=0;
-  strcpy(menu.nodatamsg, "");
   strcpy(menu.title, "UTILITIES CONTROL");
-  strcpy(menu.statusText, "");
   while(1) {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;

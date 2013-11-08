@@ -159,7 +159,6 @@ void addinManager() {
   menu.type=MENUTYPE_FKEYS;
   strcpy(menu.nodatamsg, "No Add-Ins");
   strcpy(menu.title, "Add-In Manager");
-  strcpy(menu.statusText, "");
   while(res) {
     res = addinManagerSub(&menu);
   }
