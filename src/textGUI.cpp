@@ -21,6 +21,8 @@
 
 int doTextArea(textArea* text) {
   int scroll = 0;
+  int isFirstDraw = 1;
+  int totalTextY = 0;
   int key;
   while(1) {
     drawRectangle(text->x, text->y+24, text->width, LCD_HEIGHT_PX-24, COLOR_WHITE);
@@ -55,8 +57,16 @@ int doTextArea(textArea* text) {
         if(*src || text->elements[cur].spaceAtEnd) PrintMini(&textX, &textY, (unsigned char*)" ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
       }
       free(singleword);
+      if(isFirstDraw) {
+        totalTextY = textY;
+      } else {
+        if(textY>LCD_HEIGHT_PX) {
+          break;
+        }
+      }
       cur++;
     }
+    isFirstDraw=0;
     if(text->showtitle) {
       clearLine(1,1);
       mPrintXY(1, 1, (char*)text->title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
@@ -66,7 +76,7 @@ int doTextArea(textArea* text) {
       TScrollbar sb;
       sb.I1 = 0;
       sb.I5 = 0;
-      sb.indicatormaximum = (textY-scroll);
+      sb.indicatormaximum = (totalTextY)-(text->showtitle ? 0 : 24);
       sb.indicatorheight = 10*17;
       sb.indicatorpos = -scroll;
       sb.barheight = LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1);
@@ -87,7 +97,7 @@ int doTextArea(textArea* text) {
         }
         break;
       case KEY_CTRL_DOWN:
-        if (textY > LCD_HEIGHT_PX-24*2) {
+        if (textY > LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1)) {
           scroll = scroll - 17;
         }
         break;
