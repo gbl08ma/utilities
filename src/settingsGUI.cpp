@@ -161,7 +161,7 @@ void settingsMenu() {
 
 void lockSettingsMenu() {
   MenuItem menuitems[5];
-  strcpy(menuitems[0].text, "Set lock code");;
+  strcpy(menuitems[0].text, "Set lock code");
   
   strcpy(menuitems[1].text, "Show last code char");
   menuitems[1].type = MENUITEM_CHECKBOX;
