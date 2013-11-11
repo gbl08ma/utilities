@@ -181,10 +181,10 @@ void powerMenu() {
   mPrintXY(2, 2, (char*)"Power options", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
   MenuItem menuitems[5];
-  strcpy(menuitems[0].text, "Auto Power Off");
-  strcpy(menuitems[1].text, "Backlight Duration");
-  strcpy(menuitems[2].text, "Backlight Level");
-  strcpy(menuitems[3].text, "Power Information");
+  strcpy(menuitems[0].text, "Auto power off");
+  strcpy(menuitems[1].text, "Backlight duration");
+  strcpy(menuitems[2].text, "Backlight level");
+  strcpy(menuitems[3].text, "Power information");
   strcpy(menuitems[4].text, "CPU speed");
   
   Menu menu;
@@ -300,7 +300,7 @@ void toolsMenu() {
   MenuItem menuitems[5];
   strcpy(menuitems[0].text, "File manager");
   strcpy(menuitems[1].text, "Memory usage");
-  strcpy(menuitems[2].text, "Add-In Manager");
+  strcpy(menuitems[2].text, "Add-In manager");
   strcpy(menuitems[3].text, "Function key color");
   strcpy(menuitems[4].text, "System information");
   
