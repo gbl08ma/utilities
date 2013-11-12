@@ -651,7 +651,7 @@ void viewEvents(int y, int m, int d) {
   menu.showtitle=1;
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
-  strcpy(menu.nodatamsg, "No Events - press F2");
+  strcpy(menu.nodatamsg, "No events - press F2");
   char buffer[15] = "";
   dateToString(buffer, y, m, d, GetSetting(SETTING_DATEFORMAT));
   strcpy(menu.title, "Events for ");

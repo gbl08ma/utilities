@@ -31,7 +31,7 @@ void viewTasks() {
   menu.showtitle=1;
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
-  strcpy(menu.nodatamsg, "No Tasks - press F2");
+  strcpy(menu.nodatamsg, "No tasks - press F2");
   strcpy(menu.title, "Tasks");
   while(res) {
     res = viewTasksSub(&menu);
