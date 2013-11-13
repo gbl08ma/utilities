@@ -26,11 +26,13 @@ void mGetKey(int* key) {
     checkChronoComplete();
     GetKey(key);
     if (*key == KEY_CTRL_SETUP) {
+      Cursor_SetFlashOff(); // in case we were in an input
       SaveVRAM_1();
       settingsMenu();
       LoadVRAM_1();
       break;
     } else if (*key == KEY_CTRL_QUIT) {
+      Cursor_SetFlashOff(); // in case we were in an input
       stopAndUninstallStubTimer(); // in case we were in some timer screen, where the timer has been set
       // having timers running breaks Bfile functions
       longjmp(utilities_return, 1); // this is also used for returning from Run-Mat. Basically equates to restarting the add-in.
