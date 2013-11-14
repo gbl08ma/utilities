@@ -112,6 +112,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
   //don't forget to reload the file list after using this
   if (itemsInClipboard>0) {
     int curfile = 0;
+    progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
     while(curfile < itemsInClipboard) {
       char name[MAX_NAME_SIZE] = "";
       nameFromFilename(clipboard[curfile].filename, name);
