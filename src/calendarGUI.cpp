@@ -166,7 +166,10 @@ int viewMonthCalendar() {
           sd = d;
           return 1;
         }
-        break;     
+        break;
+      case KEY_CTRL_OPTN:
+        viewBusyMap(0, y, m, d);
+        break;
       case KEY_CTRL_UP:
         d-=7;
         if (d < 1)
@@ -1911,4 +1914,45 @@ void searchEventsGUI(int y, int m, int d) {
       }
     }
   }
+}
+
+void viewBusyMap(int type, int y, int m, int d) {
+  // type: 0 for day, 1 for week, 2 for month
+  Bdisp_AllClr_VRAM();
+  int starty=50;
+  int startx=0;
+  int height=20;
+  int width=LCD_WIDTH_PX;
+  if(type==0) {
+    drawRectangle(startx, starty, width, height, COLOR_LIGHTGRAY);
+    for(int i = 0; i < 24; i++) {
+      int tx=(width*i*60*60)/(24*60*60);
+      plot(startx+tx,starty+height,COLOR_GRAY);
+    }
+    EventDate thisday;
+    thisday.day = d; thisday.month = m; thisday.year = y;  
+    int count = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+    CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
+    count = GetEventsForDate(&thisday, CALENDARFOLDER, events);
+    int curitem = 0;
+    while(curitem <= count-1) {
+      if(events[curitem].timed) {
+        long int start = events[curitem].starttime.hour*60*60 + events[curitem].starttime.minute*60 + events[curitem].starttime.second;        
+        
+        long int bwidth = 0;
+        long int x = (width*start)/(24*60*60);
+        if(DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day) == DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day)) {
+          long int duration = events[curitem].endtime.hour*60*60 + events[curitem].endtime.minute*60 + events[curitem].endtime.second - start;
+          bwidth = (width*duration)/(24*60*60);
+          if(bwidth <= 0) bwidth = 1; // always make an event visible
+        } else {
+          bwidth = width-x;
+        }
+        drawRectangle(startx+x, starty, bwidth, height, textColorToFullColor((events[curitem].category == 0 ? 7 : events[curitem].category-1)));
+      }
+      curitem++;
+    }
+  }
+  int key;
+  mGetKey(&key);
 }
