@@ -1984,6 +1984,8 @@ void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int
     }
     plot(startx+daywidth*curday,starty-1,COLOR_GRAY);
     plot(startx+daywidth*curday,starty-2,COLOR_GRAY);
+    if(date.year == (unsigned)getCurrentYear() && date.month == (unsigned)getCurrentMonth() && date.day == (unsigned)getCurrentDay())
+      drawRectangle(startx+daywidth*curday+1, starty-2, daywidth-1, 2, COLOR_YELLOW);
     drawDayBusyMap(&date, startx+curday*daywidth, starty, daywidth, height, 0,curday+1,startx+daywidth*7);
     ddays++;
     curday++;
