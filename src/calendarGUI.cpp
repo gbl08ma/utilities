@@ -168,7 +168,7 @@ int viewMonthCalendar() {
         }
         break;
       case KEY_CTRL_OPTN:
-        viewBusyMap(0, y, m, d);
+        viewBusyMap(1, y, m, d);
         break;
       case KEY_CTRL_UP:
         d-=7;
@@ -1916,41 +1916,70 @@ void searchEventsGUI(int y, int m, int d) {
   }
 }
 
+void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int height, int showHourMarks, int isMoreThanDay) {
+  drawRectangle(startx, starty, width, height, COLOR_LIGHTGRAY);
+  if(showHourMarks) {
+    for(int i = 0; i < 24; i++) {
+      int tx=(width*i*60*60)/(24*60*60);
+      plot(startx+tx,starty+height,COLOR_GRAY);
+    }
+  }
+  int count = GetEventsForDate(thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+  CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
+  count = GetEventsForDate(thisday, CALENDARFOLDER, events);
+  int curitem = 0;
+  while(curitem <= count-1) {
+    if(events[curitem].timed) {
+      long int start = events[curitem].starttime.hour*60*60 + events[curitem].starttime.minute*60 + events[curitem].starttime.second;        
+      
+      long int bwidth = 0;
+      long int x = (width*start)/(24*60*60);
+      if(DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day) == DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day)) {
+        long int duration = events[curitem].endtime.hour*60*60 + events[curitem].endtime.minute*60 + events[curitem].endtime.second - start;
+        bwidth = (width*duration)/(24*60*60);
+        if(bwidth <= 0) bwidth = 1; // always make an event visible
+      } else {
+        bwidth = width-x;
+      }
+      drawRectangle(startx+x, starty, bwidth, height, textColorToFullColor((events[curitem].category == 0 ? 7 : events[curitem].category-1)));
+    } else if(!events[curitem].timed && isMoreThanDay) {
+      drawRectangle(startx, starty, width, height, textColorToFullColor((events[curitem].category == 0 ? 7 : events[curitem].category-1)));
+    }
+    curitem++;
+  }
+}
 void viewBusyMap(int type, int y, int m, int d) {
   // type: 0 for day, 1 for week, 2 for month
   Bdisp_AllClr_VRAM();
   int starty=50;
   int startx=0;
   int height=20;
-  int width=LCD_WIDTH_PX;
   if(type==0) {
-    drawRectangle(startx, starty, width, height, COLOR_LIGHTGRAY);
-    for(int i = 0; i < 24; i++) {
-      int tx=(width*i*60*60)/(24*60*60);
-      plot(startx+tx,starty+height,COLOR_GRAY);
-    }
     EventDate thisday;
-    thisday.day = d; thisday.month = m; thisday.year = y;  
-    int count = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
-    CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
-    count = GetEventsForDate(&thisday, CALENDARFOLDER, events);
-    int curitem = 0;
-    while(curitem <= count-1) {
-      if(events[curitem].timed) {
-        long int start = events[curitem].starttime.hour*60*60 + events[curitem].starttime.minute*60 + events[curitem].starttime.second;        
-        
-        long int bwidth = 0;
-        long int x = (width*start)/(24*60*60);
-        if(DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day) == DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day)) {
-          long int duration = events[curitem].endtime.hour*60*60 + events[curitem].endtime.minute*60 + events[curitem].endtime.second - start;
-          bwidth = (width*duration)/(24*60*60);
-          if(bwidth <= 0) bwidth = 1; // always make an event visible
-        } else {
-          bwidth = width-x;
-        }
-        drawRectangle(startx+x, starty, bwidth, height, textColorToFullColor((events[curitem].category == 0 ? 7 : events[curitem].category-1)));
+    thisday.day = d; thisday.month = m; thisday.year = y;
+    int width=LCD_WIDTH_PX;
+    drawDayBusyMap(&thisday, startx, starty, width, height, 1,0);
+  } else if (type==1) {
+    long int ddays=DateToDays(y, m, d);
+    while(dow(y,m,d) != GetSetting(SETTING_WEEK_START_DAY)) { //find sunday/monday before provided date
+      ddays = DateToDays(y, m, d) - 1; //decrease day by 1
+      long int ny, nm, nd;
+      DaysToDate(ddays, &ny, &nm, &nd);
+      y=ny; m=nm; d=nd;
+    }
+    unsigned int curday = 0;
+    while(curday < 7) {
+      long int ny, nm, nd;
+      DaysToDate(ddays, &ny, &nm, &nd);
+      EventDate date;
+      date.year=ny; date.month=nm; date.day=nd;
+      if(!isDateValid(ny,nm,nd)) {
+        // one of the dates we're trying to view is not valid (probably because the year is not valid, i.e. below 0 or above 9999).
+        return; // NOTE abort
       }
-      curitem++;
+      drawDayBusyMap(&date, startx+curday*(LCD_WIDTH_PX/7), starty, LCD_WIDTH_PX/7, height, 0,1);
+      ddays++;
+      curday++;
     }
   }
   int key;
