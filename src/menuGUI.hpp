@@ -29,9 +29,15 @@ typedef struct
   int value=MENUITEM_VALUE_NONE; // value of the menu item. For example, if type is MENUITEM_CHECKBOX and the checkbox is checked, the value of this var will be MENUITEM_VALUE_CHECKED
   int color=TEXT_COLOR_BLACK; // color of the menu item (use TEXT_COLOR_* to define)
   // The following two settings require the menu type to be set to MENUTYPE_MULTISELECT
-  int isfolder=0; // for file browsers, this will show a folder before the item.
-  int isselected=0; // for file browsers and other multi-select screens, this will show a arrow before the item
+  int isfolder=0; // for file browsers, this will signal the item is a folder
+  int isselected=0; // for file browsers and other multi-select screens, this will show an arrow before the item
+  int icon=-1; //for file browsers, to show a file icon. -1 shows no icon (default)
 } MenuItem;
+
+typedef struct
+{
+  unsigned short data[0x12*0x18];
+} MenuItemIcon;
 
 #define MENUTYPE_NORMAL 0
 #define MENUTYPE_MULTISELECT 1
@@ -68,7 +74,7 @@ typedef struct {
 #define MENU_RETURN_SELECTION 1
 #define MENU_RETURN_INSTANT 2
 #define MENU_RETURN_SCROLLING 3 //for returnOnInfiniteScrolling
-int doMenu(Menu* menu);
+int doMenu(Menu* menu, MenuItemIcon* icontable=NULL);
 int getMenuSelectionIgnoringSeparators(Menu* menu);
 int getMenuSelectionOnlySeparators(Menu* menu);
 

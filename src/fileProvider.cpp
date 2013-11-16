@@ -16,6 +16,7 @@
 #include "graphicsProvider.hpp"
 #include "timeProvider.hpp"
 #include "settingsProvider.hpp"
+#include "stringsProvider.hpp"
 #include "menuGUI.hpp"
 #include "fileProvider.hpp"
 
@@ -49,9 +50,11 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
         if(fileinfo.fsize == 0) {
           files[*count].isfolder = 1;
           menuitems[*count].isfolder = 1;
+          menuitems[*count].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
         } else {
           menuitems[*count].isfolder = 0;
           menuitems[*count].isfolder = 0;
+          menuitems[*count].icon = fileIconFromName((char*)buffer);
         }
         menuitems[*count].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
         // because usually alloca is used to declare space for MenuItem*, the space is not cleared. which means we need to explicitly set each field:
@@ -204,4 +207,24 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
     }
     closeProgressMessage(); //we opened it, no matter if copying or moving.
   }
+}
+
+int fileIconFromName(char* name) {
+  if(EndsIWith(name, (char*)".g1m") || EndsIWith(name, (char*)".g2m") || EndsIWith(name, (char*)".g3m"))
+    return FILE_ICON_G3M;
+  else if (EndsIWith(name, (char*)".g1e") || EndsIWith(name, (char*)".g2e") || EndsIWith(name, (char*)".g3e"))
+    return FILE_ICON_G3E;
+  else if (EndsIWith(name, (char*)".g3a") || EndsIWith(name, (char*)".g3l"))
+    return FILE_ICON_G3A;
+  else if (EndsIWith(name, (char*)".g3p"))
+    return FILE_ICON_G3P;
+  else if (EndsIWith(name, (char*)".g3b"))
+    return FILE_ICON_G3B;
+  else if (EndsIWith(name, (char*)".bmp"))
+    return FILE_ICON_BMP;
+  else if (EndsIWith(name, (char*)".txt"))
+    return FILE_ICON_TXT;
+  else if (EndsIWith(name, (char*)".csv"))
+    return FILE_ICON_CSV;
+  else return FILE_ICON_OTHER;
 }

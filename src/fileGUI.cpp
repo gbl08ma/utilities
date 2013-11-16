@@ -39,6 +39,8 @@ void fileManager() {
 
 int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard) {
   Menu menu;
+  MenuItemIcon icontable[12];
+  buildIconTable(icontable);
   
   // first get file count so we know how much to alloc
   int res = GetAnyFiles(NULL, NULL, browserbasepath, &menu.numitems);
@@ -132,7 +134,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
       GetFKeyPtr(0x038E, &iresult); // MKFLDR
       FKey_Display(3, (int*)iresult);
     }
-    res = doMenu(&menu);
+    res = doMenu(&menu, icontable);
     switch(res) {
       case MENU_RETURN_EXIT:
         if(!strcmp(browserbasepath,"\\\\fls0\\")) { //check that we aren't already in the root folder
@@ -359,10 +361,21 @@ void fileInformation(File* files, Menu* menu) {
   nameFromFilename(files[menu->selection-1].filename, name);
   textX=0; textY=textY+17;
   PrintMini(&textX, &textY, (unsigned char*)name, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textX=0; textY=textY+25;
+  textX=0; textY=textY+20;
   PrintMini(&textX, &textY, (unsigned char*)"Full file path:", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
-  textX=0; textY=textY+17;
-  PrintMini(&textX, &textY, (unsigned char*)files[menu->selection-1].filename, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  textX=0; textY=textY+18;
+  PrintMiniMini( &textX, &textY, (unsigned char*)files[menu->selection-1].filename, 0, TEXT_COLOR_BLACK, 0 );
+  
+  // get file type description from OS
+  unsigned int msgno;
+  unsigned short iconbuffer[0x12*0x18];
+  unsigned short folder[7]={};
+  SMEM_MapIconToExt( (unsigned char*)name, folder, &msgno, iconbuffer );
+  char mresult[88] = "";
+  LocalizeMessage1( msgno, mresult );
+  textX=0; textY=textY+15;
+  PrintMini(&textX, &textY, (unsigned char*)"File type: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, (unsigned char*)mresult, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   
   //Get file size
   unsigned short pFile[MAX_FILENAME_SIZE+1];
@@ -373,7 +386,7 @@ void fileInformation(File* files, Menu* menu) {
     unsigned int filesize = Bfile_GetFileSize_OS(hFile);  
     unsigned char buffer[50] = "";
     itoa(filesize, (unsigned char*)buffer);
-    textX=0; textY=textY+25;
+    textX=0; textY=textY+20;
     PrintMini(&textX, &textY, (unsigned char*)"File size: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
     PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     PrintMini(&textX, &textY, (unsigned char*)" bytes", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
@@ -393,7 +406,7 @@ void fileInformation(File* files, Menu* menu) {
       memset( &ctx, 0, sizeof( sha2_context ) );
       
       unsigned char niceout[32] = "";
-      textX=0; textY=textY+25;
+      textX=0; textY=textY+20;
       PrintMini(&textX, &textY, (unsigned char*)"SHA-256 checksum: ", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
       textY=textY+5;
       for(int i=0; i<32;i++) {
@@ -640,4 +653,41 @@ void shortenDisplayPath(char* longpath, char* shortpath, int jump) {
   if (longpath[i] == '\\') {
     strcat(shortpath, longpath+i);
   }
+}
+
+void buildIconTable(MenuItemIcon* icontable) {
+  unsigned int msgno;
+  unsigned short iconbuffer[0x12*0x18];
+  unsigned short folder[7]={'\\','\\','f','l','s','0',0};
+  // get folder icon
+  SMEM_MapIconToExt( (unsigned char*)"t", folder, &msgno, iconbuffer );
+  memcpy(icontable[FILE_ICON_FOLDER].data, iconbuffer, sizeof(iconbuffer));
+  
+  SMEM_MapIconToExt( (unsigned char*)"t.g3m", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
+  memcpy(icontable[FILE_ICON_G3M].data, iconbuffer, sizeof(iconbuffer));
+  
+  SMEM_MapIconToExt( (unsigned char*)"t.g3e", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
+  memcpy(icontable[FILE_ICON_G3E].data, iconbuffer, sizeof(iconbuffer));
+  
+  SMEM_MapIconToExt( (unsigned char*)"t.g3a", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
+  memcpy(icontable[FILE_ICON_G3A].data, iconbuffer, sizeof(iconbuffer));
+  
+  SMEM_MapIconToExt( (unsigned char*)"t.g3p", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
+  memcpy(icontable[FILE_ICON_G3P].data, iconbuffer, sizeof(iconbuffer));
+  
+  SMEM_MapIconToExt( (unsigned char*)"t.g3b", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
+  memcpy(icontable[FILE_ICON_G3B].data, iconbuffer, sizeof(iconbuffer));
+  
+  SMEM_MapIconToExt( (unsigned char*)"t.bmp", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
+  memcpy(icontable[FILE_ICON_BMP].data, iconbuffer, sizeof(iconbuffer));
+  
+  SMEM_MapIconToExt( (unsigned char*)"t.txt", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
+  memcpy(icontable[FILE_ICON_TXT].data, iconbuffer, sizeof(iconbuffer));
+  
+  SMEM_MapIconToExt( (unsigned char*)"t.csv", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
+  memcpy(icontable[FILE_ICON_CSV].data, iconbuffer, sizeof(iconbuffer));
+  
+  // get icon for unsupported files
+  SMEM_MapIconToExt( (unsigned char*)"t.abc", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
+  memcpy(icontable[FILE_ICON_OTHER].data, iconbuffer, sizeof(iconbuffer));
 }

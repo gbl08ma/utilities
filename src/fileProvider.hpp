@@ -44,4 +44,16 @@ void deleteFiles(File* files, Menu* menu);
 void nameFromFilename(char* filename, char* name);
 void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard);
 
+#define FILE_ICON_FOLDER 0
+#define FILE_ICON_G3M 1
+#define FILE_ICON_G3E 2
+#define FILE_ICON_G3A 3
+#define FILE_ICON_G3P 4
+#define FILE_ICON_G3B 5
+#define FILE_ICON_BMP 6
+#define FILE_ICON_TXT 7
+#define FILE_ICON_CSV 8
+#define FILE_ICON_OTHER 9
+int fileIconFromName(char* name);
+
 #endif

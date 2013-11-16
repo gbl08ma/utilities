@@ -13,12 +13,11 @@
 #include <math.h>
 
 #include "menuGUI.hpp"
-#include "sprites.h"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "settingsProvider.hpp"
 
-int doMenu(Menu* menu) { // returns code telling what user did. selection is on menu->selection. menu->selection starts at 1!
+int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what user did. selection is on menu->selection. menu->selection starts at 1!
   int key;
   int itemsStartY=menu->startY; // char Y where to start drawing the menu items. Having a title increases this by one
   if (menu->showtitle) itemsStartY++;
@@ -69,8 +68,16 @@ int doMenu(Menu* menu) { // returns code telling what user did. selection is on 
           }
           // deal with multiselect menus
           if(menu->type == MENUTYPE_MULTISELECT) {
-            if (menu->items[curitem].isfolder == 1) {
-              if((curitem+itemsStartY-menu->scroll)>=itemsStartY&&(curitem+itemsStartY-menu->scroll)<=(itemsStartY+itemsHeight)) CopySpriteMasked((unsigned char*)folder_icon, menu->startX+18, (curitem+itemsStartY-menu->scroll)*24+4, 17, 15, 0xf81f  );
+            if((curitem+itemsStartY-menu->scroll)>=itemsStartY &&
+              (curitem+itemsStartY-menu->scroll)<=(itemsStartY+itemsHeight) &&
+              icontable != NULL
+            ) {
+              if (menu->items[curitem].isfolder == 1) {
+                // assumes first icon in icontable is the folder icon
+                CopySpriteMasked((unsigned char*)icontable[0].data, menu->startX+17, (curitem+itemsStartY-menu->scroll)*24, 0x12, 0x18, 0xf81f  );
+              } else {
+                if(menu->items[curitem].icon >= 0) CopySpriteMasked((unsigned char*)icontable[menu->items[curitem].icon].data, menu->startX+17, (curitem+itemsStartY-menu->scroll)*24, 0x12, 0x18, 0xf81f  );
+              }
             }
             if (menu->items[curitem].isselected) {
               if (menu->selection == curitem+1) {

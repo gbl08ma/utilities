@@ -15,6 +15,7 @@
 #include <math.h> 
 
 #include "fileProvider.hpp"
+#include "menuGUI.hpp"
 
 void fileManager();
 int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard);
@@ -26,5 +27,6 @@ void fileViewAsText(char* filename);
 void viewFilesInClipboard(File* clipboard, int *itemsinclip);
 void showCopyFolderWarning();
 void shortenDisplayPath(char* longpath, char* shortpath, int jump=1);
+void buildIconTable(MenuItemIcon* icontable);
 
 #endif

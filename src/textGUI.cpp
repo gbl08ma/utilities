@@ -14,7 +14,7 @@
 
 #include "timeProvider.hpp"
 #include "textGUI.hpp"
-#include "calendarProvider.hpp"
+#include "stringsProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "selectorGUI.hpp"

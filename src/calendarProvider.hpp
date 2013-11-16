@@ -78,8 +78,4 @@ int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* 
 int SearchEventsOnMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit);
 int SearchEventsOnYear(int y, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int arraystart=0);
 
-char tolower(char c);
-int strncasecmp(const char *s1, const char *s2, size_t n);
-char *strcasestr(const char *s, const char *find);
-unsigned char *toksplit(unsigned char *src, char tokchar, unsigned char *token, int lgh);
 #endif
