@@ -46,6 +46,9 @@ int changeEventCategory(CalendarEvent* event);
 void viewNthEventOnDay(EventDate* date, int pos);
 void searchEventsGUI(int y=0, int m=0, int d=0);
 void viewBusyMap(int type, int y, int m, int d);
+void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int height, int showHourMarks, int isWeek, int maxx);
+void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int height);
+
 
 
 #endif

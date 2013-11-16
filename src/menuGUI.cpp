@@ -29,7 +29,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
   while(1) {
     // Clear the area of the screen we are going to draw on
     DefineStatusMessage((char*)menu->statusText, 1, 0, 0);
-    drawRectangle(18*(menu->startX-1), 24*menu->startY, 18*menu->width, 24*menu->height, COLOR_WHITE);
+    drawRectangle(18*(menu->startX-1), 24*(menu->miniMiniTitle ? itemsStartY:menu->startY), 18*menu->width, 24*menu->height-(menu->miniMiniTitle ? 24:0), COLOR_WHITE);
     if (menu->numitems>0) {
       int curitem= 0; //current processing item
       while(curitem < menu->numitems) {
@@ -109,7 +109,10 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
       printCentered((unsigned char*)menu->nodatamsg, (itemsStartY*24)+(itemsHeight*24)/2-12, COLOR_BLACK, COLOR_WHITE);
     }
     if(menu->showtitle) {
-      mPrintXY(menu->startX, menu->startY, menu->title, TEXT_MODE_TRANSPARENT_BACKGROUND, menu->titleColor);
+      if(menu->miniMiniTitle) {
+        int textX = 0, textY=(menu->startY-1)*24;
+        PrintMiniMini( &textX, &textY, (unsigned char*)menu->title, 0, menu->titleColor, 0 );
+      } else mPrintXY(menu->startX, menu->startY, menu->title, TEXT_MODE_TRANSPARENT_BACKGROUND, menu->titleColor);
     }
     if(menu->showsubtitle && menu->showtitle) { // linker havocs with PrintMini if I put this if inside the one above
       int textX=MB_ElementCount(menu->title)*18+10, textY=6;

@@ -167,9 +167,6 @@ int viewMonthCalendar() {
           return 1;
         }
         break;
-      case KEY_CTRL_OPTN:
-        viewBusyMap(1, y, m, d);
-        break;
       case KEY_CTRL_UP:
         d-=7;
         if (d < 1)
@@ -251,6 +248,7 @@ int viewWeekCalendar() {
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnInfiniteScrolling=1;
+  menu.miniMiniTitle = 1;
   int jumpToSel=1;
   while(res) {
     if(!sy || !sm || !sd) {
@@ -375,8 +373,14 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
     if(menu->scroll > menu->numitems-6) 
         menu->scroll = menu->numitems-6;
   }
+  Bdisp_AllClr_VRAM();
+  drawWeekBusyMap(*y, *m, *d, 0, 24+14, LCD_WIDTH_PX, 10);
+  // backup busy map so we don't need to redraw it again every time its VRAM location gets overwritten.
+  unsigned short busyMapBuffer[LCD_WIDTH_PX*12];
+  MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 1);
   while(1) {
     Bdisp_AllClr_VRAM();
+    MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 0);
     int iresult;
     if(menu->fkeypage==0) {
       GetFKeyPtr(0x01FC, &iresult); // JUMP
@@ -1916,8 +1920,8 @@ void searchEventsGUI(int y, int m, int d) {
   }
 }
 
-void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int height, int showHourMarks, int isMoreThanDay) {
-  drawRectangle(startx, starty, width, height, COLOR_LIGHTGRAY);
+void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int height, int showHourMarks, int isWeek, int maxx) {
+  if(!isWeek) drawRectangle(startx, starty, width, height, COLOR_LIGHTGRAY);
   if(showHourMarks) {
     for(int i = 0; i < 24; i++) {
       int tx=(width*i*60*60)/(24*60*60);
@@ -1929,25 +1933,57 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
   count = GetEventsForDate(thisday, CALENDARFOLDER, events);
   int curitem = 0;
   while(curitem <= count-1) {
+    long int daysduration = DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
+    long int bwidth = 0;
     if(events[curitem].timed) {
       long int start = events[curitem].starttime.hour*60*60 + events[curitem].starttime.minute*60 + events[curitem].starttime.second;        
       
-      long int bwidth = 0;
       long int x = (width*start)/(24*60*60);
-      if(DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day) == DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day)) {
-        long int duration = events[curitem].endtime.hour*60*60 + events[curitem].endtime.minute*60 + events[curitem].endtime.second - start;
-        bwidth = (width*duration)/(24*60*60);
-        if(bwidth <= 0) bwidth = 1; // always make an event visible
-      } else {
+      long int duration = daysduration*24*60*60 + events[curitem].endtime.hour*60*60 + events[curitem].endtime.minute*60 + events[curitem].endtime.second - start;
+      bwidth = (width*duration)/(24*60*60);
+      if(bwidth <= 0) bwidth = 1; // always make an event visible
+      if((!isWeek) && x+bwidth > width) {
         bwidth = width-x;
       }
+      if(isWeek) {
+        int weekx = startx+x;
+        if(weekx+bwidth > maxx) {
+          bwidth = maxx-weekx;
+        }
+      }
       drawRectangle(startx+x, starty, bwidth, height, textColorToFullColor((events[curitem].category == 0 ? 7 : events[curitem].category-1)));
-    } else if(!events[curitem].timed && isMoreThanDay) {
-      drawRectangle(startx, starty, width, height, textColorToFullColor((events[curitem].category == 0 ? 7 : events[curitem].category-1)));
+    } else if(!events[curitem].timed && isWeek) {
+      bwidth = width*(daysduration+1);
+      if(startx+bwidth > maxx) {
+        bwidth = maxx-startx;
+      }
+      drawRectangle(startx, starty, bwidth, height, textColorToFullColor((events[curitem].category == 0 ? 7 : events[curitem].category-1)));
     }
     curitem++;
   }
 }
+void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int height) {
+  long int ddays=DateToDays(y, m, d);
+  unsigned int curday = 0;
+  int daywidth = width/7;
+  drawRectangle(startx, starty, daywidth*7, height, COLOR_LIGHTGRAY);
+  while(curday < 7) {
+    long int ny, nm, nd;
+    DaysToDate(ddays, &ny, &nm, &nd);
+    EventDate date;
+    date.year=ny; date.month=nm; date.day=nd;
+    if(!isDateValid(ny,nm,nd)) {
+      // one of the dates we're trying to view is not valid (probably because the year is not valid, i.e. below 0 or above 9999).
+      return; // NOTE abort
+    }
+    plot(startx+daywidth*curday,starty-1,COLOR_GRAY);
+    plot(startx+daywidth*curday,starty-2,COLOR_GRAY);
+    drawDayBusyMap(&date, startx+curday*daywidth, starty, daywidth, height, 0,curday+1,startx+daywidth*7);
+    ddays++;
+    curday++;
+  }
+}
+/*
 void viewBusyMap(int type, int y, int m, int d) {
   // type: 0 for day, 1 for week, 2 for month
   Bdisp_AllClr_VRAM();
@@ -1958,7 +1994,7 @@ void viewBusyMap(int type, int y, int m, int d) {
     EventDate thisday;
     thisday.day = d; thisday.month = m; thisday.year = y;
     int width=LCD_WIDTH_PX;
-    drawDayBusyMap(&thisday, startx, starty, width, height, 1,0);
+    drawDayBusyMap(&thisday, startx, starty, width, height, 1,0,0);
   } else if (type==1) {
     long int ddays=DateToDays(y, m, d);
     while(dow(y,m,d) != GetSetting(SETTING_WEEK_START_DAY)) { //find sunday/monday before provided date
@@ -1968,6 +2004,8 @@ void viewBusyMap(int type, int y, int m, int d) {
       y=ny; m=nm; d=nd;
     }
     unsigned int curday = 0;
+    int daywidth = LCD_WIDTH_PX/7;
+    drawRectangle(startx, starty, daywidth*7, height, COLOR_LIGHTGRAY);
     while(curday < 7) {
       long int ny, nm, nd;
       DaysToDate(ddays, &ny, &nm, &nd);
@@ -1977,11 +2015,12 @@ void viewBusyMap(int type, int y, int m, int d) {
         // one of the dates we're trying to view is not valid (probably because the year is not valid, i.e. below 0 or above 9999).
         return; // NOTE abort
       }
-      drawDayBusyMap(&date, startx+curday*(LCD_WIDTH_PX/7), starty, LCD_WIDTH_PX/7, height, 0,1);
+      plot(startx+daywidth*curday,starty+height,COLOR_GRAY);
+      drawDayBusyMap(&date, startx+curday*daywidth, starty, daywidth, height, 0,curday+1,daywidth*7);
       ddays++;
       curday++;
     }
   }
   int key;
   mGetKey(&key);
-}
+}*/
