@@ -249,6 +249,7 @@ int viewWeekCalendar() {
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnInfiniteScrolling=1;
   int jumpToSel=1;
+  int keepMenuSel=0;
   while(res) {
     if(!sy || !sm || !sd) {
       if(!y || !m || !d) {
@@ -265,13 +266,13 @@ int viewWeekCalendar() {
       jumpToSel=1;
     }
 
-    res = viewWeekCalendarSub(&menu, &y, &m, &d, &jumpToSel);
+    res = viewWeekCalendarSub(&menu, &y, &m, &d, &jumpToSel, &keepMenuSel);
     if(res==2) return 1;
   }
   return 0;
 }
 
-int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
+int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int* keepMenuSel) {
   //returns 1 when it wants to be restarted (refresh tasks)
   //returns 0 if the idea really is to exit the screen
   //returns 2 to switch to month view
@@ -366,8 +367,10 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
   menu->numitems = curmenu;
   menu->items = menuitems;
   if(*jumpToSel==0) {
-    menu->selection = 1;
-    menu->scroll = 0;
+    if(!*keepMenuSel) {
+      menu->selection = 1;
+      menu->scroll = 0;
+    } else *keepMenuSel=0;
   } else {
     if(menu->scroll > menu->numitems-6) 
         menu->scroll = menu->numitems-6;
@@ -615,8 +618,9 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
           if(changeEventCategory(&ce[events[msel-1].origpos])) {
             ReplaceEventFile(&events[msel-1].startdate, ce, CALENDARFOLDER, ne);
           }
-          *y=events[msel-1].startdate.year; *m=events[msel-1].startdate.month; *d=events[msel-1].startdate.day;
-          *jumpToSel=1;
+          //*y=events[msel-1].startdate.year; *m=events[msel-1].startdate.month; *d=events[msel-1].startdate.day;
+          *jumpToSel=0;
+          *keepMenuSel=1;
           return 1; // return even if user aborted, because we used alloca inside a loop (leak waiting to happen)
         }
         break;

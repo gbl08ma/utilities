@@ -26,7 +26,7 @@
 void viewCalendar();
 int viewMonthCalendar();
 int viewWeekCalendar();
-int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel);
+int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int* keepMenuSel);
 void buildWeekCalendarDayMenu(long int ddays, unsigned int numevents, unsigned int* curmenu, MenuItem* menuitems, unsigned int* cursce, SimpleCalendarEvent* events); // helper function
 void viewEvents(int y, int m, int d);
 void viewEvent(CalendarEvent* event);
