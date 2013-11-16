@@ -15,7 +15,7 @@
 #include "settingsProvider.hpp"
 #include "constantsProvider.hpp"
 
-#define SETTINGSFILE_VERSION 6 // NOTE: update this when changing the amount or meaning of settings!
+#define SETTINGSFILE_VERSION 7 // NOTE: update this when changing the amount or meaning of settings!
 static int setting_self_fileversion = SETTINGSFILE_VERSION; // this is a special setting
 static int setting_timeformat = 0; // 0 = 24-hour HH:MM:SS ; 1 = 12-hour HH:MM:SS AM/PM
 static int setting_longdateformat = 0;
@@ -66,6 +66,7 @@ static int setting_clock_seconds = 1; // whether to show seconds in clock
 static int setting_home_panes = 1; // whether to enable panes in home screen
 static int setting_default_calendar_view = 1; // default calendar view. 0 = week, 1 = month
 static int setting_week_start_day = 0; // 0 = sunday, 1 = monday
+static int setting_show_calendar_busy_map = 1;
 
 // Routines for accessing and setting settings
 // NOTE: directly accessing setting_* variables is now strictly forbidden!
@@ -114,6 +115,8 @@ int GetSetting(int setting) {
       return setting_default_calendar_view;
     case SETTING_WEEK_START_DAY:
       return setting_week_start_day;
+    case SETTING_SHOW_CALENDAR_BUSY_MAP:
+      return setting_show_calendar_busy_map;
     default:
       return 0;
   }
@@ -189,9 +192,11 @@ void SetSetting(int setting, int value, int autosave) {
     case SETTING_DEFAULT_CALENDAR_VIEW:
       setting_default_calendar_view = value;
       break;
-     case SETTING_WEEK_START_DAY:
+    case SETTING_WEEK_START_DAY:
       setting_week_start_day = value;
       break;
+    case SETTING_SHOW_CALENDAR_BUSY_MAP:
+      setting_show_calendar_busy_map = value;
     default:
       break;
   }

@@ -248,7 +248,6 @@ int viewWeekCalendar() {
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnInfiniteScrolling=1;
-  menu.miniMiniTitle = 1;
   int jumpToSel=1;
   while(res) {
     if(!sy || !sm || !sd) {
@@ -374,13 +373,20 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel) {
         menu->scroll = menu->numitems-6;
   }
   Bdisp_AllClr_VRAM();
-  drawWeekBusyMap(*y, *m, *d, 0, 24+14, LCD_WIDTH_PX, 10);
-  // backup busy map so we don't need to redraw it again every time its VRAM location gets overwritten.
+  int hasBusyMap = 0;
   unsigned short busyMapBuffer[LCD_WIDTH_PX*12];
-  MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 1);
+  if(GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) {
+    menu->miniMiniTitle = 1;
+    drawWeekBusyMap(*y, *m, *d, 0, 24+14, LCD_WIDTH_PX, 10);
+    // backup busy map so we don't need to redraw it again every time its VRAM location gets overwritten.
+    MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 1);
+    hasBusyMap=1;
+  } else {
+    menu->miniMiniTitle = 0;
+  }
   while(1) {
     Bdisp_AllClr_VRAM();
-    MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 0);
+    if(hasBusyMap) MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 0);
     int iresult;
     if(menu->fkeypage==0) {
       GetFKeyPtr(0x01FC, &iresult); // JUMP

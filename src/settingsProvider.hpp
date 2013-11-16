@@ -41,8 +41,9 @@
 #define SETTING_HOME_PANES 18
 #define SETTING_DEFAULT_CALENDAR_VIEW 19
 #define SETTING_WEEK_START_DAY 20
+#define SETTING_SHOW_CALENDAR_BUSY_MAP 21
 
-#define NUMBER_OF_SETTINGS 20 //NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
+#define NUMBER_OF_SETTINGS 21 //NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
 /*End of settings*/ 
 
 int GetSetting(int setting);

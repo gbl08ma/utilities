@@ -337,13 +337,17 @@ void calendarSettingsMenu() {
   
   strcpy(menuitems[2].text, "First day of week");
   
+  strcpy(menuitems[3].text, "Week view timetable");
+  menuitems[3].type = MENUITEM_CHECKBOX;
+  
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=3;
+  menu.numitems=4;
   menu.scrollout=1;
   menu.allowMkey=0;
   while(1) {
     menuitems[0].value = GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT);
+    menuitems[3].value = GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP);
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
@@ -385,6 +389,11 @@ void calendarSettingsMenu() {
           else SetSetting(SETTING_WEEK_START_DAY, smallmenu.selection-1, 1);
         }
         MsgBoxPop();
+      }
+      if(menu.selection==4) {
+        if(menuitems[3].value == MENUITEM_VALUE_CHECKED) menuitems[3].value=MENUITEM_VALUE_NONE;
+        else menuitems[3].value=MENUITEM_VALUE_CHECKED;
+        SetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP, menuitems[3].value, 1); 
       }
     }
   }
