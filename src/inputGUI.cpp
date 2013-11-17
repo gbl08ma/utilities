@@ -76,7 +76,7 @@ int doTextInput(textInput* input) {
         if (strlen((char*)input->buffer) > 0) {
           Cursor_SetFlashOff(); return INPUT_RETURN_CONFIRM;
         } else {
-          MsgBoxPush(4);
+          mMsgBoxPush(4);
           mPrintXY(3, 2, (char*)"Field can't be", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(3, 3, (char*)"left blank.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message

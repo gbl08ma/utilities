@@ -16,6 +16,7 @@
 #include "menuGUI.hpp"
 #include "settingsProvider.hpp"
 #include "linkProvider.hpp"
+#include "graphicsProvider.hpp"
 
 int debugMode = 0; // when 1, debug mode is on
 int GetDebugMode() {
@@ -49,6 +50,7 @@ void showRAMused() {
   int usedStack = (int)GetStackPtr();
   int ramused = initStackPtr - usedStack;
   debugMessage((char*)"  RAM USED", (char*)"  bytes:", ramused);
+  debugMessage((char*)"  MsgBox PUSHED", (char*)"  count:", getNumberOfMsgBoxPushed());
 }
 
 void showRAMusedStatus() {

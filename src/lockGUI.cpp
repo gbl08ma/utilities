@@ -97,7 +97,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
       if (strlen((char*)buffer) > 0) {
         Cursor_SetFlashOff(); return 1;
       } else {
-        MsgBoxPush(3);
+        mMsgBoxPush(3);
         mPrintXY(3, 3, (char*)"Code can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         mPrintXY(3, 4, (char*)"empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
@@ -152,7 +152,7 @@ int unlockCalc() {
     case 1:
     case 2:
     case 3:
-      MsgBoxPush(3);
+      mMsgBoxPush(3);
       mPrintXY(3, 3, (char*)"Data tampering", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       mPrintXY(3, 4, (char*)"detected!", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
@@ -160,7 +160,7 @@ int unlockCalc() {
       return 0;
       break;
     case 4:
-      MsgBoxPush(3);
+      mMsgBoxPush(3);
       mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
       closeMsgBox(0);
@@ -272,7 +272,7 @@ void lockApp() {
       if (GetSetting(SETTING_UNLOCK_RUNMAT) == 1) {
         openRunMat();
       } else if (GetSetting(SETTING_UNLOCK_RUNMAT) == 2) {
-        MsgBoxPush(4);
+        mMsgBoxPush(4);
         mPrintXY(3, 2, (char*)"Open Run-Mat?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(3, 4, (char*)"   Yes:[F1]/[1]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(3, 5, (char*)"   No :Other key", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -284,7 +284,7 @@ void lockApp() {
             case KEY_CTRL_F1:
             case KEY_CHAR_1:
               {
-                MsgBoxPop();
+                mMsgBoxPop();
                 openRunMat();
                 break;
               }
@@ -293,7 +293,7 @@ void lockApp() {
               break;
           }
         }
-        MsgBoxPop();
+        mMsgBoxPop();
       }
     } 
   }

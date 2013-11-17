@@ -359,3 +359,26 @@ void mPrintXY(int x, int y, char*msg, int mode, int color) {
   strncat(nmsg, msg, 50);
   PrintXY(x, y, nmsg, mode, color );
 }
+
+static int numberOfMsgBoxPushed = 0;
+// progressMessage and closeProgressMessage do not count towards this number even though they push and pop MsgBoxes
+// this is because mGetKey can't be used to "restart" the add-in while a progressbar is shown
+void mMsgBoxPush(int lines) {
+  MsgBoxPush(lines);
+  numberOfMsgBoxPushed++;
+}
+
+void mMsgBoxPop() {
+  MsgBoxPop();
+  numberOfMsgBoxPushed--;
+}
+
+// useful when "restarting" the add-in
+void popAllMsgBoxes() {
+  while(0<numberOfMsgBoxPushed) {
+    mMsgBoxPop();
+  }
+}
+int getNumberOfMsgBoxPushed() {
+  return numberOfMsgBoxPushed;
+}

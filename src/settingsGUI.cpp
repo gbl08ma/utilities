@@ -208,7 +208,7 @@ void lockSettingsMenu() {
         setPassword();
       }
       if(menu.selection == 5) { // open a menu with Yes, No and Ask
-        MsgBoxPush(4);
+        mMsgBoxPush(4);
         MenuItem smallmenuitems[3];
         strcpy(smallmenuitems[0].text, "Off");
         smallmenuitems[0].type = MENUITEM_NORMAL;
@@ -239,7 +239,7 @@ void lockSettingsMenu() {
         if(sres == MENU_RETURN_SELECTION) {
           SetSetting(SETTING_UNLOCK_RUNMAT, smallmenu.selection-1, 1);
         }
-        MsgBoxPop();
+        mMsgBoxPop();
       }
     }
   }
@@ -357,7 +357,7 @@ void calendarSettingsMenu() {
         SetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT, menuitems[0].value, 1); 
       }
       if(menu.selection == 2 || menu.selection == 3) {
-        MsgBoxPush(4);
+        mMsgBoxPush(4);
         MenuItem smallmenuitems[3];
         if(menu.selection == 2) {
           strcpy(smallmenuitems[0].text, "Week");
@@ -388,7 +388,7 @@ void calendarSettingsMenu() {
           if(menu.selection == 2) SetSetting(SETTING_DEFAULT_CALENDAR_VIEW, smallmenu.selection-1, 1);
           else SetSetting(SETTING_WEEK_START_DAY, smallmenu.selection-1, 1);
         }
-        MsgBoxPop();
+        mMsgBoxPop();
       }
       if(menu.selection==4) {
         if(menuitems[3].value == MENUITEM_VALUE_CHECKED) menuitems[3].value=MENUITEM_VALUE_NONE;

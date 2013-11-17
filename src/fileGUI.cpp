@@ -46,7 +46,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   int res = GetAnyFiles(NULL, NULL, browserbasepath, &menu.numitems);
   if(res == GETFILES_MAX_FILES_REACHED) {
     // show "folder has over 200 items, some will be skipped" message
-    MsgBoxPush(5);
+    mMsgBoxPush(5);
     PrintXY_2(TEXT_MODE_NORMAL, 1, 2, 1833, TEXT_COLOR_BLACK); // folder has over
     PrintXY_2(TEXT_MODE_NORMAL, 1, 3, 1834, TEXT_COLOR_BLACK); // 200 files
     PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 1835, TEXT_COLOR_BLACK); // some will
@@ -158,7 +158,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           strcpy(browserbasepath, files[menu.selection-1].filename); //switch to selected folder
           strcat(browserbasepath, "\\");
           if(!strcmp(browserbasepath, "\\\\fls0\\@MainMem\\") && !*shownMainMemHelp) {
-            MsgBoxPush(5);
+            mMsgBoxPush(5);
             mPrintXY(3, 2, (char*)"Note: this is not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 3, (char*)"the Main Memory,", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 4, (char*)"just a special", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -214,7 +214,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
               ifile++;
             }
             if(*shownClipboardHelp == 0) {
-              MsgBoxPush(5);
+              mMsgBoxPush(5);
               mPrintXY(3, 2, (char*)"Hint: press OPTN", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               mPrintXY(3, 3, (char*)"to manage the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               mPrintXY(3, 4, (char*)"clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -223,7 +223,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
               *shownClipboardHelp=1;
             }
           } else {
-            MsgBoxPush(4);
+            mMsgBoxPush(4);
             mPrintXY(3, 2, (char*)"Can't add", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 3, (char*)"selected items to", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 4, (char*)"clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -256,7 +256,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
 }
 
 int deleteFilesGUI(File* files, Menu* menu) {
-  MsgBoxPush(4);
+  mMsgBoxPush(4);
   int key;
   while (1) {
     mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -265,12 +265,12 @@ int deleteFilesGUI(File* files, Menu* menu) {
     PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
     mGetKey(&key);
     if (key==KEY_CTRL_F1) {
-      MsgBoxPop();
+      mMsgBoxPop();
       Bdisp_PutDisp_DD();
       deleteFiles(files, menu);
       return 1;
     } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
-      MsgBoxPop();
+      mMsgBoxPop();
       return 0;
     }
   } 
@@ -460,7 +460,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
     Bfile_CloseFile_OS(hFile);
   } else {
     //Error opening file, abort
-    MsgBoxPush(4);
+    mMsgBoxPush(4);
     mPrintXY(3, 2, (char*)"Error opening", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     mPrintXY(3, 3, (char*)"file to read.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
@@ -633,7 +633,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
 }
 
 void showCopyFolderWarning() {
-  MsgBoxPush(4);
+  mMsgBoxPush(4);
   mPrintXY(3, 2, (char*)"Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 3, (char*)"not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message

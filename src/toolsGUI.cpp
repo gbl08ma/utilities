@@ -222,7 +222,7 @@ int addinManagerSub(Menu* menu) {
       break;
     case KEY_CTRL_F2:
       if(menu->numitems > 0) {
-        MsgBoxPush(4);
+        mMsgBoxPush(4);
         while (1) {
           int key;
           mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -231,14 +231,14 @@ int addinManagerSub(Menu* menu) {
           PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
           mGetKey(&key);
           if (key==KEY_CTRL_F1) {
-            MsgBoxPop();
+            mMsgBoxPop();
             strcpy(buffer, "\\\\fls0\\");
             strcat(buffer, addins[menu->selection-1].filename);
             Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, 0x10A);
             Bfile_DeleteEntry( oldpath );
             return 1;
           } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
-            MsgBoxPop();
+            mMsgBoxPop();
             break;
           }
         }

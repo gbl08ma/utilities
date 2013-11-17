@@ -17,6 +17,7 @@
 #include "debugGUI.hpp"
 #include "chronoProvider.hpp"
 #include "chronoGUI.hpp"
+#include "graphicsProvider.hpp"
 #include "setjmp.h"
 
 extern jmp_buf utilities_return;
@@ -36,6 +37,7 @@ int mGetKey(int* key) {
       Cursor_SetFlashOff(); // in case we were in an input
       stopAndUninstallStubTimer(); // in case we were in some timer screen, where the timer has been set
       // having timers running breaks Bfile functions
+      popAllMsgBoxes();
       longjmp(utilities_return, 1); // this is also used for returning from Run-Mat. Basically equates to restarting the add-in.
       break;
     } else if (*key == KEY_SHIFT_OPTN && GetDebugMode()) {
@@ -45,6 +47,7 @@ int mGetKey(int* key) {
       Set_FKeys1( 0, (unsigned int*)default_fkeys );
       Set_FKeys2( 0 );
       LoadVRAM_1();
+      DisplayStatusArea(); // so that the Shift icon, which was restored, goes away
     } else if (*key == KEY_CTRL_PRGM && GetDebugMode()) {
       showRAMused();
     } else {

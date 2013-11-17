@@ -415,7 +415,7 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
         //clear this chrono
         clearChrono(&chronoarray[cur]);
         saveChronoArray(chronoarray, NUMBER_OF_CHRONO);
-        MsgBoxPush(4);
+        mMsgBoxPush(4);
         mPrintXY(3,2,(char*)"Timer Complete", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         char buffer1[10] = "";
         itoa(cur+1, (unsigned char*)buffer1);
@@ -427,7 +427,7 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
         
         Bdisp_PutDisp_DD();
         flashLight(1); // with parameter set to 1, it doesn't change VRAM, and since it returns on pressing EXIT...
-        MsgBoxPop();
+        mMsgBoxPop();
         //and return
         return;
       }

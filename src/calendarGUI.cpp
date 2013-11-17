@@ -1334,7 +1334,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             int res = AddEvent(event, CALENDARFOLDER);
           
             if(res > 0) {
-              MsgBoxPush(4);
+              mMsgBoxPush(4);
               if (res == 4) {
                 mPrintXY(3, 2, (char*)"Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               } else {
@@ -1487,7 +1487,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
 
 void deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
-  MsgBoxPush(4);
+  mMsgBoxPush(4);
   mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(istask) {
     mPrintXY(3, 3, (char*)"Selected Task?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -1511,12 +1511,12 @@ void deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int po
         break;
     }
   }
-  MsgBoxPop();
+  mMsgBoxPop();
 }
 
 void deleteAllEventUI(int y, int m, int d, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
-  MsgBoxPush(4);
+  mMsgBoxPush(4);
   if (istask) {
     mPrintXY(3, 2, (char*)"Delete All Tasks?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   } else {
@@ -1540,7 +1540,7 @@ void deleteAllEventUI(int y, int m, int d, int istask) {
         break;
     }
   }
-  MsgBoxPop();
+  mMsgBoxPop();
 }
 
 int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2)
@@ -1650,7 +1650,7 @@ void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
       //already checked if passes num limit
       int res = AddEvent(&events[pos], CALENDARFOLDER);
       if(res > 0) {
-        MsgBoxPush(4);
+        mMsgBoxPush(4);
         if (res == 4) { //error on size check
           mPrintXY(3, 2, (char*)"Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         } else {
@@ -1670,7 +1670,7 @@ void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
 }
 
 void invalidFieldMsg(int istime) {
-  MsgBoxPush(3);
+  mMsgBoxPush(3);
   if(istime) mPrintXY(3, 3, (char*)"Invalid time.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   else mPrintXY(3, 3, (char*)"Invalid date.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
@@ -1697,7 +1697,7 @@ void setEventChrono(CalendarEvent* event) {
   // get chrono duration (difference between event start time and current time)
   
   long long int duration = estart - currentUnixTime();
-  MsgBoxPush(4);
+  mMsgBoxPush(4);
   if(duration < 0) {
     // event is in the past, abort
     mPrintXY(3, 2, (char*)"Event starts in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -1744,7 +1744,7 @@ void viewNthEventOnDay(EventDate* date, int pos) {
 }
 
 void searchEventsGUI(int y, int m, int d) {
-  MsgBoxPush(5);
+  mMsgBoxPush(5);
   MenuItem smallmenuitems[5];
   strcpy(smallmenuitems[0].text, "Selected year");
   smallmenuitems[0].type = MENUITEM_NORMAL;
@@ -1774,7 +1774,7 @@ void searchEventsGUI(int y, int m, int d) {
   smallmenu.showtitle=1;
   strcpy(smallmenu.title, "Search on:");
   int sres = doMenu(&smallmenu);
-  MsgBoxPop();
+  mMsgBoxPop();
   
   if(sres == MENU_RETURN_SELECTION) {
     char needle[55] = "";

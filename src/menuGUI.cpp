@@ -320,5 +320,5 @@ void closeMsgBox(int mgetkey) {
         break;
     }
   }
-  MsgBoxPop(); 
+  mMsgBoxPop(); 
 }
