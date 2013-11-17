@@ -200,8 +200,9 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           if (menu->type == MENUTYPE_FKEYS || menu->type==MENUTYPE_MULTISELECT) return key; // MULTISELECT also returns on Fkeys
           break;
         case KEY_CTRL_PASTE:
-        case KEY_CTRL_OPTN:
           if (menu->type==MENUTYPE_MULTISELECT) return key; // MULTISELECT also returns on paste
+        case KEY_CTRL_OPTN:
+          if (menu->type==MENUTYPE_FKEYS || menu->type==MENUTYPE_MULTISELECT) return key;
           break;
         case KEY_CTRL_FORMAT:
           if (menu->type==MENUTYPE_FKEYS) return key; // return on the Format key so that event lists can prompt to change event category
@@ -307,7 +308,7 @@ int getMenuSelectionOnlySeparators(Menu* menu) {
 // not really related to the menu, but had to go somewhere as a general GUI helper:
 
 void closeMsgBox(int mgetkey) {
-  // waits for user to exit a simple info box, and calls MsgBoxPush for you!
+  // waits for user to exit a simple info box, and calls MsgBoxPop for you!
   int key,inscreen=1;
   while(inscreen) {
     if(mgetkey) mGetKey(&key);

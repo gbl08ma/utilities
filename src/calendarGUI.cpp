@@ -29,19 +29,20 @@
 
 int bufmonth = 0; //this is global so that it's easier to make the events count refresh
 int searchValid = 0; // whether the last search results are valid or not. Set to zero when modifying events in any way.
-int sy, sm, sd = 0; //date to which to switch the calendar
-
-void viewCalendar() {
+int sy, sm, sd = 0; //date to which to switch the calendar, or result of date selection
+int dateselRes = 0; //whether user aborted date selection (0) or not (1)
+void viewCalendar(int dateselection) {
   int res = 0;
   int type = GetSetting(SETTING_DEFAULT_CALENDAR_VIEW);
+  if(dateselection) type = 1; // week view can't act as date selector for now
   while(1) {
-    if(type) res = viewMonthCalendar();
+    if(type) res = viewMonthCalendar(dateselection);
     else res = viewWeekCalendar();
     if(res) type=!type; else return;
   }
 }
 
-int viewMonthCalendar() {
+int viewMonthCalendar(int dateselection) {
   //returns 1 to switch to weekly view
   //returns 0 to exit calendar
   int y = getCurrentYear();
@@ -68,16 +69,18 @@ int viewMonthCalendar() {
     case 1:
         GetFKeyPtr(0x01FC, &iresult); // JUMP
         FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x049F, &iresult); // VIEW
-        FKey_Display(1, (int*)iresult);
-        GetFKeyPtr(0x03B4, &iresult); // INSERT
-        FKey_Display(2, (int*)iresult);
-        GetFKeyPtr(0x0104, &iresult); // DEL-ALL
-        FKey_Display(3, (int*)iresult);
-        GetFKeyPtr(0x0187, &iresult); // SEARCH
-        FKey_Display(4, (int*)iresult);
-        GetFKeyPtr(0x0102, &iresult); // SWAP [white]
-        FKey_Display(5, (int*)iresult);
+        if(!dateselection) {
+          GetFKeyPtr(0x049F, &iresult); // VIEW
+          FKey_Display(1, (int*)iresult);
+          GetFKeyPtr(0x03B4, &iresult); // INSERT
+          FKey_Display(2, (int*)iresult);
+          GetFKeyPtr(0x0104, &iresult); // DEL-ALL
+          FKey_Display(3, (int*)iresult);
+          GetFKeyPtr(0x0187, &iresult); // SEARCH
+          FKey_Display(4, (int*)iresult);
+          GetFKeyPtr(0x0102, &iresult); // SWAP [white]
+          FKey_Display(5, (int*)iresult);
+        }
         break;
     case 2:
         GetFKeyPtr(0x0408, &iresult); // |<<
@@ -112,7 +115,7 @@ int viewMonthCalendar() {
               m = 12;
               y--;
           }
-        } else if (menu == 1) {
+        } else if (menu == 1 && !dateselection) {
           viewEvents(y, m, d);
         }
         break;
@@ -126,7 +129,7 @@ int viewMonthCalendar() {
               m = 1;
               y++;
           }
-        } else if (menu == 1) {
+        } else if (menu == 1 && !dateselection) {
           if(eventcount[d]+1 > MAX_DAY_EVENTS) {
             AUX_DisplayErrorMessage( 0x2E );
           } else {
@@ -138,7 +141,7 @@ int viewMonthCalendar() {
       case KEY_CTRL_F4:
         if (menu == 2) {
           if (y != 9999) y++;
-        } else if (menu == 1) {
+        } else if (menu == 1 && !dateselection) {
           deleteAllEventUI(y, m, d);
           bufmonth=0;//force calendar events to reload
         }
@@ -148,7 +151,7 @@ int viewMonthCalendar() {
           y = getCurrentYear();
           m = getCurrentMonth();
           d = getCurrentDay();
-        } else if (menu == 1) {
+        } else if (menu == 1 && !dateselection) {
           searchEventsGUI(y, m, d);
           if(!sy || !sm || !sd) {} else {
             y = sy;
@@ -160,13 +163,16 @@ int viewMonthCalendar() {
         break;       
       case KEY_CTRL_F6:
         if (menu == 2) { if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"Jump to specific date", (char*)"")) { y=ny;m=nm;d=nd; } } //only update calendar if selection was clean
-        else if (menu == 1) {
+        else if (menu == 1 && !dateselection) {
           sy = y;
           sm = m;
           sd = d;
           return 1;
         }
         break;
+      case KEY_CTRL_OPTN:
+        if(!dateselection) calendarTools(y, m, d);
+      break;
       case KEY_CTRL_UP:
         d-=7;
         if (d < 1)
@@ -220,10 +226,17 @@ int viewMonthCalendar() {
         }
         break;
       case KEY_CTRL_EXE:
-        viewEvents(y, m, d);
+        if(dateselection) {
+          sy = y;
+          sm = m;
+          sd = d;
+          dateselRes = 1;
+          return 0;
+        } else viewEvents(y, m, d);
         break;
       case KEY_CTRL_EXIT:
-        if (menu == 2) { menu = 1; } else { return 0; }
+        if (menu == 2) { menu = 1; }
+        else { dateselRes = 0; return 0; }
         break;
     }
     if (menu == 2) {
@@ -622,6 +635,19 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
           *jumpToSel=0;
           *keepMenuSel=1;
           return 1; // return even if user aborted, because we used alloca inside a loop (leak waiting to happen)
+        }
+        break;
+      case KEY_CTRL_OPTN:
+        if(msel>0) { // do not lose selection precision if possible
+          calendarTools(events[msel-1].startdate.year, events[msel-1].startdate.month, events[msel-1].startdate.day);
+        } else {
+          int ssel = getMenuSelectionOnlySeparators(menu);
+          if(ssel>0) {
+            long int dd = DateToDays(*y, *m, *d) + ssel-1;
+            long int ny, nm, nd;
+            DaysToDate(dd, &ny, &nm, &nd);
+            calendarTools(ny, nm, nd);
+          }
         }
         break;
     }
@@ -1995,6 +2021,76 @@ void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int
     curday++;
   }
 }
+
+void calendarTools(int y, int m, int d) {
+  mMsgBoxPush(5);
+  MenuItem smallmenuitems[5];
+  strcpy(smallmenuitems[0].text, "Count days");
+  smallmenuitems[0].type = MENUITEM_NORMAL;
+  smallmenuitems[0].color = TEXT_COLOR_BLACK;
+  
+  strcpy(smallmenuitems[1].text, "C. business days");
+  smallmenuitems[1].type = MENUITEM_NORMAL;
+  smallmenuitems[1].color = TEXT_COLOR_BLACK;
+  
+  strcpy(smallmenuitems[2].text, "Repair database");
+  smallmenuitems[2].type = MENUITEM_NORMAL;
+  smallmenuitems[2].color = TEXT_COLOR_BLACK;
+  
+  Menu smallmenu;
+  smallmenu.items=smallmenuitems;
+  smallmenu.numitems=3;
+  smallmenu.width=17;
+  smallmenu.height=5;
+  smallmenu.startX=3;
+  smallmenu.startY=2;
+  smallmenu.scrollbar=0;
+  smallmenu.scrollout=1;
+  smallmenu.showtitle=1;
+  strcpy(smallmenu.title, "Calendar tools");
+  int sres = doMenu(&smallmenu);
+  mMsgBoxPop();
+  
+  if(sres == MENU_RETURN_SELECTION) {
+    if(smallmenu.selection == 1) {
+      sy = y;
+      sm = m;
+      sd = d;
+      DefineStatusMessage((char*)"Select first date", 1, 0, 0);
+      viewCalendar(1);
+      int y1, m1, d1, y2, m2, d2;
+      if(dateselRes) {
+        y1=sy;
+        m1=sm;
+        d1=sd;
+      } else {
+        DefineStatusMessage((char*)"", 1, 0, 0);
+        sy = 0; //avoid jumping again
+        return;
+      }
+      DefineStatusMessage((char*)"Select second date", 1, 0, 0);
+      viewCalendar(1);
+      if(dateselRes) {
+        y2=sy;
+        m2=sm;
+        d2=sd;
+        long int daysdiff = DateToDays(y2, m2, d2) - DateToDays(y1, m1, d1);
+        mMsgBoxPush(4);
+        mPrintXY(3, 2, (char*)"Diff. between the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 3, (char*)"1st and 2nd date:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        char buffer[50] = "";
+        itoa((int)daysdiff, (unsigned char*)buffer);
+        strcat(buffer, (char*)" days");
+        mPrintXY(3, 4, (char*)buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+        closeMsgBox();
+      }
+      DefineStatusMessage((char*)"", 1, 0, 0);
+      sy = 0; //avoid jumping again
+    }
+  }  
+}
+
 /*
 void viewBusyMap(int type, int y, int m, int d) {
   // type: 0 for day, 1 for week, 2 for month
