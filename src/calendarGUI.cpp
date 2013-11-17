@@ -2029,17 +2029,13 @@ void calendarTools(int y, int m, int d) {
   smallmenuitems[0].type = MENUITEM_NORMAL;
   smallmenuitems[0].color = TEXT_COLOR_BLACK;
   
-  strcpy(smallmenuitems[1].text, "C. business days");
+  strcpy(smallmenuitems[1].text, "Repair database");
   smallmenuitems[1].type = MENUITEM_NORMAL;
   smallmenuitems[1].color = TEXT_COLOR_BLACK;
   
-  strcpy(smallmenuitems[2].text, "Repair database");
-  smallmenuitems[2].type = MENUITEM_NORMAL;
-  smallmenuitems[2].color = TEXT_COLOR_BLACK;
-  
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
-  smallmenu.numitems=3;
+  smallmenu.numitems=2;
   smallmenu.width=17;
   smallmenu.height=5;
   smallmenu.startX=3;
@@ -2070,22 +2066,63 @@ void calendarTools(int y, int m, int d) {
       }
       DefineStatusMessage((char*)"Select second date", 1, 0, 0);
       viewCalendar(1);
+      DefineStatusMessage((char*)"", 1, 0, 0);
       if(dateselRes) {
         y2=sy;
         m2=sm;
         d2=sd;
         long int daysdiff = DateToDays(y2, m2, d2) - DateToDays(y1, m1, d1);
-        mMsgBoxPush(4);
-        mPrintXY(3, 2, (char*)"Diff. between the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 3, (char*)"1st and 2nd date:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        char buffer[50] = "";
-        itoa((int)daysdiff, (unsigned char*)buffer);
-        strcat(buffer, (char*)" days");
-        mPrintXY(3, 4, (char*)buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-        closeMsgBox();
+        long int businessdiff = 0;
+        if(daysdiff > 0) {
+          for(long int i = 0; i < daysdiff; i++) {
+            long int ny, nm, nd;
+            DaysToDate(DateToDays(y1, m1, d1)+i, &ny, &nm, &nd);
+            int dw = dow(ny, nm, nd);
+            if(dw != 0 && dw != 6) businessdiff++;
+          }
+        } else if(daysdiff < 0) {
+          for(long int i = 0; i > daysdiff; i--) {
+            long int ny, nm, nd;
+            DaysToDate(DateToDays(y1, m1, d1)+i, &ny, &nm, &nd);
+            int dw = dow(ny, nm, nd);
+            if(dw != 0 && dw != 6) businessdiff--;
+          }
+        }
+        textArea text;
+        strcpy(text.title, (char*)"Date difference");
+        text.showtitle=1;
+
+        textElement elem[15];
+        text.elements = elem;
+        text.scrollbar=0;
+        
+        char line1[50] = "";
+        strcpy(line1, (char*)"Between ");
+        char buffer[20] = "";
+        dateToString(buffer, y1, m1, d1, GetSetting(SETTING_DATEFORMAT));
+        strcat(line1, buffer);
+        strcat(line1, (char*)" and ");
+        dateToString(buffer, y2, m2, d2, GetSetting(SETTING_DATEFORMAT));
+        strcat(line1, buffer);
+        strcat(line1, (char*)":");
+        elem[0].text = line1;
+        
+        
+        elem[1].newLine = 1;
+        char line2[50] = "";
+        itoa((int)daysdiff, (unsigned char*)line2);
+        strcat(line2, (char*)" days");
+        elem[1].text = line2;
+        
+        elem[2].newLine = 1;
+        char line3[50] = "";
+        itoa((int)businessdiff, (unsigned char*)line3);
+        strcat(line3, (char*)" business days");
+        elem[2].text = line3;
+        
+        text.numelements = 3;
+        doTextArea(&text);
       }
-      DefineStatusMessage((char*)"", 1, 0, 0);
       sy = 0; //avoid jumping again
     }
   }  
