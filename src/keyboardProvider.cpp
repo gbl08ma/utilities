@@ -20,7 +20,7 @@
 #include "setjmp.h"
 
 extern jmp_buf utilities_return;
-void mGetKey(int* key) {
+int mGetKey(int* key) {
   //managed GetKey. allows for entering the settings menu from most points in the add-in.
   while (1) {
     checkChronoComplete();
@@ -30,6 +30,7 @@ void mGetKey(int* key) {
       SaveVRAM_1();
       settingsMenu();
       LoadVRAM_1();
+      return MGETKEY_RETURN_INTOSETTINGS;
       break;
     } else if (*key == KEY_CTRL_QUIT) {
       Cursor_SetFlashOff(); // in case we were in an input
@@ -50,6 +51,7 @@ void mGetKey(int* key) {
       break; 
     }
   }
+  return MGETKEY_RETURN_KEY;
 }
 
 /* CODE BY SIMON LOTHAR, AVAILABLE ON "fx_calculators_SuperH_based.chm" version 16 */

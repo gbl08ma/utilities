@@ -15,7 +15,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-void mGetKey(int* key); 
+#define MGETKEY_RETURN_KEY 0
+#define MGETKEY_RETURN_INTOSETTINGS 1
+int mGetKey(int* key);
 unsigned int SetGetkeyToMainFunctionReturnFlag( unsigned int enabled );
 
 #endif
