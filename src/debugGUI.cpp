@@ -18,7 +18,7 @@
 #include "linkProvider.hpp"
 #include "graphicsProvider.hpp"
 
-int debugMode = 0; // when 1, debug mode is on
+static int debugMode = 0; // when 1, debug mode is on
 int GetDebugMode() {
   return debugMode;
 }
@@ -26,7 +26,7 @@ void SetDebugMode(int val) {
   debugMode = val;
 }
 
-int initStackPtr;
+static int initStackPtr;
 void debugMessage(char* text1, char* text2, int value) {
   int key;
   MsgBoxPush(4);
