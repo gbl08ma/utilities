@@ -23,6 +23,8 @@ typedef struct
   int lineSpacing=0;
 } textElement;
 
+#define TEXTAREATYPE_NORMAL 0
+#define TEXTAREATYPE_INSTANT_RETURN 1
 typedef struct
 {
   int x=0;
@@ -38,6 +40,7 @@ typedef struct
   int allowEXE=0; //whether to allow EXE to exit the screen
   int allowF1=0; //whether to allow F1 to exit the screen
   int allowMkey=1; //whether to allow managed GetKey (allow to go into settings, do Shift+Exit...)
+  int type=TEXTAREATYPE_NORMAL;
 } textArea;
 
 int doTextArea(textArea* text); //returns 0 when user EXITs, 1 when allowEXE is true and user presses EXE, 2 when allowF1 is true and user presses F1.
