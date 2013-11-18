@@ -8,6 +8,7 @@
 #include <fxcg/rtc.h>
 #include <fxcg/heap.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -19,6 +20,7 @@
 #include "stringsProvider.hpp"
 #include "selectorGUI.hpp"
 #include "calendarProvider.hpp" 
+#include "debugGUI.hpp" 
 
 void append(unsigned char* s, char c) //beacuse strcat seems to have problems with 1-byte non-null-terminated chars like the field and event separators
 {
@@ -560,4 +562,248 @@ int SearchEventsOnYear(int y, const char* folder, SimpleCalendarEvent* calEvents
     m++;
   }
   return resCount;
+}
+
+void repairEventsFile(char* name, const char* folder, int* checkedevents, int* problemsfound) {
+  // name should only contain the latest part of the name, e.g. 20130415.pce
+  // folder does not include \\fls0\ or anything, just the user friendly name for the folder
+  
+  // before anything, build a complete filename for the file
+  char filename[128] = "";
+  strcpy(filename, "\\\\fls0\\");
+  strcat(filename, folder);
+  strcat(filename, "\\");
+  strcat(filename, name);
+  
+  unsigned short pFile[256];
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  // Check if file opened
+  int size = 0;
+  if(hFile >= 0)
+  { //opened
+    size = Bfile_GetFileSize_OS(hFile);
+    // File exists and we have its size, let's see if it is above the minimum
+    if(size < 51) {
+      Bfile_CloseFile_OS(hFile);
+      Bfile_DeleteEntry(pFile);
+      *problemsfound = *problemsfound + 1;
+      return;
+    }
+    unsigned char asrc[MAX_EVENT_FILESIZE] = "";
+    // Read file into a buffer
+    if ((unsigned int)size > MAX_EVENT_FILESIZE) {
+      Bfile_CloseFile_OS(hFile);
+      // TODO do something with files that are too big.
+      // delete them or tell the user to send them to the developers to see if any data can be recovered?
+      return;
+    } //file too big, return error.
+    Bfile_ReadFile_OS(hFile, asrc, size, 0);
+    Bfile_CloseFile_OS(hFile); //we got file contents, close it
+    
+    // Let's see if the file header is OK
+    if(strncmp((char*)asrc, FILE_HEADER, 7)) {
+      // strncmp was not zero, so the header is invalid.
+      // delete file.
+      Bfile_DeleteEntry(pFile);
+      *problemsfound = *problemsfound + 1;
+      return;
+    }
+    // before we give the file to GetEventsForDate, let's check if it has the right amount of field separators
+    // in relation to the amount of event separators.
+    int fieldsep = 0;
+    int eventsep = 0;
+    int len = strlen((char*)asrc);
+    for(int i = 0; i<len; i++) {
+      if(asrc[i] == FIELD_SEPARATOR) fieldsep++;
+      if(asrc[i] == EVENT_SEPARATOR) eventsep++;
+    }
+    // there should be 19 field separators per event.
+    // each event has a field separator in the end, even if it is the last event on file
+    // so dividing the total amount of field separators by the total amount of event separators should return 19.
+    if(fieldsep/eventsep != 19 || !fieldsep || !eventsep) {
+      // file corrupt / invalid format, delete it.
+      Bfile_DeleteEntry(pFile);
+      *problemsfound = *problemsfound + 1;
+      return;
+    }
+  } else return; // it should have opened...
+  
+  // if we got to this point, one could assume that the file doesn't suffer from corruption and has a valid format
+  // but this is not the case, as we still need to check one thing, see:
+  // apparently, we can now pass the file to GetEventsForDate, to check for "nicer" problems
+  // but before we can pass the file to GetEventsForDate, we must figure out what start date it belongs to.
+  // we must figure this out from the filename... problem: we haven't checked yet that the filename is valid!
+  
+  // following figures will exclude the file extension (".pce") - the file extension has already been checked by the GUI when listing files.
+  // a valid filename will contain at least 5 numeric characters.
+  // why five and not eight? Simple: due to a grandfathered bug (to keep compatibility), the year is not appended zeros when making up the filename...
+  // so, a file for events starting on the 31st of January of year 5 will look like this: 50131
+  // for year 100: 1000131, for year 2000: 20000131.
+  // min strlen for name (with extension): 9
+  // max strlen for name (with extension): 12
+  int nlen = strlen(name);
+  if(nlen < 9 || nlen > 12) {
+    // invalid file name. while this should not mess with the remaining database system, let's delete it anyway.
+    Bfile_DeleteEntry(pFile);
+    *problemsfound = *problemsfound + 1;
+    return;
+  }
+  char mainname[20] = "";
+  strncpy(mainname, name, nlen-4); //strip the file extension out
+  // strcpy will not add a \0 at the end if the limit is reached, let's add it ourselves
+  mainname[nlen-4] = '\0';
+  nlen = strlen(mainname);
+  
+  // last step in checking the file name: verify that it only contains numbers
+  for(int i = 0; i < nlen; i++) {
+    if(!isdigit(mainname[i])) {
+      // some character is not a number, delete file
+      Bfile_DeleteEntry(pFile);
+      *problemsfound = *problemsfound + 1;
+      return;
+    }
+  }
+  
+  char bufferyear[10] = "";
+  char buffermonth[10] = "";
+  char bufferday[10] = "";
+  if(nlen == 5) {
+    bufferyear[0] = mainname[0];
+    bufferyear[1] = '\0';
+    buffermonth[0] = mainname[1];
+    buffermonth[1] = mainname[2];
+    buffermonth[2] = '\0';
+    bufferday[0] = mainname[3];
+    bufferday[1] = mainname[4];
+    bufferday[2] = '\0';
+  } else if(nlen == 6) {
+    bufferyear[0] = mainname[0];
+    bufferyear[1] = mainname[1];
+    bufferyear[2] = '\0';
+    buffermonth[0] = mainname[2];
+    buffermonth[1] = mainname[3];
+    buffermonth[2] = '\0';
+    bufferday[0] = mainname[4];
+    bufferday[1] = mainname[5];
+    bufferday[2] = '\0';
+  } else if(nlen == 7) {
+    bufferyear[0] = mainname[0];
+    bufferyear[1] = mainname[1];
+    bufferyear[2] = mainname[2];
+    bufferyear[3] = '\0';
+    buffermonth[0] = mainname[3];
+    buffermonth[1] = mainname[4];
+    buffermonth[2] = '\0';
+    bufferday[0] = mainname[5];
+    bufferday[1] = mainname[6];
+    bufferday[2] = '\0';
+  } else {
+    bufferyear[0] = mainname[0];
+    bufferyear[1] = mainname[1];
+    bufferyear[2] = mainname[2];
+    bufferyear[3] = mainname[3];
+    bufferyear[4] = '\0';
+    buffermonth[0] = mainname[4];
+    buffermonth[1] = mainname[5];
+    buffermonth[2] = '\0';
+    bufferday[0] = mainname[6];
+    bufferday[1] = mainname[7];
+    bufferday[2] = '\0';
+  }
+  EventDate thisday;
+  thisday.year = atoi((const char*)bufferyear);
+  thisday.month = atoi((const char*)buffermonth);
+  thisday.day = atoi((const char*)bufferday);
+  
+  // final step on filename checking: see if the date in the filename is valid
+  // and that year is not zero (so we don't delete the tasks file)
+  if(!isDateValid(thisday.year,thisday.month,thisday.day) && thisday.year) {
+    // oops, date is not valid, and this is not the tasks file
+    Bfile_DeleteEntry(pFile);
+    *problemsfound = *problemsfound + 1;
+    return;
+  }
+  
+  int numitems = GetEventsForDate(&thisday, folder, NULL); //get event count only so we know how much to alloc
+  CalendarEvent* events = (CalendarEvent*)alloca(numitems*sizeof(CalendarEvent));
+  numitems = GetEventsForDate(&thisday, folder, events);
+  *checkedevents = *checkedevents + numitems;
+  int curitem = 0;
+  int doneEdits = 0;
+  while(curitem <= numitems-1) {
+    // first of all, check that this is not a task:
+    if(events[curitem].startdate.year || events[curitem].startdate.month || events[curitem].startdate.day) {
+      // check validity of start date, start time, end date and end time individually
+      if(!isDateValid(events[curitem].startdate.year,events[curitem].startdate.month,events[curitem].startdate.day) ||
+        events[curitem].startdate.year != thisday.year || events[curitem].startdate.month != thisday.month ||
+        events[curitem].startdate.day != thisday.day)
+      {
+        // start date is not valid, or does not belong on this file.
+        //fix this by setting the start date to be the same as on the filename.
+        doneEdits = 1;
+        events[curitem].startdate.year = thisday.year;
+        events[curitem].startdate.month = thisday.month;
+        events[curitem].startdate.day = thisday.day;
+        *problemsfound = *problemsfound + 1;
+      }
+      if(!isDateValid(events[curitem].enddate.year,events[curitem].enddate.month,events[curitem].enddate.day)) {
+        // end date is not valid. set it to be the start date.
+        doneEdits = 1;
+        events[curitem].enddate.year = events[curitem].startdate.year;
+        events[curitem].enddate.month = events[curitem].startdate.month;
+        events[curitem].enddate.day = events[curitem].startdate.day;
+        *problemsfound = *problemsfound + 1;
+      }
+      if(!isTimeValid(events[curitem].starttime.hour,events[curitem].starttime.minute,events[curitem].starttime.second)) {
+        // the start time is not valid. set it to midnight.
+        doneEdits = 1;
+        events[curitem].starttime.second = 0;
+        events[curitem].starttime.minute = 0;
+        events[curitem].starttime.hour = 0;
+        *problemsfound = *problemsfound + 1;
+      }
+      if(!isTimeValid(events[curitem].endtime.hour,events[curitem].endtime.minute,events[curitem].endtime.second)) {
+        // the end time is not valid. set it to midnight.
+        doneEdits = 1;
+        events[curitem].endtime.second = 0;
+        events[curitem].endtime.minute = 0;
+        events[curitem].endtime.hour = 0;
+        *problemsfound = *problemsfound + 1;
+      }
+      
+      // check if end datetime is past start datetime. if not, modify end datetime to be the same as start datetime.
+      long int timediff = (events[curitem].endtime.hour*60*60+events[curitem].endtime.minute*60+events[curitem].endtime.second) - (events[curitem].starttime.hour*60*60+events[curitem].starttime.minute*60+events[curitem].starttime.second);
+      long int datediff = DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
+      int dwrong = 0;
+      if(0<=datediff) {
+        if(datediff==0) {
+          if(0>timediff) dwrong=1;
+        }
+      } else {
+        dwrong=1;
+      }
+      if(dwrong) {
+        doneEdits=1;
+        events[curitem].enddate.year = events[curitem].startdate.year;
+        events[curitem].enddate.month = events[curitem].startdate.month;
+        events[curitem].enddate.day = events[curitem].startdate.day;
+        events[curitem].endtime.second = events[curitem].starttime.second;
+        events[curitem].endtime.minute = events[curitem].starttime.minute;
+        events[curitem].endtime.hour = events[curitem].starttime.hour;
+        *problemsfound = *problemsfound + 1;
+      }
+    }
+    // check if category is in allowed range
+    if(events[curitem].category < 0 || events[curitem].category > 7) {
+      doneEdits = 1;
+      events[curitem].category = 1; // reset to black category
+      *problemsfound = *problemsfound + 1;
+    }
+    curitem++;
+  }
+  if(doneEdits) {
+    // replace event file...
+    ReplaceEventFile(&thisday, events, folder, numitems);
+  }
 }

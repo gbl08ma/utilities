@@ -49,6 +49,7 @@ void viewBusyMap(int type, int y, int m, int d);
 void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int height, int showHourMarks, int isWeek, int maxx);
 void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int height);
 void calendarTools(int y, int m, int d);
+void repairCalendarDatabase();
 
 
 #endif

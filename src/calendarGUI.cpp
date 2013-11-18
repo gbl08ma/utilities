@@ -25,6 +25,7 @@
 #include "calendarProvider.hpp" 
 #include "keyboardProvider.hpp"
 #include "unixtimeExternal.hpp"
+#include "fileProvider.hpp"
 #include "debugGUI.hpp"
 
 int bufmonth = 0; //this is global so that it's easier to make the events count refresh
@@ -631,23 +632,30 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
           if(changeEventCategory(&ce[events[msel-1].origpos])) {
             ReplaceEventFile(&events[msel-1].startdate, ce, CALENDARFOLDER, ne);
           }
-          //*y=events[msel-1].startdate.year; *m=events[msel-1].startdate.month; *d=events[msel-1].startdate.day;
           *jumpToSel=0;
           *keepMenuSel=1;
           return 1; // return even if user aborted, because we used alloca inside a loop (leak waiting to happen)
         }
         break;
       case KEY_CTRL_OPTN:
+        long int ny, nm, nd;
         if(msel>0) { // do not lose selection precision if possible
-          calendarTools(events[msel-1].startdate.year, events[msel-1].startdate.month, events[msel-1].startdate.day);
+          ny = events[msel-1].startdate.year;
+          nm = events[msel-1].startdate.month;
+          nd = events[msel-1].startdate.day;
         } else {
           int ssel = getMenuSelectionOnlySeparators(menu);
           if(ssel>0) {
             long int dd = DateToDays(*y, *m, *d) + ssel-1;
-            long int ny, nm, nd;
             DaysToDate(dd, &ny, &nm, &nd);
-            calendarTools(ny, nm, nd);
           }
+        }
+        searchValid = 1;
+        calendarTools(ny, nm, nd);
+        if(!searchValid) {
+          *y=ny; *m=nm; *d=nd;
+          *jumpToSel=1;
+          return 1;
         }
         break;
     }
@@ -2124,8 +2132,99 @@ void calendarTools(int y, int m, int d) {
         doTextArea(&text);
       }
       sy = 0; //avoid jumping again
+    } else if(smallmenu.selection == 2) {
+      repairCalendarDatabase();
     }
   }  
+}
+
+void repairCalendarDatabase() {
+  textArea text;
+  strcpy(text.title, (char*)"Database repair");
+  text.showtitle=1;
+
+  textElement elem[15];
+  text.elements = elem;
+  text.type = TEXTAREATYPE_INSTANT_RETURN;
+  text.scrollbar=0;
+  
+  elem[0].text = (char*)"Checking for problems on the calendar events' database and repairing them. This may take a long time, please do not turn off the calculator and wait...";
+  elem[1].newLine = 1;
+  elem[1].text = (char*)"Number of files checked:";
+  elem[1].spaceAtEnd = 1;
+  // elem[2] is set in loop
+  elem[3].newLine = 1;
+  elem[3].text = (char*)"Number of events checked:";
+  elem[3].spaceAtEnd = 1;
+  //elem[4] is set in loop
+  elem[5].newLine = 1;
+  elem[5].text = (char*)"Number of problems fixed:";
+  elem[5].spaceAtEnd = 1;
+  //elem[6] is set in loop
+  text.numelements = 1; // for security, in case no file is found
+  int checkedfiles = 0;
+  int checkedevents = 0;
+  int problemsfound = 0;
+  
+  unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
+  unsigned char buffer[MAX_FILENAME_SIZE+1];
+  unsigned char* filter = (unsigned char*)"*.pce";
+
+  // make the buffer
+  strcpy((char*)buffer, "\\\\fls0\\");
+  strcat((char*)buffer, CALENDARFOLDER);
+  strcat((char*)buffer, "\\");
+  strcat((char*)buffer, "*");
+  
+  file_type_t fileinfo;
+  int findhandle;
+  Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
+  int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
+  Bfile_StrToName_ncpy(path, filter, MAX_FILENAME_SIZE+1);
+  while(!ret) {
+    Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
+    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0) &&
+       (fileinfo.fsize == 0 || Bfile_Name_MatchMask((const short int*)path, (const short int*)found)))
+    {      
+      char buffer1[20] = "";
+      itoa((int)checkedfiles, (unsigned char*)buffer1);
+      elem[2].text = buffer1;
+      
+      char buffer2[20] = "";
+      itoa((int)checkedevents, (unsigned char*)buffer2);
+      elem[4].text = buffer2;
+      
+      char buffer3[20] = "";
+      itoa((int)problemsfound, (unsigned char*)buffer3);
+      elem[6].text = buffer3;
+      
+      text.numelements = 7;
+      doTextArea(&text);
+      Bdisp_PutDisp_DD();
+      repairEventsFile((char*)buffer, CALENDARFOLDER, &checkedevents, &problemsfound);
+      checkedfiles++;
+    }
+    ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
+  }
+  Bfile_FindClose(findhandle);
+  // update totals, because they do not include the last file checked
+  char buffer1[20] = "";
+  itoa((int)checkedfiles, (unsigned char*)buffer1);
+  elem[2].text = buffer1;
+  
+  char buffer2[20] = "";
+  itoa((int)checkedevents, (unsigned char*)buffer2);
+  elem[4].text = buffer2;
+  
+  char buffer3[20] = "";
+  itoa((int)problemsfound, (unsigned char*)buffer3);
+  elem[6].text = buffer3;
+  
+  text.type = TEXTAREATYPE_NORMAL;
+  elem[0].text = (char*)"Repaired calendar events database.";
+  doTextArea(&text);
+  bufmonth = 0; // because apart from editing dates, database repair also deletes invalid files that may influence event counts.
+  searchValid = 0; // invalidate week view results
 }
 
 /*
