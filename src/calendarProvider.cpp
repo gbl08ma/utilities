@@ -596,8 +596,11 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
       Bfile_CloseFile_OS(hFile);
       // TODO do something with files that are too big.
       // delete them or tell the user to send them to the developers to see if any data can be recovered?
+      // for now let's delete them
+      Bfile_DeleteEntry(pFile);
+      *problemsfound = *problemsfound + 1;
       return;
-    } //file too big, return error.
+    }
     Bfile_ReadFile_OS(hFile, asrc, size, 0);
     Bfile_CloseFile_OS(hFile); //we got file contents, close it
     
