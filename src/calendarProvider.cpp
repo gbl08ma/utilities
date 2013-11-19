@@ -468,6 +468,35 @@ int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* 
   }
   return resCount;
 }
+
+void SearchMonthHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resCount, int daynumevents, const char* folder, char* needle, int limit) {
+  CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
+  daynumevents = GetEventsForDate(date, folder, dayEvents);
+  int curitem = 0;
+  while(curitem <= daynumevents-1) {
+    int match = 0;
+    if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
+      match = 1;
+    }
+    if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
+      match = 1;
+    }
+    if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
+      match = 1;
+    }
+    if(match) {
+      if(calEvents != NULL) {
+        strcpy((char*)calEvents[*resCount].title, (char*)dayEvents[curitem].title);
+        calEvents[*resCount].startdate = *date;
+        calEvents[*resCount].category = dayEvents[curitem].category;
+        calEvents[*resCount].origpos = curitem;
+      }
+      *resCount = *resCount + 1;
+    }
+    if(*resCount >= limit) return;
+    curitem++;
+  }
+}
 int SearchEventsOnMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
   /* goes through the events on storage memory for a certain month
    * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)
@@ -482,37 +511,42 @@ int SearchEventsOnMonth(int y, int m, const char* folder, SimpleCalendarEvent* c
     date.year = y; date.month = m; date.day = d;
     int daynumevents = GetEventsForDate(&date, folder, NULL); //get event count only so we know how much to alloc
     if(daynumevents==0) { d++; continue; }
-    CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
-    daynumevents = GetEventsForDate(&date, folder, dayEvents);
-    int curitem = 0;
-    while(curitem <= daynumevents-1) {
-      int match = 0;
-      if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
-        match = 1;
-      }
-      if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
-        match = 1;
-      }
-      if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
-        match = 1;
-      }
-      if(match) {
-        if(calEvents != NULL) {
-          strcpy((char*)calEvents[resCount].title, (char*)dayEvents[curitem].title);
-          calEvents[resCount].startdate = date;
-          calEvents[resCount].category = dayEvents[curitem].category;
-          calEvents[resCount].origpos = curitem;
-        }
-        resCount++;
-      }
-      if(resCount == limit) return resCount;
-      curitem++;
-    }
+    SearchMonthHelper(&date, calEvents, &resCount, daynumevents, folder, needle, limit);
+    if(resCount >= limit) return resCount;    
     d++;
   }
   return resCount;
 }
 
+void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resCount, int daynumevents, const char* folder, char* needle, int limit, int* curfpos) {
+  CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
+  daynumevents = GetEventsForDate(date, folder, dayEvents);
+  int curitem = 0;
+  while(curitem <= daynumevents-1) {
+    int match = 0;
+    if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
+      match = 1;
+    }
+    if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
+      match = 1;
+    }
+    if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
+      match = 1;
+    }
+    if(match) {
+      if(calEvents != NULL) {
+        strcpy((char*)calEvents[*curfpos].title, (char*)dayEvents[curitem].title);
+        calEvents[*curfpos].startdate = *date;
+        calEvents[*curfpos].category = dayEvents[curitem].category;
+        calEvents[*curfpos].origpos = curitem;
+      }
+      *resCount = *resCount+1;
+      *curfpos = *curfpos+1;
+    }
+    if(*resCount >= limit) return;
+    curitem++;
+  }
+}
 int SearchEventsOnYear(int y, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int arraystart) {
   /* goes through the events on storage memory for a certain month
    * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)
@@ -530,33 +564,8 @@ int SearchEventsOnYear(int y, const char* folder, SimpleCalendarEvent* calEvents
       date.year = y; date.month = m; date.day = d;
       int daynumevents = GetEventsForDate(&date, folder, NULL); //get event count only so we know how much to alloc
       if(daynumevents==0) { d++; continue; }
-      CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
-      daynumevents = GetEventsForDate(&date, folder, dayEvents);
-      int curitem = 0;
-      while(curitem <= daynumevents-1) {
-        int match = 0;
-        if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
-          match = 1;
-        }
-        if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
-          match = 1;
-        }
-        if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
-          match = 1;
-        }
-        if(match) {
-          if(calEvents != NULL) {
-            strcpy((char*)calEvents[curfpos].title, (char*)dayEvents[curitem].title);
-            calEvents[curfpos].startdate = date;
-            calEvents[curfpos].category = dayEvents[curitem].category;
-            calEvents[curfpos].origpos = curitem;
-          }
-          resCount++;
-          curfpos++;
-        }
-        if(resCount == limit) return resCount;
-        curitem++;
-      }
+      SearchYearHelper(&date, calEvents, &resCount, daynumevents, folder, needle, limit, &curfpos);
+      if(resCount >= limit) return resCount;
       d++;
     }
     m++;
