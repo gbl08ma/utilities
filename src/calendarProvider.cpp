@@ -53,9 +53,9 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
   itoa(calEvent->endtime.hour, (unsigned char*)smallbuf); strcat((char*)buf, (char*)smallbuf); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->endtime.minute, (unsigned char*)smallbuf); strcat((char*)buf, (char*)smallbuf); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->endtime.second, (unsigned char*)smallbuf); strcat((char*)buf, (char*)smallbuf); append(buf, FIELD_SEPARATOR);
-  strcat((char*)buf, (char*)calEvent->title); append(buf, FIELD_SEPARATOR);
-  strcat((char*)buf, (char*)calEvent->location); append(buf, FIELD_SEPARATOR);
-  strcat((char*)buf, (char*)calEvent->description); append(buf, EVENT_SEPARATOR);
+  strncat((char*)buf, (char*)calEvent->title,25); append(buf, FIELD_SEPARATOR);
+  strncat((char*)buf, (char*)calEvent->location,135); append(buf, FIELD_SEPARATOR);
+  strncat((char*)buf, (char*)calEvent->description,1030); append(buf, EVENT_SEPARATOR);
   //the last field ends with a field separator followed by an event separator. both are contained in EVENT_SEPARATOR
   
   /*sprintf((char*)buf, "%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%s%c%s%c%s%c" ,
