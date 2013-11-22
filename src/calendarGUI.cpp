@@ -1029,6 +1029,11 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       if(istask) mPrintXY(1, 1, (char*)"Edit Task", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
       else mPrintXY(1, 1, (char*)"Edit Event", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     }
+    if(curstep >= 3) {
+      // disable keyboard modifiers, as user may have come from a text input field
+      // where alpha-lock was enabled, not being disabled on F6.
+      SetSetupSetting( (unsigned int)0x14, 0);
+    }
     DisplayStatusArea();
     switch(curstep) {
       case 0:
@@ -1099,169 +1104,163 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             input.key=0;
             int res = doTextInput(&input);
             if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
-            else if (res==INPUT_RETURN_CONFIRM) { curstep=curstep+1; break;} // continue to next step
+            else if (res==INPUT_RETURN_CONFIRM) {
+              // continue to next step
+              if(istask) curstep=6;
+              else curstep=curstep+1;
+              break;
+            }
             else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
           }
         }
         break;
-      case 3:
-        if(!istask) {
-          // disable keyboard modifiers, as user may have come from a text input field
-          // where alpha-lock was enabled, not being disabled on F6.
-          SetSetupSetting( (unsigned int)0x14, 0);
-          DisplayStatusArea();
-          
-          mPrintXY(1, 2, (char*)"Start time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          mPrintXY(1, 3, (char*)"Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          mPrintXY(6, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          int textX = 0;
-          int textY = 5*24;
-          PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will be a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textX=0; textY += 17;
-          PrintMini(&textX, &textY, (unsigned char*)"full-day event.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          int iresult;
-          GetFKeyPtr(0x036F, &iresult); // <
-          FKey_Display(0, (int*)iresult);
-          GetFKeyPtr(0x04A3, &iresult); // Next
-          FKey_Display(5, (int*)iresult);
-          
-          textInput input;
-          input.x=6;
-          input.y=3;
-          input.width=6;
-          input.charlimit=6;
-          input.acceptF6=1;
-          input.type=INPUTTYPE_TIME;
-          char stbuffer[15] = "";
-          strcpy(stbuffer, (char*)"");
-          if(event->timed) fillInputTime(event->starttime.hour, event->starttime.minute, event->starttime.second, stbuffer);
-          input.buffer = (char*)stbuffer;
-          while(1) {
-            input.key=0;
-            int res = doTextInput(&input);
-            if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
-            else if (res==INPUT_RETURN_CONFIRM) {
-              char hour[3] = "";
-              char minute[3] = "";
-              char second[3] = "";
-              hour[0] = stbuffer[0]; hour[1] = stbuffer[1]; hour[2] = '\0';
-              minute[0] = stbuffer[2]; minute[1] = stbuffer[3]; minute[2] = '\0';
-              second[0] = stbuffer[4]; second[1] = stbuffer[5]; second[2] = '\0';
+      case 3: {   
+        mPrintXY(1, 2, (char*)"Start time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(1, 3, (char*)"Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(6, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        int textX = 0;
+        int textY = 5*24;
+        PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will be a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        textX=0; textY += 17;
+        PrintMini(&textX, &textY, (unsigned char*)"full-day event.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        int iresult;
+        GetFKeyPtr(0x036F, &iresult); // <
+        FKey_Display(0, (int*)iresult);
+        GetFKeyPtr(0x04A3, &iresult); // Next
+        FKey_Display(5, (int*)iresult);
+        
+        textInput input;
+        input.x=6;
+        input.y=3;
+        input.width=6;
+        input.charlimit=6;
+        input.acceptF6=1;
+        input.type=INPUTTYPE_TIME;
+        char stbuffer[15] = "";
+        strcpy(stbuffer, (char*)"");
+        if(event->timed) fillInputTime(event->starttime.hour, event->starttime.minute, event->starttime.second, stbuffer);
+        input.buffer = (char*)stbuffer;
+        while(1) {
+          input.key=0;
+          int res = doTextInput(&input);
+          if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
+          else if (res==INPUT_RETURN_CONFIRM) {
+            char hour[3] = "";
+            char minute[3] = "";
+            char second[3] = "";
+            hour[0] = stbuffer[0]; hour[1] = stbuffer[1]; hour[2] = '\0';
+            minute[0] = stbuffer[2]; minute[1] = stbuffer[3]; minute[2] = '\0';
+            second[0] = stbuffer[4]; second[1] = stbuffer[5]; second[2] = '\0';
 
-              int h = sys_atoi(hour);
-              int m = sys_atoi(minute);
-              int s = sys_atoi(second);
-              if(isTimeValid(h, m, s) && (int)strlen(stbuffer) == input.charlimit) {
-                event->timed = 1;
-                event->starttime.hour = h;
-                event->starttime.minute = m;
-                event->starttime.second = s;
+            int h = sys_atoi(hour);
+            int m = sys_atoi(minute);
+            int s = sys_atoi(second);
+            if(isTimeValid(h, m, s) && (int)strlen(stbuffer) == input.charlimit) {
+              event->timed = 1;
+              event->starttime.hour = h;
+              event->starttime.minute = m;
+              event->starttime.second = s;
+              curstep=curstep+1; break; // continue to next step
+            } else if (!strlen(stbuffer)) {
+              // user wants all-day event
+              event->timed = 0;
+              curstep=curstep+1; break; // next step
+            } else {
+              invalidFieldMsg(1);
+            }
+          } 
+          else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
+        }
+        break;
+      }
+      case 4: {
+        mPrintXY(1, 2, (char*)"End date:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        switch(GetSetting(SETTING_DATEFORMAT)) {
+          case 0:
+            mPrintXY(6, 4, (char*)"DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            break;
+          case 1:
+            mPrintXY(6, 4, (char*)"MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            break;
+          case 2:
+            mPrintXY(6, 4, (char*)"YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            break;
+        }
+        int textX = 0;
+        int textY = 5*24;
+        PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will end on", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        textX=0; textY += 17;
+        PrintMini(&textX, &textY, (unsigned char*)"the same day that it starts.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        int iresult;
+        GetFKeyPtr(0x036F, &iresult); // <
+        FKey_Display(0, (int*)iresult);
+        GetFKeyPtr(0x04A3, &iresult); // Next
+        FKey_Display(5, (int*)iresult);
+        
+        textInput input;
+        input.x=6;
+        input.y=3;
+        input.width=8;
+        input.charlimit=8;
+        input.acceptF6=1;
+        input.type=INPUTTYPE_DATE;
+        char edbuffer[15] = "";
+        strcpy(edbuffer, (char*)"");
+        fillInputDate(event->enddate.year, event->enddate.month, event->enddate.day, edbuffer);
+        input.buffer = (char*)edbuffer;
+        while(1) {
+          input.key=0;
+          int res = doTextInput(&input);
+          if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
+          else if (res==INPUT_RETURN_CONFIRM) {
+            char year[6] = "";
+            char month[3] = "";
+            char day[3] = "";
+            switch(GetSetting(SETTING_DATEFORMAT)) {
+              case 0:
+                day[0] = edbuffer[0]; day[1] = edbuffer[1]; day[2] = '\0';
+                month[0] = edbuffer[2]; month[1] = edbuffer[3]; month[2] = '\0';
+                year[0] = edbuffer[4]; year[1] = edbuffer[5]; year[2] = edbuffer[6]; year[3] = edbuffer[7]; year[4] = '\0';
+                break;
+              case 1:
+                day[0] = edbuffer[2]; day[1] = edbuffer[3]; day[2] = '\0';
+                month[0] = edbuffer[0]; month[1] = edbuffer[1]; month[2] = '\0';
+                year[0] = edbuffer[4]; year[1] = edbuffer[5]; year[2] = edbuffer[6]; year[3] = edbuffer[7]; year[4] = '\0';
+                break;
+              case 2:
+                day[0] = edbuffer[6]; day[1] = edbuffer[7]; day[2] = '\0';
+                month[0] = edbuffer[4]; month[1] = edbuffer[5]; month[2] = '\0';
+                year[0] = edbuffer[0]; year[1] = edbuffer[1]; year[2] = edbuffer[2]; year[3] = edbuffer[3]; year[4] = '\0';
+                break;
+            }
+
+            int yr = sys_atoi(year);
+            int m = sys_atoi(month);
+            int d = sys_atoi(day);
+            if(isDateValid(yr, m, d) && (int)strlen(edbuffer) == input.charlimit) {
+              long int datediff = DateToDays(yr, m, d) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
+              if(datediff>=0) {
+                event->enddate.year = yr;
+                event->enddate.month = m;
+                event->enddate.day = d;
                 curstep=curstep+1; break; // continue to next step
-              } else if (!strlen(stbuffer)) {
-                // user wants all-day event
-                event->timed = 0;
-                curstep=curstep+1; break; // next step
-              } else {
-                invalidFieldMsg(1);
-              }
-            } 
-            else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
-          }
-        } else {
-          curstep=curstep+1;
+              } else invalidFieldMsg(0);
+            } else if (!strlen(edbuffer)) {
+              // user wants end date to be the same as the start date
+              event->enddate.year = event->startdate.year;
+              event->enddate.month = event->startdate.month;
+              event->enddate.day = event->startdate.day;
+              curstep=curstep+1; break; // next step
+            } else {
+              invalidFieldMsg(0);
+            }
+          } 
+          else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
         }
         break;
-      case 4:
-        if(!istask) {
-          mPrintXY(1, 2, (char*)"End date:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          switch(GetSetting(SETTING_DATEFORMAT)) {
-            case 0:
-              mPrintXY(6, 4, (char*)"DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              break;
-            case 1:
-              mPrintXY(6, 4, (char*)"MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              break;
-            case 2:
-              mPrintXY(6, 4, (char*)"YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              break;
-          }
-          int textX = 0;
-          int textY = 5*24;
-          PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will end on", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          textX=0; textY += 17;
-          PrintMini(&textX, &textY, (unsigned char*)"the same day that it starts.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-          int iresult;
-          GetFKeyPtr(0x036F, &iresult); // <
-          FKey_Display(0, (int*)iresult);
-          GetFKeyPtr(0x04A3, &iresult); // Next
-          FKey_Display(5, (int*)iresult);
-          
-          textInput input;
-          input.x=6;
-          input.y=3;
-          input.width=8;
-          input.charlimit=8;
-          input.acceptF6=1;
-          input.type=INPUTTYPE_DATE;
-          char edbuffer[15] = "";
-          strcpy(edbuffer, (char*)"");
-          fillInputDate(event->enddate.year, event->enddate.month, event->enddate.day, edbuffer);
-          input.buffer = (char*)edbuffer;
-          while(1) {
-            input.key=0;
-            int res = doTextInput(&input);
-            if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
-            else if (res==INPUT_RETURN_CONFIRM) {
-              char year[6] = "";
-              char month[3] = "";
-              char day[3] = "";
-              switch(GetSetting(SETTING_DATEFORMAT)) {
-                case 0:
-                  day[0] = edbuffer[0]; day[1] = edbuffer[1]; day[2] = '\0';
-                  month[0] = edbuffer[2]; month[1] = edbuffer[3]; month[2] = '\0';
-                  year[0] = edbuffer[4]; year[1] = edbuffer[5]; year[2] = edbuffer[6]; year[3] = edbuffer[7]; year[4] = '\0';
-                  break;
-                case 1:
-                  day[0] = edbuffer[2]; day[1] = edbuffer[3]; day[2] = '\0';
-                  month[0] = edbuffer[0]; month[1] = edbuffer[1]; month[2] = '\0';
-                  year[0] = edbuffer[4]; year[1] = edbuffer[5]; year[2] = edbuffer[6]; year[3] = edbuffer[7]; year[4] = '\0';
-                  break;
-                case 2:
-                  day[0] = edbuffer[6]; day[1] = edbuffer[7]; day[2] = '\0';
-                  month[0] = edbuffer[4]; month[1] = edbuffer[5]; month[2] = '\0';
-                  year[0] = edbuffer[0]; year[1] = edbuffer[1]; year[2] = edbuffer[2]; year[3] = edbuffer[3]; year[4] = '\0';
-                  break;
-              }
-
-              int yr = sys_atoi(year);
-              int m = sys_atoi(month);
-              int d = sys_atoi(day);
-              if(isDateValid(yr, m, d) && (int)strlen(edbuffer) == input.charlimit) {
-                long int datediff = DateToDays(yr, m, d) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
-                if(datediff>=0) {
-                  event->enddate.year = yr;
-                  event->enddate.month = m;
-                  event->enddate.day = d;
-                  curstep=curstep+1; break; // continue to next step
-                } else invalidFieldMsg(0);
-              } else if (!strlen(edbuffer)) {
-                // user wants end date to be the same as the start date
-                event->enddate.year = event->startdate.year;
-                event->enddate.month = event->startdate.month;
-                event->enddate.day = event->startdate.day;
-                curstep=curstep+1; break; // next step
-              } else {
-                invalidFieldMsg(0);
-              }
-            } 
-            else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
-          }
-        } else {
-          curstep=curstep+1;
-        }
-        break;
-      case 5:
+      }
+      case 5: {
         if(event->timed) {
           mPrintXY(1, 2, (char*)"End time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(1, 3, (char*)"Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -1313,83 +1312,85 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             } 
             else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
           }
-        } else { curstep=curstep+1; break; } //skip this step
+        } else {
+          curstep=6;
+        }
         break;
-      case 6:
-        if(1) {
-          mPrintXY(1, 2, (char*)"Select category", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          mPrintXY(5, 4, (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
-          mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
-          int iresult, inscreen=1; int key = 0;
-          GetFKeyPtr(0x036F, &iresult); // <
-          FKey_Display(0, (int*)iresult);
-          GetFKeyPtr(0x04A4, &iresult); // Finish
-          FKey_Display(5, (int*)iresult);
-          char buffer[20] = "";
-          if(type == EVENTEDITORTYPE_ADD) event->category = 1;
-          while(inscreen)
+      }
+      case 6: {
+        mPrintXY(1, 2, (char*)"Select category", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(5, 4, (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
+        mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
+        int iresult, inscreen=1; int key = 0;
+        GetFKeyPtr(0x036F, &iresult); // <
+        FKey_Display(0, (int*)iresult);
+        GetFKeyPtr(0x04A4, &iresult); // Finish
+        FKey_Display(5, (int*)iresult);
+        char buffer[20] = "";
+        if(type == EVENTEDITORTYPE_ADD) event->category = 1;
+        while(inscreen)
+        {
+          mPrintXY(5, 5, (char*)" ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); //clear line
+          itoa(event->category, (unsigned char*)buffer);
+          mPrintXY(5, 5, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, (event->category <= 6 ? event->category-1 : TEXT_COLOR_YELLOW));
+          mGetKey(&key);
+          switch(key)
           {
-            mPrintXY(5, 5, (char*)" ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); //clear line
-            itoa(event->category, (unsigned char*)buffer);
-            mPrintXY(5, 5, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, (event->category <= 6 ? event->category-1 : TEXT_COLOR_YELLOW));
-            mGetKey(&key);
-            switch(key)
-            {
-              case KEY_CTRL_DOWN:
-                if (event->category == 0) {
-                  event->category = 7;
-                } else {
-                  event->category--;
-                }
-                break;
-              case KEY_CTRL_UP:
-                if (event->category == 7) {
-                  event->category = 0;
-                } else {
-                  event->category++;
-                }
-                break;
-              case KEY_CTRL_F1:
-                if(istask) curstep = 2; // go to description
-                else curstep=curstep-(event->timed?1:2);
-                goto endofloop;
-                break;
-              case KEY_CTRL_EXE:
-              case KEY_CTRL_F6:
-                inscreen = 0;
-                break;
-              case KEY_CTRL_EXIT: return EVENTEDITOR_RETURN_EXIT;
-            }
-          }
-          event->daterange = 0;
-          event->repeat = 0;
-          event->dayofweek = dow(event->startdate.day, event->startdate.month, event->startdate.year);
-          if(type == EVENTEDITORTYPE_ADD) {
-            int res = AddEvent(event, CALENDARFOLDER);
-          
-            if(res > 0) {
-              mMsgBoxPush(4);
-              if (res == 4) {
-                mPrintXY(3, 2, (char*)"Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            case KEY_CTRL_DOWN:
+              if (event->category == 0) {
+                event->category = 7;
               } else {
-                if(istask) mPrintXY(3, 2, (char*)"Task add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-                else mPrintXY(3, 2, (char*)"Event add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+                event->category--;
               }
-              if(istask) mPrintXY(3, 3, (char*)"Task could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              else mPrintXY(3, 3, (char*)"Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              mPrintXY(3, 4, (char*)"be added.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-              closeMsgBox();
-            }
-            return EVENTEDITOR_RETURN_EXIT; // error is like exit
-          } else {
-            // if we're editing an event, do not save anything to storage and just act as an editor for what's in RAM.
-            // saving to storage is something that must be dealt with after this function returns.
-            return EVENTEDITOR_RETURN_CONFIRM;
+              break;
+            case KEY_CTRL_UP:
+              if (event->category == 7) {
+                event->category = 0;
+              } else {
+                event->category++;
+              }
+              break;
+            case KEY_CTRL_F1:
+              if(istask) curstep = 2; // go to description
+              else curstep=curstep-(event->timed?1:2);
+              goto endofloop;
+              break;
+            case KEY_CTRL_EXE:
+            case KEY_CTRL_F6:
+              inscreen = 0;
+              break;
+            case KEY_CTRL_EXIT: return EVENTEDITOR_RETURN_EXIT;
           }
+        }
+        event->daterange = 0;
+        event->repeat = 0;
+        event->dayofweek = dow(event->startdate.day, event->startdate.month, event->startdate.year);
+        if(type == EVENTEDITORTYPE_ADD) {
+          int res = AddEvent(event, CALENDARFOLDER);
+        
+          if(res > 0) {
+            mMsgBoxPush(4);
+            if (res == 4) {
+              mPrintXY(3, 2, (char*)"Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            } else {
+              if(istask) mPrintXY(3, 2, (char*)"Task add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              else mPrintXY(3, 2, (char*)"Event add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            }
+            if(istask) mPrintXY(3, 3, (char*)"Task could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            else mPrintXY(3, 3, (char*)"Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(3, 4, (char*)"be added.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+            closeMsgBox();
+          }
+          return EVENTEDITOR_RETURN_EXIT; // error is like exit
+        } else {
+          // if we're editing an event, do not save anything to storage and just act as an editor for what's in RAM.
+          // saving to storage is something that must be dealt with after this function returns.
+          return EVENTEDITOR_RETURN_CONFIRM;
         }
         endofloop:
         break;
+      }
       default:
         return EVENTEDITOR_RETURN_EXIT; // non-existent step specified, return
     }
