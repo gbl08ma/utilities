@@ -392,8 +392,9 @@ void eventsPane(int textmode) {
     Bdisp_Fill_VRAM( COLOR_WHITE, 2 ); //fill between the status area and f-key area
     DrawFrame( 0xfffff  );
   }
+  pane_drawTodayEvents(calevents, 0, 0, numevents, eventsToDisplayInFull);
+  drawDayBusyMap(&thisday, 0, LCD_HEIGHT_PX-44, LCD_WIDTH_PX, 15, 1,0,0);
   while (inscreen) {
-    pane_drawTodayEvents(calevents, 0, 0, numevents, eventsToDisplayInFull);
     if (GetSetting(SETTING_THEME)) {
       DisplayStatusArea();
       darkenStatusbar();
