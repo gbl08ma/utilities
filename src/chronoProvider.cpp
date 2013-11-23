@@ -43,12 +43,20 @@ void saveChronoArray(chronometer* chronoarray, int count) { // count is the amou
 
   // convert each chrono in chronoarray to a buffer, and concat it to finalbuffer
   int cur = 0;
+  int allClear = 1;
   while(cur <= count-1) {
+    if(chronoarray[cur].state != CHRONO_STATE_CLEARED) allClear=0;
     chronoToBuffer(&chronoarray[cur], buffer);
     memcpy(finalbuffer+cur*8*5,buffer,8*5);
     cur++;
   }
-  
+  if(allClear) {
+    // all chronos are clear
+    // this means that saving a state file to MCS is wasting space there
+    // just delete any existing file and return.
+    MCSDelVar2(DIRNAME, CHRONOFILE);
+    return;
+  }
   int createResult = MCS_CreateDirectory( DIRNAME );
 
   if(createResult != 0) // Check if directory exists
