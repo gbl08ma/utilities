@@ -1019,7 +1019,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
   if(istask) event->timed=0;
   int curstep = 0;
   while(1) {
-    Bdisp_AllClr_VRAM();
     if (type == EVENTEDITORTYPE_ADD) {
       SetBackGround(0x0A);
       if(istask) mPrintXY(1, 1, (char*)"Add New Task", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
@@ -1029,6 +1028,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       if(istask) mPrintXY(1, 1, (char*)"Edit Task", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
       else mPrintXY(1, 1, (char*)"Edit Event", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     }
+    clearLine(1,8); // SetBackGround already took care of filling the lines 1 through 7, and DisplayStatusArea will fill line 0
     if(curstep >= 3) {
       // disable keyboard modifiers, as user may have come from a text input field
       // where alpha-lock was enabled, not being disabled on F6.
@@ -1116,8 +1116,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       case 3: {   
         mPrintXY(1, 2, (char*)"Start time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(1, 3, (char*)"Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(6, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int textX = 0;
         int textY = 5*24;
         PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will be a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
@@ -1130,7 +1129,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         FKey_Display(5, (int*)iresult);
         
         textInput input;
-        input.x=6;
+        input.x=8;
         input.y=3;
         input.width=6;
         input.charlimit=6;
@@ -1175,16 +1174,15 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       }
       case 4: {
         mPrintXY(1, 2, (char*)"End date:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         switch(GetSetting(SETTING_DATEFORMAT)) {
           case 0:
-            mPrintXY(6, 4, (char*)"DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(7, 4, (char*)"DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             break;
           case 1:
-            mPrintXY(6, 4, (char*)"MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(7, 4, (char*)"MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             break;
           case 2:
-            mPrintXY(6, 4, (char*)"YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(7, 4, (char*)"YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             break;
         }
         int textX = 0;
@@ -1199,7 +1197,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         FKey_Display(5, (int*)iresult);
         
         textInput input;
-        input.x=6;
+        input.x=7;
         input.y=3;
         input.width=8;
         input.charlimit=8;
@@ -1263,8 +1261,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       case 5: {
         if(event->timed) {
           mPrintXY(1, 2, (char*)"End time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          mPrintXY(1, 3, (char*)"Time: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          mPrintXY(6, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           int iresult;
           GetFKeyPtr(0x036F, &iresult); // <
           FKey_Display(0, (int*)iresult);
@@ -1272,7 +1269,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           FKey_Display(5, (int*)iresult);
           
           textInput input;
-          input.x=6;
+          input.x=8;
           input.y=3;
           input.width=6;
           input.charlimit=6;
@@ -1367,7 +1364,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         event->dayofweek = dow(event->startdate.day, event->startdate.month, event->startdate.year);
         if(type == EVENTEDITORTYPE_ADD) {
           int res = AddEvent(event, CALENDARFOLDER);
-        
           if(res > 0) {
             mMsgBoxPush(4);
             if (res == 4) {
