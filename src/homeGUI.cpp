@@ -58,8 +58,8 @@ void showHome(chronometer* chrono) {
       bgcolor = COLOR_WHITE;
       fgcolor = COLOR_BLACK;
     }
-    DisplayStatusArea();
     DefineStatusMessage((char*)"", 1, 0, 0);
+    DisplayStatusArea();
     
     // Print time
     drawHomeClock(GetSetting(SETTING_CLOCK_TYPE), fgcolor, bgcolor);
