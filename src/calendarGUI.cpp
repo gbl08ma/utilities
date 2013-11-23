@@ -134,8 +134,9 @@ int viewMonthCalendar(int dateselection) {
           if(eventcount[d]+1 > MAX_DAY_EVENTS) {
             AUX_DisplayErrorMessage( 0x2E );
           } else {
-            eventEditor(y, m, d);
-            bufmonth=0;//force calendar events to reload
+            if(EVENTEDITOR_RETURN_CONFIRM == eventEditor(y, m, d)) {
+              bufmonth=0;//force calendar events to reload
+            }
           }
         }
         break;
@@ -562,9 +563,10 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
           if(existcount >= MAX_DAY_EVENTS) {
             AUX_DisplayErrorMessage( 0x2E );
           } else {
-            eventEditor(date->year, date->month, date->day);
-            *y=date->year; *m=date->month; *d=date->day; *jumpToSel=1;
-            return 1;
+            if(EVENTEDITOR_RETURN_CONFIRM == eventEditor(date->year, date->month, date->day)) {
+              *y=date->year; *m=date->month; *d=date->day; *jumpToSel=1;
+              return 1;
+            }
           }
         } else if (menu->fkeypage == 1) {
           ddays = DateToDays(*y, *m, *d) + 30; // increase by one month.
@@ -731,111 +733,114 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
     curitem++;
   }
   menu->items=menuitems; 
-
-  Bdisp_AllClr_VRAM();
-  DisplayStatusArea(); 
-  
-  int iresult;
-  if (menu->fkeypage == 0) {
-    if(menu->numitems>0) {
-      GetFKeyPtr(0x049F, &iresult); // VIEW
-      FKey_Display(0, (int*)iresult);
-    }
-    GetFKeyPtr(0x03B4, &iresult); // INSERT
-    FKey_Display(1, (int*)iresult);
-    if(menu->numitems>0) {
-      GetFKeyPtr(0x0185, &iresult); // EDIT
-      FKey_Display(2, (int*)iresult);
-      GetFKeyPtr(0x0038, &iresult); // DELETE
-      FKey_Display(3, (int*)iresult);
-      GetFKeyPtr(0x0104, &iresult); // DEL-ALL
-      FKey_Display(4, (int*)iresult);
-    }
-  } else if (menu->fkeypage == 1) {
-    if(menu->numitems>0) {
-      GetFKeyPtr(0x038D, &iresult); // COPY
-      FKey_Display(0, (int*)iresult);
-      GetFKeyPtr(0x04D2, &iresult); // MOVE
+  while(1) {
+    Bdisp_AllClr_VRAM();
+    DisplayStatusArea(); 
+    
+    int iresult;
+    if (menu->fkeypage == 0) {
+      if(menu->numitems>0) {
+        GetFKeyPtr(0x049F, &iresult); // VIEW
+        FKey_Display(0, (int*)iresult);
+      }
+      GetFKeyPtr(0x03B4, &iresult); // INSERT
       FKey_Display(1, (int*)iresult);
-      GetFKeyPtr(0x0470, &iresult); // MEMO
-      FKey_Display(2, (int*)iresult);
-    } else { menu = 0; } //because if there are no events, 2nd menu is empty.
-  }
-  if(menu->numitems>0) {
-    GetFKeyPtr(0x0006, &iresult); // Rotate FKey menu arrow
-    FKey_Display(5, (int*)iresult);
-  }
-  if(menu->selection > menu->numitems) menu->selection = menu->numitems;
-  if(menu->selection < 1) menu->selection = 1;
-  int res = doMenu(menu);
-  switch(res) {
-    case MENU_RETURN_EXIT:
-      return 0;
-      break;
-    case KEY_CTRL_F1:
-      if(menu->fkeypage == 0) { if(menu->numitems > 0) viewEvent(&events[menu->selection-1]); }
-      else if (menu->fkeypage == 1) {
-        copyEvent(&events[menu->selection-1]);
-        bufmonth = 0; searchValid = 0;
+      if(menu->numitems>0) {
+        GetFKeyPtr(0x0185, &iresult); // EDIT
+        FKey_Display(2, (int*)iresult);
+        GetFKeyPtr(0x0038, &iresult); // DELETE
+        FKey_Display(3, (int*)iresult);
+        GetFKeyPtr(0x0104, &iresult); // DEL-ALL
+        FKey_Display(4, (int*)iresult);
       }
-      break;
-    case MENU_RETURN_SELECTION:
-      if(menu->numitems > 0) viewEvent(&events[menu->selection-1]);
-      break;
-    case KEY_CTRL_F2:
-      if(menu->fkeypage == 0) {
-        if(menu->numitems >= MAX_DAY_EVENTS) {
-          AUX_DisplayErrorMessage( 0x2E );
-        } else {
-          eventEditor(y, m, d);
-          bufmonth=0; searchValid = 0;
-        }
-      } else if (menu->fkeypage == 1) {
-        moveEvent(events, menu->numitems, menu->selection-1);
-        bufmonth=0; searchValid = 0;
+    } else if (menu->fkeypage == 1) {
+      if(menu->numitems>0) {
+        GetFKeyPtr(0x038D, &iresult); // COPY
+        FKey_Display(0, (int*)iresult);
+        GetFKeyPtr(0x04D2, &iresult); // MOVE
+        FKey_Display(1, (int*)iresult);
+        GetFKeyPtr(0x0470, &iresult); // MEMO
+        FKey_Display(2, (int*)iresult);
+      } else { menu = 0; } //because if there are no events, 2nd menu is empty.
+    }
+    if(menu->numitems>0) {
+      GetFKeyPtr(0x0006, &iresult); // Rotate FKey menu arrow
+      FKey_Display(5, (int*)iresult);
+    }
+    if(menu->selection > menu->numitems) menu->selection = menu->numitems;
+    if(menu->selection < 1) menu->selection = 1;
+    int res = doMenu(menu);
+    switch(res) {
+      case MENU_RETURN_EXIT:
         return 0;
-      }
-      break;
-    case KEY_CTRL_F3:
-      if(menu->fkeypage == 0) {
-        if(menu->numitems > 0) {
-          if(eventEditor(y, m, d, EVENTEDITORTYPE_EDIT, &events[menu->selection-1]) == EVENTEDITOR_RETURN_CONFIRM) {
-            ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
-            searchValid = 0;
+        break;
+      case KEY_CTRL_F1:
+        if(menu->fkeypage == 0) { if(menu->numitems > 0) viewEvent(&events[menu->selection-1]); }
+        else if (menu->fkeypage == 1) {
+          copyEvent(&events[menu->selection-1]);
+          bufmonth = 0; searchValid = 0;
+          return 1;
+        }
+        break;
+      case MENU_RETURN_SELECTION:
+        if(menu->numitems > 0) viewEvent(&events[menu->selection-1]);
+        break;
+      case KEY_CTRL_F2:
+        if(menu->fkeypage == 0) {
+          if(menu->numitems >= MAX_DAY_EVENTS) {
+            AUX_DisplayErrorMessage( 0x2E );
+          } else {
+            if(EVENTEDITOR_RETURN_CONFIRM == eventEditor(y, m, d)) {
+              bufmonth=0; searchValid = 0; return 1;
+            }
+          }
+        } else if (menu->fkeypage == 1) {
+          moveEvent(events, menu->numitems, menu->selection-1);
+          bufmonth=0; searchValid = 0;
+          return 0;
+        }
+        break;
+      case KEY_CTRL_F3:
+        if(menu->fkeypage == 0) {
+          if(menu->numitems > 0) {
+            if(eventEditor(y, m, d, EVENTEDITORTYPE_EDIT, &events[menu->selection-1]) == EVENTEDITOR_RETURN_CONFIRM) {
+              ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
+              searchValid = 0; return 1;
+            }
+          }
+        } else if (menu->fkeypage == 1) {
+          setEventChrono(&events[menu->selection-1]);
+        }
+        break;
+      case KEY_CTRL_F4:
+        if(menu->fkeypage == 0) {
+          if(menu->numitems > 0) {
+            deleteEventUI(y, m, d, events, menu->numitems, menu->selection-1);
+            bufmonth=0; searchValid = 0; return 1;
           }
         }
-      } else if (menu->fkeypage == 1) {
-        setEventChrono(&events[menu->selection-1]);
-      }
-      break;
-    case KEY_CTRL_F4:
-      if(menu->fkeypage == 0) {
+        break;
+      case KEY_CTRL_F5:
+        if(menu->fkeypage == 0) {
+          if(menu->numitems > 0) { deleteAllEventUI(y, m, d, 0); bufmonth=0; searchValid = 0; return 1; }
+        }
+        break;
+      case KEY_CTRL_F6:
+        if (menu->fkeypage == 0) {
+          if(menu->numitems > 0) menu->fkeypage = 1;
+        } else menu->fkeypage = 0;
+        break;
+      case KEY_CTRL_FORMAT:
         if(menu->numitems > 0) {
-          deleteEventUI(y, m, d, events, menu->numitems, menu->selection-1);
-          bufmonth=0; searchValid = 0;
+          //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
+          //so on this add-in it is used to change the category (color) of a task/calendar event.
+          if(changeEventCategory(&events[menu->selection-1])) {
+            ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
+            searchValid = 0; return 1;
+          }
         }
-      }
-      break;
-    case KEY_CTRL_F5:
-      if(menu->fkeypage == 0) {
-        if(menu->numitems > 0) { deleteAllEventUI(y, m, d, 0); bufmonth=0; searchValid = 0; }
-      }
-      break;
-    case KEY_CTRL_F6:
-      if (menu->fkeypage == 0) {
-        if(menu->numitems > 0) menu->fkeypage = 1;
-      } else menu->fkeypage = 0;
-      break;
-    case KEY_CTRL_FORMAT:
-      if(menu->numitems > 0) {
-        //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
-        //so on this add-in it is used to change the category (color) of a task/calendar event.
-        if(changeEventCategory(&events[menu->selection-1])) {
-          ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
-          searchValid = 0;
-        }
-      }
-      break;
+        break;
+    }
   }
   return 1;
 }
@@ -1377,8 +1382,9 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             mPrintXY(3, 4, (char*)"be added.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
             closeMsgBox();
+            return EVENTEDITOR_RETURN_EXIT; // error is like exit
           }
-          return EVENTEDITOR_RETURN_EXIT; // error is like exit
+          return EVENTEDITOR_RETURN_CONFIRM;
         } else {
           // if we're editing an event, do not save anything to storage and just act as an editor for what's in RAM.
           // saving to storage is something that must be dealt with after this function returns.
