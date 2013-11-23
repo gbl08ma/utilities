@@ -2072,6 +2072,7 @@ void calendarTools(int y, int m, int d) {
       DefineStatusMessage((char*)"Select second date", 1, 0, 0);
       viewCalendar(1);
       DefineStatusMessage((char*)"", 1, 0, 0);
+      DisplayStatusArea();
       if(dateselRes) {
         y2=sy;
         m2=sm;
