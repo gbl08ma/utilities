@@ -58,68 +58,83 @@ int viewTasksSub(Menu* menu) {
   }
   menu->items=menuitems; 
 
-  Bdisp_AllClr_VRAM();
-  DisplayStatusArea(); 
-  
-  int iresult;
-  if (menu->fkeypage == 0) {
-    if(menu->numitems>0) {
-      GetFKeyPtr(0x049F, &iresult); // VIEW
-      FKey_Display(0, (int*)iresult);
-      GetFKeyPtr(0x0185, &iresult); // EDIT
-      FKey_Display(2, (int*)iresult);
-      GetFKeyPtr(0x0038, &iresult); // DELETE
-      FKey_Display(3, (int*)iresult);
-      GetFKeyPtr(0x0104, &iresult); // DEL-ALL
-      FKey_Display(4, (int*)iresult);
-      GetFKeyPtr(0x049D, &iresult); // Switch [white]
-      FKey_Display(5, (int*)iresult);
+  while(1) {
+    Bdisp_AllClr_VRAM();
+    DisplayStatusArea(); 
+    
+    int iresult;
+    if (menu->fkeypage == 0) {
+      if(menu->numitems>0) {
+        GetFKeyPtr(0x049F, &iresult); // VIEW
+        FKey_Display(0, (int*)iresult);
+        GetFKeyPtr(0x0185, &iresult); // EDIT
+        FKey_Display(2, (int*)iresult);
+        GetFKeyPtr(0x0038, &iresult); // DELETE
+        FKey_Display(3, (int*)iresult);
+        GetFKeyPtr(0x0104, &iresult); // DEL-ALL
+        FKey_Display(4, (int*)iresult);
+        GetFKeyPtr(0x049D, &iresult); // Switch [white]
+        FKey_Display(5, (int*)iresult);
+      }
+      GetFKeyPtr(0x03B4, &iresult); // INSERT
+      FKey_Display(1, (int*)iresult);
     }
-    GetFKeyPtr(0x03B4, &iresult); // INSERT
-    FKey_Display(1, (int*)iresult);
-  }
-  if(menu->selection > menu->numitems) menu->selection = menu->numitems;
-  if(menu->selection < 1) menu->selection = 1;
-  int res = doMenu(menu);
-  switch(res) {
-    case MENU_RETURN_EXIT:
-      return 0;
-      break;
-    case KEY_CTRL_F1:
-    case MENU_RETURN_SELECTION:
-      if(menu->numitems > 0) viewTask(&tasks[menu->selection-1]);
-      break;
-    case KEY_CTRL_F2:
-      if(menu->numitems >= MAX_DAY_EVENTS) {
-        AUX_DisplayErrorMessage( 0x2E );
-      } else {
-        eventEditor(0, 0, 0, EVENTEDITORTYPE_ADD, NULL, 1);
-      }
-      break;
-    case KEY_CTRL_F3:
-      if(menu->numitems > 0)
-        if(eventEditor(0, 0, 0, EVENTEDITORTYPE_EDIT, &tasks[menu->selection-1], 1) == EVENTEDITOR_RETURN_CONFIRM) {
-          ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
+    if(menu->selection > menu->numitems) menu->selection = menu->numitems;
+    if(menu->selection < 1) menu->selection = 1;
+    int res = doMenu(menu);
+    switch(res) {
+      case MENU_RETURN_EXIT:
+        return 0;
+        break;
+      case KEY_CTRL_F1:
+      case MENU_RETURN_SELECTION:
+        if(menu->numitems > 0) viewTask(&tasks[menu->selection-1]);
+        break;
+      case KEY_CTRL_F2:
+        if(menu->numitems >= MAX_DAY_EVENTS) {
+          AUX_DisplayErrorMessage( 0x2E );
+        } else {
+          if(EVENTEDITOR_RETURN_CONFIRM == eventEditor(0, 0, 0, EVENTEDITORTYPE_ADD, NULL, 1)) {
+            return 1;
+          }
         }
-      break;
-    case KEY_CTRL_F4:
-      if(menu->numitems > 0) deleteEventUI(0, 0, 0, tasks, menu->numitems, menu->selection-1, 1);
-      break;
-    case KEY_CTRL_F5:
-      if(menu->numitems > 0) deleteAllEventUI(0, 0, 0, 1);
-      break;
-    case KEY_CTRL_F6:
-      if(menu->numitems > 0) toggleTaskActivity(tasks, menu->selection-1, menu->numitems);
-      break;
-    case KEY_CTRL_FORMAT:
-      if(menu->numitems > 0) {
-        //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
-        //so on this add-in it is used to change the category (color) of a task/calendar event.
-        if(changeEventCategory(&tasks[menu->selection-1])) {
-          ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
+        break;
+      case KEY_CTRL_F3:
+        if(menu->numitems > 0)
+          if(eventEditor(0, 0, 0, EVENTEDITORTYPE_EDIT, &tasks[menu->selection-1], 1) == EVENTEDITOR_RETURN_CONFIRM) {
+            ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
+            return 1;
+          }
+        break;
+      case KEY_CTRL_F4:
+        if(menu->numitems > 0) {
+          deleteEventUI(0, 0, 0, tasks, menu->numitems, menu->selection-1, 1);
+          return 1;
         }
-      }
-      break;
+        break;
+      case KEY_CTRL_F5:
+        if(menu->numitems > 0) {
+          deleteAllEventUI(0, 0, 0, 1);
+          return 1;
+        }
+        break;
+      case KEY_CTRL_F6:
+        if(menu->numitems > 0) {
+          toggleTaskActivity(tasks, menu->selection-1, menu->numitems);
+          return 1;
+        }
+        break;
+      case KEY_CTRL_FORMAT:
+        if(menu->numitems > 0) {
+          //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
+          //so on this add-in it is used to change the category (color) of a task/calendar event.
+          if(changeEventCategory(&tasks[menu->selection-1])) {
+            ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
+            return 1;
+          }
+        }
+        break;
+    }
   }
   return 1;
 }
