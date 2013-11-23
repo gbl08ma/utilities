@@ -68,6 +68,7 @@ typedef struct {
   int returnOnInfiniteScrolling=0; //whether the menu should return when user reaches the last item and presses the down key (or the first item and presses the up key)
   int darken=0; // for dark theme on homeGUI menus
   int miniMiniTitle=0; // if true, title will be drawn in minimini. for calendar week view
+  int useStatusText=1;
   MenuItem* items; // items in menu
 } Menu;
 

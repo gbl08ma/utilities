@@ -37,6 +37,7 @@ void viewCalendar(int dateselection) {
   int type = GetSetting(SETTING_DEFAULT_CALENDAR_VIEW);
   if(dateselection) type = 1; // week view can't act as date selector for now
   while(1) {
+    if(!dateselection) DefineStatusMessage((char*)"\xe7\x50\xe7\x72\xe7\x65\xe7\x73\xe7\x73 \xe7\x4f\xe7\x50\xe7\x54\xe7\x4e \xe7\x66\xe7\x6f\xe7\x72 \xe7\x6d\xe7\x6f\xe7\x72\xe7\x65 \xe7\x6f\xe7\x70\xe7\x74\xe7\x69\xe7\x6f\xe7\x6e\xe7\x73", 1, 0, 0);
     if(type) res = viewMonthCalendar(dateselection);
     else res = viewWeekCalendar();
     if(res) type=!type; else return;
@@ -263,6 +264,7 @@ int viewWeekCalendar() {
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnInfiniteScrolling=1;
+  menu.useStatusText=0;
   int jumpToSel=1;
   int keepMenuSel=0;
   while(res) {
@@ -851,6 +853,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
 }
 
 void viewEvent(CalendarEvent* event) {
+  DefineStatusMessage((char*)"", 1, 0, 0); // clear "press OPTN for more options" message
   char buffer[15];
   textArea text;
   strcpy(text.title, (char*)event->title);
@@ -1000,6 +1003,7 @@ void fillInputTime(int h, int m, int s, char* buffer) {
 }
 int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask) {
   // returns 0 if success, 1
+  DefineStatusMessage((char*)"", 1, 0, 0); // clear "press OPTN for more options" message
   if(type == EVENTEDITORTYPE_ADD) {
     event = (CalendarEvent*)alloca(sizeof(CalendarEvent));
     

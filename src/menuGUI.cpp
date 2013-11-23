@@ -28,7 +28,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
   char itemBackFiller[23] = "";
   while(1) {
     // Clear the area of the screen we are going to draw on
-    DefineStatusMessage((char*)menu->statusText, 1, 0, 0);
+    if(menu->useStatusText) DefineStatusMessage((char*)menu->statusText, 1, 0, 0);
     drawRectangle(18*(menu->startX-1), 24*(menu->miniMiniTitle ? itemsStartY:menu->startY), 18*menu->width, 24*menu->height-(menu->miniMiniTitle ? 24:0), COLOR_WHITE);
     if (menu->numitems>0) {
       int curitem= 0; //current processing item
