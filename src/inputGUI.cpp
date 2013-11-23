@@ -33,6 +33,10 @@ int doTextInput(textInput* input) {
   
   while(1)
   {
+    if(input->forcetext && strlen(input->buffer)==0) {
+      input->buffer[0]='\xd8';
+      input->buffer[1]='\x0';
+    }
     DisplayMBString2( 0, (unsigned char*)input->buffer, input->start, input->cursor, 0, input->x, input->y*24-24, input->width+input->x, 0 );
     
     drawLine(input->x*18-18, input->y*24-1, (input->width==21?LCD_WIDTH_PX-1:input->width*18+input->x*18-18-1), input->y*24-1, COLOR_GRAY);
@@ -73,7 +77,7 @@ int doTextInput(textInput* input) {
     {
       // Next step
       if(input->forcetext) {
-        if (strlen((char*)input->buffer) > 0) {
+        if (strlen((char*)input->buffer) > 0 && input->buffer[0]!='\xd8') {
           Cursor_SetFlashOff(); return INPUT_RETURN_CONFIRM;
         } else {
           mMsgBoxPush(4);
