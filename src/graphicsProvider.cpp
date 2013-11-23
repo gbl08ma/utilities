@@ -43,12 +43,11 @@ int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short col
   return x;
 }
 //draws a point of color color at (x0, y0) 
-void plot(int x0, int y0, int color) { 
-   char* VRAM = (char*)0xA8000000; 
-   VRAM += 2*(y0*LCD_WIDTH_PX + x0); 
-   *(VRAM++) = (color&0x0000FF00)>>8; 
-   *(VRAM++) = (color&0x000000FF); 
-   return; 
+void plot(int x0, int y0, unsigned short color) {
+  unsigned short* VRAM = (unsigned short*)0xA8000000; 
+  VRAM += (y0*LCD_WIDTH_PX + x0); 
+  *VRAM = color;
+  return; 
 }
 
 void drawRectangle(int x, int y, int width, int height, unsigned short color) {
@@ -68,7 +67,7 @@ void drawLine(int x1, int y1, int x2, int y2, int color) {
     int delta_x = (x2 > x1?(ix = 1, x2 - x1):(ix = -1, x1 - x2)) << 1; 
     int delta_y = (y2 > y1?(iy = 1, y2 - y1):(iy = -1, y1 - y2)) << 1; 
   
-   plot(x1, y1, color);  
+    plot(x1, y1, color);  
     if (delta_x >= delta_y) { 
         int error = delta_y - (delta_x >> 1);        // error may go below zero 
         while (x1 != x2) { 
