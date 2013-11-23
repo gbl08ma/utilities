@@ -23,6 +23,8 @@
 
 #define EVENTEDITOR_RETURN_EXIT 0
 #define EVENTEDITOR_RETURN_CONFIRM 1
+#define EVENTDELETE_RETURN_EXIT 0
+#define EVENTDELETE_RETURN_CONFIRM 1
 void viewCalendar(int dateselection=0);
 int viewMonthCalendar(int dateselection=0);
 int viewWeekCalendar();
@@ -37,8 +39,8 @@ int eventEditor(int y, int m, int d, int type=EVENTEDITORTYPE_ADD, CalendarEvent
 void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* bufmonth, int* bufyear);
 void copyEvent(CalendarEvent* event);
 void moveEvent(CalendarEvent* events, int count, int pos, int isCopy=0);
-void deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask=0);
-void deleteAllEventUI(int y, int m, int d, int istask=0);
+int deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask=0);
+int deleteAllEventUI(int y, int m, int d, int istask=0);
 int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2);
 void invalidFieldMsg(int istime);
 void setEventChrono(CalendarEvent* event);

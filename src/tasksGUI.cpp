@@ -108,14 +108,16 @@ int viewTasksSub(Menu* menu) {
         break;
       case KEY_CTRL_F4:
         if(menu->numitems > 0) {
-          deleteEventUI(0, 0, 0, tasks, menu->numitems, menu->selection-1, 1);
-          return 1;
+          if(EVENTDELETE_RETURN_CONFIRM == deleteEventUI(0, 0, 0, tasks, menu->numitems, menu->selection-1, 1)) {
+            return 1;
+          }
         }
         break;
       case KEY_CTRL_F5:
         if(menu->numitems > 0) {
-          deleteAllEventUI(0, 0, 0, 1);
-          return 1;
+          if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventUI(0, 0, 0, 1)) {
+            return 1;
+          }
         }
         break;
       case KEY_CTRL_F6:
@@ -128,7 +130,7 @@ int viewTasksSub(Menu* menu) {
         if(menu->numitems > 0) {
           //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
           //so on this add-in it is used to change the category (color) of a task/calendar event.
-          if(changeEventCategory(&tasks[menu->selection-1])) {
+          if(EVENTEDITOR_RETURN_CONFIRM == changeEventCategory(&tasks[menu->selection-1])) {
             ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
             return 1;
           }

@@ -631,7 +631,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
           // we can use alloca here, as we're going to return right after
           CalendarEvent* ce = (CalendarEvent*)alloca(ne*sizeof(CalendarEvent));
           GetEventsForDate(&events[msel-1].startdate, CALENDARFOLDER, ce);
-          if(changeEventCategory(&ce[events[msel-1].origpos])) {
+          if(EVENTEDITOR_RETURN_CONFIRM == changeEventCategory(&ce[events[msel-1].origpos])) {
             ReplaceEventFile(&events[msel-1].startdate, ce, CALENDARFOLDER, ne);
           }
           *jumpToSel=0;
@@ -815,14 +815,19 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
       case KEY_CTRL_F4:
         if(menu->fkeypage == 0) {
           if(menu->numitems > 0) {
-            deleteEventUI(y, m, d, events, menu->numitems, menu->selection-1);
-            bufmonth=0; searchValid = 0; return 1;
+            if(EVENTDELETE_RETURN_CONFIRM == deleteEventUI(y, m, d, events, menu->numitems, menu->selection-1)) {
+              bufmonth=0; searchValid = 0; return 1;
+            }
           }
         }
         break;
       case KEY_CTRL_F5:
         if(menu->fkeypage == 0) {
-          if(menu->numitems > 0) { deleteAllEventUI(y, m, d, 0); bufmonth=0; searchValid = 0; return 1; }
+          if(menu->numitems > 0) {
+            if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventUI(y, m, d, 0)) {
+              bufmonth=0; searchValid = 0; return 1;
+            }
+          }
         }
         break;
       case KEY_CTRL_F6:
@@ -834,7 +839,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         if(menu->numitems > 0) {
           //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
           //so on this add-in it is used to change the category (color) of a task/calendar event.
-          if(changeEventCategory(&events[menu->selection-1])) {
+          if(EVENTEDITOR_RETURN_CONFIRM == changeEventCategory(&events[menu->selection-1])) {
             ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
             searchValid = 0; return 1;
           }
@@ -1522,7 +1527,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
 }
 
 
-void deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask) {
+int deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
   mMsgBoxPush(4);
   mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -1534,24 +1539,28 @@ void deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int po
   PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
   int key,inscreen=1;
+  int ret = 0;
   while(inscreen) {
     mGetKey(&key);
     switch(key)
     {
       case KEY_CTRL_F1:
         RemoveEvent(&date, events, CALENDARFOLDER, count, pos);
+        ret = EVENTDELETE_RETURN_CONFIRM;
         inscreen=0;
         break;
       case KEY_CTRL_F6:
       case KEY_CTRL_EXIT:
+        ret = EVENTDELETE_RETURN_EXIT;
         inscreen=0;
         break;
     }
   }
   mMsgBoxPop();
+  return ret;
 }
 
-void deleteAllEventUI(int y, int m, int d, int istask) {
+int deleteAllEventUI(int y, int m, int d, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
   mMsgBoxPush(4);
   if (istask) {
@@ -1563,21 +1572,25 @@ void deleteAllEventUI(int y, int m, int d, int istask) {
   PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
   int key,inscreen=1;
+  int ret = 0;
   while(inscreen) {
     mGetKey(&key);
     switch(key)
     {
       case KEY_CTRL_F1:
         RemoveDay(&date, CALENDARFOLDER);
+        ret = EVENTDELETE_RETURN_CONFIRM;
         inscreen=0;
         break;
       case KEY_CTRL_F6:
       case KEY_CTRL_EXIT:
+        ret = EVENTDELETE_RETURN_EXIT;
         inscreen=0;
         break;
     }
   }
   mMsgBoxPop();
+  return ret;
 }
 
 int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2)
@@ -1768,9 +1781,9 @@ int changeEventCategory(CalendarEvent* event) {
   if(selcolor != (unsigned char)0xFF) {
     //user didn't press EXIT, QUIT or AC/ON. input is validated.
     selcolor != 7 ? event->category = selcolor+1 : event->category = 0;
-    return 1;
+    return EVENTEDITOR_RETURN_CONFIRM;
   }
-  return 0;
+  return EVENTEDITOR_RETURN_EXIT;
 }
 
 void viewNthEventOnDay(EventDate* date, int pos) {
