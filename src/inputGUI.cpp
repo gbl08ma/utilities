@@ -132,7 +132,7 @@ int doTextInput(textInput* input) {
     }
     else
     {
-      EditMBStringCtrl2( (unsigned char*)input->buffer, input->charlimit+1, &input->start, &input->cursor, &input->key, input->x, input->y*24-24, 1, input->width+input->x-1 );
+      EditMBStringCtrl2( (unsigned char*)input->buffer, input->charlimit+1, &input->start, &input->cursor, &input->key, input->x, input->y*24-24, 1, input->width+input->x );
     }
   }
   Cursor_SetFlashOff();
