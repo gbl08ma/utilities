@@ -1743,8 +1743,6 @@ void setEventChrono(CalendarEvent* event) {
   sel.value = 1;
   sel.min = 1;
   sel.max = NUMBER_OF_CHRONO;
-  sel.cycle = 1;
-  sel.type = SELECTORTYPE_NORMAL;
   int res = doSelector(&sel);
   if (res == SELECTOR_RETURN_EXIT) return;
   // get unix*1000 time of the event's start time/date
@@ -1890,8 +1888,6 @@ void searchEventsGUI(int y, int m, int d) {
       sel.value = userStartYear;
       sel.min = 1;
       sel.max = 9999;
-      sel.cycle = 1;
-      sel.type = SELECTORTYPE_NORMAL;
       res = doSelector(&sel);
       if (res == SELECTOR_RETURN_EXIT) return;
       userStartYear = sel.value;
@@ -1902,7 +1898,6 @@ void searchEventsGUI(int y, int m, int d) {
       sel.max = (userStartYear+254 > 9999 ? 9999 : userStartYear+254); //do not allow for more than 255 years, otherwise maximum will be less than an event per year
       // also, if more than 255 years it would definitely take too much time, and user would certainly reboot the calculator
       sel.cycle = 0;
-      sel.type = SELECTORTYPE_NORMAL;
       res = doSelector(&sel);
       if (res == SELECTOR_RETURN_EXIT) return;
       userEndYear = sel.value;

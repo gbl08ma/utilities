@@ -347,7 +347,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
   sel.min = 0;
   sel.max = -1; // no limit. long long int is big enough to accomodate a chronometer with a duration of over 2 million days.
   sel.cycle = 0;
-  sel.type = SELECTORTYPE_NORMAL;
   res = doSelector(&sel);
   if (res == SELECTOR_RETURN_EXIT) return;
   long int days = sel.value;
@@ -358,7 +357,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
   sel.min = 0;
   sel.max = 23;
   sel.cycle = 0;
-  sel.type = SELECTORTYPE_NORMAL;
   res = doSelector(&sel);
   if (res == SELECTOR_RETURN_EXIT) return;
   int hours = sel.value;
@@ -368,9 +366,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
   sel.value = 0;
   sel.min = 0;
   sel.max = 59;
-  sel.allowMkey = 1;
   sel.cycle = 0;
-  sel.type = SELECTORTYPE_NORMAL;
   res = doSelector(&sel);
   if (res == SELECTOR_RETURN_EXIT) return;
   int minutes = sel.value;
@@ -385,9 +381,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
     sel.min = 0;
   }
   sel.max = 59;
-  sel.allowMkey = 1;
   sel.cycle = 0;
-  sel.type = SELECTORTYPE_NORMAL;
   res = doSelector(&sel);
   if (res == SELECTOR_RETURN_EXIT) return;
   long long int seconds = sel.value;

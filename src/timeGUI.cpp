@@ -276,8 +276,6 @@ void setTimeGUI(int canExit) {
     hour.min = 0;
     hour.max = 23;
     hour.allowMkey = 0;
-    hour.cycle = 1;
-    hour.type = SELECTORTYPE_NORMAL;
     int res = doSelector(&hour);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;
@@ -289,8 +287,6 @@ void setTimeGUI(int canExit) {
     minute.min = 0;
     minute.max = 59;
     minute.allowMkey = 0;
-    minute.cycle = 1;
-    minute.type = SELECTORTYPE_NORMAL;
     int res = doSelector(&minute);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;
@@ -302,8 +298,6 @@ void setTimeGUI(int canExit) {
     second.min = 0;
     second.max = 59;
     second.allowMkey = 0;
-    second.cycle = 1;
-    second.type = SELECTORTYPE_NORMAL;
     int res = doSelector(&second);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;
@@ -323,7 +317,6 @@ void setDateGUI(int canExit) {
     year.max = 9999;
     year.allowMkey = 0;
     year.cycle = 0;
-    year.type = SELECTORTYPE_NORMAL;
     int res = doSelector(&year);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;
@@ -335,8 +328,6 @@ void setDateGUI(int canExit) {
     month.min = 1;
     month.max = 12;
     month.allowMkey = 0;
-    month.cycle = 1;
-    month.type = SELECTORTYPE_MONTH;
     int res = doSelector(&month);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;
@@ -348,8 +339,6 @@ void setDateGUI(int canExit) {
     day.min = 1;
     day.max = ( month.value==2? (isLeap(year.value)? 29 : 28) : getMonthDays(month.value));
     day.allowMkey = 0;
-    day.cycle = 1;
-    day.type = SELECTORTYPE_NORMAL;
     int res = doSelector(&day);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;
