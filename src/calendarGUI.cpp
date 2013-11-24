@@ -26,6 +26,7 @@
 #include "keyboardProvider.hpp"
 #include "unixtimeExternal.hpp"
 #include "fileProvider.hpp"
+#include "settingsGUI.hpp"
 #include "debugGUI.hpp"
 
 int bufmonth = 0; //this is global so that it's easier to make the events count refresh
@@ -2053,17 +2054,13 @@ void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int
 void calendarTools(int y, int m, int d) {
   mMsgBoxPush(5);
   MenuItem smallmenuitems[5];
-  strcpy(smallmenuitems[0].text, "Count days");
-  smallmenuitems[0].type = MENUITEM_NORMAL;
-  smallmenuitems[0].color = TEXT_COLOR_BLACK;
-  
+  strcpy(smallmenuitems[0].text, "Count days");  
   strcpy(smallmenuitems[1].text, "Repair database");
-  smallmenuitems[1].type = MENUITEM_NORMAL;
-  smallmenuitems[1].color = TEXT_COLOR_BLACK;
+  strcpy(smallmenuitems[2].text, "Calendar settings");
   
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
-  smallmenu.numitems=2;
+  smallmenu.numitems=3;
   smallmenu.width=17;
   smallmenu.height=5;
   smallmenu.startX=3;
@@ -2155,6 +2152,8 @@ void calendarTools(int y, int m, int d) {
       sy = 0; //avoid jumping again
     } else if(smallmenu.selection == 2) {
       repairCalendarDatabase();
+    } else if(smallmenu.selection == 3) {
+      calendarSettingsMenu();
     }
   }  
 }
