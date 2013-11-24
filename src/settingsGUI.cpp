@@ -161,7 +161,7 @@ void settingsMenu() {
 
 void lockSettingsMenu() {
   MenuItem menuitems[5];
-  strcpy(menuitems[0].text, "Set lock code");
+  strcpy(menuitems[0].text, "Set lock code");  
   
   strcpy(menuitems[1].text, "Show last code char");
   menuitems[1].type = MENUITEM_CHECKBOX;
@@ -210,17 +210,9 @@ void lockSettingsMenu() {
       if(menu.selection == 5) { // open a menu with Yes, No and Ask
         mMsgBoxPush(4);
         MenuItem smallmenuitems[3];
-        strcpy(smallmenuitems[0].text, "Off");
-        smallmenuitems[0].type = MENUITEM_NORMAL;
-        smallmenuitems[0].color = TEXT_COLOR_BLACK;
-        
-        strcpy(smallmenuitems[1].text, "On");
-        smallmenuitems[1].type = MENUITEM_NORMAL;
-        smallmenuitems[1].color = TEXT_COLOR_BLACK;
-        
+        strcpy(smallmenuitems[0].text, "Off");        
+        strcpy(smallmenuitems[1].text, "On");        
         strcpy(smallmenuitems[2].text, "Ask");
-        smallmenuitems[2].type = MENUITEM_NORMAL;
-        smallmenuitems[2].color = TEXT_COLOR_BLACK;
         
         Menu smallmenu;
         smallmenu.items=smallmenuitems;
@@ -248,7 +240,6 @@ void lockSettingsMenu() {
 void clockSettingsMenu() {
   MenuItem menuitems[5];
   strcpy(menuitems[0].text, "Set clock type");
-  menuitems[0].type = MENUITEM_NORMAL;
   
   strcpy(menuitems[1].text, "Show seconds");
   menuitems[1].type = MENUITEM_CHECKBOX;
