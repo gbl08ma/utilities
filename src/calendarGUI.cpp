@@ -594,9 +594,14 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
             sem=nm;
             sed=nd;
           } else return 1; //this should never happen
+          searchValid=1;
           searchEventsGUI(sey, sem, sed);
-          *jumpToSel=1;
-          return 1;
+          if(!sy || !sm || !sd) {
+            if(!searchValid) return 1;
+          } else {
+            *jumpToSel=1;
+            return 1;
+          }
         } else if (menu->fkeypage == 1) {
           *y=0; // forces a return to today's values
           return 1;
