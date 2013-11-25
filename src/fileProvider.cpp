@@ -124,7 +124,8 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         //copy file
         char newfilename[MAX_FILENAME_SIZE] = "";
         strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
-        strncat(newfilename, name, MAX_FILENAME_SIZE);
+        unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
+        strncat(newfilename, name, maxcatlen);
         if(!strcmp(newfilename, clipboard[curfile].filename)) {
           //a file with that name already exists on the new location.
           curfile++; continue; //skip
@@ -196,7 +197,8 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         //move file
         char newfilename[MAX_FILENAME_SIZE] = "";
         strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
-        strncat(newfilename, name, MAX_FILENAME_SIZE);
+        unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
+        strncat(newfilename, name, maxcatlen);
         unsigned short newfilenameshort[0x10A];
         unsigned short oldfilenameshort[0x10A];
         Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)clipboard[curfile].filename, 0x10A);

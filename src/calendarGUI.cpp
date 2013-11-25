@@ -994,8 +994,8 @@ void fillInputDate(int yr, int m, int d, char* buffer) {
 
 void fillInputTime(int h, int m, int s, char* buffer) {
   buffer[0] = '\0'; // This sets the first character to \0, also represented by "", an empty string
-  char buffer2[8] = ""; // Some string length
   if(h != 0 || m != 0 || s != 0) {
+    char buffer2[8] = "";
     if (h < 10) { strcat(buffer, "0"); }
     itoa(h, (unsigned char*) buffer2);
     strcat(buffer, buffer2);
@@ -2081,7 +2081,7 @@ void calendarTools(int y, int m, int d) {
       sd = d;
       DefineStatusMessage((char*)"Select first date", 1, 0, 0);
       viewCalendar(1);
-      int y1, m1, d1, y2, m2, d2;
+      int y1, m1, d1;
       if(dateselRes) {
         y1=sy;
         m1=sm;
@@ -2096,9 +2096,7 @@ void calendarTools(int y, int m, int d) {
       DefineStatusMessage((char*)"", 1, 0, 0);
       DisplayStatusArea();
       if(dateselRes) {
-        y2=sy;
-        m2=sm;
-        d2=sd;
+        int y2=sy, m2=sm, d2=sd;
         long int daysdiff = DateToDays(y2, m2, d2) - DateToDays(y1, m1, d1);
         long int businessdiff = 0;
         if(daysdiff > 0) {

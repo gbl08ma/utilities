@@ -32,7 +32,6 @@ int mGetKey(int* key) {
       settingsMenu();
       LoadVRAM_1();
       return MGETKEY_RETURN_INTOSETTINGS;
-      break;
     } else if (*key == KEY_CTRL_QUIT) {
       Cursor_SetFlashOff(); // in case we were in an input
       stopAndUninstallStubTimer(); // in case we were in some timer screen, where the timer has been set
