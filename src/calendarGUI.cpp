@@ -146,8 +146,9 @@ int viewMonthCalendar(int dateselection) {
         if (menu == 2) {
           if (y != 9999) y++;
         } else if (menu == 1 && !dateselection) {
-          deleteAllEventUI(y, m, d);
-          bufmonth=0;//force calendar events to reload
+          if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventUI(y, m, d)) {
+            bufmonth=0;//force calendar events to reload
+          }
         }
         break;
       case KEY_CTRL_F5:
