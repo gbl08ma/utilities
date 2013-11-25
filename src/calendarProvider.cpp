@@ -676,53 +676,30 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
       return;
     }
   }
+  char tmpbuf[10] = "";
+  strcpy(tmpbuf, "");
+  for(int i = 0; i<8-nlen; i++) {
+    strcat(tmpbuf, "0");
+  }
+  strcat(tmpbuf, mainname);
+  strcpy(mainname, tmpbuf);
   
   char bufferyear[10] = "";
   char buffermonth[10] = "";
   char bufferday[10] = "";
-  if(nlen == 5) {
-    bufferyear[0] = mainname[0];
-    bufferyear[1] = '\0';
-    buffermonth[0] = mainname[1];
-    buffermonth[1] = mainname[2];
-    buffermonth[2] = '\0';
-    bufferday[0] = mainname[3];
-    bufferday[1] = mainname[4];
-    bufferday[2] = '\0';
-  } else if(nlen == 6) {
-    bufferyear[0] = mainname[0];
-    bufferyear[1] = mainname[1];
-    bufferyear[2] = '\0';
-    buffermonth[0] = mainname[2];
-    buffermonth[1] = mainname[3];
-    buffermonth[2] = '\0';
-    bufferday[0] = mainname[4];
-    bufferday[1] = mainname[5];
-    bufferday[2] = '\0';
-  } else if(nlen == 7) {
-    bufferyear[0] = mainname[0];
-    bufferyear[1] = mainname[1];
-    bufferyear[2] = mainname[2];
-    bufferyear[3] = '\0';
-    buffermonth[0] = mainname[3];
-    buffermonth[1] = mainname[4];
-    buffermonth[2] = '\0';
-    bufferday[0] = mainname[5];
-    bufferday[1] = mainname[6];
-    bufferday[2] = '\0';
-  } else {
-    bufferyear[0] = mainname[0];
-    bufferyear[1] = mainname[1];
-    bufferyear[2] = mainname[2];
-    bufferyear[3] = mainname[3];
-    bufferyear[4] = '\0';
-    buffermonth[0] = mainname[4];
-    buffermonth[1] = mainname[5];
-    buffermonth[2] = '\0';
-    bufferday[0] = mainname[6];
-    bufferday[1] = mainname[7];
-    bufferday[2] = '\0';
-  }
+
+  bufferyear[0] = mainname[0];
+  bufferyear[1] = mainname[1];
+  bufferyear[2] = mainname[2];
+  bufferyear[3] = mainname[3];
+  bufferyear[4] = '\0';
+  buffermonth[0] = mainname[4];
+  buffermonth[1] = mainname[5];
+  buffermonth[2] = '\0';
+  bufferday[0] = mainname[6];
+  bufferday[1] = mainname[7];
+  bufferday[2] = '\0';
+  
   EventDate thisday;
   thisday.year = atoi((const char*)bufferyear);
   thisday.month = atoi((const char*)buffermonth);
