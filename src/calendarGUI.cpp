@@ -808,8 +808,9 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
           if(menu->numitems > 0) {
             if(eventEditor(y, m, d, EVENTEDITORTYPE_EDIT, &events[menu->selection-1]) == EVENTEDITOR_RETURN_CONFIRM) {
               ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
-              searchValid = 0; return 1;
+              searchValid = 0;
             }
+            return 1; //even if the user didn't confirm the changes, we have them in our event list. so we need to reload it to its unmodified state.
           }
         } else if (menu->fkeypage == 1) {
           setEventChrono(&events[menu->selection-1]);
