@@ -135,7 +135,7 @@ long long int DaysPerYear(long long int year)
  
 //list Unix2DateTime(unsigned int unixtime)
 // WARNING this still works with seconds and not milliseconds like I modified the function below to do -gbl08ma
-datetime Unix2DateTime(long long int unixtime)
+/*datetime Unix2DateTime(long long int unixtime)
 {
     datetime dt;
     
@@ -181,7 +181,7 @@ datetime Unix2DateTime(long long int unixtime)
     dt.minute = minute;
     dt.second = second;
     return dt;
-}
+}*/
  
 ///////////////////////////////////////////////////////////////////////////////
 // Convert a date and time to a Unix time unsigned int
