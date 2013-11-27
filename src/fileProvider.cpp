@@ -135,17 +135,21 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)clipboard[curfile].filename, 0x10A);
         Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
         
-        int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READ, 0); // Get handle for the old file
+        static int hOldFile;
+        hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READ, 0); // Get handle for the old file
         if(hOldFile < 0) {
           //returned error: couldn't open file to copy.
           curfile++; continue; //skip this file
         } else {
           //file to copy exists and is open. get its size.
-          int copySize = Bfile_GetFileSize_OS(hOldFile);
-          int hNewFile = Bfile_OpenFile_OS(newfilenameshort, WRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
+          static int copySize;
+          copySize = Bfile_GetFileSize_OS(hOldFile);
+          static int hNewFile;
+          hNewFile = Bfile_OpenFile_OS(newfilenameshort, WRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
           if(hNewFile < 0) {
             // Returned error, dest file does not exist (which is good)
-            int BCEres = Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &copySize);
+            static int BCEres;
+            BCEres = Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &copySize);
             if(BCEres >= 0) // Did it create?
             {
               //created. open newly-created destination file
@@ -158,11 +162,11 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
               }
               //File to copy is open, destination file is created and open.
               //copy 4 KB at a time. Write more bytes in the last loop because WriteFile doesn't like writing few bytes.
-              unsigned char copybuffer[4096*2+5];
-              int curpos = 0;
+              static unsigned char copybuffer[4096*2+5];
+              static int curpos = 0;
               while(curpos < copySize) {
                 memset( &copybuffer, 0, sizeof( copybuffer ) );
-                int writesize = 0;
+                static int writesize = 0;
                 if(copySize - curpos > 4096) {
                   // decide on whether to copy 4 KB, or find out if less than 8 KB are yet to be copied
                   // if less than 8 KB are yet to be written, write them all at once (instead of writing 4 KB then having a write that may be too small, causing problems with WriteFile)
