@@ -161,30 +161,13 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
                 curfile++; continue;
               }
               //File to copy is open, destination file is created and open.
-              //copy 4 KB at a time. Write more bytes in the last loop because WriteFile doesn't like writing few bytes.
-              static unsigned char copybuffer[4096*2+5];
-              static int curpos = 0;
+              long int curpos = 0;
               while(curpos < copySize) {
-                memset( &copybuffer, 0, sizeof( copybuffer ) );
-                static int writesize = 0;
-                if(copySize - curpos > 4096) {
-                  // decide on whether to copy 4 KB, or find out if less than 8 KB are yet to be copied
-                  // if less than 8 KB are yet to be written, write them all at once (instead of writing 4 KB then having a write that may be too small, causing problems with WriteFile)
-                  if(copySize - curpos < 4096*2) {
-                    // less than 8 KB are yet to be copied.
-                    // write them all at once.
-                    writesize = copySize - curpos;
-                  } else {
-                    // more than 4 KB are yet to be copied.
-                    // write yet another 4 KB...
-                    writesize = 4096;
-                  }
-                } else {
-                  writesize = copySize - curpos;
-                }
-                Bfile_ReadFile_OS( hOldFile, copybuffer, writesize, -1 );
-                Bfile_WriteFile_OS(hNewFile, copybuffer, writesize);
-                curpos = curpos + writesize;
+#define FILE_COPYBUFFER 8192
+                unsigned char copybuffer[FILE_COPYBUFFER+5] = "";
+                Bfile_ReadFile_OS( hOldFile, copybuffer, FILE_COPYBUFFER, -1 );
+                Bfile_WriteFile_OS(hNewFile, copybuffer, FILE_COPYBUFFER);
+                curpos = curpos + FILE_COPYBUFFER;
               }
               //done copying, close files.
               Bfile_CloseFile_OS(hOldFile);
