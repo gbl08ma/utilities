@@ -138,6 +138,13 @@ int doTextInput(textInput* input) {
     {
       EditMBStringCtrl2( (unsigned char*)input->buffer, input->charlimit+1, &input->start, &input->cursor, &input->key, input->x, input->y*24-24, 1, input->width+input->x );
     }
+    if(input->key == KEY_CTRL_PASTE) {
+      // at this point it will have already pasted
+      int pos = strlen(input->buffer)-1;
+      if(input->forcetext && pos > 0 && input->buffer[pos]=='\xd8') {
+        input->buffer[pos]='\x0';
+      }
+    }
   }
   Cursor_SetFlashOff();
   return INPUT_RETURN_CONFIRM;
