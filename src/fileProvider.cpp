@@ -19,6 +19,7 @@
 #include "stringsProvider.hpp"
 #include "menuGUI.hpp"
 #include "fileProvider.hpp"
+#include "debugGUI.hpp"
 
 int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
   // searches storage memory for folders and files, puts their count in int* count
@@ -135,51 +136,66 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)clipboard[curfile].filename, 0x10A);
         Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
         
-        static int hOldFile;
+        int hOldFile;
+        int copySize;
         hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READ, 0); // Get handle for the old file
         if(hOldFile < 0) {
           //returned error: couldn't open file to copy.
           curfile++; continue; //skip this file
         } else {
-          //file to copy exists and is open. get its size.
-          static int copySize;
           copySize = Bfile_GetFileSize_OS(hOldFile);
-          static int hNewFile;
-          hNewFile = Bfile_OpenFile_OS(newfilenameshort, WRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
-          if(hNewFile < 0) {
-            // Returned error, dest file does not exist (which is good)
-            static int BCEres;
-            BCEres = Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &copySize);
-            if(BCEres >= 0) // Did it create?
-            {
-              //created. open newly-created destination file
-              hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
-              if(hNewFile < 0) // Still failing?
-              {
-                //skip this copy.
-                Bfile_CloseFile_OS(hOldFile);
-                curfile++; continue;
-              }
-              //File to copy is open, destination file is created and open.
-              long int curpos = 0;
-              while(curpos < copySize) {
-#define FILE_COPYBUFFER 8192
-                unsigned char copybuffer[FILE_COPYBUFFER+5] = "";
-                Bfile_ReadFile_OS( hOldFile, copybuffer, FILE_COPYBUFFER, -1 );
-                Bfile_WriteFile_OS(hNewFile, copybuffer, FILE_COPYBUFFER);
-                curpos = curpos + FILE_COPYBUFFER;
-              }
-              //done copying, close files.
-              Bfile_CloseFile_OS(hOldFile);
-              Bfile_CloseFile_OS(hNewFile);
-            }
-          } else {
-            //destination file exists and is now open. Close open files and skip.
-            Bfile_CloseFile_OS(hNewFile);
-            Bfile_CloseFile_OS(hOldFile);
-          }
+          Bfile_CloseFile_OS(hOldFile); // close for now
+        }
+          
+        int hNewFile;
+        hNewFile = Bfile_OpenFile_OS(newfilenameshort, WRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
+        if(hNewFile < 0) {
+          // Returned error, dest file does not exist (which is good)
+        } else {
+          // dest file exists (which is bad) and is open.
+          Bfile_CloseFile_OS(hNewFile);
+          curfile++; continue; //skip this file
         }
         
+        // at this point we know that:
+        // source file exists
+        // destination file doesn't exist
+        // source file is closed so CreateEntry can proceed.
+        int BCEres;
+        BCEres = Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &copySize);
+        if(BCEres >= 0) // Did it create?
+        {
+          //created. open newly-created destination file
+          hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
+          if(hNewFile < 0) // Still failing after the file was created?
+          {
+            //skip this copy.
+            curfile++; continue;
+          }
+          
+          // open old file again
+          hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0);
+          if(hOldFile < 0) // Opening origin file didn't fail before, but is failing now?!
+          {
+            //skip this copy.
+            Bfile_CloseFile_OS(hNewFile); // close the new file we had opened
+            curfile++; continue;
+          }
+          
+          //File to copy is open, destination file is created and open.
+          long int curpos = 0;
+          while(curpos < copySize) {
+#define FILE_COPYBUFFER 4096
+            unsigned char copybuffer[FILE_COPYBUFFER+5] = "";
+            int rwsize = (copySize-curpos < FILE_COPYBUFFER ? copySize-curpos : FILE_COPYBUFFER);
+            Bfile_ReadFile_OS( hOldFile, copybuffer, rwsize, -1 );
+            Bfile_WriteFile_OS(hNewFile, copybuffer, rwsize);
+            curpos = curpos + FILE_COPYBUFFER;
+          }
+          //done copying, close files.
+          Bfile_CloseFile_OS(hOldFile);
+          Bfile_CloseFile_OS(hNewFile);
+        } //else: create failed, but we're going to skip anyway
       } else {
         //move file
         char newfilename[MAX_FILENAME_SIZE] = "";
