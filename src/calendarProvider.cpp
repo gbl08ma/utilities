@@ -684,26 +684,23 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   strcat(tmpbuf, mainname);
   strcpy(mainname, tmpbuf);
   
-  char bufferyear[10] = "";
-  char buffermonth[10] = "";
-  char bufferday[10] = "";
+  char datebuffer[10] = "";
 
-  bufferyear[0] = mainname[0];
-  bufferyear[1] = mainname[1];
-  bufferyear[2] = mainname[2];
-  bufferyear[3] = mainname[3];
-  bufferyear[4] = '\0';
-  buffermonth[0] = mainname[4];
-  buffermonth[1] = mainname[5];
-  buffermonth[2] = '\0';
-  bufferday[0] = mainname[6];
-  bufferday[1] = mainname[7];
-  bufferday[2] = '\0';
-  
+  datebuffer[0] = mainname[0];
+  datebuffer[1] = mainname[1];
+  datebuffer[2] = mainname[2];
+  datebuffer[3] = mainname[3];
+  datebuffer[4] = '\0';
   EventDate thisday;
-  thisday.year = atoi((const char*)bufferyear);
-  thisday.month = atoi((const char*)buffermonth);
-  thisday.day = atoi((const char*)bufferday);
+  thisday.year = atoi((const char*)datebuffer);
+  datebuffer[0] = mainname[4];
+  datebuffer[1] = mainname[5];
+  datebuffer[2] = '\0';
+  thisday.month = atoi((const char*)datebuffer);
+  datebuffer[0] = mainname[6];
+  datebuffer[1] = mainname[7];
+  datebuffer[2] = '\0';
+  thisday.day = atoi((const char*)datebuffer);
   
   // final step on filename checking: see if the date in the filename is valid
   // and that year is not zero (so we don't delete the tasks file)
