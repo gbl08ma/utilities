@@ -48,6 +48,8 @@ int getCurrentMinute();
 int getCurrentSecond();
 int getCurrentMillisecond();
 
+long long int DateTime2Unix(long long int year, long long int month, long long int day, long long int hour, long long int minute, long long int second, long long int millisecond);
+
 int getRTCisUnadjusted();
 
 void currentDateToString(char *buffer, int format); // usually one just specifies GetSetting(SETTING_DATEFORMAT) for the format

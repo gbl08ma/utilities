@@ -15,7 +15,6 @@
 #include "timeProvider.hpp"
 #include "constantsProvider.hpp"
 #include "settingsProvider.hpp"
-#include "unixtimeExternal.hpp"
 
 #include "debugGUI.hpp"
 
@@ -143,6 +142,49 @@ int getCurrentMillisecond() {
   RTC_GetTime( &ihour, &iminute, &isecond, &imillisecond );
   return (int)imillisecond;
 }
+
+// Info and license for the following routine:
+// Script Library Contribution by Flennan Roffo
+// Logic Scripted Products & Script Services
+// Peacock Park (183,226,69)
+// (c) 2007 - Flennan Roffo
+//
+// Distributed as GPL, donated to wiki.secondlife.com on 19 sep 2007
+// Modified by gbl08ma for use in the Casio Prizm Utilities add-in
+#define DAYS_PER_YEAR 365
+#define SECONDS_PER_DAY 86400
+#define SECONDS_PER_HOUR 3600
+#define SECONDS_PER_MINUTE 60
+long long int DateTime2Unix(long long int year, long long int month, long long int day, long long int hour, long long int minute, long long int second, long long int millisecond)
+{
+  long long int time = 0;
+  long long int yr = 1970;
+  long long int mt = 1;
+  long long int days;
+
+  while(yr < year)
+  {
+    days = (isLeap(yr++) ? DAYS_PER_YEAR + 1 : DAYS_PER_YEAR);
+    time += days * SECONDS_PER_DAY*1000;
+  }
+
+  while (mt < month)
+  {
+    if(mt!=2) days = getMonthDays(mt++);
+    else { days = (isLeap(year)? 29 : 28); mt++; }
+    time += days * SECONDS_PER_DAY*1000;
+  }
+
+  days = day - 1;
+  time += days * SECONDS_PER_DAY*1000;
+  time += hour * SECONDS_PER_HOUR*1000;
+  time += minute * SECONDS_PER_MINUTE*1000;
+  time += second*1000;
+  time += millisecond;
+
+  return time;
+}
+
 int getRTCisUnadjusted() {
   //returns 1 if the RTC is unadjusted.
   //this function finds out if the clock is unadjusted if its date/time is set to a previous date/time than 1st Jan 2013 00:00:00.000
