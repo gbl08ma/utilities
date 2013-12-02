@@ -183,14 +183,18 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
           }
           
           //File to copy is open, destination file is created and open.
-          long int curpos = 0;
-          while(curpos < copySize) {
+          long int curpos = 0; // NOTE: for debug
+          while(1) {
 #define FILE_COPYBUFFER 4096
             unsigned char copybuffer[FILE_COPYBUFFER+5] = "";
-            int rwsize = (copySize-curpos < FILE_COPYBUFFER ? copySize-curpos : FILE_COPYBUFFER);
-            Bfile_ReadFile_OS( hOldFile, copybuffer, rwsize, -1 );
-            Bfile_WriteFile_OS(hNewFile, copybuffer, rwsize);
-            curpos = curpos + FILE_COPYBUFFER;
+            debugMessage((char*)"  in loop", (char*)"  curpos: ", curpos);
+            int rwsize = Bfile_ReadFile_OS( hOldFile, copybuffer, FILE_COPYBUFFER, -1 );
+            if(rwsize > 0) {
+              Bfile_WriteFile_OS(hNewFile, copybuffer, rwsize);
+            } else {
+              break;
+            }
+            curpos = curpos + rwsize; // NOTE: now this is for debug only
           }
           //done copying, close files.
           Bfile_CloseFile_OS(hOldFile);
