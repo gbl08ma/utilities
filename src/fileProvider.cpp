@@ -65,10 +65,10 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
       }
       *count=*count+1;
     }
-    if (*count-1==MAX_ITEMS_IN_DIR) { 
+    if (*count-1==MAX_ITEMS_IN_DIR) {
+      Bfile_FindClose(findhandle);
       return GETFILES_MAX_FILES_REACHED; // Don't find more files, the array is full. 
-    } 
-    ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
+    } else ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
   Bfile_FindClose(findhandle);
   return GETFILES_SUCCESS;
@@ -128,7 +128,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
         strncat(newfilename, name, maxcatlen);
         if(!strcmp(newfilename, clipboard[curfile].filename)) {
-          //a file with that name already exists on the new location.
+          //trying to copy over the original file
           curfile++; continue; //skip
         }
         unsigned short newfilenameshort[0x10A];
@@ -136,9 +136,8 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)clipboard[curfile].filename, 0x10A);
         Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
         
-        int hOldFile;
         int copySize;
-        hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READ, 0); // Get handle for the old file
+        int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0); // Get handle for the old file
         if(hOldFile < 0) {
           //returned error: couldn't open file to copy.
           curfile++; continue; //skip this file
@@ -146,9 +145,8 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
           copySize = Bfile_GetFileSize_OS(hOldFile);
           Bfile_CloseFile_OS(hOldFile); // close for now
         }
-          
-        int hNewFile;
-        hNewFile = Bfile_OpenFile_OS(newfilenameshort, WRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
+
+        int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
         if(hNewFile < 0) {
           // Returned error, dest file does not exist (which is good)
         } else {
@@ -185,7 +183,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
           //File to copy is open, destination file is created and open.
           long int curpos = 0; // NOTE: for debug
           while(1) {
-#define FILE_COPYBUFFER 4096
+#define FILE_COPYBUFFER 51200
             unsigned char copybuffer[FILE_COPYBUFFER+5] = "";
             debugMessage((char*)"  in loop", (char*)"  curpos: ", curpos);
             int rwsize = Bfile_ReadFile_OS( hOldFile, copybuffer, FILE_COPYBUFFER, -1 );
