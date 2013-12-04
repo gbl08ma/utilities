@@ -16,10 +16,8 @@
 #include <math.h>
 
 #include "menuGUI.hpp"
-#include "calendarProvider.hpp"
 
 void viewTasks();
 int viewTasksSub(Menu* menu);
-void viewTask(CalendarEvent* task);
 
 #endif

@@ -88,7 +88,7 @@ int viewTasksSub(Menu* menu) {
         break;
       case KEY_CTRL_F1:
       case MENU_RETURN_SELECTION:
-        if(menu->numitems > 0) viewTask(&tasks[menu->selection-1]);
+        if(menu->numitems > 0) viewEvent(&tasks[menu->selection-1], 1);
         break;
       case KEY_CTRL_F2:
         if(menu->numitems >= MAX_DAY_EVENTS) {
@@ -139,39 +139,4 @@ int viewTasksSub(Menu* menu) {
     }
   }
   return 1;
-}
-
-void viewTask(CalendarEvent* task) {
-  textArea text;
-  strcpy(text.title, (char*)task->title);
-  
-  textElement elem[10];
-  text.elements = elem;
-  
-  elem[0].text = (char*)"Location:";
-  elem[0].color=COLOR_LIGHTGRAY;
-  elem[0].spaceAtEnd=1;
-  
-  elem[1].text = (char*)task->location;
-  
-  elem[2].text = (char*)"Category:";
-  elem[2].color=COLOR_LIGHTGRAY;
-  elem[2].newLine = 1;
-  elem[2].spaceAtEnd=1;
-  
-  char buffer[10];
-  itoa(task->category, (unsigned char*)buffer);
-  elem[3].text = (char*)buffer;
-  elem[3].color = textColorToFullColor((task->category == 0 ? 7 : task->category-1));
-  
-  elem[4].text = (char*)"Description:";
-  elem[4].newLine = 1;
-  elem[4].lineSpacing = 8;
-  elem[4].color=COLOR_LIGHTGRAY;
-  
-  elem[5].text = (char*) task->description;
-  elem[5].newLine = 1;
-  
-  text.numelements = 6;
-  doTextArea(&text);
 }
