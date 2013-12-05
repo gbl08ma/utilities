@@ -245,7 +245,7 @@ int addinManagerSub(Menu* menu) {
       }
       break;
     case KEY_CTRL_F6:
-      if(1) {
+      {
         textArea text;
         strcpy(text.title, (char*)"Add-In Manager");
         
@@ -287,15 +287,15 @@ void changeFKeyColor() {
   DisplayStatusArea();
   mPrintXY(1, 1, (char*)"Function key color", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   int textX=0; int textY=132;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"Please note that only the Utilities add-in and an hidden", 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)"Please note that only the Utilities add-in and a hidden", 0, TEXT_COLOR_BLACK, 0 );
   textY=textY+12; textX=0;
   PrintMiniMini( &textX, &textY, (unsigned char*)"debug screen on your calculator are able to change this", 0, TEXT_COLOR_BLACK, 0 );
   textY=textY+12; textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"setting, which survives reboots. To reset it back to the", 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)"setting, which persists across reboots. To reset it back to", 0, TEXT_COLOR_BLACK, 0 );
   textY=textY+12; textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"black color you need to use this add-in, the hidden debug", 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)"the black color you need to use this add-in, the hidden", 0, TEXT_COLOR_BLACK, 0 );
   textY=textY+12; textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"screen or to reset the Main Memory.", 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)"debug screen or to reset the Main Memory.", 0, TEXT_COLOR_BLACK, 0 );
   Bdisp_PutDisp_DD();
   selcolor = ColorIndexDialog1( *keycolor, 0 );
   if(selcolor != (unsigned char)0xFF) {
