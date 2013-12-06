@@ -350,7 +350,6 @@ void setDateGUI(int canExit) {
 void RTCunadjustedWizard(int helpMessage) {
   //first check if RTC is unadjusted. if not, return.
   if(!getRTCisUnadjusted()) return;
-  Bdisp_AllClr_VRAM();
   DisplayStatusArea();
   if(helpMessage) {
     textArea text;

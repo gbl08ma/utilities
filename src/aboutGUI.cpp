@@ -58,7 +58,6 @@ void showAbout() {
   PrintMini(&textX, &textY, (unsigned char*)"Press any key", 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
   GetKey(&key);
 
-  Bdisp_AllClr_VRAM();
   DisplayStatusArea();
   
   textArea text;

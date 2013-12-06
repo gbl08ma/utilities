@@ -97,9 +97,7 @@ void powerInformation() {
   voltbuffer[1] = '.';
   strcat((char*)voltbuffer, "V");
 
-  Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  
   
   textArea text;
   strcpy(text.title, (char*)"Power Information");
@@ -277,7 +275,6 @@ void setCPUclock() {
   volatile unsigned int*FRQCR = (unsigned int*) 0xA4150000;
   while (1) {
     Bdisp_AllClr_VRAM();
-    Bdisp_EnableColor(1); 
     DisplayStatusArea();
 
     mPrintXY(1, 1, (char*)"CPU speed", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
@@ -289,7 +286,6 @@ void setCPUclock() {
     PrintMiniMini( &textX, &textY, (unsigned char*)"Note: changes are applied instantly.", 0, TEXT_COLOR_BLACK, 0 );
     
     updateCurrentFreq();
-    Bdisp_PutDisp_DD();
     mGetKey(&key);
     switch (key) {
       case KEY_CTRL_RIGHT:      
