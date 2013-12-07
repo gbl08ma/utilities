@@ -567,7 +567,8 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
             AUX_DisplayErrorMessage( 0x2E );
           } else {
             if(EVENTEDITOR_RETURN_CONFIRM == eventEditor(date->year, date->month, date->day)) {
-              *y=date->year; *m=date->month; *d=date->day; *jumpToSel=1;
+              *jumpToSel=0;
+              *keepMenuSel=1;
               return 1;
             }
           }
