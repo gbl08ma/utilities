@@ -43,7 +43,7 @@ int deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos
 int deleteAllEventUI(int y, int m, int d, int istask=0);
 int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2);
 void invalidFieldMsg(int istime);
-void setEventChrono(CalendarEvent* event);
+int setEventReminder(CalendarEvent* event);
 int changeEventCategory(CalendarEvent* event);
 void viewNthEventOnDay(EventDate* date, int pos);
 void searchEventsGUI(int y=0, int m=0, int d=0);

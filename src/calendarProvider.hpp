@@ -40,7 +40,7 @@ typedef struct // Event time definition
 typedef struct // Defines what a calendar event contains
 {
   unsigned int category=0;
-  unsigned int daterange=0;
+  int reminder=0; // 0: no reminder; >0: number of minutes before the start time when the reminder will trigger; -1: reminder triggers at start time
   EventDate startdate;
   EventDate enddate;
   unsigned int dayofweek=1;

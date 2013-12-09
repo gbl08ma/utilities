@@ -26,6 +26,7 @@
 #define SELECTORTYPE_INSTANT_RETURN 8 // this type of selector insantly returns even if user hasn't confirmed a value (allows for e.g. redrawing the GUI behind it). if user hasn't exited or confirmed a value, selector will return SELECTOR_RETURN_INSTANT
 #define SELECTORTYPE_TEXTCOLOR 9
 #define SELECTORTYPE_TIMERTYPE 10
+#define SELECTORTYPE_REMINDER 11
 
 typedef struct
 {
