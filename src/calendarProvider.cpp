@@ -37,7 +37,7 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
   unsigned char smallbuf[50] = ""; 
 
   itoa(calEvent->category, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->reminder, (unsigned char*)smallbuf);  strncat((char*)buf, (char*)smallbuf,4); append(buf, FIELD_SEPARATOR);
+  itoa(calEvent->daterange, (unsigned char*)smallbuf);  strncat((char*)buf, (char*)smallbuf,2); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->startdate.day, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->startdate.month, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->startdate.year, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 5); append(buf, FIELD_SEPARATOR);
@@ -60,7 +60,7 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
   
   /*sprintf((char*)buf, "%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%s%c%s%c%s%c" ,
         calEvent->category,                             FIELD_SEPARATOR,
-        calEvent->reminder,                            FIELD_SEPARATOR,
+        calEvent->daterange,                            FIELD_SEPARATOR,
         calEvent->startdate.day,                        FIELD_SEPARATOR,
         calEvent->startdate.month,                      FIELD_SEPARATOR,
         calEvent->startdate.year,                       FIELD_SEPARATOR,
@@ -95,11 +95,8 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
       case 0: //category
         calEvent->category = atoi((const char*)token);
         break;
-      case 1: //reminder
-        // this atoi parses the minus sign incorrectly?...
-        // we only need -1 in this case, for now.
-        if(token[0] == '-') calEvent->reminder = -1;
-        else calEvent->reminder = atoi((const char*)token);
+      case 1: //daterange
+        calEvent->daterange = atoi((const char*)token);
         break;
       case 2: //startdate.day
         calEvent->startdate.day = atoi((const char*)token);

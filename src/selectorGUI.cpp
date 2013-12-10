@@ -66,13 +66,6 @@ int doSelector(Selector* selector) {
         itoa(selector->value, (unsigned char*)buffer2);
         strcat(buffer1, buffer2);
         strcat(buffer1, " Minutes");
-      } else if(selector->type == SELECTORTYPE_REMINDER) {
-        if(selector->value == 0) strcpy(buffer1, "No reminder");
-        else if(selector->value == -1) strcpy(buffer1, "At event start");
-        else {
-          itoa(selector->value, (unsigned char*)buffer1);
-          strcat(buffer1, " min. before");
-        }
       } else if(selector->type == SELECTORTYPE_TEXTCOLOR) {
         switch (selector->value) {
           case 0: strcat(buffer1, "Blue"); break;

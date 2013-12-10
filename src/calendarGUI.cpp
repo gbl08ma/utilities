@@ -819,10 +819,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
             return 1; //even if the user didn't confirm the changes, we have them in our event list. so we need to reload it to its unmodified state.
           }
         } else if (menu->fkeypage == 1) {
-          if(EVENTEDITOR_RETURN_CONFIRM == setEventReminder(&events[menu->selection-1])) {
-            ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
-            searchValid = 0; return 1;
-          }
+          setEventChrono(&events[menu->selection-1]);
         }
         break;
       case KEY_CTRL_F4:
@@ -865,34 +862,28 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
 
 void viewEvent(CalendarEvent* event, int istask) {
   DefineStatusMessage((char*)"", 1, 0, 0); // clear "press OPTN for more options" message
-  char catbuffer[10];
-  char rembuffer[10];
   char buffer[15];
   textArea text;
   strcpy(text.title, (char*)event->title);
   
-  textElement elem[15];
+  textElement elem[10];
   text.elements = elem;
-  text.numelements = 0; //we will use this as element cursor
   
-  elem[text.numelements].text = (char*)"Location:";
-  elem[text.numelements].color=COLOR_LIGHTGRAY;
-  elem[text.numelements].spaceAtEnd=1;
-  text.numelements++;
+  elem[0].text = (char*)"Location:";
+  elem[0].color=COLOR_LIGHTGRAY;
+  elem[0].spaceAtEnd=1;
   
-  elem[text.numelements].text = (char*)event->location;
-  text.numelements++;
+  elem[1].text = (char*)event->location;
   
   if(!istask) {
-    elem[text.numelements].text = (char*)"Starts on";
-    elem[text.numelements].newLine = 1;
-    elem[text.numelements].lineSpacing = 8;
-    elem[text.numelements].spaceAtEnd=1;
-    elem[text.numelements].color=COLOR_LIGHTGRAY;
-    text.numelements++;
+    elem[2].text = (char*)"Starts on";
+    elem[2].newLine = 1;
+    elem[2].lineSpacing = 8;
+    elem[2].spaceAtEnd=1;
+    elem[2].color=COLOR_LIGHTGRAY; 
     
     unsigned char startson[50] = "";
-    strcpy(rembuffer, (char*)"");
+    strcpy(buffer, (char*)"");
     dateToString((char*)buffer, event->startdate.year, event->startdate.month, event->startdate.day, GetSetting(SETTING_DATEFORMAT));
     strcpy((char*)startson, buffer);
     strcat((char*)startson, (char*)" ");
@@ -905,14 +896,12 @@ void viewEvent(CalendarEvent* event, int istask) {
       strcat((char*)startson, (char*)"(all day)");
     }
     
-    elem[text.numelements].text = (char*)startson;
-    text.numelements++;
+    elem[3].text = (char*)startson;
     
-    elem[text.numelements].text = (char*)"Ends on";
-    elem[text.numelements].newLine = 1;
-    elem[text.numelements].spaceAtEnd=1;
-    elem[text.numelements].color=COLOR_LIGHTGRAY; 
-    text.numelements++;
+    elem[4].text = (char*)"Ends on";
+    elem[4].newLine = 1;
+    elem[4].spaceAtEnd=1;
+    elem[4].color=COLOR_LIGHTGRAY; 
     
     unsigned char endson[50] = "";
     strcpy(buffer, (char*)"");
@@ -926,57 +915,28 @@ void viewEvent(CalendarEvent* event, int istask) {
       strcat((char*)endson, (char*)buffer);
     }
     
-    elem[text.numelements].text = (char*)endson;
-    text.numelements++;
-    
-    if(event->reminder) {
-      elem[text.numelements].text = (char*)"Reminding";
-      elem[text.numelements].newLine = 1;
-      elem[text.numelements].spaceAtEnd=1; 
-      text.numelements++;
-      if(event->reminder == -1) {
-        elem[text.numelements].text = (char*)"when";
-        elem[text.numelements].spaceAtEnd = 1;
-        text.numelements++;
-      } else {
-        strcpy(buffer, (char*)"");
-        itoa(event->reminder, (unsigned char*)rembuffer);
-        elem[text.numelements].text = (char*)rembuffer;
-        elem[text.numelements].spaceAtEnd = 1;
-        text.numelements++;
-        
-        elem[text.numelements].text = (char*)"minutes before";
-        elem[text.numelements].spaceAtEnd = 1;
-        text.numelements++;
-      }
-      elem[text.numelements].text = (char*)"event starts";
-      elem[text.numelements].spaceAtEnd = 1;
-      text.numelements++;
-    }
+    elem[5].text = (char*)endson;
   }
   
-  elem[text.numelements].text = (char*)"Category:";
-  elem[text.numelements].color=COLOR_LIGHTGRAY;
-  elem[text.numelements].newLine = 1;
-  elem[text.numelements].spaceAtEnd=1;
-  text.numelements++;
+  elem[(istask?2:6)].text = (char*)"Category:";
+  elem[(istask?2:6)].color=COLOR_LIGHTGRAY;
+  elem[(istask?2:6)].newLine = 1;
+  elem[(istask?2:6)].spaceAtEnd=1;
   
-  strcpy(catbuffer, (char*)"");
-  itoa(event->category, (unsigned char*)catbuffer);
-  elem[text.numelements].text = (char*)catbuffer;
-  elem[text.numelements].color = textColorToFullColor((event->category == 0 ? 7 : event->category-1));
-  text.numelements++;
+  strcpy(buffer, (char*)"");
+  itoa(event->category, (unsigned char*)buffer);
+  elem[(istask?3:7)].text = (char*)buffer;
+  elem[(istask?3:7)].color = textColorToFullColor((event->category == 0 ? 7 : event->category-1));
   
-  elem[text.numelements].text = (char*)"Description:";
-  elem[text.numelements].newLine = 1;
-  elem[text.numelements].lineSpacing = 8;
-  elem[text.numelements].color=COLOR_LIGHTGRAY;
-  text.numelements++;
+  elem[(istask?4:8)].text = (char*)"Description:";
+  elem[(istask?4:8)].newLine = 1;
+  elem[(istask?4:8)].lineSpacing = 8;
+  elem[(istask?4:8)].color=COLOR_LIGHTGRAY;
   
-  elem[text.numelements].text = (char*) event->description;
-  elem[text.numelements].newLine = 1;
-  text.numelements++;
-
+  elem[(istask?5:9)].text = (char*) event->description;
+  elem[(istask?5:9)].newLine = 1;
+  
+  text.numelements = (istask?6:10);
   doTextArea(&text);
 }
 
@@ -1423,7 +1383,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             case KEY_CTRL_EXIT: return EVENTEDITOR_RETURN_EXIT;
           }
         }
-        if (type == EVENTEDITORTYPE_ADD) event->reminder = 0;
+        event->daterange = 0;
         event->repeat = 0;
         event->dayofweek = dow(event->startdate.day, event->startdate.month, event->startdate.year);
         if(type == EVENTEDITORTYPE_ADD) {
@@ -1781,20 +1741,44 @@ void invalidFieldMsg(int istime) {
   closeMsgBox(); 
 }
 
-int setEventReminder(CalendarEvent* event) {
-  // set a reminder that will pop up once its time comes, X minutes before the start time
+void setEventChrono(CalendarEvent* event) {
+  // set a downwards chrono that ends on the start time of the event
+  // like a event reminder
+  
+  // ask user which chrono to set
   Selector sel;
-  strcpy(sel.title, "Event reminder");
-  sel.value = event->reminder;
-  sel.min = -1;
-  sel.max = 180;
-  sel.type = SELECTORTYPE_REMINDER;
+  strcpy(sel.title, "Set event reminder");
+  strcpy(sel.subtitle, "Select chrono");
+  sel.value = 1;
+  sel.min = 1;
+  sel.max = NUMBER_OF_CHRONO;
   int res = doSelector(&sel);
-  if (res == SELECTOR_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT;
-  else {
-    event->reminder = sel.value;
-    return EVENTEDITOR_RETURN_CONFIRM;
+  if (res == SELECTOR_RETURN_EXIT) return;
+  // get unix*1000 time of the event's start time/date
+  long long int estart = DateTime2Unix(event->startdate.year, event->startdate.month, event->startdate.day, event->starttime.hour, event->starttime.minute, event->starttime.second, 0);
+  // get chrono duration (difference between event start time and current time)
+  
+  long long int duration = estart - currentUnixTime();
+  mMsgBoxPush(4);
+  if(duration < 0) {
+    // event is in the past, abort
+    mPrintXY(3, 2, (char*)"Event starts in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 3, (char*)"the past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  } else {
+    // set downwards chrono with the calculated duration
+    res = setChronoExternal(sel.value-1, duration, CHRONO_TYPE_DOWN);
+    if(res) {
+      // success setting a chrono
+      mPrintXY(3, 2, (char*)"Event reminder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"set successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    } else {
+      // timer is busy
+      mPrintXY(3, 2, (char*)"Selected chrono", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"is not clear.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    }
   }
+  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+  closeMsgBox();
 }
 
 int changeEventCategory(CalendarEvent* event) {
