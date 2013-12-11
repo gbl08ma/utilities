@@ -862,25 +862,30 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
 
 void viewEvent(CalendarEvent* event, int istask) {
   DefineStatusMessage((char*)"", 1, 0, 0); // clear "press OPTN for more options" message
-  char buffer[15];
+  char catbuffer[10]="";
+  char buffer[15]="";
   textArea text;
   strcpy(text.title, (char*)event->title);
   
-  textElement elem[10];
+  textElement elem[15];
   text.elements = elem;
+  text.numelements = 0; //we will use this as element cursor
   
-  elem[0].text = (char*)"Location:";
-  elem[0].color=COLOR_LIGHTGRAY;
-  elem[0].spaceAtEnd=1;
+  elem[text.numelements].text = (char*)"Location:";
+  elem[text.numelements].color=COLOR_LIGHTGRAY;
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
   
-  elem[1].text = (char*)event->location;
+  elem[text.numelements].text = (char*)event->location;
+  text.numelements++;
   
   if(!istask) {
-    elem[2].text = (char*)"Starts on";
-    elem[2].newLine = 1;
-    elem[2].lineSpacing = 8;
-    elem[2].spaceAtEnd=1;
-    elem[2].color=COLOR_LIGHTGRAY; 
+    elem[text.numelements].text = (char*)"Starts on";
+    elem[text.numelements].newLine = 1;
+    elem[text.numelements].lineSpacing = 8;
+    elem[text.numelements].spaceAtEnd=1;
+    elem[text.numelements].color=COLOR_LIGHTGRAY;
+    text.numelements++;
     
     unsigned char startson[50] = "";
     strcpy(buffer, (char*)"");
@@ -896,47 +901,51 @@ void viewEvent(CalendarEvent* event, int istask) {
       strcat((char*)startson, (char*)"(all day)");
     }
     
-    elem[3].text = (char*)startson;
+    elem[text.numelements].text = (char*)startson;
+    text.numelements++;
     
-    elem[4].text = (char*)"Ends on";
-    elem[4].newLine = 1;
-    elem[4].spaceAtEnd=1;
-    elem[4].color=COLOR_LIGHTGRAY; 
+    elem[text.numelements].text = (char*)"Ends on";
+    elem[text.numelements].newLine = 1;
+    elem[text.numelements].spaceAtEnd=1;
+    elem[text.numelements].color=COLOR_LIGHTGRAY; 
+    text.numelements++;
     
     unsigned char endson[50] = "";
-    strcpy(buffer, (char*)"");
-    dateToString((char*)buffer, event->enddate.year, event->enddate.month, event->enddate.day, GetSetting(SETTING_DATEFORMAT));
-    strcpy((char*)endson, buffer);
-    strcat((char*)endson, (char*)" ");
+    dateToString((char*)endson, event->enddate.year, event->enddate.month, event->enddate.day, GetSetting(SETTING_DATEFORMAT));
     
     if(event->timed) {
       strcpy(buffer, (char*)"");
       timeToString((char*)buffer, event->endtime.hour, event->endtime.minute, event->endtime.second, GetSetting(SETTING_TIMEFORMAT));
+      strcat((char*)endson, (char*)" ");
       strcat((char*)endson, (char*)buffer);
     }
     
-    elem[5].text = (char*)endson;
+    elem[text.numelements].text = (char*)endson;
+    text.numelements++;
   }
   
-  elem[(istask?2:6)].text = (char*)"Category:";
-  elem[(istask?2:6)].color=COLOR_LIGHTGRAY;
-  elem[(istask?2:6)].newLine = 1;
-  elem[(istask?2:6)].spaceAtEnd=1;
+  elem[text.numelements].text = (char*)"Category:";
+  elem[text.numelements].color=COLOR_LIGHTGRAY;
+  elem[text.numelements].newLine = 1;
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
   
-  strcpy(buffer, (char*)"");
-  itoa(event->category, (unsigned char*)buffer);
-  elem[(istask?3:7)].text = (char*)buffer;
-  elem[(istask?3:7)].color = textColorToFullColor((event->category == 0 ? 7 : event->category-1));
+  strcpy(catbuffer, (char*)"");
+  itoa(event->category, (unsigned char*)catbuffer);
+  elem[text.numelements].text = (char*)catbuffer;
+  elem[text.numelements].color = textColorToFullColor((event->category == 0 ? 7 : event->category-1));
+  text.numelements++;
   
-  elem[(istask?4:8)].text = (char*)"Description:";
-  elem[(istask?4:8)].newLine = 1;
-  elem[(istask?4:8)].lineSpacing = 8;
-  elem[(istask?4:8)].color=COLOR_LIGHTGRAY;
+  elem[text.numelements].text = (char*)"Description:";
+  elem[text.numelements].newLine = 1;
+  elem[text.numelements].lineSpacing = 8;
+  elem[text.numelements].color=COLOR_LIGHTGRAY;
+  text.numelements++;
   
-  elem[(istask?5:9)].text = (char*) event->description;
-  elem[(istask?5:9)].newLine = 1;
-  
-  text.numelements = (istask?6:10);
+  elem[text.numelements].text = (char*) event->description;
+  elem[text.numelements].newLine = 1;
+  text.numelements++;
+
   doTextArea(&text);
 }
 
