@@ -60,12 +60,12 @@ int viewMonthCalendar(int dateselection) {
   int menu = 1;
   int iresult;
   int eventcount[32];
-  //int bufmonth = 0;
+  int busydays[32];
   int bufyear = 0;
   while (1)
   {
     if(y>9999||y<0) { y=getCurrentYear(); m=getCurrentMonth(); d=getCurrentDay(); } //protection: reset to today's date if somehow we're trying to access the calendar for an year after 9999, or before 0.
-    drawCalendar(y,m,d, GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT), eventcount, &bufmonth, &bufyear);
+    drawCalendar(y,m,d, GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT), eventcount, busydays, &bufmonth, &bufyear);
     switch (menu)
     {
     case 1:
@@ -132,6 +132,7 @@ int viewMonthCalendar(int dateselection) {
               y++;
           }
         } else if (menu == 1 && !dateselection) {
+          // NOTE NOTE eventcount may not be ready, depending on settings!
           if(eventcount[d]+1 > MAX_DAY_EVENTS) {
             AUX_DisplayErrorMessage( 0x2E );
           } else {
@@ -814,7 +815,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
           if(menu->numitems > 0) {
             if(eventEditor(y, m, d, EVENTEDITORTYPE_EDIT, &events[menu->selection-1]) == EVENTEDITOR_RETURN_CONFIRM) {
               ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
-              searchValid = 0;
+              searchValid = 0; bufmonth = 0;
             }
             return 1; //even if the user didn't confirm the changes, we have them in our event list. so we need to reload it to its unmodified state.
           }
@@ -1428,7 +1429,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
 }
 
 
-void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* bufmonth, int* bufyear) {
+void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* busydays, int* bufmonth, int* bufyear) {
     Bdisp_AllClr_VRAM();
     DisplayStatusArea();
     int textX = 0;
@@ -1492,7 +1493,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
         //events indicator:            
         if (show_event_count) {
           if (*bufmonth!=month || *bufyear!=year) { //events in buffer are not for this month, refresh.
-            GetEventCountsForMonth(year, month, eventcount);
+            GetEventCountsForMonth(year, month, eventcount, busydays);
             *bufmonth = month; //update which month is now in buffer
             *bufyear = year; //update which year is now in buffer
           }
@@ -1511,7 +1512,9 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
               VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_WHITE, COLOR_RED);
               VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_BLACK, COLOR_WHITE);
             }
-            else if(x == 0 || x == 6) {
+          }
+          if(busydays[day] == 1 && day != d) {
+            if(x == 0 || x == 6) {
               VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_WHITE, myyellow);
               VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_AQUA, myyellow);
             } else {

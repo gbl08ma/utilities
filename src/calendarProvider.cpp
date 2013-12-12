@@ -144,11 +144,9 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
         calEvent->endtime.second = atoi((const char*)token);
         break;
       case 17: //title
-        //calEvent->title = (unsigned char*)token;
         strncpy((char*)calEvent->title, (char*)token, 25);
         break;
       case 18: //location
-        //calEvent->location = (unsigned char*)token;
         strncpy((char*)calEvent->location, (char*)token, 135);
         break;
       case 19: //description
@@ -407,13 +405,35 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
   }
 }
 
-void GetEventCountsForMonth(int year, int month, int* buffer) {
+void GetEventCountsForMonthHelper(EventDate* date, int count, int* busydays) {
+  CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
+  count = GetEventsForDate(date, CALENDARFOLDER, events);
+  for(int curitem = 0; curitem <= count - 1; curitem++) {
+    long int datediff = DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
+    if(datediff == 0) {
+      busydays[date->day] = 1;
+    } else if(datediff > 0) {
+      if(events[curitem].enddate.month > date->month || events[curitem].enddate.year > date->year) {
+        // event ends after this month. which means the current month days are all busy past this day.
+        for(unsigned int k = date->day; k<=31; k++) busydays[k] = 1;
+      } else {
+        // events past this day up to the end day are all busy.
+        for(unsigned int k = date->day; k<=events[curitem].enddate.day; k++) busydays[k] = 1;
+      }
+    } // else: end date is before start date, which is invalid. user should repair DB some day...
+  }
+}
+void GetEventCountsForMonth(int year, int month, int* buffer, int* busydays) {
   int day = 1;
+  for(unsigned int k = 0; k<=31; k++) {
+    busydays[k] = 0; //clean array
+  }
   while (day <= getMonthDays(month) + ((month == 2 && isLeap(year)) ? 1 : 0))
   {
     EventDate thisday;
     thisday.day = day; thisday.month = month; thisday.year = year;
     buffer[day] = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //NULL means it will only count and not parse
+    if(buffer[day] > 0) GetEventCountsForMonthHelper(&thisday, buffer[day], busydays);
     day++;
   }
 }
