@@ -132,8 +132,14 @@ int viewMonthCalendar(int dateselection) {
               y++;
           }
         } else if (menu == 1 && !dateselection) {
-          // NOTE NOTE eventcount may not be ready, depending on settings!
-          if(eventcount[d]+1 > MAX_DAY_EVENTS) {
+          int eventsOnDay = 0;
+          if(GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT)) eventsOnDay = eventcount[d];
+          else {
+            EventDate thisday;
+            thisday.day = d; thisday.month = m; thisday.year = y;
+            eventsOnDay = GetEventsForDate(&thisday, CALENDARFOLDER, NULL);
+          }
+          if(eventsOnDay >= MAX_DAY_EVENTS) {
             AUX_DisplayErrorMessage( 0x2E );
           } else {
             if(EVENTEDITOR_RETURN_CONFIRM == eventEditor(y, m, d)) {
