@@ -58,7 +58,9 @@ int viewTasksSub(Menu* menu) {
   }
   menu->items=menuitems; 
 
-  while(1) {    
+  while(1) {
+    Bdisp_AllClr_VRAM();
+    DisplayStatusArea();
     int iresult;
     if (menu->fkeypage == 0) {
       if(menu->numitems>0) {
