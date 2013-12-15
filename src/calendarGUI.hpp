@@ -52,6 +52,6 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
 void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int height);
 void calendarTools(int y, int m, int d);
 void repairCalendarDatabase();
-
+void trimCalendarDatabase();
 
 #endif

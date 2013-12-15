@@ -8,6 +8,7 @@
 #include <fxcg/rtc.h>
 #include <fxcg/heap.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -2078,11 +2079,12 @@ void calendarTools(int y, int m, int d) {
   MenuItem smallmenuitems[5];
   strcpy(smallmenuitems[0].text, "Count days");  
   strcpy(smallmenuitems[1].text, "Repair database");
-  strcpy(smallmenuitems[2].text, "Calendar settings");
+  strcpy(smallmenuitems[2].text, "Trim database");
+  strcpy(smallmenuitems[3].text, "Calendar settings");
   
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
-  smallmenu.numitems=3;
+  smallmenu.numitems=4;
   smallmenu.width=17;
   smallmenu.height=5;
   smallmenu.startX=3;
@@ -2173,6 +2175,8 @@ void calendarTools(int y, int m, int d) {
     } else if(smallmenu.selection == 2) {
       repairCalendarDatabase();
     } else if(smallmenu.selection == 3) {
+      trimCalendarDatabase();
+    } else if(smallmenu.selection == 4) {
       calendarSettingsMenu();
     }
   }  
@@ -2185,7 +2189,6 @@ void repairCalendarDatabase() {
 
   textElement elem[15];
   text.elements = elem;
-  text.scrollbar=1;
   
   elem[0].text = (char*)"Repairing the calendar events' database will delete or fix any corrupt or inconsistent data, such as events with an end time preceding their start time.";
   elem[1].newLine = 1;
@@ -2287,6 +2290,176 @@ void repairCalendarDatabase() {
   doTextArea(&text);
   bufmonth = 0; // because apart from editing dates, database repair also deletes invalid files that may influence event counts.
   searchValid = 0; // invalidate week view results
+}
+
+void trimCalendarDatabase() {
+  textArea text;
+  strcpy(text.title, (char*)"Trim database");
+  text.showtitle=1;
+  text.type = TEXTAREATYPE_INSTANT_RETURN;
+
+  textElement elem[5];
+  text.elements = elem;
+  text.scrollbar=0;
+  
+  elem[0].text = (char*)"You can reduce the size of the calendar events' database, by";
+  elem[0].spaceAtEnd = 1;
+  elem[1].text = (char*)"deleting";
+  elem[1].spaceAtEnd = 1;
+  elem[1].color = COLOR_RED;
+  elem[2].text = (char*)"events you do not need anymore. Select what events to delete, or press EXIT to cancel.";
+
+  text.numelements = 3;
+  doTextArea(&text);
+  
+  MenuItem menuitems[5];
+  strcpy(menuitems[0].text, "Older than 6 months");
+  strcpy(menuitems[1].text, "Older than 1 month");
+  strcpy(menuitems[2].text, "Events in the past");
+  strcpy(menuitems[3].text, "All calendar events");
+  
+  Menu menu;
+  menu.items=menuitems;
+  menu.numitems=4;
+  menu.scrollout=1;
+  menu.startY = 6;
+  menu.height = 3;
+  
+  int res = doMenu(&menu);
+  if(res == MENU_RETURN_EXIT) return;
+  else if(res == MENU_RETURN_SELECTION) {
+    if(menu.selection == 4) {
+      mMsgBoxPush(5);
+      mPrintXY(3, 2, (char*)"DELETE / RESET", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"ALL the calendar", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 4, (char*)"events?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 3, TEXT_COLOR_BLACK); // yes, F1
+      PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 4, TEXT_COLOR_BLACK); // no, F6
+      while (1) {
+        int key;
+        mGetKey(&key);
+        if (key==KEY_CTRL_F1) {
+          mMsgBoxPop();
+          break; // user wants to continue... so we continue
+        } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
+          // user aborted. better just return.
+          mMsgBoxPop();
+          return;
+        }
+      }
+    }
+    int y = getCurrentYear();
+    int m = getCurrentMonth();
+    int d = getCurrentDay();
+    unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
+    unsigned char buffer[MAX_FILENAME_SIZE+1];
+    unsigned char* filter = (unsigned char*)"*.pce";
+
+    // make the buffer
+    strcpy((char*)buffer, "\\\\fls0\\");
+    strcat((char*)buffer, CALENDARFOLDER);
+    strcat((char*)buffer, "\\");
+    strcat((char*)buffer, "*");
+    
+    file_type_t fileinfo;
+    int findhandle;
+    Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
+    int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
+    Bfile_StrToName_ncpy(path, filter, MAX_FILENAME_SIZE+1);
+    while(!ret) {
+      Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
+      // the 00000.pce strcmp is there so we don't delete the tasks file
+      if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "00000.pce") == 0) &&
+        (fileinfo.fsize == 0 || Bfile_Name_MatchMask((const short int*)path, (const short int*)found)))
+      {      
+        // select what to do depending on menu selection
+        int deleteThisFile = 0;
+        if(menu.selection == 4) {
+          // user wants to delete all events
+          deleteThisFile = 1;
+        } else {
+          // user wants to do something that depends on the start date, so we need to get it from the filename
+          char mainname[20] = "";
+          int nlen = strlen((char*)buffer);
+          strncpy(mainname, (char*)buffer, nlen-4); //strip the file extension out
+          // strcpy will not add a \0 at the end if the limit is reached, let's add it ourselves
+          mainname[nlen-4] = '\0';
+          nlen = strlen(mainname);
+          
+          // verify that it only contains numbers
+          for(int i = 0; i < nlen; i++) {
+            if(!isdigit(mainname[i])) {
+              // some character is not a number, delete file (DB repair would do this, anyway)
+              deleteThisFile = 1;
+            }
+          }
+          EventDate thisday;
+          if(!deleteThisFile) {
+            char tmpbuf[10] = "";
+            strcpy(tmpbuf, "");
+            for(int i = 0; i<8-nlen; i++) {
+              strcat(tmpbuf, "0");
+            }
+            strcat(tmpbuf, mainname);
+            strcpy(mainname, tmpbuf);
+            
+            char datebuffer[10] = "";
+
+            datebuffer[0] = mainname[0];
+            datebuffer[1] = mainname[1];
+            datebuffer[2] = mainname[2];
+            datebuffer[3] = mainname[3];
+            datebuffer[4] = '\0';
+            thisday.year = atoi((const char*)datebuffer);
+            datebuffer[0] = mainname[4];
+            datebuffer[1] = mainname[5];
+            datebuffer[2] = '\0';
+            thisday.month = atoi((const char*)datebuffer);
+            datebuffer[0] = mainname[6];
+            datebuffer[1] = mainname[7];
+            datebuffer[2] = '\0';
+            thisday.day = atoi((const char*)datebuffer);
+            
+            // see if the date in the filename is valid
+            if(!isDateValid(thisday.year,thisday.month,thisday.day)) {
+              // oops, date is not valid, and this is not the tasks file
+              deleteThisFile = 1; // DB repair would do this anyway
+            }
+          }
+          if(!deleteThisFile) {
+            long int datediff = DateToDays(y, m, d) - DateToDays(thisday.year, thisday.month, thisday.day);
+            if(menu.selection == 1) {
+              if(datediff > 30+31+30+31+30+31) deleteThisFile=1;
+            } else if(menu.selection == 2) {
+              if(datediff > 30) deleteThisFile=1;
+            } else if(menu.selection == 3) {
+              if(datediff > 0) deleteThisFile=1;
+            }
+          }
+        }
+        if(deleteThisFile) {
+          unsigned char delfname[MAX_FILENAME_SIZE+1] = "";
+          strcpy((char*)delfname, "\\\\fls0\\");
+          strcat((char*)delfname, CALENDARFOLDER);
+          strcat((char*)delfname, "\\");
+          strcat((char*)delfname, (char*)buffer);
+          unsigned short path2[MAX_FILENAME_SIZE+1];
+          Bfile_StrToName_ncpy(path2, delfname, MAX_FILENAME_SIZE+1);
+          Bfile_DeleteEntry( path2 );
+        }
+      }
+      ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
+    }
+    Bfile_FindClose(findhandle);
+  }
+  mMsgBoxPush(4);
+  mPrintXY(3, 2, (char*)"DB trimming", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 3, (char*)"completed", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 4, (char*)"successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+  closeMsgBox();
+  bufmonth = 0;
+  searchValid = 0;
 }
 
 /*
