@@ -1427,7 +1427,15 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
 #define THICKNESS 20
 #define TOPOFFSET 22
 #define WIDTH 47
-    int myyellow = drawRGB24toRGB565(249, 248, 199);
+    int categoryBackColors[20];
+    categoryBackColors[0] = drawRGB24toRGB565(249, 248, 199);
+    categoryBackColors[1] = categoryBackColors[0];
+    categoryBackColors[2] = drawRGB24toRGB565(127, 127, 255);
+    categoryBackColors[3] = drawRGB24toRGB565(127, 255, 127);
+    categoryBackColors[4] = drawRGB24toRGB565(127, 255, 255);
+    categoryBackColors[5] = drawRGB24toRGB565(255, 127, 127);
+    categoryBackColors[6] = drawRGB24toRGB565(255, 127, 255);
+    categoryBackColors[7] = drawRGB24toRGB565(255, 255, 127);
     drawLine(LEFT,TOP,RIGHT-1,TOP,COLOR_BLACK);
     drawLine(LEFT,TOP,LEFT,BOTTOM-1,COLOR_BLACK);
     drawLine(LEFT,BOTTOM-1,RIGHT-1,BOTTOM-1,COLOR_BLACK);
@@ -1499,12 +1507,12 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
               VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_BLACK, COLOR_WHITE);
             }
           }
-          if(busydays[day] == 1 && day != d) {
+          if(busydays[day] > 0 && day != d) {
             if(x == 0 || x == 6) {
-              VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_WHITE, myyellow);
-              VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_AQUA, myyellow);
+              VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_WHITE, categoryBackColors[busydays[day]]);
+              VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_AQUA, categoryBackColors[busydays[day]]);
             } else {
-              VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_WHITE, myyellow);
+              VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_WHITE, categoryBackColors[busydays[day]]);
             }
           }
         }
@@ -1791,6 +1799,7 @@ int changeEventCategory(CalendarEvent* event) {
   if(selcolor != (unsigned char)0xFF) {
     //user didn't press EXIT, QUIT or AC/ON. input is validated.
     selcolor != 7 ? event->category = selcolor+1 : event->category = 0;
+    bufmonth = 0; //because colors will change in month view
     return EVENTEDITOR_RETURN_CONFIRM;
   }
   return EVENTEDITOR_RETURN_EXIT;
