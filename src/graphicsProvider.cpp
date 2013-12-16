@@ -187,23 +187,17 @@ void drawFkeyPopup(int Fkey, int darktheme, int showclosemessage) {
     fgcolor = COLOR_WHITE;
     bgcolor = COLOR_BLACK;
   }
-  int c1x = 18; int c1y = 24*2;
-  int c2x = 18*20; int c2y = 24*2;
-  int c3x = 18*20; int c3y = 24*8-12;
-  int c4x = 18; int c4y = 24*8-12;
-  drawRectangle(c1x, c1y, c3x-c1x, c3y-c1x-24, bgcolor);
-  drawLine(c1x-1, c1y-1, c2x, c2y-1, fgcolor);
-  drawLine(c1x-1, c1y-1, c4x-1, c4y+1, fgcolor);
-  drawLine(c2x, c2y-1, c3x, c3y+1, fgcolor);
-  drawLine(c4x-1, c4y+1, c3x, c3y+1, fgcolor);
+#define FKEY_C1X 18
+#define FKEY_C1Y 24*2
+#define FKEY_C2X 18*20
+#define FKEY_C2Y 24*2
+#define FKEY_C3X 18*20
+#define FKEY_C3Y 24*8-12
+  drawRectangle(FKEY_C1X-2, FKEY_C1Y-2, FKEY_C3X-FKEY_C1X+4, FKEY_C3Y-FKEY_C1X-25, fgcolor);
+  drawRectangle(FKEY_C1X, FKEY_C1Y, FKEY_C3X-FKEY_C1X, FKEY_C3Y-FKEY_C1X-29, bgcolor);
 
-  drawLine(c1x-2, c1y-2, c2x+1, c2y-2, fgcolor);
-  drawLine(c1x-2, c1y-2, c4x-2, c4y+2, fgcolor);
-  drawLine(c2x+1, c2y-2, c3x+1, c3y+2, fgcolor);
-  drawLine(c4x-2, c4y+2, c3x+1, c3y+2, fgcolor);
-
-  drawLine(c1x, c1y+23, c2x-1, c2y+23, COLOR_GRAY);
-  drawRectangle(c1x, c1y, c2x-c1x, 23, COLOR_LIGHTGRAY);
+  drawLine(FKEY_C1X, FKEY_C1Y+23, FKEY_C2X-1, FKEY_C2Y+23, COLOR_GRAY);
+  drawRectangle(FKEY_C1X, FKEY_C1Y, FKEY_C2X-FKEY_C1X, 23, COLOR_LIGHTGRAY);
 
   drawArrowDown(31+Fkey*64, 190, fgcolor);
   drawLine(23+Fkey*64, 181, 40+Fkey*64, 181, bgcolor);
@@ -212,9 +206,9 @@ void drawFkeyPopup(int Fkey, int darktheme, int showclosemessage) {
 
   if (showclosemessage) {
     int textX = 0;
-    int textY = c3y-14-20;
+    int textY = FKEY_C3Y-14-20;
     PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", (darktheme == 1 ? 4 : 0), TEXT_COLOR_BLACK, 1 ); //fake draw
-    textX = c3x-textX-4;
+    textX = FKEY_C3X-textX-4;
     PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", (darktheme == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
   }
 }
