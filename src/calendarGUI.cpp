@@ -380,7 +380,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
     strcat(menuitems[curmenu].text, getDOWAsString(dow(ny, nm, nd)+1));
     strcat(menuitems[curmenu].text, (char*)")");
     menuitems[curmenu].type = MENUITEM_SEPARATOR;
-    menuitems[curmenu].color = TEXT_COLOR_BLACK;
+    menuitems[curmenu].color = 8; //make it dark blue
     if(ny==oy&&nm==om&&nd==od&&*jumpToSel==1) {
       menu->selection=curmenu+1;
       menu->scroll = menu->selection -1;
