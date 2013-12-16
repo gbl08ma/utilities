@@ -1437,9 +1437,9 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
     textX=LEFT+5; textY= TOP+2-TOPOFFSET;
     PrintMini(&textX, &textY, (unsigned char*)getMonthAsString(month), 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
     int x,y = 0; int k = 1;
-    drawRectangle(LEFT+2,TOP+2+THICKNESS,RIGHT-2-2-LEFT,THICKNESS,COLOR_LIME);
-    drawRectangle(RIGHT-2-WIDTH,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_AQUA);
-    drawRectangle(LEFT+2,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_AQUA);
+    drawRectangle(LEFT+2,TOP+2+THICKNESS,RIGHT-2-2-LEFT,THICKNESS,COLOR_LIGHTGRAY);
+    drawRectangle(RIGHT-2-WIDTH,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
+    drawRectangle(LEFT+2,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
     drawLine(LEFT+2,TOP+2+THICKNESS,RIGHT-3,TOP+2+THICKNESS,COLOR_BLACK);
     for (x = LEFT + 2+WIDTH; x < RIGHT - WIDTH;x+=WIDTH)
     {
@@ -1453,18 +1453,17 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
     {
       textX = x+2;
       textY = TOP+2+THICKNESS-TOPOFFSET;
-      PrintMini(&textX, &textY, (unsigned char*)getDOWAsShortString(k++), 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_LIME, 1, 0);
+      PrintMini(&textX, &textY, (unsigned char*)getDOWAsShortString(k++), 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_LIGHTGRAY, 1, 0);
     }
 
     int startingday = dow(year,month,1),day = 1;
     int prevstart = getMonthDays((month == 1 ? 12 : month - 1)) - (startingday == 0 ? 7 : startingday) + ((month == 3 && isLeap(year)) ? 2 : 1);
-    //int prevstart = monthDays[(month == 1 ? 11 : month - 2)] - (startingday == 0 ? 7 : startingday) + ((month == 3 && isLeap(year)) ? 2 : 1);
     char buffer[10];
     if (startingday != 0) { //solve "overlapping days on months started on a sunday" bug
       for (x = 0; x < (startingday == 0 ? 7 : startingday); x++)
       {
           itoa(prevstart++,(unsigned char*)buffer);
-          PrintMiniFix(LEFT+2+x*WIDTH+2,TOP+2+2*THICKNESS-TOPOFFSET,buffer,0,(x == 0 ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY),(x == 0 ? COLOR_AQUA : COLOR_WHITE));
+          PrintMiniFix(LEFT+2+x*WIDTH+2,TOP+2+2*THICKNESS-TOPOFFSET,buffer,0,(x == 0 ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY),(x == 0 ? COLOR_LIGHTBLUE : COLOR_WHITE));
       }
     }
     x = startingday;
@@ -1476,7 +1475,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
           drawRectangle(LEFT+2+WIDTH*x+1,TOP+1+2+y*THICKNESS,WIDTH-1,THICKNESS-1,COLOR_RED);
           if(x == 0) drawRectangle(LEFT+2+WIDTH*x,TOP+1+2+y*THICKNESS,WIDTH,THICKNESS-1,COLOR_RED); //make sure the little pixels row on sundays is filled
         }
-        PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,(day == d ? COLOR_WHITE : COLOR_BLACK),(day == d ? COLOR_RED : (x == 0 || x == 6) ? COLOR_AQUA : COLOR_WHITE));
+        PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,(day == d ? COLOR_WHITE : COLOR_BLACK),(day == d ? COLOR_RED : (x == 0 || x == 6) ? COLOR_LIGHTBLUE : COLOR_WHITE));
         //events indicator:            
         if (show_event_count) {
           if (*bufmonth!=month || *bufyear!=year) { //events in buffer are not for this month, refresh.
@@ -1503,7 +1502,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
           if(busydays[day] > 0 && day != d) {
             if(x == 0 || x == 6) {
               VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_WHITE, categoryBackColors[busydays[day]]);
-              VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_AQUA, categoryBackColors[busydays[day]]);
+              VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_LIGHTBLUE, categoryBackColors[busydays[day]]);
             } else {
               VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_WHITE, categoryBackColors[busydays[day]]);
             }
@@ -1523,7 +1522,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
     while (y != 8)
     {
         itoa(day++,(unsigned char*)buffer);
-        PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,((x == 0) | (x == 6)) ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY,(x == 0 || x == 6) ? COLOR_AQUA : COLOR_WHITE);
+        PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,((x == 0) | (x == 6)) ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY,(x == 0 || x == 6) ? COLOR_LIGHTBLUE : COLOR_WHITE);
         x++;
         if (x == 7)
         {
