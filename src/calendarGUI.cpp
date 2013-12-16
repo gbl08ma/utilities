@@ -347,10 +347,10 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   MenuItem* menuitems = (MenuItem*)alloca((numevents+7)*sizeof(MenuItem));
   
   // read events this time
-  curday = 0; unsigned int curmenu = 0;
+  unsigned int curmenu = 0;
   unsigned int cursce = 0; // current SimpleCalendarEvent, in the end it will have the SimpleCalendarEvent count
   ddays=DateToDays(*y, *m, *d);
-  while(curday < 7) {
+  for(curday=0; curday < 7; curday++) {
     // one menuitem for day header
     char buffer[15] = "";
     long int ny, nm, nd;
@@ -385,10 +385,20 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
     }
     curmenu++;
     if(fevcount[curday]) {
-      buildWeekCalendarDayMenu(ddays, fevcount[curday], &curmenu, menuitems, &cursce, events); 
+      EventDate date;
+      date.year=ny; date.month=nm; date.day=nd;
+      // read directly into SimpleCalendarEvents
+      GetEventsForDate(&date, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW, events, cursce);
+      for(unsigned int k = 0; k < fevcount[curday]; k++) {
+        // build menuitem
+        strcpy(menuitems[curmenu].text, (char*)events[cursce].title);
+        menuitems[curmenu].type = MENUITEM_NORMAL;
+        menuitems[curmenu].color = events[cursce].category-1;
+        curmenu++;
+        cursce++;
+      }
     }
     ddays++;
-    curday++;
   }
   menu->numitems = curmenu;
   menu->items = menuitems;
@@ -680,37 +690,6 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
     }
   }
   return 1;
-}
-
-void buildWeekCalendarDayMenu(long int ddays, unsigned int numevents, unsigned int* curmenu, MenuItem* menuitems, unsigned int* cursce, SimpleCalendarEvent* events) {
-  long int ny, nm, nd;
-  DaysToDate(ddays, &ny, &nm, &nd);
-  EventDate date;
-  date.year=ny; date.month=nm; date.day=nd;
-  
-  // allocate enough CalendarEvents for today
-  CalendarEvent* dayEvents = (CalendarEvent*)alloca(numevents*sizeof(CalendarEvent));
-  // get the events
-  GetEventsForDate(&date, CALENDARFOLDER, dayEvents, MAX_DAY_EVENTS_WEEKVIEW);
-  
-  // process CalendarEvents into SimpleCalendarEvents
-  // and build menu at the same time
-  unsigned int curevent = 0;
-  while(curevent < numevents) {
-    // build SimpleCalendarEvent
-    strcpy((char*)events[*cursce].title, (char*)dayEvents[curevent].title);
-    events[*cursce].startdate = date;
-    events[*cursce].category = dayEvents[curevent].category;
-    events[*cursce].origpos = curevent;
-    *cursce = *cursce+1;
-    
-    // build MenuItem
-    strcpy(menuitems[*curmenu].text, (char*)dayEvents[curevent].title);
-    menuitems[*curmenu].type = MENUITEM_NORMAL;
-    menuitems[*curmenu].color = dayEvents[curevent].category-1;
-    *curmenu = *curmenu+1;
-    curevent++;
-  }
 }
 
 void viewEvents(int y, int m, int d) {

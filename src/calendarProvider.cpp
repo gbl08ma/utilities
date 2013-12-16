@@ -344,7 +344,7 @@ int RemoveDay(EventDate* date, const char* folder) {
   return 0;
 }
 
-int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit) {
+int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit, SimpleCalendarEvent* simpleCalEvents, int startArray) {
 /*reads the storage memory searching for events starting on specified date.
   folder is where events will be searched for (useful for multiple calendar support)
   if calEvents is not NULL:
@@ -382,11 +382,22 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
     unsigned char token[2048];
     unsigned char* src = asrc;
     src = toksplit(src, EVENT_SEPARATOR , token, 2048);
-
     int notfinished = 1;
     while (notfinished) {
       //pass event to the parser and store it in the string event array
-      if(calEvents != NULL) charToCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &calEvents[curevent]); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
+      if(calEvents != NULL) charToCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &calEvents[startArray+curevent]); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
+      // we don't want full CalendarEvents, but do we want SimpleCalendarEvents?
+      else if(simpleCalEvents != NULL) {
+        // calEvents is null, so we need to get our own CalendarEvent to hold the results
+        CalendarEvent cEvt;
+        charToCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &cEvt);
+        strcpy((char*)simpleCalEvents[startArray+curevent].title, (char*)cEvt.title);
+        simpleCalEvents[startArray+curevent].startdate.day = cEvt.startdate.day;
+        simpleCalEvents[startArray+curevent].startdate.month = cEvt.startdate.month;
+        simpleCalEvents[startArray+curevent].startdate.year = cEvt.startdate.year;
+        simpleCalEvents[startArray+curevent].category = cEvt.category;
+        simpleCalEvents[startArray+curevent].origpos = curevent;
+      }
       curevent++;
       if (strlen((char*)src) < 5) { //5 bytes is not enough space to hold an event, so that means there are no more events to process... right?
         notfinished = 0;
