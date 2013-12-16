@@ -43,7 +43,6 @@ void showHome(chronometer* chrono) {
   int fgcolor;
   int bgcolor;
   while (1) {
-    checkDownwardsChronoCompleteGUI(chrono, NUMBER_OF_CHRONO);
     Bdisp_AllClr_VRAM();
 
     //black theme, or not?
@@ -83,8 +82,8 @@ void showHome(chronometer* chrono) {
         darkenFkeys((GetSetting(SETTING_ENABLE_LOCK) == 1 ? 5 : 4));
       }
     }
-
     Bdisp_PutDisp_DD();
+    checkDownwardsChronoCompleteGUI(chrono, NUMBER_OF_CHRONO);
     if (0 != GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key) || pane_keycache ) {
       if(!pane_keycache) {
         key = PRGM_GetKey();
