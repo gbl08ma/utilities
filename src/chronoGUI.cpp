@@ -34,9 +34,12 @@ void formatChronoString(chronometer* tchrono, int num, unsigned char* string)
   itoa(num, (unsigned char*)buffer);
   if(tchrono->state == CHRONO_STATE_CLEARED) {
     strcpy((char*)string, "\xe6\xa6");
+  } else if (tchrono->state == CHRONO_STATE_RUNNING) {
+    if(tchrono->type == CHRONO_TYPE_UP) strcpy((char*)string, "\xe6\x9C");
+    else strcpy((char*)string, "\xe6\x9D"); 
   } else {
-    if(tchrono->type == CHRONO_TYPE_UP) strcpy((char*)string, "\xe6\x92");
-    else strcpy((char*)string, "\xe6\x93"); 
+    if(tchrono->type == CHRONO_TYPE_UP) strcpy((char*)string, "\xe6\xAC");
+    else strcpy((char*)string, "\xe6\xAD"); 
   }
   strcat((char*)string, buffer);
   strcat((char*)string, ":");
@@ -347,6 +350,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
   sel.min = 0;
   sel.max = -1; // no limit. long long int is big enough to accomodate a chronometer with a duration of over 2 million days.
   sel.cycle = 0;
+  sel.type = SELECTORTYPE_NORMAL;
   res = doSelector(&sel);
   if (res == SELECTOR_RETURN_EXIT) return;
   long int days = sel.value;
