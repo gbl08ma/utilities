@@ -102,8 +102,8 @@ int viewTasksSub(Menu* menu) {
         if(menu->numitems > 0)
           if(eventEditor(0, 0, 0, EVENTEDITORTYPE_EDIT, &tasks[menu->selection-1], 1) == EVENTEDITOR_RETURN_CONFIRM) {
             ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
-            return 1;
           }
+          return 1;
         break;
       case KEY_CTRL_F4:
         if(menu->numitems > 0) {
