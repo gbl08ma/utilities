@@ -115,7 +115,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
       } else mPrintXY(menu->startX, menu->startY, menu->title, TEXT_MODE_TRANSPARENT_BACKGROUND, menu->titleColor);
     }
     if(menu->showsubtitle && menu->showtitle) { // linker havocs with PrintMini if I put this if inside the one above
-      int textX=MB_ElementCount(menu->title)*18+10, textY=6;
+      int textX=(MB_ElementCount(menu->title)+menu->startX-1)*18+10, textY=6;
       PrintMini(&textX, &textY, (unsigned char*)menu->subtitle, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
     }
     int iresult;
