@@ -45,7 +45,6 @@ void showHome(chronometer* chrono) {
   while (1) {
     checkDownwardsChronoCompleteGUI(chrono, NUMBER_OF_CHRONO);
     Bdisp_AllClr_VRAM();
-    Bdisp_EnableColor(1); 
 
     //black theme, or not?
     if (GetSetting(SETTING_THEME) == 1) {

@@ -185,13 +185,12 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
   //Saves a calendar event on an existing calendar with specified file name.
   //If the specified file doesn't exist, it is created and the event is added to it.
   //Returns 0 on success, other values on error.
-  // open and close: should always be 1. If 0, it will be assumed that the file is already open/closed and global var hAddFile will be used as handle
-  char foldername[128] = "";
+  /*char foldername[128] = "";
   unsigned short pFolder[256];
   strcpy(foldername, "\\\\fls0\\");
   strcat(foldername, folder);
   Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
-  Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
+  Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file*/
   char filename[128] = "";
   smemFilenameFromDate(&calEvent->startdate, filename, folder);
   
@@ -224,7 +223,18 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
     else
     {
       // file doesn't exist, but can't be created?
-      return 2;
+      // it's probably because the DB has never been used and is not initialized (i.e. we haven't created the calendar folder).
+      // create the folder:
+      char foldername[128] = "";
+      unsigned short pFolder[256];
+      strcpy(foldername, "\\\\fls0\\");
+      strcat(foldername, folder);
+      Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
+      Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0);
+      // now let's call ourselves again, then according to the return value of our second instance, decide if there was an error or not.
+      int ret = AddEvent(calEvent, folder);
+      if(ret) return 2; // another error ocurred
+      else return 0; //event was added without error, now that we created the folder
     }
   } else {
     /*File exists and is open.

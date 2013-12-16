@@ -20,8 +20,7 @@
 
 void showAbout() {
   int key;
-  Bdisp_AllClr_VRAM();
-  Bdisp_EnableColor(1); 
+  Bdisp_AllClr_VRAM(); 
   DefineStatusMessage((char*)"About Utilities", 1, 0, 0);
   DisplayStatusArea();
   //y increment between each line: 17; between paragraphs: 20
