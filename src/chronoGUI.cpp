@@ -155,7 +155,10 @@ void chronoScreen(chronometer* chrono) {
       FKey_Display(4, (int*)iresult);
       // "hack" the stop icon, turning it into a pause icon
       drawRectangle(286, 197, 4, 14, COLOR_WHITE);
+      GetFKeyPtr(0x0156, &iresult); // BUILT-IN
+      FKey_Display(5, (int*)iresult);
     } else if (menu.fkeypage==1) {
+      clearLine(1,8);
       GetFKeyPtr(0x0037, &iresult); // SELECT (white)
       FKey_Display(0, (int*)iresult);
       GetFKeyPtr(0x0398, &iresult); // ALL (white)
@@ -261,6 +264,9 @@ void chronoScreen(chronometer* chrono) {
           break;
         case KEY_PRGM_F5:
           if(menu.fkeypage==0) stopSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
+          break;
+        case KEY_PRGM_F6:
+          if(menu.fkeypage==0) setBuiltinChrono(&menu, chrono);
           break;
         case KEY_PRGM_EXIT:
           if(menu.fkeypage==0) {
@@ -401,6 +407,57 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
     cur++;
   }
   if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], seconds*1000, type); // if there was no selected chrono, do it for the currently selected menu position
+}
+
+void setBuiltinChrono(Menu* menu, chronometer* tchrono) {
+  long long int duration = 0;
+  MenuItem menuitems[10];
+  strcpy(menuitems[0].text, "1 minute timer");  
+  strcpy(menuitems[1].text, "5 minutes timer");  
+  strcpy(menuitems[2].text, "15 minutes timer");  
+  strcpy(menuitems[3].text, "30 minutes timer");
+  strcpy(menuitems[4].text, "1 hour timer");
+  strcpy(menuitems[5].text, "1 hour 30 min. timer");
+  strcpy(menuitems[6].text, "2 hours timer");
+  strcpy(menuitems[7].text, "5 hours timer");
+  strcpy(menuitems[8].text, "12 hours timer");
+  strcpy(menuitems[9].text, "1 day timer");
+  
+  Menu bmenu;
+  bmenu.items=menuitems;
+  bmenu.numitems=10;
+  bmenu.scrollout=1;
+  bmenu.allowMkey=0;
+  while(1) {
+    int res = doMenu(&bmenu);
+    if(res == MENU_RETURN_EXIT) {
+      Bdisp_AllClr_VRAM();
+      return;
+    } else if(res == MENU_RETURN_SELECTION) {
+      if(bmenu.selection == 1) duration = 60*1000;
+      if(bmenu.selection == 2) duration = 5*60*1000;
+      if(bmenu.selection == 3) duration = 15*60*1000;
+      if(bmenu.selection == 4) duration = 30*60*1000;
+      if(bmenu.selection == 5) duration = 60*60*1000;
+      if(bmenu.selection == 6) duration = 90*60*1000;
+      if(bmenu.selection == 7) duration = 120*60*1000;
+      if(bmenu.selection == 8) duration = 5*60*60*1000;
+      if(bmenu.selection == 9) duration = 12*60*60*1000;
+      if(bmenu.selection == 10) duration = 24*60*60*1000;
+      break;
+    }
+  }
+  
+  int cur = 0, hasPerformedAny = 0;
+  while(cur <= NUMBER_OF_CHRONO-1) {
+    if(menu->items[cur].value == MENUITEM_VALUE_CHECKED) {
+      setChrono(&tchrono[cur], duration, CHRONO_TYPE_DOWN);
+      hasPerformedAny=1;
+    }
+    cur++;
+  }
+  if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], duration, CHRONO_TYPE_DOWN); // if there was no selected chrono, do it for the currently selected menu position
+  Bdisp_AllClr_VRAM();
 }
 
 void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {

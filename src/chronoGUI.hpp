@@ -25,6 +25,7 @@ void startSelectedChronos(Menu* menu, chronometer* tchrono, int count);
 void stopSelectedChronos(Menu* menu, chronometer* tchrono, int count);
 void clearSelectedChronos(Menu* menu, chronometer* tchrono, int count);
 void setChronoGUI(Menu* menu, chronometer* tchrono);
+void setBuiltinChrono(Menu* menu, chronometer* tchrono);
 void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count);
 
 #endif
