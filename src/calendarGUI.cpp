@@ -1807,20 +1807,9 @@ void searchEventsGUI(int y, int m, int d) {
   mMsgBoxPush(5);
   MenuItem smallmenuitems[5];
   strcpy(smallmenuitems[0].text, "Selected year");
-  smallmenuitems[0].type = MENUITEM_NORMAL;
-  smallmenuitems[0].color = TEXT_COLOR_BLACK;
-  
   strcpy(smallmenuitems[1].text, "Selected month");
-  smallmenuitems[1].type = MENUITEM_NORMAL;
-  smallmenuitems[1].color = TEXT_COLOR_BLACK;
-  
   strcpy(smallmenuitems[2].text, "Selected day");
-  smallmenuitems[2].type = MENUITEM_NORMAL;
-  smallmenuitems[2].color = TEXT_COLOR_BLACK;
-  
   strcpy(smallmenuitems[3].text, "Year range");
-  smallmenuitems[3].type = MENUITEM_NORMAL;
-  smallmenuitems[3].color = TEXT_COLOR_BLACK;
   
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
