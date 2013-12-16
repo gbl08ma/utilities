@@ -1414,7 +1414,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
   }
 }
 
-
 void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* busydays, int* bufmonth, int* bufyear) {
     Bdisp_AllClr_VRAM();
     DisplayStatusArea();
@@ -1427,15 +1426,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
 #define THICKNESS 20
 #define TOPOFFSET 22
 #define WIDTH 47
-    int categoryBackColors[20];
-    categoryBackColors[0] = drawRGB24toRGB565(249, 248, 199);
-    categoryBackColors[1] = categoryBackColors[0];
-    categoryBackColors[2] = drawRGB24toRGB565(127, 127, 255);
-    categoryBackColors[3] = drawRGB24toRGB565(127, 255, 127);
-    categoryBackColors[4] = drawRGB24toRGB565(127, 255, 255);
-    categoryBackColors[5] = drawRGB24toRGB565(255, 127, 127);
-    categoryBackColors[6] = drawRGB24toRGB565(255, 127, 255);
-    categoryBackColors[7] = drawRGB24toRGB565(255, 255, 127);
+    int categoryBackColors[10] = {0xffd8, 0xffd8, 0x7bff, 0x7fef, 0x7fff, 0xfbef, 0xfbff, 0xffef};
     drawLine(LEFT,TOP,RIGHT-1,TOP,COLOR_BLACK);
     drawLine(LEFT,TOP,LEFT,BOTTOM-1,COLOR_BLACK);
     drawLine(LEFT,BOTTOM-1,RIGHT-1,BOTTOM-1,COLOR_BLACK);
@@ -1995,7 +1986,6 @@ void searchEventsGUI(int y, int m, int d) {
     }
   }
 }
-
 void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int height, int showHourMarks, int isWeek, int maxx) {
   if(!isWeek) drawRectangle(startx, starty, width, height, COLOR_LIGHTGRAY);
   if(showHourMarks) {
@@ -2007,6 +1997,7 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
   int count = GetEventsForDate(thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
   CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
   count = GetEventsForDate(thisday, CALENDARFOLDER, events);
+  int categoryColors[10] = {COLOR_GRAY, COLOR_BLACK, COLOR_BLUE, COLOR_GREEN, COLOR_CYAN, COLOR_RED, COLOR_MAGENTA, COLOR_YELLOW};
   int curitem = 0;
   while(curitem <= count-1) {
     long int daysduration = DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
@@ -2027,13 +2018,13 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
           bwidth = maxx-weekx;
         }
       }
-      drawRectangle(startx+x, starty, bwidth, height, textColorToFullColor((events[curitem].category == 0 ? 7 : events[curitem].category-1)));
+      drawRectangle(startx+x, starty, bwidth, height, categoryColors[events[curitem].category]);
     } else if(!events[curitem].timed && isWeek) {
       bwidth = width*(daysduration+1);
       if(startx+bwidth > maxx) {
         bwidth = maxx-startx;
       }
-      drawRectangle(startx, starty, bwidth, height, textColorToFullColor((events[curitem].category == 0 ? 7 : events[curitem].category-1)));
+      drawRectangle(startx, starty, bwidth, height, categoryColors[events[curitem].category]);
     }
     curitem++;
   }

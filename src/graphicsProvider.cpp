@@ -316,7 +316,7 @@ int textColorToFullColor(int textcolor) {
     case TEXT_COLOR_GREEN: return COLOR_GREEN;
     case TEXT_COLOR_CYAN: return COLOR_CYAN;
     case TEXT_COLOR_RED: return COLOR_RED;
-    case TEXT_COLOR_PURPLE: return COLOR_PURPLE;
+    case TEXT_COLOR_PURPLE: return COLOR_MAGENTA;
     case TEXT_COLOR_YELLOW: return COLOR_YELLOW;
     case TEXT_COLOR_WHITE: return COLOR_LIGHTGRAY;
     default: return COLOR_BLACK;
