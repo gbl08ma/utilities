@@ -73,12 +73,14 @@ int viewMonthCalendar(int dateselection) {
         GetFKeyPtr(0x01FC, &iresult); // JUMP
         FKey_Display(0, (int*)iresult);
         if(!dateselection) {
-          GetFKeyPtr(0x049F, &iresult); // VIEW
-          FKey_Display(1, (int*)iresult);
+          if(!GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0) {
+            GetFKeyPtr(0x049F, &iresult); // VIEW
+            FKey_Display(1, (int*)iresult);
+            GetFKeyPtr(0x0104, &iresult); // DEL-ALL
+            FKey_Display(3, (int*)iresult);
+          }
           GetFKeyPtr(0x03B4, &iresult); // INSERT
           FKey_Display(2, (int*)iresult);
-          GetFKeyPtr(0x0104, &iresult); // DEL-ALL
-          FKey_Display(3, (int*)iresult);
           GetFKeyPtr(0x0187, &iresult); // SEARCH
           FKey_Display(4, (int*)iresult);
           GetFKeyPtr(0x0102, &iresult); // SWAP [white]
@@ -118,7 +120,7 @@ int viewMonthCalendar(int dateselection) {
               m = 12;
               y--;
           }
-        } else if (menu == 1 && !dateselection) {
+        } else if (menu == 1 && !dateselection && (!GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0)) {
           viewEvents(y, m, d);
         }
         break;
@@ -152,7 +154,7 @@ int viewMonthCalendar(int dateselection) {
       case KEY_CTRL_F4:
         if (menu == 2) {
           if (y != 9999) y++;
-        } else if (menu == 1 && !dateselection) {
+        } else if (menu == 1 && !dateselection && (!GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0)) {
           if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventUI(y, m, d)) {
             bufmonth=0;//force calendar events to reload
           }
