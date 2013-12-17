@@ -1605,72 +1605,88 @@ int deleteAllEventUI(int y, int m, int d, int istask) {
   return ret;
 }
 
-int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2)
+int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, int graphical)
 { //returns 0 on success, 1 on user abort
-  Bdisp_AllClr_VRAM();
-  SetSetupSetting( (unsigned int)0x14, 0); //we only accept numbers, so switch off alpha/shift
-  DisplayStatusArea();
-  mPrintXY(1, 1, (char*)message, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  mPrintXY(1, 2, (char*)message2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);  
-  switch(GetSetting(SETTING_DATEFORMAT)) {
-    case 0:
-      mPrintXY(6, 4, (char*)"DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      break;
-    case 1:
-      mPrintXY(6, 4, (char*)"MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      break;
-    case 2:
-      mPrintXY(6, 4, (char*)"YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      break;
-  }
-  
-  textInput input;
-  input.x=6;
-  input.y=3;
-  input.width=8;
-  input.charlimit=8;
-  input.acceptF6=0;
-  input.type=INPUTTYPE_DATE;
-  char buffer[15] = "";
-  strcpy(buffer, (char*)"");
-  fillInputDate(*yr, *m, *d, buffer);
-  input.buffer = (char*)buffer;
-  while(1) {
-    input.key=0;
-    int res = doTextInput(&input);
-    if (res==INPUT_RETURN_EXIT) return 1; // user aborted
-    else if (res==INPUT_RETURN_CONFIRM) {
-      char year[6] = "";
-      char month[3] = "";
-      char day[3] = "";
-      switch(GetSetting(SETTING_DATEFORMAT)) {
-        case 0:
-          day[0] = buffer[0]; day[1] = buffer[1]; day[2] = '\0';
-          month[0] = buffer[2]; month[1] = buffer[3]; month[2] = '\0';
-          year[0] = buffer[4]; year[1] = buffer[5]; year[2] = buffer[6]; year[3] = buffer[7]; year[4] = '\0';
-          break;
-        case 1:
-          day[0] = buffer[2]; day[1] = buffer[3]; day[2] = '\0';
-          month[0] = buffer[0]; month[1] = buffer[1]; month[2] = '\0';
-          year[0] = buffer[4]; year[1] = buffer[5]; year[2] = buffer[6]; year[3] = buffer[7]; year[4] = '\0';
-          break;
-        case 2:
-          day[0] = buffer[6]; day[1] = buffer[7]; day[2] = '\0';
-          month[0] = buffer[4]; month[1] = buffer[5]; month[2] = '\0';
-          year[0] = buffer[0]; year[1] = buffer[1]; year[2] = buffer[2]; year[3] = buffer[3]; year[4] = '\0';
-          break;
-      }
+  if(graphical) {
+    DefineStatusMessage(message, 1, 0, 0);
+    viewCalendar(1);
+    DefineStatusMessage((char*)"", 1, 0, 0);
+    if(dateselRes) {
+      *yr=sy;
+      *m=sm;
+      *d=sd;
+      sy = 0; //avoid jumping again
+      return 0;
+    } else {
+      sy = 0; //avoid jumping again
+      return 1;
+    }
+  } else {
+    Bdisp_AllClr_VRAM();
+    SetSetupSetting( (unsigned int)0x14, 0); //we only accept numbers, so switch off alpha/shift
+    DisplayStatusArea();
+    mPrintXY(1, 1, (char*)message, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+    mPrintXY(1, 2, (char*)message2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);  
+    switch(GetSetting(SETTING_DATEFORMAT)) {
+      case 0:
+        mPrintXY(6, 4, (char*)"DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        break;
+      case 1:
+        mPrintXY(6, 4, (char*)"MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        break;
+      case 2:
+        mPrintXY(6, 4, (char*)"YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        break;
+    }
+    
+    textInput input;
+    input.x=6;
+    input.y=3;
+    input.width=8;
+    input.charlimit=8;
+    input.acceptF6=0;
+    input.type=INPUTTYPE_DATE;
+    char buffer[15] = "";
+    strcpy(buffer, (char*)"");
+    fillInputDate(*yr, *m, *d, buffer);
+    input.buffer = (char*)buffer;
+    while(1) {
+      input.key=0;
+      int res = doTextInput(&input);
+      if (res==INPUT_RETURN_EXIT) return 1; // user aborted
+      else if (res==INPUT_RETURN_CONFIRM) {
+        char year[6] = "";
+        char month[3] = "";
+        char day[3] = "";
+        switch(GetSetting(SETTING_DATEFORMAT)) {
+          case 0:
+            day[0] = buffer[0]; day[1] = buffer[1]; day[2] = '\0';
+            month[0] = buffer[2]; month[1] = buffer[3]; month[2] = '\0';
+            year[0] = buffer[4]; year[1] = buffer[5]; year[2] = buffer[6]; year[3] = buffer[7]; year[4] = '\0';
+            break;
+          case 1:
+            day[0] = buffer[2]; day[1] = buffer[3]; day[2] = '\0';
+            month[0] = buffer[0]; month[1] = buffer[1]; month[2] = '\0';
+            year[0] = buffer[4]; year[1] = buffer[5]; year[2] = buffer[6]; year[3] = buffer[7]; year[4] = '\0';
+            break;
+          case 2:
+            day[0] = buffer[6]; day[1] = buffer[7]; day[2] = '\0';
+            month[0] = buffer[4]; month[1] = buffer[5]; month[2] = '\0';
+            year[0] = buffer[0]; year[1] = buffer[1]; year[2] = buffer[2]; year[3] = buffer[3]; year[4] = '\0';
+            break;
+        }
 
-      *yr = sys_atoi(year);
-      *m = sys_atoi(month);
-      *d = sys_atoi(day);
-      if(isDateValid(*yr, *m, *d) && (int)strlen(buffer) == input.charlimit) {
-        return 0;
-      } else {
-        invalidFieldMsg(0);
-      }
-    } 
+        *yr = sys_atoi(year);
+        *m = sys_atoi(month);
+        *d = sys_atoi(day);
+        if(isDateValid(*yr, *m, *d) && (int)strlen(buffer) == input.charlimit) {
+          return 0;
+        } else {
+          invalidFieldMsg(0);
+        }
+      } 
+    }
   }
 }
 

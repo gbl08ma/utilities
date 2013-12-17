@@ -40,7 +40,7 @@ void copyEvent(CalendarEvent* event);
 void moveEvent(CalendarEvent* events, int count, int pos, int isCopy=0);
 int deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask=0);
 int deleteAllEventUI(int y, int m, int d, int istask=0);
-int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2);
+int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, int graphical = 0);
 void invalidFieldMsg(int istime);
 void setEventChrono(CalendarEvent* event);
 int changeEventCategory(CalendarEvent* event);

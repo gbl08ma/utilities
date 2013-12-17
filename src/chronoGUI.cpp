@@ -26,6 +26,8 @@
 #include "chronoProvider.hpp"
 #include "chronoGUI.hpp"
 #include "lightGUI.hpp"
+#include "calendarGUI.hpp"
+#include "inputGUI.hpp"
 
 void formatChronoString(chronometer* tchrono, int num, unsigned char* string)
 {
@@ -418,9 +420,70 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         break;
       }
       if(bmenu.selection == 3) {
+        int y, m, d;
+        if(chooseCalendarDate(&y, &m, &d, (char*)"Select chronometer end date", (char*)"", 1)) return;
+        long int daysdiff = DateToDays(y, m, d) - DateToDays(getCurrentYear(), getCurrentMonth(), getCurrentDay());
+        if(daysdiff < 0) {
+          mMsgBoxPush(4);
+          mPrintXY(3, 2, (char*)"Date is in the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 3, (char*)"past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+          closeMsgBox();
+          return;
+        }
+        Bdisp_AllClr_VRAM();
+        DisplayStatusArea();
+        mPrintXY(1, 1, (char*)"Set downwards chrono.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+        mPrintXY(1, 2, (char*)"Chronometer end time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         
-        type=CHRONO_TYPE_DOWN;
-        break;
+        textInput input;
+        input.x=8;
+        input.y=3;
+        input.width=6;
+        input.charlimit=6;
+        input.acceptF6=1;
+        input.type=INPUTTYPE_TIME;
+        char etbuffer[15] = "";
+        strcpy(etbuffer, (char*)"");
+        input.buffer = (char*)etbuffer;
+        int h=0,mi=0,s=0;
+        while(1) {
+          input.key=0;
+          int res = doTextInput(&input);
+          if (res==INPUT_RETURN_EXIT) return; // user aborted
+          else if (res==INPUT_RETURN_CONFIRM) {
+            char hour[3] = "";
+            char minute[3] = "";
+            char second[3] = "";
+            hour[0] = etbuffer[0]; hour[1] = etbuffer[1]; hour[2] = '\0';
+            minute[0] = etbuffer[2]; minute[1] = etbuffer[3]; minute[2] = '\0';
+            second[0] = etbuffer[4]; second[1] = etbuffer[5]; second[2] = '\0';
+
+            h = sys_atoi(hour);
+            mi = sys_atoi(minute);
+            s = sys_atoi(second);
+            if(isTimeValid(h, mi, s) && (int)strlen(etbuffer) == input.charlimit) {
+              break;
+            } else {
+              invalidFieldMsg(1);
+            }
+          } 
+        }
+        long long int endunix = DateTime2Unix(y, m, d, h, mi, s, 0);
+        long long int duration = endunix - currentUnixTime();
+        if(duration < 0) {
+          mMsgBoxPush(4);
+          mPrintXY(3, 2, (char*)"Time is in the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 3, (char*)"past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+          closeMsgBox();
+          return;
+        } else {
+          seconds = duration/1000;
+          type=CHRONO_TYPE_DOWN;
+          break;
+        }
       }
     }
   }
