@@ -1708,6 +1708,7 @@ void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
     // add event on new day
     if(GetEventsForDate(&events[pos].startdate, CALENDARFOLDER, NULL)+1 > MAX_DAY_EVENTS) {
       AUX_DisplayErrorMessage( 0x2E );
+      return; // do not keep running, as we'd delete the original event, even though the move was not sucessful.
     } else {
       //already checked if passes num limit
       int res = AddEvent(&events[pos], CALENDARFOLDER);
