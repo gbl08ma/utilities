@@ -20,6 +20,7 @@
 #include "stringsProvider.hpp"
 #include "selectorGUI.hpp"
 #include "calendarProvider.hpp" 
+#include "fileProvider.hpp" 
 #include "debugGUI.hpp" 
 
 void append(unsigned char* s, char c) //beacuse strcat seems to have problems with 1-byte non-null-terminated chars like the field and event separators
@@ -510,55 +511,6 @@ int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* 
   return resCount;
 }
 
-void SearchMonthHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resCount, int daynumevents, const char* folder, char* needle, int limit) {
-  CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
-  daynumevents = GetEventsForDate(date, folder, dayEvents);
-  int curitem = 0;
-  while(curitem <= daynumevents-1) {
-    int match = 0;
-    if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
-      match = 1;
-    }
-    if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
-      match = 1;
-    }
-    if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
-      match = 1;
-    }
-    if(match) {
-      if(calEvents != NULL) {
-        strcpy((char*)calEvents[*resCount].title, (char*)dayEvents[curitem].title);
-        calEvents[*resCount].startdate = *date;
-        calEvents[*resCount].category = dayEvents[curitem].category;
-        calEvents[*resCount].origpos = curitem;
-      }
-      *resCount = *resCount + 1;
-    }
-    if(*resCount >= limit) return;
-    curitem++;
-  }
-}
-int SearchEventsOnMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
-  /* goes through the events on storage memory for a certain month
-   * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)
-   * if calEvents is NULL simply returns the number of results
-   * returns the search results count */
-  int d = 1;
-  int resCount = 0;
-  int mdays = getMonthDays(m);
-  if(m == 2) if(isLeap(y)) mdays = 29;
-  while(d<=mdays) {
-    EventDate date;
-    date.year = y; date.month = m; date.day = d;
-    int daynumevents = GetEventsForDate(&date, folder, NULL); //get event count only so we know how much to alloc
-    if(daynumevents==0) { d++; continue; }
-    SearchMonthHelper(&date, calEvents, &resCount, daynumevents, folder, needle, limit);
-    if(resCount >= limit) return resCount;    
-    d++;
-  }
-  return resCount;
-}
-
 void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resCount, int daynumevents, const char* folder, char* needle, int limit, int* curfpos) {
   CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
   daynumevents = GetEventsForDate(date, folder, dayEvents);
@@ -588,29 +540,92 @@ void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resC
     curitem++;
   }
 }
-int SearchEventsOnYear(int y, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int arraystart) {
-  /* goes through the events on storage memory for a certain month
-   * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)
-   * if calEvents is NULL simply returns the number of results
-   * returns the search results count */
-  int m = 1;
+
+int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int arraystart) {
+  // if m is zero, will search on year y
   int resCount = 0;
   int curfpos = arraystart;
-  while(m<=12) {
-    int d = 1;
-    int mdays = getMonthDays(m);
-    if(m == 2) if(isLeap(y)) mdays = 29;
-    while(d<=mdays) {
-      EventDate date;
-      date.year = y; date.month = m; date.day = d;
-      int daynumevents = GetEventsForDate(&date, folder, NULL); //get event count only so we know how much to alloc
-      if(daynumevents==0) { d++; continue; }
-      SearchYearHelper(&date, calEvents, &resCount, daynumevents, folder, needle, limit, &curfpos);
-      if(resCount >= limit) return resCount;
-      d++;
+  
+  unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
+  unsigned char buffer[MAX_FILENAME_SIZE+1];
+  unsigned char* filter = (unsigned char*)"*.pce";
+
+  // make the buffer
+  strcpy((char*)buffer, "\\\\fls0\\");
+  strcat((char*)buffer, folder);
+  strcat((char*)buffer, "\\");
+  strcat((char*)buffer, "*");
+  
+  file_type_t fileinfo;
+  int findhandle;
+  Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
+  int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
+  Bfile_StrToName_ncpy(path, filter, MAX_FILENAME_SIZE+1);
+  while(!ret) {
+    Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
+    // the 00000.pce strcmp is there so we don't search on the tasks file
+    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "00000.pce") == 0) &&
+      (fileinfo.fsize == 0 || Bfile_Name_MatchMask((const short int*)path, (const short int*)found)))
+    {      
+      // get the start date from the filename
+      char mainname[20] = "";
+      int nlen = strlen((char*)buffer);
+      strncpy(mainname, (char*)buffer, nlen-4); //strip the file extension out
+      // strcpy will not add a \0 at the end if the limit is reached, let's add it ourselves
+      mainname[nlen-4] = '\0';
+      nlen = strlen(mainname);
+      
+      int isValid = 1;
+      // verify that it only contains numbers
+      for(int i = 0; i < nlen; i++) {
+        if(!isdigit(mainname[i])) {
+          // some character is not a number, this file is invalid, do nothing on it
+          isValid = 0;
+        }
+      }
+      if(isValid) {
+        char tmpbuf[10] = "";
+        strcpy(tmpbuf, "");
+        for(int i = 0; i<8-nlen; i++) {
+          strcat(tmpbuf, "0");
+        }
+        strcat(tmpbuf, mainname);
+        strcpy(mainname, tmpbuf);
+        
+        char datebuffer[10] = "";
+
+        datebuffer[0] = mainname[0];
+        datebuffer[1] = mainname[1];
+        datebuffer[2] = mainname[2];
+        datebuffer[3] = mainname[3];
+        datebuffer[4] = '\0';
+        EventDate thisday;
+        thisday.year = atoi((const char*)datebuffer);
+        datebuffer[0] = mainname[4];
+        datebuffer[1] = mainname[5];
+        datebuffer[2] = '\0';
+        thisday.month = atoi((const char*)datebuffer);
+        datebuffer[0] = mainname[6];
+        datebuffer[1] = mainname[7];
+        datebuffer[2] = '\0';
+        thisday.day = atoi((const char*)datebuffer);
+        
+        // see if the date in the filename is valid, and that it is in the year we are searching in
+        if(isDateValid(thisday.year,thisday.month,thisday.day) && thisday.year==(unsigned int)y && (m==0?1:thisday.month==(unsigned int)m)) {
+          int daynumevents = GetEventsForDate(&thisday, folder, NULL); //get event count only so we know how much to alloc
+          if(daynumevents>0) {
+            SearchYearHelper(&thisday, calEvents, &resCount, daynumevents, folder, needle, limit, &curfpos);
+            if(resCount >= limit) {
+              Bfile_FindClose(findhandle);
+              return resCount;
+            }
+          }
+        }
+      }
     }
-    m++;
+    ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
+  Bfile_FindClose(findhandle);
   return resCount;
 }
 

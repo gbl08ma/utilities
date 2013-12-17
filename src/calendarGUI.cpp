@@ -1862,13 +1862,13 @@ void searchEventsGUI(int y, int m, int d) {
     strcpy(menu.title, "Search results");
 
     if(smallmenu.selection == 1) {
-      menu.numitems = SearchEventsOnYear(y, CALENDARFOLDER, NULL, needle, 200); //get event count
+      menu.numitems = SearchEventsOnYearOrMonth(y, 0, CALENDARFOLDER, NULL, needle, 200); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
-      menu.numitems = SearchEventsOnYear(y, CALENDARFOLDER, events, needle, 200);
+      menu.numitems = SearchEventsOnYearOrMonth(y, 0, CALENDARFOLDER, events, needle, 200);
     } else if(smallmenu.selection == 2) {
-      menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, NULL, needle, 200); //get event count
+      menu.numitems = SearchEventsOnYearOrMonth(y, m, CALENDARFOLDER, NULL, needle, 200); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
-      menu.numitems = SearchEventsOnMonth(y, m, CALENDARFOLDER, events, needle, 200);
+      menu.numitems = SearchEventsOnYearOrMonth(y, m, CALENDARFOLDER, events, needle, 200);
     } else if(smallmenu.selection == 3) {
       EventDate sday;
       sday.day = d; sday.month = m; sday.year = y;
@@ -1905,7 +1905,7 @@ void searchEventsGUI(int y, int m, int d) {
       int maxPerYear = 250/yc; // calculate maximum number of events we can get on each year
       progressMessage((char*)" Searching...", 0, yc);
       for(int i=userStartYear; i<=userEndYear; i++) {
-        c = SearchEventsOnYear(i, CALENDARFOLDER, NULL, needle, maxPerYear, ic); //get event count
+        c = SearchEventsOnYearOrMonth(i, 0, CALENDARFOLDER, NULL, needle, maxPerYear, ic); //get event count
         if(!firstYwithEvents && c>0) firstYwithEvents = i;
         if(c>0) lastYwithEvents = i;
         pc++;
@@ -1919,7 +1919,7 @@ void searchEventsGUI(int y, int m, int d) {
       pc=0;
       progressMessage((char*)" Searching...", 0, yc);
       for(int i=firstYwithEvents; i<=lastYwithEvents; i++) {
-        ic += SearchEventsOnYear(i, CALENDARFOLDER, events, needle, maxPerYear, ic);
+        ic += SearchEventsOnYearOrMonth(i, 0, CALENDARFOLDER, events, needle, maxPerYear, ic);
         pc++;
         if(pc <= yc) progressMessage((char*)" Searching...", pc, yc);
       }

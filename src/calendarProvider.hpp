@@ -76,7 +76,7 @@ void GetEventCountsForMonth(int year, int month, int* buffer, int* busydays);
 void toggleTaskActivity(CalendarEvent* event, int pos, int count);
 int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit);
 int SearchEventsOnMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit);
-int SearchEventsOnYear(int y, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int arraystart=0);
+int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int arraystart=0);
 void repairEventsFile(char* name, const char* folder, int* checkedevents, int* problemsfound);
 
 #endif
