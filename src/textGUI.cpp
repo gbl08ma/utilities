@@ -28,7 +28,7 @@ int doTextArea(textArea* text) {
     drawRectangle(text->x, text->y+24, text->width, LCD_HEIGHT_PX-24, COLOR_WHITE);
     int cur = 0;
     int textX = text->x;
-    int textY = scroll+(text->showtitle ? 24 : 0); // 24 pixels for title (or not)
+    int textY = scroll+(text->showtitle ? 24 : 0)+text->y; // 24 pixels for title (or not)
     int temptextY = 0;
     int temptextX = 0;
     while(cur <= text->numelements-1) {
@@ -71,7 +71,7 @@ int doTextArea(textArea* text) {
       clearLine(1,1);
       mPrintXY(1, 1, (char*)text->title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     }
-    int scrollableHeight = LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1);
+    int scrollableHeight = LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1)-text->y;
     //draw a scrollbar:
     if(text->scrollbar) {
       TScrollbar sb;
@@ -81,7 +81,7 @@ int doTextArea(textArea* text) {
       sb.indicatorheight = scrollableHeight;
       sb.indicatorpos = -scroll;
       sb.barheight = scrollableHeight;
-      sb.bartop = (text->showtitle ? 24 : 0);
+      sb.bartop = (text->showtitle ? 24 : 0)+text->y;
       sb.barleft = text->width - 6;
       sb.barwidth = 6;
 

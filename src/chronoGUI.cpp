@@ -19,6 +19,7 @@
 #include "graphicsProvider.hpp"
 #include "timeProvider.hpp"
 #include "timeGUI.hpp"
+#include "textGUI.hpp"
 #include "settingsProvider.hpp"
 #include "settingsGUI.hpp" 
 #include "selectorGUI.hpp"
@@ -326,77 +327,103 @@ void clearSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
 
 
 void setChronoGUI(Menu* menu, chronometer* tchrono) {
-  Selector sel;
-  strcpy(sel.title, "Set timer");
-  strcpy(sel.subtitle, "Type");
-  sel.value = 0;
-  sel.min = 0;
-  sel.max = 1;
-  sel.cycle = 1;
-  sel.type = SELECTORTYPE_TIMERTYPE;
-  int res = doSelector(&sel);
-  if (res == SELECTOR_RETURN_EXIT) return;
-  int type = sel.value;
-  if (type == CHRONO_TYPE_UP) {
-    int cur = 0, hasPerformedAny = 0;
-    while(cur <= NUMBER_OF_CHRONO-1) {
-      if(menu->items[cur].value == MENUITEM_VALUE_CHECKED) {
-        setChrono(&tchrono[cur], 0, CHRONO_TYPE_UP);
-        hasPerformedAny=1;
-      }
-      cur++;
-    }
-    if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], 0, CHRONO_TYPE_UP); // if there was no selected chrono, do it for the currently selected menu position
-    return;
-  }
+  long long int seconds = 0;
+  int type = CHRONO_TYPE_UP;
+  MenuItem menuitems[10];
+  strcpy(menuitems[0].text, "Upwards");  
+  strcpy(menuitems[1].text, "Downwards (period)");  
+  strcpy(menuitems[2].text, "Downwards (date-time)");  
+  
+  Menu bmenu;
+  bmenu.items=menuitems;
+  bmenu.numitems=3;
+  bmenu.height = 4;
+  bmenu.scrollbar=0;
+  strcpy(bmenu.title, (char*)"Set chronometer type");
+  bmenu.showtitle=1;
+  
+  textArea text;
+  text.type = TEXTAREATYPE_INSTANT_RETURN;
+  text.showtitle = 0;
+  text.y = 4*24+5;
 
-  strcpy(sel.title, "Set timer");
-  strcpy(sel.subtitle, "Days");
-  sel.value = 0;
-  sel.min = 0;
-  sel.max = -1; // no limit. long long int is big enough to accomodate a chronometer with a duration of over 2 million days.
-  sel.cycle = 0;
-  sel.type = SELECTORTYPE_NORMAL;
-  res = doSelector(&sel);
-  if (res == SELECTOR_RETURN_EXIT) return;
-  long int days = sel.value;
+  textElement elem[2];
+  text.elements = elem;
+  text.scrollbar=0;
   
-  strcpy(sel.title, "Set timer");
-  strcpy(sel.subtitle, "Hours");
-  sel.value = 0;
-  sel.min = 0;
-  sel.max = 23;
-  sel.cycle = 0;
-  res = doSelector(&sel);
-  if (res == SELECTOR_RETURN_EXIT) return;
-  int hours = sel.value;
+  elem[0].text = (char*)"Chronometers will start the moment you set them. You should familiarize yourself with the behavior of the chronometer function before using it for something important.";
+
+  text.numelements = 1;
+  Bdisp_AllClr_VRAM();
   
-  strcpy(sel.title, "Set timer");
-  strcpy(sel.subtitle, "Minutes");
-  sel.value = 0;
-  sel.min = 0;
-  sel.max = 59;
-  sel.cycle = 0;
-  res = doSelector(&sel);
-  if (res == SELECTOR_RETURN_EXIT) return;
-  int minutes = sel.value;
-  
-  strcpy(sel.title, "Set timer");
-  strcpy(sel.subtitle, "Seconds");
-  if(days == 0 && hours == 0 && minutes == 0) {
-    sel.value = 1;
-    sel.min = 1;
-  } else {
-    sel.value = 0;
-    sel.min = 0;
+  while(1) {
+    doTextArea(&text);
+    int res = doMenu(&bmenu);
+    if(res == MENU_RETURN_EXIT) {
+      Bdisp_AllClr_VRAM();
+      return;
+    } else if(res == MENU_RETURN_SELECTION) {
+      if(bmenu.selection == 1) {
+        type=CHRONO_TYPE_UP;
+        break;
+      }
+      if(bmenu.selection == 2) {
+        Selector sel;
+        strcpy(sel.title, "Set downwards chrono.");
+        strcpy(sel.subtitle, "Days");
+        sel.value = 0;
+        sel.min = 0;
+        sel.max = -1; // no limit. long long int is big enough to accomodate a chronometer with a duration of over 2 million days.
+        sel.cycle = 0;
+        sel.type = SELECTORTYPE_NORMAL;
+        res = doSelector(&sel);
+        if (res == SELECTOR_RETURN_EXIT) return;
+        long int days = sel.value;
+        
+        strcpy(sel.title, "Set downwards chrono.");
+        strcpy(sel.subtitle, "Hours");
+        sel.value = 0;
+        sel.min = 0;
+        sel.max = 23;
+        sel.cycle = 0;
+        res = doSelector(&sel);
+        if (res == SELECTOR_RETURN_EXIT) return;
+        int hours = sel.value;
+        
+        strcpy(sel.title, "Set downwards chrono.");
+        strcpy(sel.subtitle, "Minutes");
+        sel.value = 0;
+        sel.min = 0;
+        sel.max = 59;
+        sel.cycle = 0;
+        res = doSelector(&sel);
+        if (res == SELECTOR_RETURN_EXIT) return;
+        int minutes = sel.value;
+        
+        strcpy(sel.title, "Set downwards chrono.");
+        strcpy(sel.subtitle, "Seconds");
+        if(days == 0 && hours == 0 && minutes == 0) {
+          sel.value = 1;
+          sel.min = 1;
+        } else {
+          sel.value = 0;
+          sel.min = 0;
+        }
+        sel.max = 59;
+        sel.cycle = 0;
+        res = doSelector(&sel);
+        if (res == SELECTOR_RETURN_EXIT) return;
+        seconds = sel.value + 60*minutes + 60*60*hours + 60*60*24*days;
+        type=CHRONO_TYPE_DOWN;
+        break;
+      }
+      if(bmenu.selection == 3) {
+        
+        type=CHRONO_TYPE_DOWN;
+        break;
+      }
+    }
   }
-  sel.max = 59;
-  sel.cycle = 0;
-  res = doSelector(&sel);
-  if (res == SELECTOR_RETURN_EXIT) return;
-  long long int seconds = sel.value;
-  
-  seconds = seconds + 60*minutes + 60*60*hours + 60*60*24*days;
   
   int cur = 0, hasPerformedAny = 0;
   while(cur <= NUMBER_OF_CHRONO-1) {
@@ -427,7 +454,6 @@ void setBuiltinChrono(Menu* menu, chronometer* tchrono) {
   bmenu.items=menuitems;
   bmenu.numitems=10;
   bmenu.scrollout=1;
-  bmenu.allowMkey=0;
   while(1) {
     int res = doMenu(&bmenu);
     if(res == MENU_RETURN_EXIT) {
