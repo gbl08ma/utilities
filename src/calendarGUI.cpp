@@ -2066,16 +2066,16 @@ void calendarTools(int y, int m, int d) {
   strcpy(smallmenuitems[0].text, "Count days");  
   strcpy(smallmenuitems[1].text, "Repair database");
   strcpy(smallmenuitems[2].text, "Trim database");
-  strcpy(smallmenuitems[3].text, "Calendar settings");
+  strcpy(smallmenuitems[3].text, "Import events");
+  strcpy(smallmenuitems[4].text, "Calendar settings");
   
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
-  smallmenu.numitems=4;
+  smallmenu.numitems=5;
   smallmenu.width=17;
   smallmenu.height=5;
   smallmenu.startX=3;
   smallmenu.startY=2;
-  smallmenu.scrollbar=0;
   smallmenu.scrollout=1;
   smallmenu.showtitle=1;
   strcpy(smallmenu.title, "Calendar tools");
@@ -2163,6 +2163,8 @@ void calendarTools(int y, int m, int d) {
     } else if(smallmenu.selection == 3) {
       trimCalendarDatabase();
     } else if(smallmenu.selection == 4) {
+      importCalendarEvents();
+    } else if(smallmenu.selection == 5) {
       calendarSettingsMenu();
     }
   }  
@@ -2446,6 +2448,88 @@ void trimCalendarDatabase() {
   closeMsgBox();
   bufmonth = 0;
   searchValid = 0;
+}
+int importHelper(EventDate* date, int count, textArea* text, textElement* elem, int initSuc) {
+  CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
+  GetEventsForDate(date, CALENDARFOLDER, events);
+  int curitem = 0;
+  int successful = initSuc;
+  while(curitem <= count-1) {
+    char buffer1[20] = "";
+    itoa((int)successful, (unsigned char*)buffer1);
+    elem[2].text = buffer1;
+    doTextArea(text);
+    Bdisp_PutDisp_DD();
+    // add the event. this will automatically put it in the correct file in the database.
+    if(!AddEvent(&events[curitem], CALENDARFOLDER)) successful++;
+    curitem++;
+  }
+  return successful;
+}
+void importCalendarEvents() {
+  textArea text;
+  strcpy(text.title, (char*)"Import events");
+  text.showtitle=1;
+
+  textElement elem[15];
+  text.elements = elem;
+  
+  elem[0].text = (char*)"This tool is responsible for the last step in importing events into the calendar database.";
+  elem[1].newLine = 1;
+  elem[1].text = (char*)"It assumes you have already used desktop software to convert events into an appropriate format, and that you followed that software's instructions as to where the resulting files should go in this calculator.";
+  elem[2].newLine = 1;
+  elem[2].lineSpacing = 5;
+  elem[2].text = (char*)"This operation may take a long time if there are many events events to import. Press F1 to start or EXIT to cancel.";
+  
+  text.allowF1 = 1;
+  text.numelements = 3;
+  if(!doTextArea(&text)) return;
+  
+  text.type = TEXTAREATYPE_INSTANT_RETURN;
+  text.allowF1 = 0;
+  text.scrollbar=0;
+  elem[0].text = (char*)"Importing calendar events. This may take a long time, please wait and do not turn off the calculator...";
+  elem[1].newLine = 1;
+  elem[1].lineSpacing = 20;
+  elem[1].text = (char*)"Number of events imported:";
+  elem[1].spaceAtEnd = 1;
+  // elem[2] is set in loop
+  elem[2].lineSpacing = 0;
+  elem[2].newLine = 0;
+  text.numelements = 3;
+  
+  // User accepted, let the importing operation begin.
+  // the import tool assumes the events to import to be in up to 99 files, up to 100 events each
+  // this means that one can import 9900 events at a time (but that would take hours).
+  // files should be in the PCE format, and be in the @UTILS folder with the other calendar files.
+  // the files should be numbered from 00001.pce to 00099.pce
+  // they do not collide with existing event files, because the month 0 is reserved for non-calendar files (tasks and files to import).
+  EventDate thisday;
+  thisday.day = 1; thisday.month = 0; thisday.year = 0;
+  int successful = 0;
+  while(thisday.day<100) {
+    int count = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+    if(count && count<=MAX_DAY_EVENTS) {
+      successful = importHelper(&thisday, count, &text, elem, successful);
+      // delete so we don't import this day again, if user calls the import function again.
+      RemoveDay(&thisday, CALENDARFOLDER);
+    }
+    thisday.day++;
+  }
+  text.type = TEXTAREATYPE_NORMAL;
+  char buffer1[20] = "";
+  itoa((int)successful, (unsigned char*)buffer1);
+  elem[0].text = buffer1;
+  elem[0].spaceAtEnd = 1;
+  elem[1].newLine = 0;
+  elem[1].text = (char*)"events imported successfully.";
+  elem[2].lineSpacing = 5;
+  elem[2].newLine = 1;
+  elem[2].text = (char*)"Press EXIT.";
+  text.numelements = 3;
+  doTextArea(&text);
+  bufmonth = 0; // because apart from editing dates, database repair also deletes invalid files that may influence event counts.
+  searchValid = 0; // invalidate week view results
 }
 
 /*

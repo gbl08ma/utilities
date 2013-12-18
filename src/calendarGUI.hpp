@@ -52,5 +52,6 @@ void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int
 void calendarTools(int y, int m, int d);
 void repairCalendarDatabase();
 void trimCalendarDatabase();
+void importCalendarEvents();
 
 #endif
