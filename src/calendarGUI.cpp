@@ -2234,26 +2234,29 @@ void repairCalendarDatabase() {
   Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
   Bfile_StrToName_ncpy(path, filter, MAX_FILENAME_SIZE+1);
+  int loopc = 0;
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
     if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0) &&
        (fileinfo.fsize == 0 || Bfile_Name_MatchMask((const short int*)path, (const short int*)found)))
-    {      
-      char buffer1[20] = "";
-      itoa((int)checkedfiles, (unsigned char*)buffer1);
-      elem[2].text = buffer1;
-      
-      char buffer2[20] = "";
-      itoa((int)checkedevents, (unsigned char*)buffer2);
-      elem[4].text = buffer2;
-      
-      char buffer3[20] = "";
-      itoa((int)problemsfound, (unsigned char*)buffer3);
-      elem[6].text = buffer3;
-      
-      text.numelements = 7;
-      doTextArea(&text);
-      Bdisp_PutDisp_DD();
+    {     
+      if (loopc>=9) {
+        char buffer1[20] = "";
+        itoa((int)checkedfiles, (unsigned char*)buffer1);
+        elem[2].text = buffer1;
+        
+        char buffer2[20] = "";
+        itoa((int)checkedevents, (unsigned char*)buffer2);
+        elem[4].text = buffer2;
+        
+        char buffer3[20] = "";
+        itoa((int)problemsfound, (unsigned char*)buffer3);
+        elem[6].text = buffer3;
+        doTextArea(&text);
+        text.numelements = 7;
+        Bdisp_PutDisp_DD();
+        loopc = 0;
+      } else loopc++;
       repairEventsFile((char*)buffer, CALENDARFOLDER, &checkedevents, &problemsfound);
       checkedfiles++;
     }
