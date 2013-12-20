@@ -2061,7 +2061,7 @@ void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int
 }
 
 void calendarTools(int y, int m, int d) {
-  mMsgBoxPush(5);
+  mMsgBoxPush(6);
   MenuItem smallmenuitems[5];
   strcpy(smallmenuitems[0].text, "Count days");  
   strcpy(smallmenuitems[1].text, "Repair database");
@@ -2073,10 +2073,10 @@ void calendarTools(int y, int m, int d) {
   smallmenu.items=smallmenuitems;
   smallmenu.numitems=5;
   smallmenu.width=17;
-  smallmenu.height=5;
+  smallmenu.height=6;
   smallmenu.startX=3;
   smallmenu.startY=2;
-  smallmenu.scrollout=1;
+  smallmenu.scrollbar=0;
   smallmenu.showtitle=1;
   strcpy(smallmenu.title, "Calendar tools");
   int sres = doMenu(&smallmenu);
