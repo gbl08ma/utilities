@@ -65,8 +65,8 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   }
   
   char titleBuffer[23] = ""; 
-  int smemfree;
-  unsigned short smemMedia[7]={'\\','\\','f','l','s','0',0};
+  int smemfree = 0;
+  unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
   
   char friendlypath[MAX_FILENAME_SIZE] = "";

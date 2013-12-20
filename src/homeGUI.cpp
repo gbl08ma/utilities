@@ -32,6 +32,7 @@
 #include "toolsGUI.hpp"
 #include "lockGUI.hpp"
 #include "fileGUI.hpp"
+#include "editorGUI.hpp"
 #include "debugGUI.hpp"
 
 int pane_keycache = 0; // TODO: see if it's possible not to have this being a global var
@@ -295,16 +296,17 @@ void toolsMenu() {
   drawFkeyPopup(3, GetSetting(SETTING_THEME), 1);
   mPrintXY(2, 2, (char*)"Tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
-  MenuItem menuitems[5];
+  MenuItem menuitems[6];
   strcpy(menuitems[0].text, "File manager");
-  strcpy(menuitems[1].text, "Memory usage");
-  strcpy(menuitems[2].text, "Add-In manager");
-  strcpy(menuitems[3].text, "Function key color");
-  strcpy(menuitems[4].text, "System information");
+  strcpy(menuitems[1].text, "Text editor");
+  strcpy(menuitems[2].text, "Memory usage");
+  strcpy(menuitems[3].text, "Add-In manager");
+  strcpy(menuitems[4].text, "Function key color");
+  strcpy(menuitems[5].text, "System information");
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=5;
+  menu.numitems=6;
   menu.width=19;
   menu.height=4;
   menu.startX=2;
@@ -319,12 +321,14 @@ void toolsMenu() {
       if(menu.selection == 1) {
         fileManager();
       } else if(menu.selection == 2) {
-        memoryCapacityViewer();
+        fileTextEditor();
       } else if(menu.selection == 3) {
-        addinManager();
+        memoryCapacityViewer();
       } else if(menu.selection == 4) {
-        changeFKeyColor();
+        addinManager();
       } else if(menu.selection == 5) {
+        changeFKeyColor();
+      } else if(menu.selection == 6) {
         systemInfo();
       }
     }

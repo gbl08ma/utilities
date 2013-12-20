@@ -21,15 +21,17 @@
 #include "graphicsProvider.hpp"
 #include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
+#include "debugGUI.hpp"
 
 void memoryCapacityViewer() {
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
   mPrintXY(1, 1, (char*)"Memory usage", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  int smemfree;
   unsigned char buffer[50] ="";
-  unsigned short smemMedia[7]={'\\','\\','f','l','s','0',0};
+  int smemfree = 0;
+  unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
+  strcpy((char*)buffer, (char*)"");
   itoa(smemfree, buffer);
   unsigned char smemtext[70] = "";
   strcpy((char*)smemtext, "Storage: ");
@@ -51,11 +53,11 @@ void memoryCapacityViewer() {
 #ifdef DRAW_MEMUSAGE_GRAPHS
   textY = textY + 12;
   //what could be done in one line, has to be done in 3+another var, because of integer overflows -.-
-  long long int tmpvar = TOTAL_SMEM-smemfree;
+  long long int tmpvar = (long long int)TOTAL_SMEM-(long long int)smemfree;
   tmpvar = LCD_WIDTH_PX*tmpvar;
-  long long int barwidthcpl = tmpvar/TOTAL_SMEM;
+  long long int barwidthcpl = tmpvar/(long long int)TOTAL_SMEM;
   drawRectangle(0, textY+24, LCD_WIDTH_PX, 20, COLOR_GRAY);
-  drawRectangle(0, textY+24, barwidthcpl, 20, COLOR_BLUE);
+  drawRectangle(0, textY+24, (int)barwidthcpl, 20, COLOR_BLUE);
   
   int newTextX = 0;
   int newTextY = textY+5;
