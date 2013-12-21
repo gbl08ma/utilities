@@ -23,6 +23,7 @@
 #include "fileGUI.hpp"
 #include "textGUI.hpp"
 #include "sha2.h"
+#include "editorGUI.hpp"
 #include "debugGUI.hpp"
 
 void fileManager() {
@@ -30,14 +31,19 @@ void fileManager() {
   int itemsinclip = 0;
   int shownClipboardHelp = 0;
   int shownMainMemHelp = 0;
-  char browserbasepath[MAX_FILENAME_SIZE+1] = "\\\\fls0\\";  
+  char browserbasepath[MAX_FILENAME_SIZE+1] = "\\\\fls0\\";
+  char filetoedit[MAX_FILENAME_SIZE+1] = "";
   File* clipboard = (File*)alloca((MAX_ITEMS_IN_CLIPBOARD+1)*sizeof(File));
   while(res) {
-    res = fileManagerSub(browserbasepath, &itemsinclip, &shownClipboardHelp, &shownMainMemHelp, clipboard);
+    strcpy(filetoedit, (char*)"");
+    res = fileManagerSub(browserbasepath, &itemsinclip, &shownClipboardHelp, &shownMainMemHelp, clipboard, filetoedit);
+    if(strlen(filetoedit) > 0) {
+      fileTextEditor(filetoedit);
+    }
   }
 }
 
-int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard) {
+int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard, char* filetoedit) {
   Menu menu;
   MenuItemIcon icontable[12];
   buildIconTable(icontable);
@@ -169,7 +175,11 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           }
           return 1; //reload at new folder
         } else {
-          fileInformation(files, &menu);
+          if(1 == fileInformation(files, &menu)) {
+            // user wants to edit the file
+            strcpy(filetoedit, files[menu.selection-1].filename);
+            return 1;
+          }
         }
         break;
       case KEY_CTRL_F2:
@@ -350,7 +360,9 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   return 0;
 }
 
-void fileInformation(File* files, Menu* menu) {
+int fileInformation(File* files, Menu* menu) {
+  // returns 0 if user exits.
+  // returns 1 if user wants to edit the file
   int key;
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
@@ -422,16 +434,21 @@ void fileInformation(File* files, Menu* menu) {
   int iresult;
   GetFKeyPtr(0x03B1, &iresult); // OPEN
   FKey_Display(0, (int*)iresult);
+  GetFKeyPtr(0x0185, &iresult); // EDIT
+  FKey_Display(1, (int*)iresult);
   while (1) {
     mGetKey(&key);
     switch(key) {
       case KEY_CTRL_EXIT:
       case KEY_CTRL_LEFT:
-        return;
+        return 0;
         break;
       case KEY_CTRL_F1:
         fileViewAsText(files[menu->selection-1].filename);
-        return;
+        return 0;
+        break;
+      case KEY_CTRL_F2:
+        return 1;
         break;
     }
   }

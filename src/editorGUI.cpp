@@ -32,5 +32,8 @@ void fileTextEditor(char* filename) {
     mPrintXY(1, 2, (char*)filename, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   }
   int key;
-  mGetKey(&key);
+  while(1) {
+    mGetKey(&key);
+    if(key==KEY_CTRL_EXIT) return;
+  }
 }

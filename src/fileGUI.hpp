@@ -18,11 +18,11 @@
 #include "menuGUI.hpp"
 
 void fileManager();
-int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard);
+int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard, char* filetoedit);
 int deleteFilesGUI(File* files, Menu* menu);
 int makeFolderGUI(char* browserbasepath);
 int renameFileGUI(File* files, Menu* menu, char* browserbasepath);
-void fileInformation(File* files, Menu* menu);
+int fileInformation(File* files, Menu* menu);
 void fileViewAsText(char* filename);
 void viewFilesInClipboard(File* clipboard, int *itemsinclip);
 void showCopyFolderWarning();
