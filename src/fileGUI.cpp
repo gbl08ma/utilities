@@ -258,7 +258,6 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         break;
       case KEY_CTRL_OPTN:
         viewFilesInClipboard(clipboard, itemsinclip);
-        return 1; //redraw and everything
         break;
     }
   }
