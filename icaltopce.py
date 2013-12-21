@@ -5,6 +5,8 @@ import os, sys, unicodedata
 from pytz import timezone
 import pytz
 caltz = timezone('UTC')
+CURSOR_UP_ONE = '\x1b[1A'
+ERASE_LINE = '\x1b[2K'
 print "iCalendar to Portable Calendar Event converter - (C) 2013 tny. internet media"
 if len(sys.argv) == 1:
   print "Usage: icaltopce.py fileToConvert.ics"
@@ -42,14 +44,18 @@ while 1:
           if rcategory < 0 or rcategory > 7:
             print "Invalid category, aborting"
             sys.exit()
-          else: category = rcategory
+          else:
+            category = rcategory
+            print 'Converting' #this will get deleted
         lastCalendarName = str(component.get('x-wr-calname'))
     if component.name == "VEVENT":
       curevent = curevent + 1
       if curevent <= lastConvertedEvent:
         continue;
       lastConvertedEvent = lastConvertedEvent + 1
-      if component.get('summary'): print "Converting: " + str(component.get('summary').encode('utf8'))
+      if component.get('summary'):
+        print(CURSOR_UP_ONE + ERASE_LINE + CURSOR_UP_ONE)
+        print "Converting: " + str(component.get('summary').encode('utf8'))
       o.write(str(category)) #category
       o.write("\x1d")
       o.write("0") #daterange
@@ -115,22 +121,22 @@ while 1:
       o.write("\x1d")
       
       if component.get('summary'):
-        o.write(unicodedata.normalize('NFKD',component.get('summary')).encode('ascii','ignore')[:21]) #title
+        o.write(' '.join(unicodedata.normalize('NFKD',component.get('summary')).encode('ascii','ignore').replace('\n', ' ').replace('\r', '').split())[:21]) #title
       o.write("\x1d") # write field separator even if field is empty
       if component.get('location'):
-        o.write(unicodedata.normalize('NFKD',component.get('location')).encode('ascii','ignore')[:128]) #location
+        o.write(' '.join(unicodedata.normalize('NFKD',component.get('location')).encode('ascii','ignore').replace('\n', ' ').replace('\r', '').split())[:128]) #location
       o.write("\x1d")
       # if summary was too big to fit in title, put it in description too:
       remainDescChars = 1024
       if component.get('summary'):
-        if len(unicodedata.normalize('NFKD',component.get('summary')).encode('ascii','ignore')) > 21:
+        if len(' '.join(unicodedata.normalize('NFKD',component.get('summary')).encode('ascii','ignore').replace('\n', ' ').replace('\r', '').split())) > 21:
           o.write("Summary: ")
           remainDescChars = remainDescChars - 11 # len("Summary: ") + len("; ")
-          o.write(unicodedata.normalize('NFKD',component.get('summary')).encode('ascii','ignore')[:remainDescChars])
-          remainDescChars = remainDescChars - len(unicodedata.normalize('NFKD',component.get('summary')).encode('ascii','ignore')[:remainDescChars])
+          o.write(' '.join(unicodedata.normalize('NFKD',component.get('summary')).encode('ascii','ignore').replace('\n', ' ').replace('\r', '').split())[:remainDescChars])
+          remainDescChars = remainDescChars - len(' '.join(unicodedata.normalize('NFKD',component.get('summary')).encode('ascii','ignore').replace('\n', ' ').replace('\r', '').split())[:remainDescChars])
           o.write("; ")
       if component.get('description'):
-        o.write(unicodedata.normalize('NFKD',component.get('description')).encode('ascii','ignore')[:remainDescChars]) #description
+        o.write(' '.join(unicodedata.normalize('NFKD',component.get('description')).encode('ascii','ignore').replace('\n', ' ').replace('\r', '').split())[:remainDescChars]) #description
       o.write("\x1e")
       eventcount = eventcount + 1
       totaleventcount = totaleventcount + 1
@@ -141,6 +147,7 @@ while 1:
     os.remove(filename)
     break;
 g.close()
+print(CURSOR_UP_ONE + ERASE_LINE + CURSOR_UP_ONE)
 print "Converted " + str(totaleventcount) + " events."
 print "To import the events into the Utilities calendar:"
 print "Connect your calculator to the computer through USB (select F1:MassStorage when asked). Your calculator will appear as a flash drive, now place the *.pce files that were just created, in the folder called \"@UTILS\". If that folder doesn't exist, create it and put the files inside."
