@@ -107,7 +107,22 @@ void fileTextEditor(char* filename) {
           }
         }
       } else {
+        // delete, then create and save file
+        unsigned short newfilenameshort[0x10A];
+        Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)filename, 0x10A);
+        Bfile_DeleteEntry(newfilenameshort);
+        int size = strlen(sText);
+        Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size); //create the file
         
+        int h = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
+        if(h < 0) // Still failing?
+        {
+          return;
+        }
+        //Write file contents
+        Bfile_WriteFile_OS(h, sText, size);
+        Bfile_CloseFile_OS(h);
+        return;
       }
     }
   }
