@@ -18,6 +18,5 @@
 #define TEXT_BUFFER_SIZE 32*1024
 
 void fileTextEditor(char* filename=NULL);
-int stringEndsInG3A(char* string);
 
 #endif 

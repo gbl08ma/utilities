@@ -136,9 +136,3 @@ void fileTextEditor(char* filename) {
     }
   }
 }
-
-int stringEndsInG3A(char* string) {
-  int l = strlen(string);
-  if(l > 4 && (string[l-1] == 'a' || string[l-1] == 'A') && string[l-2] == '3' && (string[l-3] == 'g' || string[l-3] == 'G') && string[l-4] == '.') return 1;
-  else return 0;
-}

@@ -55,5 +55,6 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
 #define FILE_ICON_CSV 8
 #define FILE_ICON_OTHER 9
 int fileIconFromName(char* name);
+int stringEndsInG3A(char* string);
 
 #endif

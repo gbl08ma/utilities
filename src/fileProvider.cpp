@@ -127,8 +127,8 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
         unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
         strncat(newfilename, name, maxcatlen);
-        if(!strcmp(newfilename, clipboard[curfile].filename)) {
-          //trying to copy over the original file
+        if(!strcmp(newfilename, clipboard[curfile].filename) || stringEndsInG3A(newfilename)) {
+          //trying to copy over the original file, or this is a g3a file (which we can't "touch")
           curfile++; continue; //skip
         }
         unsigned short newfilenameshort[0x10A];
@@ -234,4 +234,9 @@ int fileIconFromName(char* name) {
   else if (EndsIWith(name, (char*)".csv"))
     return FILE_ICON_CSV;
   else return FILE_ICON_OTHER;
+}
+
+int stringEndsInG3A(char* string) {
+  if(EndsIWith(string, (char*)".g3a")) return 1;
+  else return 0;
 }
