@@ -447,8 +447,7 @@ int fileInformation(File* files, Menu* menu) {
         return 0;
         break;
       case KEY_CTRL_F2: {
-        int l = strlen(name);
-        if(l > 3 && name[l-1] == 'a' && name[l-2] == '3' && name[l-3] == 'g') {
+        if(stringEndsInG3A(name)) {
           mMsgBoxPush(4);
           mPrintXY(3, 2, (char*)"g3a files can't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(3, 3, (char*)"be edited by", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);

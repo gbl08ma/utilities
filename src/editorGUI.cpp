@@ -86,24 +86,33 @@ void fileTextEditor(char* filename) {
           int nres = doTextInput(&ninput);
           if (nres==INPUT_RETURN_EXIT) break; // user aborted
           else if (nres==INPUT_RETURN_CONFIRM) {
-            // create and save file
-            char newfilename[MAX_FILENAME_SIZE] = "";
-            strcpy(newfilename, (char*)"\\\\fls0\\");
-            strcat(newfilename, nfilename);
-            unsigned short newfilenameshort[0x10A];
-            Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
-            int size = strlen(sText);
-            Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size); //create the file
-            
-            int h = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
-            if(h < 0) // Still failing?
-            {
+            if(stringEndsInG3A(nfilename)) {
+              mMsgBoxPush(4);
+              mPrintXY(3, 2, (char*)"g3a files can't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              mPrintXY(3, 3, (char*)"be created by", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              mPrintXY(3, 4, (char*)"an add-in.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+              closeMsgBox();
+            } else {
+              // create and save file
+              char newfilename[MAX_FILENAME_SIZE] = "";
+              strcpy(newfilename, (char*)"\\\\fls0\\");
+              strcat(newfilename, nfilename);
+              unsigned short newfilenameshort[0x10A];
+              Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+              int size = strlen(sText);
+              Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size); //create the file
+              
+              int h = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
+              if(h < 0) // Still failing?
+              {
+                return;
+              }
+              //Write file contents
+              Bfile_WriteFile_OS(h, sText, size);
+              Bfile_CloseFile_OS(h);
               return;
             }
-            //Write file contents
-            Bfile_WriteFile_OS(h, sText, size);
-            Bfile_CloseFile_OS(h);
-            return;
           }
         }
       } else {
@@ -126,4 +135,10 @@ void fileTextEditor(char* filename) {
       }
     }
   }
+}
+
+int stringEndsInG3A(char* string) {
+  int l = strlen(string);
+  if(l > 4 && (string[l-1] == 'a' || string[l-1] == 'A') && string[l-2] == '3' && (string[l-3] == 'g' || string[l-3] == 'G') && string[l-4] == '.') return 1;
+  else return 0;
 }
