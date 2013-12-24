@@ -191,19 +191,29 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             while(ifile < menu.numitems) {  
               if (menu.items[ifile].isselected) {
                 int inclip = 0;
+                int clippos = 0;
                 for(int i = 0; i<*itemsinclip; i++) {
                   if(!strcmp(clipboard[i].filename, files[ifile].filename)) {
                     inclip=1;
+                    clippos = i;
                   }
                 }
-                if(!inclip) {
-                  if(res == KEY_CTRL_F2) {
-                      strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
-                      //0=cut file; 1=copy file:
-                      clipboard[*itemsinclip].action = 0;
-                      clipboard[*itemsinclip].isfolder = menu.items[ifile].isfolder;
-                      *itemsinclip = *itemsinclip + 1;
+                if(res == KEY_CTRL_F2) {
+                  if(!inclip) {
+                    strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
+                    //0=cut file; 1=copy file:
+                    clipboard[*itemsinclip].action = 0;
+                    clipboard[*itemsinclip].isfolder = menu.items[ifile].isfolder;
+                    *itemsinclip = *itemsinclip + 1;
                   } else {
+                    // file is already in the clipboard
+                    // if it is set for copy, set it for cut
+                    if(clipboard[clippos].action == 1) {
+                      clipboard[clippos].action = 0;
+                    }
+                  }
+                } else {
+                  if(!inclip) {
                     if (!menu.items[ifile].isfolder) {
                       strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
                       //0=cut file; 1=copy file:
@@ -212,6 +222,17 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
                       *itemsinclip = *itemsinclip + 1;
                     } else {
                       if (!hasShownFolderCopyWarning) {
+                        showCopyFolderWarning();
+                        hasShownFolderCopyWarning = 1;
+                      }
+                    }
+                  } else {
+                    // file is already in the clipboard
+                    // if it is set for cut and *is not a folder*, set it for copy
+                    if(clipboard[clippos].action == 0 && !clipboard[clippos].isfolder) {
+                      clipboard[clippos].action = 1;
+                    } else {
+                      if(!hasShownFolderCopyWarning && clipboard[clippos].isfolder) {
                         showCopyFolderWarning();
                         hasShownFolderCopyWarning = 1;
                       }
