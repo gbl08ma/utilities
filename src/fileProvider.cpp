@@ -133,8 +133,10 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         }
         unsigned short newfilenameshort[0x10A];
         unsigned short oldfilenameshort[0x10A];
+        unsigned short tempfilenameshort[0x10A];
         Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)clipboard[curfile].filename, 0x10A);
         Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+        Bfile_StrToName_ncpy(tempfilenameshort, (unsigned char*)"\\\\fls0\\UTILSTMP.PCT", 0x10A);
         
         int copySize;
         int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0); // Get handle for the old file
@@ -159,12 +161,14 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         // source file exists
         // destination file doesn't exist
         // source file is closed so CreateEntry can proceed.
+        // create a temp file in root because copying into subdirectories directly fails with sys error
+        // so we create a temp file in root, and rename in the end
         int BCEres;
-        BCEres = Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &copySize);
+        BCEres = Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &copySize);
         if(BCEres >= 0) // Did it create?
         {
           //created. open newly-created destination file
-          hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
+          hNewFile = Bfile_OpenFile_OS(tempfilenameshort, READWRITE, 0);
           if(hNewFile < 0) // Still failing after the file was created?
           {
             //skip this copy.
@@ -181,22 +185,21 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
           }
           
           //File to copy is open, destination file is created and open.
-          //long int curpos = 0; // NOTE: for debug
           while(1) {
 #define FILE_COPYBUFFER 51200
             unsigned char copybuffer[FILE_COPYBUFFER+5] = "";
-            //debugMessage((char*)"  in loop", (char*)"  curpos: ", curpos);
             int rwsize = Bfile_ReadFile_OS( hOldFile, copybuffer, FILE_COPYBUFFER, -1 );
             if(rwsize > 0) {
               Bfile_WriteFile_OS(hNewFile, copybuffer, rwsize);
             } else {
               break;
             }
-            //curpos = curpos + rwsize; // NOTE: now this is for debug only
           }
           //done copying, close files.
           Bfile_CloseFile_OS(hOldFile);
           Bfile_CloseFile_OS(hNewFile);
+          // now rename the temp file to the correct file name
+          Bfile_RenameEntry(tempfilenameshort , newfilenameshort);
         } //else: create failed, but we're going to skip anyway
       } else {
         //move file
