@@ -58,7 +58,7 @@ int doTextArea(textArea* text) {
       }
       free(singleword);
       if(isFirstDraw) {
-        totalTextY = textY;
+        totalTextY = textY+(text->showtitle ? 0 : 24);
       } else {
         if(textY>LCD_HEIGHT_PX) {
           break;
@@ -100,9 +100,9 @@ int doTextArea(textArea* text) {
         }
         break;
       case KEY_CTRL_DOWN:
-        if (textY > scrollableHeight) {
+        if (textY > scrollableHeight-(text->showtitle ? 0 : 17)) {
           scroll = scroll - 17;
-          if(scroll < -totalTextY+scrollableHeight) scroll = -totalTextY+scrollableHeight;
+          if(scroll < -totalTextY+scrollableHeight-(text->showtitle ? 0 : 17)) scroll = -totalTextY+scrollableHeight-(text->showtitle ? 0 : 17);
         }
         break;
       case KEY_CTRL_EXE:
