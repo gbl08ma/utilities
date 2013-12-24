@@ -175,7 +175,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           }
           return 1; //reload at new folder
         } else {
-          if(1 == fileInformation(files, &menu)) {
+          if(1 == fileInformation(files[menu.selection-1].filename)) {
             // user wants to edit the file
             strcpy(filetoedit, files[menu.selection-1].filename);
             return 1;
@@ -359,7 +359,7 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   return 0;
 }
 
-int fileInformation(File* files, Menu* menu) {
+int fileInformation(char* filename) {
   // returns 0 if user exits.
   // returns 1 if user wants to edit the file
   int key;
@@ -369,13 +369,13 @@ int fileInformation(File* files, Menu* menu) {
   int textX=0, textY=24;
   PrintMini(&textX, &textY, (unsigned char*)"File name:", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
   char name[MAX_NAME_SIZE] = "";
-  nameFromFilename(files[menu->selection-1].filename, name);
+  nameFromFilename(filename, name);
   textX=0; textY=textY+17;
   PrintMini(&textX, &textY, (unsigned char*)name, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   textX=0; textY=textY+20;
   PrintMini(&textX, &textY, (unsigned char*)"Full file path:", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
   textX=0; textY=textY+18;
-  PrintMiniMini( &textX, &textY, (unsigned char*)files[menu->selection-1].filename, 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)filename, 0, TEXT_COLOR_BLACK, 0 );
   
   // get file type description from OS
   unsigned int msgno;
@@ -390,7 +390,7 @@ int fileInformation(File* files, Menu* menu) {
   
   //Get file size
   unsigned short pFile[MAX_FILENAME_SIZE+1];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)files[menu->selection-1].filename, strlen(files[menu->selection-1].filename)+1); 
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hFile >= 0) // Check if it opened
   { //opened
@@ -443,7 +443,7 @@ int fileInformation(File* files, Menu* menu) {
         return 0;
         break;
       case KEY_CTRL_F1:
-        fileViewAsText(files[menu->selection-1].filename);
+        fileViewAsText(filename);
         return 0;
         break;
       case KEY_CTRL_F2: {
