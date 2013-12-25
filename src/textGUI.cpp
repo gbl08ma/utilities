@@ -43,14 +43,19 @@ int doTextArea(textArea* text) {
         temptextX = 0;
         src = toksplit(src, ' ', (unsigned char*)singleword, strlen(text->elements[cur].text)); //break into words; next word
         //check if printing this word would go off the screen, with fake PrintMini drawing:
-        PrintMini(&temptextX, &temptextY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 0, 0);
+        if(text->elements[cur].minimini) {
+          PrintMiniMini( &temptextX, &temptextY, (unsigned char*)singleword, 0, text->elements[cur].color, 1 );
+        } else {
+          PrintMini(&temptextX, &temptextY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 0, 0);
+        }
         if(temptextX + textX > text->width-6) {
           //time for a new line
           textX=text->x;
           textY=textY+text->lineHeight;
-          PrintMini(&textX, &textY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 1, 0);
+        } //else still fits, print new word normally
+        if(text->elements[cur].minimini) {
+          PrintMiniMini( &textX, &textY, (unsigned char*)singleword, 0, text->elements[cur].color, 0 );
         } else {
-          //still fits, print new word normally
           PrintMini(&textX, &textY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 1, 0);
         }
         //add a space, since it was removed from token

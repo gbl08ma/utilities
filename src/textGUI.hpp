@@ -21,6 +21,7 @@ typedef struct
   color_t color=COLOR_BLACK;
   int spaceAtEnd=0;
   int lineSpacing=0;
+  int minimini=0;
 } textElement;
 
 #define TEXTAREATYPE_NORMAL 0

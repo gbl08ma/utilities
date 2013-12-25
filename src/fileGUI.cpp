@@ -383,10 +383,89 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
 int fileInformation(char* filename, int allowEdit) {
   // returns 0 if user exits.
   // returns 1 if user wants to edit the file
-  int key;
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  mPrintXY(1, 1, (char*)"File information", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  
+  textArea text;
+  text.type=TEXTAREATYPE_INSTANT_RETURN;
+  text.scrollbar=0;
+  strcpy(text.title, (char*)"File information");
+  
+  textElement elem[15];
+  text.elements = elem;
+  text.numelements = 0; //we will use this as element cursor
+  
+  elem[text.numelements].text = (char*)"File name:";
+  elem[text.numelements].color=COLOR_LIGHTGRAY;
+  text.numelements++;
+  
+  elem[text.numelements].newLine=1;
+  char name[MAX_NAME_SIZE] = "";
+  nameFromFilename(filename, name);
+  elem[text.numelements].text = name;
+  text.numelements++;
+  
+  elem[text.numelements].newLine=1;
+  elem[text.numelements].lineSpacing=3;
+  elem[text.numelements].color=COLOR_LIGHTGRAY;
+  elem[text.numelements].text = (char*)"Full file path:";
+  text.numelements++;
+  
+  elem[text.numelements].newLine=1;
+  elem[text.numelements].minimini=1;
+  elem[text.numelements].color=TEXT_COLOR_BLACK;
+  elem[text.numelements].text = (char*)filename;
+  text.numelements++;
+  
+  elem[text.numelements].newLine=1;
+  elem[text.numelements].lineSpacing=3;
+  elem[text.numelements].color=COLOR_LIGHTGRAY;
+  elem[text.numelements].text = (char*)"File type:";
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
+  
+  // get file type description from OS
+  unsigned int msgno;
+  unsigned short iconbuffer[0x12*0x18];
+  unsigned short folder[7]={};
+  SMEM_MapIconToExt( (unsigned char*)name, folder, &msgno, iconbuffer );
+  char mresult[88] = "";
+  LocalizeMessage1( msgno, mresult );
+  
+  elem[text.numelements].text = (char*)mresult;
+  text.numelements++;
+  
+  //Get file size
+  unsigned short pFile[MAX_FILENAME_SIZE+1];
+  unsigned char sizebuffer[50] = "";
+  int fsnotzero = 0;
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  if(hFile >= 0) // Check if it opened
+  { //opened
+    unsigned int filesize = Bfile_GetFileSize_OS(hFile);
+    Bfile_CloseFile_OS(hFile);
+    if(filesize) fsnotzero = 1;
+    itoa(filesize, (unsigned char*)sizebuffer);
+    
+    elem[text.numelements].newLine=1;
+    elem[text.numelements].lineSpacing=3;
+    elem[text.numelements].color=COLOR_LIGHTGRAY;
+    elem[text.numelements].text = (char*)"File size:";
+    elem[text.numelements].spaceAtEnd=1;
+    text.numelements++;
+    
+    elem[text.numelements].text = (char*)sizebuffer;
+    elem[text.numelements].spaceAtEnd=1;
+    text.numelements++;
+    
+    elem[text.numelements].text = (char*)"bytes";
+    text.numelements++;
+  }
+  
+  doTextArea(&text);
+  
+  /*mPrintXY(1, 1, (char*)"File information", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   int textX=0, textY=24;
   PrintMini(&textX, &textY, (unsigned char*)"File name:", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
   char name[MAX_NAME_SIZE] = "";
@@ -450,7 +529,7 @@ int fileInformation(char* filename, int allowEdit) {
     }
     Bfile_CloseFile_OS(hFile);
   }  
-  
+  */
   int iresult;
   GetFKeyPtr(0x03B1, &iresult); // OPEN
   FKey_Display(0, (int*)iresult);
@@ -458,7 +537,12 @@ int fileInformation(char* filename, int allowEdit) {
     GetFKeyPtr(0x0185, &iresult); // EDIT
     FKey_Display(1, (int*)iresult);
   }
+  if(fsnotzero) {
+    GetFKeyPtr(0x0371, &iresult); // CALC (white)
+    FKey_Display(5, (int*)iresult);
+  }
   while (1) {
+    int key;
     mGetKey(&key);
     switch(key) {
       case KEY_CTRL_EXIT:
@@ -480,6 +564,41 @@ int fileInformation(char* filename, int allowEdit) {
             closeMsgBox();
           } else {
             return 1;
+          }
+        }
+        break;
+      case KEY_CTRL_F6:
+        if(fsnotzero) {
+          int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+          if(hFile >= 0) // Check if it opened
+          { //opened
+            unsigned char output[32] = "";
+            sha2_context ctx;
+            unsigned char buf[4096];
+            int readsize = 1; // not zero so we have the chance to enter the while loop
+            sha2_starts( &ctx, 0 );
+            while( readsize > 0) {
+              readsize = Bfile_ReadFile_OS(hFile, buf, sizeof( buf ), -1);
+              sha2_update( &ctx, buf, readsize );
+            }
+            Bfile_CloseFile_OS(hFile);
+            sha2_finish( &ctx, output );
+            memset( &ctx, 0, sizeof( sha2_context ) );
+            
+            mMsgBoxPush(4);
+            unsigned char niceout[32] = "";
+            int textX=2*18, textY=24;
+            PrintMini(&textX, &textY, (unsigned char*)"SHA-256 checksum:", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+            textY=textY+20;
+            textX=2*18;
+            for(int i=0; i<32;i++) {
+              strcpy((char*)niceout, (char*)"");
+              ByteToHex( output[i], niceout );
+              if((LCD_WIDTH_PX-2*18-textX) < 15) { textX=2*18; textY=textY+12; }
+              PrintMiniMini( &textX, &textY, (unsigned char*)niceout, 0, TEXT_COLOR_BLACK, 0 );
+            }
+            PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+            closeMsgBox();
           }
         }
         break;
@@ -553,6 +672,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   elem[0].color=COLOR_BLACK;
   elem[0].lineSpacing = 0;
   elem[0].spaceAtEnd = 0;
+  elem[0].minimini = 0;
   unsigned int ecur = 1;
   bcur = 0;
   while(bcur < filesize && ecur <= numelements) {
@@ -568,6 +688,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
           elem[ecur].color=COLOR_BLACK;
           elem[ecur].lineSpacing = 0;
           elem[ecur].spaceAtEnd = 0;
+          elem[ecur].minimini = 0;
           ecur++;
         }
         break;
@@ -579,6 +700,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
           elem[ecur].color=COLOR_BLACK;
           elem[ecur].lineSpacing = 0;
           elem[ecur].spaceAtEnd = 0;
+          elem[ecur].minimini = 0;
           ecur++;
         }
         break;
@@ -595,6 +717,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
           elem[ecur].color=COLOR_BLACK;
           elem[ecur].lineSpacing = 0;
           elem[ecur].spaceAtEnd = 0;
+          elem[ecur].minimini = 0;
           ecur++;
         }
         break;
