@@ -25,36 +25,65 @@ void showAbout() {
   DisplayStatusArea();
   //y increment between each line: 17; between paragraphs: 20
   int orange = drawRGB24toRGB565(210, 68, 19);
-  int textX = 0;
-  int textY = 5;
+  
+  textArea ftext;
+  strcpy(ftext.title, (char*)"");
+  ftext.showtitle=0;
+  ftext.scrollbar=0;
+  ftext.type=TEXTAREATYPE_INSTANT_RETURN;
+
+  textElement felem[15];
+  ftext.elements = felem;
+  
   char verBuffer[100] = "";
   getVersion(verBuffer);
-  PrintMini(&textX, &textY, (unsigned char*)"Version ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, &textY, (unsigned char*)verBuffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_WHITE, 1, 0);
-  textY = textY + 17; textX = 0;
-  getTimestamp(verBuffer);
-  PrintMini(&textX, &textY, (unsigned char*)verBuffer, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 1, 0);
-  textY = 42;
-  textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"Developed by gbl08ma at", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  drawtnyimLogo(10, 59+24, 0); //24 pixels for the status bar
-  textY = 101;
-  textX = 0;
-  // PrintMini and its x,y pointers allow for awesome easy color formatting... let's try
-  PrintMini(&textX, &textY, (unsigned char*)"tny. ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, &textY, (unsigned char*)"i", 0, 0xFFFFFFFF, 0, 0, orange, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, &textY, (unsigned char*)"nternet ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, &textY, (unsigned char*)"m", 0, 0xFFFFFFFF, 0, 0, orange, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, &textY, (unsigned char*)"edia", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textY = 125;
-  textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"http://i.tny.im | http://gbl08ma.com", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textY = 142;
-  textX = 0;
-  PrintMini(&textX, &textY, (unsigned char*)"gbl08ma@gmail.com", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  felem[0].text = (char*)"Version";
+  felem[0].spaceAtEnd = 1;
+  felem[0].color=COLOR_BLUE;
+  felem[1].text = (char*)verBuffer;
+  felem[1].color=COLOR_BLUE;
   
-  textX = 0; textY = 175;
-  PrintMini(&textX, &textY, (unsigned char*)"Press any key", 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
+  char verTime[100] = "";
+  getTimestamp(verTime);
+  
+  felem[2].newLine = 1;
+  felem[2].text = (char*)verTime;
+  felem[2].color=COLOR_GRAY;
+  
+  felem[3].newLine = 1;
+  felem[3].lineSpacing = 8;
+  felem[3].text = (char*)"Developed by gbl08ma at";
+  
+  felem[4].newLine = 1;
+  felem[4].lineSpacing = 42;
+  felem[4].text = (char*)"tny.";
+  felem[4].spaceAtEnd = 1;
+  
+  felem[5].text = (char*)"i";
+  felem[5].color = orange;
+  
+  felem[6].text = (char*)"nternet";
+  felem[6].spaceAtEnd = 1;
+  
+  felem[7].text = (char*)"m";
+  felem[7].color = orange;
+  
+  felem[8].text = (char*)"edia";
+ 
+  felem[9].newLine = 1;
+  felem[9].lineSpacing = 8;
+  felem[9].text = (char*)"http://i.tny.im | http://gbl08ma.com";
+  
+  felem[10].newLine = 1;
+  felem[10].text = (char*)"gbl08ma@gmail.com";
+  
+  felem[11].newLine = 1;
+  felem[11].lineSpacing = 15;
+  felem[11].text = (char*)"Press any key";
+  
+  ftext.numelements = 12;
+  doTextArea(&ftext);
+  drawtnyimLogo(10, 59+24, 0); //24 pixels for the status bar
   GetKey(&key);
 
   DisplayStatusArea();
