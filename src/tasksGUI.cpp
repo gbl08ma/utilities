@@ -30,6 +30,7 @@ void viewTasks() {
   menu.scrollout=1;
   menu.showtitle=1;
   menu.height=7;
+  menu.showsubtitle=1;
   menu.type=MENUTYPE_FKEYS;
   strcpy(menu.nodatamsg, "No tasks - press F2");
   strcpy(menu.title, "Tasks");
@@ -48,16 +49,25 @@ int viewTasksSub(Menu* menu) {
   CalendarEvent* tasks = (CalendarEvent*)alloca(menu->numitems*sizeof(CalendarEvent));
   MenuItem* menuitems = (MenuItem*)alloca(menu->numitems*sizeof(MenuItem));
   menu->numitems = GetEventsForDate(&taskday, CALENDARFOLDER, tasks);
-  int curitem = 0;
+  int curitem = 0; int activecount = 0;
   while(curitem <= menu->numitems-1) {
     strcpy(menuitems[curitem].text, (char*)tasks[curitem].title);
     menuitems[curitem].type = MENUITEM_CHECKBOX;
     menuitems[curitem].value = tasks[curitem].repeat;
+    if(menuitems[curitem].value) activecount++;
     menuitems[curitem].color = tasks[curitem].category-1;
     curitem++;
   }
-  menu->items=menuitems; 
-
+  menu->items=menuitems;
+  
+  char subtitle[50] = "";
+  itoa(menu->numitems, (unsigned char*) subtitle);
+  strcat(subtitle, (char*)" tasks, ");
+  char buf[5] = "";
+  itoa(menu->numitems-activecount, (unsigned char*) buf);
+  strcat(subtitle, (char*)buf);
+  strcat(subtitle, (char*)" active");
+  menu->subtitle = subtitle;
   while(1) {
     Bdisp_AllClr_VRAM();
     DisplayStatusArea();
