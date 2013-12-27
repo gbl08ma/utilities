@@ -130,10 +130,8 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
       if(menu.numselitems>0) {
         GetFKeyPtr(0x0069, &iresult); // CUT (white)
         FKey_Display(1, (int*)iresult);
-        if(GetSetting(SETTING_SHOW_ADVANCED)) {
-          GetFKeyPtr(0x0034, &iresult); // COPY (white)
-          FKey_Display(2, (int*)iresult);
-        }
+        GetFKeyPtr(0x0034, &iresult); // COPY (white)
+        FKey_Display(2, (int*)iresult);
         GetFKeyPtr(0x0038, &iresult); // DELETE
         FKey_Display(5, (int*)iresult);
       }
@@ -184,7 +182,6 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         break;
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
-        if(!GetSetting(SETTING_SHOW_ADVANCED) && res == KEY_CTRL_F3) break; //user didn't enable copy tool
         if (menu.numselitems > 0 && menu.fkeypage==0) {
           if((*itemsinclip < MAX_ITEMS_IN_CLIPBOARD) && menu.numselitems <= MAX_ITEMS_IN_CLIPBOARD-*itemsinclip) {
             int ifile = 0; int hasShownFolderCopyWarning = 0;
@@ -736,9 +733,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     strcpy(menu.title, "Clipboard");
     menu.showtitle=1;
     menu.subtitle = (char*)"Black=cut, Red=copy";
-    if(GetSetting(SETTING_SHOW_ADVANCED)) {
-      menu.showsubtitle=1;
-    }
+    menu.showsubtitle=1;
     menu.items = menuitems;
     int curitem = 0;
     while(curitem < *itemsinclip) {
@@ -755,10 +750,8 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     FKey_Display(0, (int*)iresult);
     GetFKeyPtr(0x04DB, &iresult); // X symbol [white]
     FKey_Display(1, (int*)iresult);
-    if(GetSetting(SETTING_SHOW_ADVANCED)) {
-      GetFKeyPtr(0x049D, &iresult); // Switch [white]
-      FKey_Display(2, (int*)iresult);
-    }
+    GetFKeyPtr(0x049D, &iresult); // Switch [white]
+    FKey_Display(2, (int*)iresult);
     int res = doMenu(&menu);
     switch(res) {
       case MENU_RETURN_SELECTION:
@@ -787,16 +780,14 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
         }
         break;
       case KEY_CTRL_F3:
-        if(GetSetting(SETTING_SHOW_ADVANCED)) {
-          if(clipboard[menu.selection-1].action == 1) {
-            clipboard[menu.selection-1].action = 0;
-            menuitems[menu.selection-1].color = TEXT_COLOR_BLACK;
-          } else {
-            if(!clipboard[menu.selection-1].isfolder) {
-              clipboard[menu.selection-1].action = 1;
-              menuitems[menu.selection-1].color = TEXT_COLOR_RED;
-            } else showCopyFolderWarning();
-          }
+        if(clipboard[menu.selection-1].action == 1) {
+          clipboard[menu.selection-1].action = 0;
+          menuitems[menu.selection-1].color = TEXT_COLOR_BLACK;
+        } else {
+          if(!clipboard[menu.selection-1].isfolder) {
+            clipboard[menu.selection-1].action = 1;
+            menuitems[menu.selection-1].color = TEXT_COLOR_RED;
+          } else showCopyFolderWarning();
         }
         break;
     }
