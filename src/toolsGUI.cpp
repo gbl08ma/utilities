@@ -33,22 +33,19 @@ void memoryCapacityViewer() {
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
   strcpy((char*)buffer, (char*)"");
   itoa(smemfree, buffer);
-  unsigned char smemtext[70] = "";
-  strcpy((char*)smemtext, "Storage: ");
-  strcat((char*)smemtext, (char*)buffer);
-  strcat((char*)smemtext, " bytes free");
   int textY = 24+6; int textX = 0;
-  PrintMini(&textX, &textY, smemtext, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  strcpy((char*)smemtext, "out of ");
-  itoa(TOTAL_SMEM, buffer);
-  strcat((char*)smemtext, (char*)buffer);
-  strcat((char*)smemtext, " bytes (");
-  itoa(TOTAL_SMEM-smemfree, buffer);
-  strcat((char*)smemtext, (char*)buffer);
-  strcat((char*)smemtext, " bytes used)");
+  PrintMini(&textX, &textY, (unsigned char*)"Storage: ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, (unsigned char*)" bytes free", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+
   textY = textY + 17; textX = 60;
-  PrintMiniMini( &textX, &textY, smemtext, 0, TEXT_COLOR_BLACK, 0 );  
-  
+  PrintMiniMini( &textX, &textY, (unsigned char*)"out of ", 0, TEXT_COLOR_BLACK, 0 );
+  itoa(TOTAL_SMEM, buffer);
+  PrintMiniMini( &textX, &textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)" bytes (", 0, TEXT_COLOR_BLACK, 0 );
+  itoa(TOTAL_SMEM-smemfree, buffer);
+  PrintMiniMini( &textX, &textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)" bytes used)", 0, TEXT_COLOR_BLACK, 0 );
   
 #ifdef DRAW_MEMUSAGE_GRAPHS
   textY = textY + 12;
@@ -77,22 +74,20 @@ void memoryCapacityViewer() {
   int MCSmaxspace; int MCScurrentload; int MCSfreespace;  
   MCS_GetState( &MCSmaxspace, &MCScurrentload, &MCSfreespace );
   barwidthcpl = (LCD_WIDTH_PX*(MCSmaxspace-MCSfreespace))/MCSmaxspace;
-  itoa(MCSfreespace, buffer);
-  unsigned char mcstext[70] = "";
-  strcpy((char*)mcstext, "Main: ");
-  strcat((char*)mcstext, (char*)buffer);
-  strcat((char*)mcstext, " bytes free");  
+  itoa(MCSfreespace, buffer);  
   textY = textY + 17; textX = 0;
-  PrintMini(&textX, &textY, mcstext, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  strcpy((char*)mcstext, "out of ");
-  itoa(MCSmaxspace, buffer);
-  strcat((char*)mcstext, (char*)buffer);
-  strcat((char*)mcstext, " bytes (");
-  itoa(MCScurrentload, buffer);
-  strcat((char*)mcstext, (char*)buffer);
-  strcat((char*)mcstext, " bytes used)");
+  PrintMini(&textX, &textY, (unsigned char*)"Main: ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, (unsigned char*)" bytes free", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   textY = textY + 17; textX = 60;
-  PrintMiniMini( &textX, &textY, mcstext, 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)"out of ", 0, TEXT_COLOR_BLACK, 0 );
+  itoa(MCSmaxspace, buffer);
+  PrintMiniMini( &textX, &textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)" bytes (", 0, TEXT_COLOR_BLACK, 0 );
+  itoa(MCScurrentload, buffer);
+  PrintMiniMini( &textX, &textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)" bytes used)", 0, TEXT_COLOR_BLACK, 0 );
+
 #ifdef DRAW_MEMUSAGE_GRAPHS
   textY = textY + 12;
   drawRectangle(0, textY+24, LCD_WIDTH_PX, 20, COLOR_GRAY);
@@ -110,8 +105,11 @@ void memoryCapacityViewer() {
   VRAMReplaceColorInRect(0, textY+24, barwidthcpl, 20, COLOR_GRAY, COLOR_BLUE);
   VRAMReplaceColorInRect(0, textY+24, LCD_WIDTH_PX, 20, COLOR_CYAN, COLOR_WHITE);
 #endif
-  int key;
-  mGetKey(&key);
+  while(1) {
+    int key;
+    mGetKey(&key);
+    if(key == KEY_CTRL_EXIT) return;
+  }
 }
 
 int GetAddins(AddIn addins[]) {
