@@ -34,7 +34,7 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
   /* Parses a CalendarEvent struct and turns it into a string which can be written to a file.
      The first field (category) begins with no separator.
      An event doesn't begin with any separators, and the last field ends with a field separator followed by an event separator.
-     An event can have at least 4KB size. The lengthy fields are obviously the title, the location and mainly the description.*/
+     An event (as bytes) can take at most 1,3 KiB. The lengthy fields are obviously the title, the location and mainly the description.*/
   unsigned char smallbuf[50] = ""; 
 
   itoa(calEvent->category, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
@@ -57,7 +57,7 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
   strncat((char*)buf, (char*)calEvent->title,25); append(buf, FIELD_SEPARATOR);
   strncat((char*)buf, (char*)calEvent->location,135); append(buf, FIELD_SEPARATOR);
   strncat((char*)buf, (char*)calEvent->description,1030); append(buf, EVENT_SEPARATOR);
-  //the last field ends with a field separator followed by an event separator. both are contained in EVENT_SEPARATOR
+  //the last field ends with an event separator (EVENT_SEPARATOR), without a field separator.
   
   /*sprintf((char*)buf, "%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%s%c%s%c%s%c" ,
         calEvent->category,                             FIELD_SEPARATOR,
@@ -239,7 +239,6 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
     }
   } else {
     /*File exists and is open.
-      0. Hope there's enough heap to store everything throughout the process.
       1. Read its contents and size and save them.
       2. Close, delete the file.
       3. Create the same file with the previous size plus the size for the new event.
@@ -258,7 +257,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
     if(oldsize) {
           Bfile_ReadFile_OS(hAddFile, oldcontents, oldsize, 0);
     }
-    Bfile_CloseFile_OS(hAddFile); // always close even if not openclose, because we're going to recreate next
+    Bfile_CloseFile_OS(hAddFile);
     Bfile_DeleteEntry(pFile);
     // we already read the previous contents and size, closed the file and deleted it.
     // now recreate it with new size and write new contents to it.
@@ -379,7 +378,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
   // Check for file existence
   if(hFile >= 0) // Check if it opened
   {
-    // Returned no error, file exists, open it
+    // Returned no error, file exists and is open
     int size = Bfile_GetFileSize_OS(hFile);
     // File exists and has size 'size'
     // Read file into a buffer which is then parsed and broke in multiple event strings.
