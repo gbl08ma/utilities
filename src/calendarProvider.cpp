@@ -323,7 +323,10 @@ void RemoveEvent(EventDate *startdate, CalendarEvent* events, const char* folder
   // count: current number of events in file (before deletion)
   // calEventPos: index (zero based) of the event to delete.
   // after the event is removed from the array, the file for the startdate is replaced with ReplaceEventFile
-  if (count == 1) RemoveDay(startdate, folder);
+  if (count == 1) {
+    RemoveDay(startdate, folder);
+    return;
+  }
   if (calEventPos >= count) {} // safety check
   else
   {
