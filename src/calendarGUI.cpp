@@ -1067,8 +1067,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
-          input.x=1;
-          input.y=3;
           input.forcetext=1; //force text so title must be at least one char.
           input.charlimit=21;
           input.acceptF6=1;
@@ -1092,8 +1090,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
-          input.x=1;
-          input.y=3;
           input.charlimit=128;
           input.acceptF6=1;
           input.buffer = (char*)event->location;
@@ -1117,8 +1113,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
-          input.x=1;
-          input.y=3;
           input.charlimit=1024;
           input.acceptF6=1;
           input.buffer = (char*)event->description;
@@ -1152,7 +1146,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         
         textInput input;
         input.x=8;
-        input.y=3;
         input.width=6;
         input.charlimit=6;
         input.acceptF6=1;
@@ -1220,7 +1213,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         
         textInput input;
         input.x=7;
-        input.y=3;
         input.width=8;
         input.charlimit=8;
         input.acceptF6=1;
@@ -1292,7 +1284,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           
           textInput input;
           input.x=8;
-          input.y=3;
           input.width=6;
           input.charlimit=6;
           input.acceptF6=1;
@@ -1642,7 +1633,6 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
     
     textInput input;
     input.x=6;
-    input.y=3;
     input.width=8;
     input.charlimit=8;
     input.acceptF6=0;
@@ -1855,8 +1845,6 @@ void searchEventsGUI(int y, int m, int d) {
     FKey_Display(5, (int*)iresult);
     
     textInput input;
-    input.x=1;
-    input.y=3;
     input.forcetext=1; //force text so title must be at least one char.
     input.charlimit=50;
     input.acceptF6=1;

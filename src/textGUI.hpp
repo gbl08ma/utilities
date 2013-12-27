@@ -31,7 +31,6 @@ typedef struct
   int x=0;
   int y=0;
   int width=LCD_WIDTH_PX;
-  //int height=LCD_HEIGHT_PX-24;
   int lineHeight=17;
   textElement* elements;
   int numelements;

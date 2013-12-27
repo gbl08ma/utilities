@@ -316,8 +316,6 @@ int makeFolderGUI(char* browserbasepath) {
   mPrintXY(1, 2, (char*)"Name:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   char newname[MAX_NAME_SIZE] = "";
   textInput input;
-  input.x=1;
-  input.y=3;
   input.forcetext=1;
   input.charlimit=MAX_NAME_SIZE;
   input.buffer = (char*)newname;
@@ -354,8 +352,6 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   char newname[MAX_NAME_SIZE] = "";
   strcpy(newname, (char*)menu->items[menu->selection-1].text);
   textInput input;
-  input.x=1;
-  input.y=3;
   input.forcetext=1;
   input.charlimit=MAX_NAME_SIZE;
   input.buffer = (char*)newname;

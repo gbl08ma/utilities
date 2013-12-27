@@ -25,8 +25,8 @@
 
 typedef struct {
   int type=INPUTTYPE_NORMAL;
-  int x; // x and y are in character coordinates (21*8..)
-  int y;
+  int x=1; // x and y are in character coordinates (21*8..)
+  int y=3;
   int width=21; // again, in character coordinates. note that last space of the input is reserved for scrolling and never gets hit by a char, only the cursor
   int forcetext=0; // if 1, user will be forced to enter text
   int charlimit; // maximum number of chars to admit in bytes (which means that if users enter multibyte it will allow for less chars)

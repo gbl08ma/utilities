@@ -61,8 +61,6 @@ void fileTextEditor(char* filename) {
     }
   }
   textInput input;
-  input.x=1;
-  input.y=3;
   input.forcetext=1;
   input.charlimit=TEXT_BUFFER_SIZE;
   input.buffer = (char*)sText;
@@ -75,8 +73,6 @@ void fileTextEditor(char* filename) {
       if(newfile) {
         mPrintXY(1, 2, (char*)"Save file as:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         textInput ninput;
-        ninput.x=1;
-        ninput.y=3;
         ninput.forcetext=1;
         ninput.charlimit=MAX_NAME_SIZE;
         char nfilename[MAX_NAME_SIZE] = "";

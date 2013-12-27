@@ -439,7 +439,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         
         textInput input;
         input.x=8;
-        input.y=3;
         input.width=6;
         input.charlimit=6;
         input.acceptF6=1;
