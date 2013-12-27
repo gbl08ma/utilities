@@ -55,7 +55,6 @@ void settingsMenu() {
   menu.items=menuitems;
   menu.numitems=12;
   menu.scrollout=1;
-  menu.selection=1;
   menu.allowMkey=0;
   while(1) {
     menuitems[6].value = GetSetting(SETTING_DISPLAY_STATUSBAR);
@@ -178,7 +177,6 @@ void lockSettingsMenu() {
   menu.items=menuitems;
   menu.numitems=5;
   menu.scrollout=1;
-  menu.selection=1;
   menu.allowMkey=0;
   while(1) {
     menuitems[1].value = GetSetting(SETTING_PASSWORD_PRIVACY);
