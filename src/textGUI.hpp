@@ -43,6 +43,9 @@ typedef struct
   int type=TEXTAREATYPE_NORMAL;
 } textArea;
 
+#define TEXTAREA_RETURN_EXIT 0
+#define TEXTAREA_RETURN_EXE 1
+#define TEXTAREA_RETURN_F1 2
 int doTextArea(textArea* text); //returns 0 when user EXITs, 1 when allowEXE is true and user presses EXE, 2 when allowF1 is true and user presses F1.
 
 #endif 

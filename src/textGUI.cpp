@@ -111,12 +111,12 @@ int doTextArea(textArea* text) {
         }
         break;
       case KEY_CTRL_EXE:
-        if(text->allowEXE) return 1;
+        if(text->allowEXE) return TEXTAREA_RETURN_EXE;
         break;
       case KEY_CTRL_F1:
-        if(text->allowF1) return 2;
+        if(text->allowF1) return TEXTAREA_RETURN_F1;
         break;
-      case KEY_CTRL_EXIT: return 0; break;
+      case KEY_CTRL_EXIT: return TEXTAREA_RETURN_EXIT; break;
     }
   }
 }
