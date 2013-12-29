@@ -16,5 +16,6 @@
 #include <math.h>
 
 void showAbout();
+void buildExpiredMessage();
 
 #endif

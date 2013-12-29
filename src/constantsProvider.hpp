@@ -25,3 +25,7 @@
 #ifndef KNOWN_PAST_TIMESTAMP
 #define KNOWN_PAST_TIMESTAMP 1383782400*1000 // a timestamp that's known to be in the past for all timezones, so we can detect a unadjusted RTC
 #endif
+
+#ifndef BUILD_EXPIRE_TIMESTAMP
+#define BUILD_EXPIRE_TIMESTAMP 1383782400*1000 // after the calc RTC is in a timestamp past this, users will be prompted to check for updates
+#endif

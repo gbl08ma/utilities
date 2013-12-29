@@ -113,3 +113,28 @@ void showAbout() {
   doTextArea(&text);
   DefineStatusMessage((char*)"", 1, 0, 0);
 }
+
+void buildExpiredMessage() {
+  if(!getBuildIsExpired()) return;
+
+  textArea text;
+  strcpy(text.title, (char*)"Check for updates");
+  
+  textElement elem[5];
+  text.elements = elem;
+  text.scrollbar = 0;
+  
+  elem[0].text = (char*)"A new version of Utilities has probably been released by now.";
+  elem[1].newLine = 1;
+  elem[1].text = (char*)"Please check for updates at the following URL:";
+  elem[2].newLine = 1;
+  elem[2].lineSpacing = 5;
+  elem[2].color=COLOR_BLUE;
+  elem[2].text = (char*)"http://tny.im/utupd";
+  elem[3].newLine = 1;
+  elem[3].lineSpacing = 16;
+  elem[3].text = (char*)"Press EXIT to continue.";
+  
+  text.numelements = 4;
+  doTextArea(&text);
+}

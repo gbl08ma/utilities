@@ -22,6 +22,7 @@
 #include "chronoProvider.hpp"
 #include "chronoGUI.hpp"
 #include "firstRunGUI.hpp"
+#include "aboutGUI.hpp"
 #include "setjmp.h"
 #include "debugGUI.hpp"
 jmp_buf utilities_return;
@@ -57,6 +58,7 @@ int main()
     RTCunadjustedWizard(0);
   } else {
     RTCunadjustedWizard(1);
+    buildExpiredMessage();
   }
   // load chronos
   chronometer* chrono;

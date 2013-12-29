@@ -9,5 +9,6 @@ void getTimestamp(char* buffer);
 # ifdef __cplusplus
 }
 # endif
+int getBuildIsExpired();
 
 #endif
