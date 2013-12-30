@@ -1827,7 +1827,6 @@ void searchEventsGUI(int y, int m, int d) {
   smallmenu.startX=3;
   smallmenu.startY=2;
   smallmenu.scrollbar=0;
-  smallmenu.scrollout=1;
   smallmenu.showtitle=1;
   strcpy(smallmenu.title, "Search on:");
   int sres = doMenu(&smallmenu);

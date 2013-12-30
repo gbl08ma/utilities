@@ -364,11 +364,9 @@ void calendarSettingsMenu() {
         smallmenu.startX=3;
         smallmenu.startY=2;
         smallmenu.scrollbar=0;
-        smallmenu.scrollout=1;
         smallmenu.showtitle=1;
         if(menu.selection == 2) smallmenu.selection=GetSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;
         else smallmenu.selection=GetSetting(SETTING_WEEK_START_DAY)+1;
-        smallmenu.scroll=0;
         smallmenu.allowMkey=0;
         if(menu.selection == 2) strcpy(smallmenu.title, "Default Calendar");
         else strcpy(smallmenu.title, "Week starts on");

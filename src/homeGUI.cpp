@@ -194,7 +194,6 @@ void powerMenu() {
   menu.startX=2;
   menu.startY=3;
   menu.scrollbar=(GetSetting(SETTING_SHOW_ADVANCED) ? 1 : 0);
-  menu.scrollout=0;
   menu.darken=GetSetting(SETTING_THEME);
   
   while(1) {
@@ -235,7 +234,6 @@ void lightMenu() {
   menu.startX=2;
   menu.startY=3;
   menu.scrollbar=0;
-  menu.scrollout=0;
   menu.darken=GetSetting(SETTING_THEME);
   
   while(1) {
@@ -273,7 +271,6 @@ void timeMenu(chronometer* chrono) {
   menu.startX=2;
   menu.startY=3;
   menu.scrollbar=0;
-  menu.scrollout=0;
   menu.darken=GetSetting(SETTING_THEME);
   
   while(1) {
@@ -311,7 +308,6 @@ void toolsMenu() {
   menu.height=4;
   menu.startX=2;
   menu.startY=3;
-  menu.scrollout=0;
   menu.darken=GetSetting(SETTING_THEME);
   
   while(1) {
