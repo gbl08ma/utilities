@@ -27,5 +27,5 @@
 #endif
 
 #ifndef BUILD_EXPIRE_TIMESTAMP
-#define BUILD_EXPIRE_TIMESTAMP 1383782400*1000 // after the calc RTC is in a timestamp past this, users will be prompted to check for updates
+#define BUILD_EXPIRE_TIMESTAMP 1397516400*1000 // after the calc RTC is in a timestamp past this, users will be prompted to check for updates
 #endif

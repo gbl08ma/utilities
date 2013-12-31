@@ -13,7 +13,6 @@ void getTimestamp(char* buffer) {
 }
 
 int getBuildIsExpired() {
-  // returns 1 if build is expired
-  if(BUILD_EXPIRE_TIMESTAMP < currentUnixTime()) return 1;
-  else return 0;
+  // returns true if build is expired
+  return ((long long int)BUILD_EXPIRE_TIMESTAMP < currentUnixTime());
 }
