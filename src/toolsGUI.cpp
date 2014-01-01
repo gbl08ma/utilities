@@ -26,7 +26,7 @@
 void memoryCapacityViewer() {
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  mPrintXY(1, 1, (char*)"Memory usage", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  mPrintXY(1, 1, (char*)"Memory Usage", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   unsigned char buffer[50] ="";
   int smemfree = 0;
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
@@ -285,7 +285,7 @@ void changeFKeyColor() {
   unsigned char selcolor = (unsigned char) 0xFF; //just so it isn't uninitialized
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  mPrintXY(1, 1, (char*)"Function key color", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  mPrintXY(1, 1, (char*)"Function Key Color", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   int textX=0; int textY=132;
   PrintMiniMini( &textX, &textY, (unsigned char*)"Please note that only the Utilities add-in and a hidden", 0, TEXT_COLOR_BLACK, 0 );
   textY=textY+12; textX=0;
