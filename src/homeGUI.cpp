@@ -391,7 +391,7 @@ void eventsPane(int textmode) {
     DrawFrame( 0xfffff  );
   }
   pane_drawTodayEvents(calevents, 0, 0, numevents, eventsToDisplayInFull);
-  drawDayBusyMap(&thisday, 0, LCD_HEIGHT_PX-44, LCD_WIDTH_PX, 15, 1,0,0);
+  if(GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) drawDayBusyMap(&thisday, 0, LCD_HEIGHT_PX-44, LCD_WIDTH_PX, 15, 1,0,0);
   while (inscreen) {
     if (GetSetting(SETTING_THEME)) {
       DisplayStatusArea();
