@@ -326,7 +326,7 @@ void calendarSettingsMenu() {
   
   strcpy(menuitems[2].text, "First day of week");
   
-  strcpy(menuitems[3].text, "Week view timetable");
+  strcpy(menuitems[3].text, "View busy timetable");
   menuitems[3].type = MENUITEM_CHECKBOX;
   
   Menu menu;

@@ -707,6 +707,9 @@ void viewEvents(int y, int m, int d) {
   dateToString(buffer, y, m, d, GetSetting(SETTING_DATEFORMAT));
   strcpy(menu.title, "Events for ");
   strcat(menu.title, buffer);
+  strcat(menu.title, " (");
+  strcat(menu.title, getDOWAsString(dow(y,m,d)+1)); // this will not show when the menu title is not minimini; this is intended
+  strcat(menu.title, ")");
   while(res) {
     res = viewEventsSub(&menu, y, m, d);
   }
@@ -730,10 +733,23 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
     menuitems[curitem].color = events[curitem].category-1;
     curitem++;
   }
-  menu->items=menuitems; 
+  menu->items=menuitems;
+  Bdisp_AllClr_VRAM();
+  int hasBusyMap = 0;
+  unsigned short busyMapBuffer[LCD_WIDTH_PX*12];
+  if(GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) {
+    menu->miniMiniTitle = 1;
+    drawDayBusyMap(&thisday, 0, 24+14, LCD_WIDTH_PX, 10, 2,0,0);
+    // backup busy map so we don't need to redraw it again every time its VRAM location gets overwritten.
+    MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 1);
+    hasBusyMap=1;
+  } else {
+    menu->miniMiniTitle = 0;
+  }
   while(1) {
     Bdisp_AllClr_VRAM();
-    DisplayStatusArea(); 
+    DisplayStatusArea();
+    if(hasBusyMap) MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 0);
     
     int iresult;
     if (menu->fkeypage == 0) {
@@ -1985,7 +2001,8 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
   if(showHourMarks) {
     for(int i = 0; i < 24; i++) {
       int tx=(width*i*60*60)/(24*60*60);
-      plot(startx+tx,starty+height,COLOR_GRAY);
+      plot(startx+tx,(showHourMarks==2? starty-1 : starty+height),COLOR_GRAY);
+      if(showHourMarks==2) plot(startx+tx, starty-2,COLOR_GRAY);
     }
   }
   int count = GetEventsForDate(thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
