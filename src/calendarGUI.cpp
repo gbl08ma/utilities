@@ -1175,22 +1175,16 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           int res = doTextInput(&input);
           if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
           else if (res==INPUT_RETURN_CONFIRM) {
-            char hour[3] = "";
-            char minute[3] = "";
-            char second[3] = "";
-            hour[0] = stbuffer[0]; hour[1] = stbuffer[1]; hour[2] = '\0';
-            minute[0] = stbuffer[2]; minute[1] = stbuffer[3]; minute[2] = '\0';
-            second[0] = stbuffer[4]; second[1] = stbuffer[5]; second[2] = '\0';
-
-            int h = sys_atoi(hour);
-            int m = sys_atoi(minute);
-            int s = sys_atoi(second);
-            if(isTimeValid(h, m, s) && (int)strlen(stbuffer) == input.charlimit) {
-              event->timed = 1;
-              event->starttime.hour = h;
-              event->starttime.minute = m;
-              event->starttime.second = s;
-              curstep=curstep+1; break; // continue to next step
+            if((int)strlen(stbuffer) == input.charlimit) {
+                int h, m, s;
+                stringToTime(stbuffer, &h, &m, &s);
+                if(isTimeValid(h, m, s)) {
+                  event->timed = 1;
+                  event->starttime.hour = h;
+                  event->starttime.minute = m;
+                  event->starttime.second = s;
+                  curstep=curstep+1; break; // continue to next step
+                } else invalidFieldMsg(1);
             } else if (!strlen(stbuffer)) {
               // user wants all-day event
               event->timed = 0;
@@ -1242,38 +1236,20 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           int res = doTextInput(&input);
           if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
           else if (res==INPUT_RETURN_CONFIRM) {
-            char year[6] = "";
-            char month[3] = "";
-            char day[3] = "";
-            switch(GetSetting(SETTING_DATEFORMAT)) {
-              case 0:
-                day[0] = edbuffer[0]; day[1] = edbuffer[1]; day[2] = '\0';
-                month[0] = edbuffer[2]; month[1] = edbuffer[3]; month[2] = '\0';
-                year[0] = edbuffer[4]; year[1] = edbuffer[5]; year[2] = edbuffer[6]; year[3] = edbuffer[7]; year[4] = '\0';
-                break;
-              case 1:
-                day[0] = edbuffer[2]; day[1] = edbuffer[3]; day[2] = '\0';
-                month[0] = edbuffer[0]; month[1] = edbuffer[1]; month[2] = '\0';
-                year[0] = edbuffer[4]; year[1] = edbuffer[5]; year[2] = edbuffer[6]; year[3] = edbuffer[7]; year[4] = '\0';
-                break;
-              case 2:
-                day[0] = edbuffer[6]; day[1] = edbuffer[7]; day[2] = '\0';
-                month[0] = edbuffer[4]; month[1] = edbuffer[5]; month[2] = '\0';
-                year[0] = edbuffer[0]; year[1] = edbuffer[1]; year[2] = edbuffer[2]; year[3] = edbuffer[3]; year[4] = '\0';
-                break;
-            }
-
-            int yr = sys_atoi(year);
-            int m = sys_atoi(month);
-            int d = sys_atoi(day);
-            if(isDateValid(yr, m, d) && (int)strlen(edbuffer) == input.charlimit) {
-              long int datediff = DateToDays(yr, m, d) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
-              if(datediff>=0) {
-                event->enddate.year = yr;
-                event->enddate.month = m;
-                event->enddate.day = d;
-                curstep=curstep+1; break; // continue to next step
-              } else invalidFieldMsg(0);
+            if((int)strlen(edbuffer) == input.charlimit) {
+              int yr,m,d;
+              stringToDate(edbuffer, &yr, &m, &d);
+              if(isDateValid(yr, m, d)) {
+                long int datediff = DateToDays(yr, m, d) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
+                if(datediff>=0) {
+                  event->enddate.year = yr;
+                  event->enddate.month = m;
+                  event->enddate.day = d;
+                  curstep=curstep+1; break; // continue to next step
+                } else invalidFieldMsg(0);
+              } else {
+                invalidFieldMsg(0);
+              }
             } else if (!strlen(edbuffer)) {
               // user wants end date to be the same as the start date
               event->enddate.year = event->startdate.year;
@@ -1313,25 +1289,21 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             int res = doTextInput(&input);
             if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
             else if (res==INPUT_RETURN_CONFIRM) {
-              char hour[3] = "";
-              char minute[3] = "";
-              char second[3] = "";
-              hour[0] = etbuffer[0]; hour[1] = etbuffer[1]; hour[2] = '\0';
-              minute[0] = etbuffer[2]; minute[1] = etbuffer[3]; minute[2] = '\0';
-              second[0] = etbuffer[4]; second[1] = etbuffer[5]; second[2] = '\0';
-
-              int h = sys_atoi(hour);
-              int m = sys_atoi(minute);
-              int s = sys_atoi(second);
-              if(isTimeValid(h, m, s) && (int)strlen(etbuffer) == input.charlimit) {
-                long int timediff = (h*60*60+m*60+s) - (event->starttime.hour*60*60+event->starttime.minute*60+event->starttime.second);
-                long int datediff = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
-                if(datediff > 0 || timediff >= 0) {
-                  event->endtime.hour = h;
-                  event->endtime.minute = m;
-                  event->endtime.second = s;
-                  curstep=curstep+1; break; // continue to next step
-                } else invalidFieldMsg(1);
+              if((int)strlen(etbuffer) == input.charlimit) {
+                int h, m, s;
+                stringToTime(etbuffer, &h, &m, &s);
+                if(isTimeValid(h, m, s)) {
+                  long int timediff = (h*60*60+m*60+s) - (event->starttime.hour*60*60+event->starttime.minute*60+event->starttime.second);
+                  long int datediff = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
+                  if(datediff > 0 || timediff >= 0) {
+                    event->endtime.hour = h;
+                    event->endtime.minute = m;
+                    event->endtime.second = s;
+                    curstep=curstep+1; break; // continue to next step
+                  } else invalidFieldMsg(1);
+                } else {
+                  invalidFieldMsg(1);
+                }
               } else {
                 invalidFieldMsg(1);
               }
@@ -1662,35 +1634,14 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
       int res = doTextInput(&input);
       if (res==INPUT_RETURN_EXIT) return 1; // user aborted
       else if (res==INPUT_RETURN_CONFIRM) {
-        char year[6] = "";
-        char month[3] = "";
-        char day[3] = "";
-        switch(GetSetting(SETTING_DATEFORMAT)) {
-          case 0:
-            day[0] = buffer[0]; day[1] = buffer[1]; day[2] = '\0';
-            month[0] = buffer[2]; month[1] = buffer[3]; month[2] = '\0';
-            year[0] = buffer[4]; year[1] = buffer[5]; year[2] = buffer[6]; year[3] = buffer[7]; year[4] = '\0';
-            break;
-          case 1:
-            day[0] = buffer[2]; day[1] = buffer[3]; day[2] = '\0';
-            month[0] = buffer[0]; month[1] = buffer[1]; month[2] = '\0';
-            year[0] = buffer[4]; year[1] = buffer[5]; year[2] = buffer[6]; year[3] = buffer[7]; year[4] = '\0';
-            break;
-          case 2:
-            day[0] = buffer[6]; day[1] = buffer[7]; day[2] = '\0';
-            month[0] = buffer[4]; month[1] = buffer[5]; month[2] = '\0';
-            year[0] = buffer[0]; year[1] = buffer[1]; year[2] = buffer[2]; year[3] = buffer[3]; year[4] = '\0';
-            break;
-        }
-
-        *yr = sys_atoi(year);
-        *m = sys_atoi(month);
-        *d = sys_atoi(day);
-        if(isDateValid(*yr, *m, *d) && (int)strlen(buffer) == input.charlimit) {
-          return 0;
-        } else {
-          invalidFieldMsg(0);
-        }
+        if((int)strlen(buffer) == input.charlimit) {
+          stringToDate(buffer, yr, m, d);
+          if(isDateValid(*yr, *m, *d)) {
+            return 0;
+          } else {
+            invalidFieldMsg(0);
+          }
+        } else invalidFieldMsg(0);
       } 
     }
   }
@@ -2397,23 +2348,7 @@ void trimCalendarDatabase() {
             }
             strcat(tmpbuf, mainname);
             strcpy(mainname, tmpbuf);
-            
-            char datebuffer[10] = "";
-
-            datebuffer[0] = mainname[0];
-            datebuffer[1] = mainname[1];
-            datebuffer[2] = mainname[2];
-            datebuffer[3] = mainname[3];
-            datebuffer[4] = '\0';
-            thisday.year = atoi((const char*)datebuffer);
-            datebuffer[0] = mainname[4];
-            datebuffer[1] = mainname[5];
-            datebuffer[2] = '\0';
-            thisday.month = atoi((const char*)datebuffer);
-            datebuffer[0] = mainname[6];
-            datebuffer[1] = mainname[7];
-            datebuffer[2] = '\0';
-            thisday.day = atoi((const char*)datebuffer);
+            stringToDate(mainname, (int*)thisday.year, (int*)thisday.month, (int*)thisday.day, 2);
             
             // see if the date in the filename is valid
             if(!isDateValid(thisday.year,thisday.month,thisday.day)) {

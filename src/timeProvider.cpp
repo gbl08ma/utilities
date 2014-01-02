@@ -441,3 +441,49 @@ long int DateToDays(int y, int m, int d)
   ly = (long int)y - (long int)lm/10LL;
   return ly*365LL + ly/4LL - ly/100LL + ly/400LL + (lm*306LL + 5LL)/10LL + ( (long int)d - 1LL );
 }
+
+void stringToDate(char* string, int* yr, int* m, int *d, int format) {
+  // string: a date in the format DDMMYYYY, MMDDYYYY or YYYYMMDD
+  // if year < 1000 it has to be zero-padded.
+  // result goes into arguments 2-4. format is the format to expect (values are the same as on the dateformat setting)
+  // if format is not specified, it is read according to settings.
+  // does not check if the date read is valid or if the string has the right size.
+  char year[6] = "";
+  char month[3] = "";
+  char day[3] = "";
+  switch(format == -1? GetSetting(SETTING_DATEFORMAT) : format) {
+    case 0:
+      day[0] = string[0]; day[1] = string[1]; day[2] = '\0';
+      month[0] = string[2]; month[1] = string[3]; month[2] = '\0';
+      year[0] = string[4]; year[1] = string[5]; year[2] = string[6]; year[3] = string[7]; year[4] = '\0';
+      break;
+    case 1:
+      day[0] = string[2]; day[1] = string[3]; day[2] = '\0';
+      month[0] = string[0]; month[1] = string[1]; month[2] = '\0';
+      year[0] = string[4]; year[1] = string[5]; year[2] = string[6]; year[3] = string[7]; year[4] = '\0';
+      break;
+    case 2:
+      day[0] = string[6]; day[1] = string[7]; day[2] = '\0';
+      month[0] = string[4]; month[1] = string[5]; month[2] = '\0';
+      year[0] = string[0]; year[1] = string[1]; year[2] = string[2]; year[3] = string[3]; year[4] = '\0';
+      break;
+  }
+
+  *yr = sys_atoi(year);
+  *m = sys_atoi(month);
+  *d = sys_atoi(day);
+}
+
+void stringToTime(char* string, int* h, int* m, int *s) {
+  char hour[3] = "";
+  char minute[3] = "";
+  char second[3] = "";
+  hour[0] = string[0]; hour[1] = string[1]; hour[2] = '\0';
+  minute[0] = string[2]; minute[1] = string[3]; minute[2] = '\0';
+  second[0] = string[4]; second[1] = string[5]; second[2] = '\0';
+
+  *h = sys_atoi(hour);
+  *m = sys_atoi(minute);
+  *s = sys_atoi(second);
+
+}

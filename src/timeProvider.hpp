@@ -71,4 +71,7 @@ int isDateValid(int y, int m, int d);
 
 void DaysToDate(long int d, long int* eyear, long int* emonth, long int* eday);
 long int DateToDays(int y, int m, int d);
+
+void stringToDate(char* string, int* yr, int* m, int *d, int format = -1);
+void stringToTime(char* string, int* h, int* m, int *s);
 #endif
