@@ -352,15 +352,12 @@ void RemoveEvent(EventDate *startdate, CalendarEvent* events, const char* folder
     RemoveDay(startdate, folder);
     return;
   }
-  if (calEventPos >= count) {} // safety check
-  else
-  {
-    int k;
-    for (k = calEventPos; k < count - 1; k++)
+  if (calEventPos < count) {
+    for (int k = calEventPos; k < count - 1; k++)
             events[k] = events[k+1];
     count = count - 1; //this "deletes" the event
+    ReplaceEventFile(startdate, events, folder, count);
   }
-  ReplaceEventFile(startdate, events, folder, count);
 }
 
 void RemoveDay(EventDate* date, const char* folder) {
