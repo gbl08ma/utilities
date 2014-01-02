@@ -482,12 +482,14 @@ int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* 
     int match = 0;
     if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
       match = 1;
-    }
-    if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
-      match = 1;
-    }
-    if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
-      match = 1;
+    } else {
+      if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
+        match = 1;
+      } else {
+        if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
+          match = 1;
+        }
+      }
     }
     if(match) {
       if(calEvents != NULL) {
@@ -512,12 +514,14 @@ void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resC
     int match = 0;
     if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
       match = 1;
-    }
-    if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
-      match = 1;
-    }
-    if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
-      match = 1;
+    } else {
+      if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
+        match = 1;
+      } else {
+        if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
+          match = 1;
+        }
+      }
     }
     if(match) {
       if(calEvents != NULL) {
