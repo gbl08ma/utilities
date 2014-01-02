@@ -186,12 +186,6 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
   //Saves a calendar event on an existing calendar with specified file name.
   //If the specified file doesn't exist, it is created and the event is added to it.
   //Returns 0 on success, other values on error.
-  /*char foldername[128] = "";
-  unsigned short pFolder[256];
-  strcpy(foldername, "\\\\fls0\\");
-  strcat(foldername, folder);
-  Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
-  Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file*/
   char filename[128] = "";
   smemFilenameFromDate(&calEvent->startdate, filename, folder);
   
