@@ -484,12 +484,6 @@ void GetEventCountsForMonth(int year, int month, int* buffer, int* busydays) {
   }
 }
 
-void toggleTaskActivity(CalendarEvent* events, int pos, int count) {  
-  //use the repeat setting as a task activity indicator. 1 is active/done (check), 0 is unchecked.
-  events[pos].repeat = !events[pos].repeat;
-  ReplaceEventFile(&events[pos].startdate, events, CALENDARFOLDER, count);
-}
-
 int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
   /* reads the events on storage memory for a certain day
    * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)

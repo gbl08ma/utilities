@@ -131,7 +131,8 @@ int viewTasksSub(Menu* menu) {
         break;
       case KEY_CTRL_F6:
         if(menu->numitems > 0) {
-          toggleTaskActivity(tasks, menu->selection-1, menu->numitems);
+          tasks[menu->selection-1].repeat = !tasks[menu->selection-1].repeat;
+          ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
           return 1;
         }
         break;
