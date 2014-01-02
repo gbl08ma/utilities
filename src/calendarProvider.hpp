@@ -40,10 +40,10 @@ typedef struct // Event time definition
 typedef struct // Defines what a calendar event contains
 {
   unsigned int category=0;
-  unsigned int daterange=0;
+  //unsigned int daterange=0; //not used for now
   EventDate startdate;
   EventDate enddate;
-  unsigned int dayofweek=1;
+  //unsigned int dayofweek=1; // not used for now
   unsigned int repeat=0;
   unsigned int timed=1; //full-day = 0, timed = 1
   EventTime starttime;

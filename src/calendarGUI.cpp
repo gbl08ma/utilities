@@ -1388,9 +1388,9 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             case KEY_CTRL_EXIT: return EVENTEDITOR_RETURN_EXIT;
           }
         }
-        event->daterange = 0;
+        //event->daterange = 0;
         event->repeat = 0;
-        event->dayofweek = dow(event->startdate.day, event->startdate.month, event->startdate.year);
+        //event->dayofweek = dow(event->startdate.day, event->startdate.month, event->startdate.year);
         if(type == EVENTEDITORTYPE_ADD) {
           int res = AddEvent(event, CALENDARFOLDER);
           if(res > 0) {

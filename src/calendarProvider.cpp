@@ -38,14 +38,14 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
   unsigned char smallbuf[50] = ""; 
 
   itoa(calEvent->category, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->daterange, (unsigned char*)smallbuf);  strncat((char*)buf, (char*)smallbuf,2); append(buf, FIELD_SEPARATOR);
+  /*itoa(calEvent->daterange, (unsigned char*)smallbuf);*/ itoa(0, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf,2); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->startdate.day, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->startdate.month, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->startdate.year, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 5); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->enddate.day, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->enddate.month, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->enddate.year, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 5); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->dayofweek, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
+  /*itoa(calEvent->dayofweek, (unsigned char*)smallbuf);*/ itoa(0, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->repeat, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->timed, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->starttime.hour, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
@@ -97,7 +97,7 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
         calEvent->category = atoi((const char*)token);
         break;
       case 1: //daterange
-        calEvent->daterange = atoi((const char*)token);
+        //calEvent->daterange = atoi((const char*)token);
         break;
       case 2: //startdate.day
         calEvent->startdate.day = atoi((const char*)token);
@@ -118,7 +118,7 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
         calEvent->enddate.year = atoi((const char*)token);
         break;
       case 8: //dayofweek
-        calEvent->dayofweek = atoi((const char*)token);
+        //calEvent->dayofweek = atoi((const char*)token);
         break;
       case 9: //repeat
         calEvent->repeat = atoi((const char*)token);
