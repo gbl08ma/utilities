@@ -162,6 +162,41 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
   }
 }
 
+void charToSimpleCalEvent(unsigned char* src, SimpleCalendarEvent* calEvent) {
+  /* Parses a string containing a single event and turns it into a SimpleCalendarEvent which the program can work with.
+     Skips all the fields not necessary to a SimpleCalendarEvent
+  */
+  int curfield = 0; //field we are parsing currently. starts at the category, which is 0.
+  unsigned char token[1024];
+  strcpy((char*)token, "");
+  src = toksplit(src, FIELD_SEPARATOR, token, 1024);
+  int notfinished = 1;
+  while (notfinished) {
+    switch (curfield) {
+      case 0: //category
+        calEvent->category = atoi((const char*)token);
+        break;
+      case 2: //startdate.day
+        calEvent->startdate.day = atoi((const char*)token);
+        break;
+      case 3: //startdate.month
+        calEvent->startdate.month = atoi((const char*)token);
+        break;
+      case 4: //startdate.year
+        calEvent->startdate.year = atoi((const char*)token);
+        break;
+      case 17: //title
+        strncpy((char*)calEvent->title, (char*)token, 21);
+        notfinished = 0;
+        break;
+      default: //some field that doesn't matter to us
+        break;
+    }
+    curfield++;
+    src = toksplit(src, FIELD_SEPARATOR, token, 1024);
+  }
+}
+
 void filenameFromDate(EventDate* date, char* filename) {
   char smallbuf[8] = "";
   itoa(date->year, (unsigned char*)smallbuf); strcpy(filename, smallbuf);
@@ -395,15 +430,8 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
       if(calEvents != NULL) charToCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &calEvents[startArray+curevent]); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
       // we don't want full CalendarEvents, but do we want SimpleCalendarEvents?
       else if(simpleCalEvents != NULL) {
-        // calEvents is null, so we need to get our own CalendarEvent to hold the results
-        CalendarEvent cEvt;
-        charToCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &cEvt);
-        strcpy((char*)simpleCalEvents[startArray+curevent].title, (char*)cEvt.title);
-        simpleCalEvents[startArray+curevent].startdate.day = cEvt.startdate.day;
-        simpleCalEvents[startArray+curevent].startdate.month = cEvt.startdate.month;
-        simpleCalEvents[startArray+curevent].startdate.year = cEvt.startdate.year;
-        simpleCalEvents[startArray+curevent].category = cEvt.category;
         simpleCalEvents[startArray+curevent].origpos = curevent;
+        charToSimpleCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &simpleCalEvents[startArray+curevent]);
       }
       curevent++;
       if (strlen((char*)src) < 5) { //5 bytes is not enough space to hold an event, so that means there are no more events to process... right?
