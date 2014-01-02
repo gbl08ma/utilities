@@ -485,5 +485,13 @@ void stringToTime(char* string, int* h, int* m, int *s) {
   *h = sys_atoi(hour);
   *m = sys_atoi(minute);
   *s = sys_atoi(second);
-
+}
+const char *dateSettingInput[] = {"DDMMYYYY",
+                                  "MMDDYYYY",
+                                 "YYYYMMDD"
+                                 };
+const char* dateSettingToInputDisplay(int setting) {
+  if(setting==-1) setting = GetSetting(SETTING_DATEFORMAT);
+  if(setting < 0 || setting > 2) return NULL;
+  return dateSettingInput[setting];
 }

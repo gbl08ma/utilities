@@ -1199,17 +1199,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       }
       case 4: {
         mPrintXY(1, 2, (char*)"End date:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        switch(GetSetting(SETTING_DATEFORMAT)) {
-          case 0:
-            mPrintXY(7, 4, (char*)"DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            break;
-          case 1:
-            mPrintXY(7, 4, (char*)"MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            break;
-          case 2:
-            mPrintXY(7, 4, (char*)"YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            break;
-        }
+        mPrintXY(7, 4, (char*)dateSettingToInputDisplay(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int textX = 0;
         int textY = 5*24;
         PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will end on", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
@@ -1607,17 +1597,7 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
     mPrintXY(1, 1, (char*)message, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     mPrintXY(1, 2, (char*)message2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);  
-    switch(GetSetting(SETTING_DATEFORMAT)) {
-      case 0:
-        mPrintXY(6, 4, (char*)"DDMMYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        break;
-      case 1:
-        mPrintXY(6, 4, (char*)"MMDDYYYY", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        break;
-      case 2:
-        mPrintXY(6, 4, (char*)"YYYYMMDD", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        break;
-    }
+    mPrintXY(6, 4, (char*)dateSettingToInputDisplay(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     
     textInput input;
     input.x=6;

@@ -452,18 +452,11 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
           int res = doTextInput(&input);
           if (res==INPUT_RETURN_EXIT) return; // user aborted
           else if (res==INPUT_RETURN_CONFIRM) {
-            char hour[3] = "";
-            char minute[3] = "";
-            char second[3] = "";
-            hour[0] = etbuffer[0]; hour[1] = etbuffer[1]; hour[2] = '\0';
-            minute[0] = etbuffer[2]; minute[1] = etbuffer[3]; minute[2] = '\0';
-            second[0] = etbuffer[4]; second[1] = etbuffer[5]; second[2] = '\0';
-
-            h = sys_atoi(hour);
-            mi = sys_atoi(minute);
-            s = sys_atoi(second);
-            if(isTimeValid(h, mi, s) && (int)strlen(etbuffer) == input.charlimit) {
-              break;
+            if((int)strlen(etbuffer) == input.charlimit) {
+                stringToTime(etbuffer, &h, &mi, &s);
+                if(isTimeValid(h, mi, s)) {
+                  break;
+                } else invalidFieldMsg(1);
             } else {
               invalidFieldMsg(1);
             }
