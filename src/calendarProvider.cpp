@@ -486,16 +486,8 @@ void GetEventCountsForMonth(int year, int month, int* buffer, int* busydays) {
 
 void toggleTaskActivity(CalendarEvent* events, int pos, int count) {  
   //use the repeat setting as a task activity indicator. 1 is active/done (check), 0 is unchecked.
-  if(events[pos].repeat == 1) {
-    events[pos].repeat = 0;
-  } else {
-    events[pos].repeat = 1;
-  }
-  EventDate sdate;
-  sdate.year = events[pos].startdate.year;
-  sdate.month = events[pos].startdate.month;
-  sdate.day = events[pos].startdate.day;
-  ReplaceEventFile(&sdate, events, CALENDARFOLDER, count);
+  events[pos].repeat = !events[pos].repeat;
+  ReplaceEventFile(&events[pos].startdate, events, CALENDARFOLDER, count);
 }
 
 int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
