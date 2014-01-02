@@ -54,9 +54,9 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
   itoa(calEvent->endtime.hour, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->endtime.minute, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->endtime.second, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
-  strncat((char*)buf, (char*)calEvent->title,25); append(buf, FIELD_SEPARATOR);
-  strncat((char*)buf, (char*)calEvent->location,135); append(buf, FIELD_SEPARATOR);
-  strncat((char*)buf, (char*)calEvent->description,1030); append(buf, EVENT_SEPARATOR);
+  strncat((char*)buf, (char*)calEvent->title,21); append(buf, FIELD_SEPARATOR);
+  strncat((char*)buf, (char*)calEvent->location,128); append(buf, FIELD_SEPARATOR);
+  strncat((char*)buf, (char*)calEvent->description,1024); append(buf, EVENT_SEPARATOR);
   //the last field ends with an event separator (EVENT_SEPARATOR), without a field separator.
   
   /*sprintf((char*)buf, "%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%s%c%s%c%s%c" ,
@@ -145,13 +145,13 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
         calEvent->endtime.second = atoi((const char*)token);
         break;
       case 17: //title
-        strncpy((char*)calEvent->title, (char*)token, 25);
+        strncpy((char*)calEvent->title, (char*)token, 21);
         break;
       case 18: //location
-        strncpy((char*)calEvent->location, (char*)token, 135);
+        strncpy((char*)calEvent->location, (char*)token, 128);
         break;
       case 19: //description
-        strncpy((char*)calEvent->description, (char*)token, 1030);
+        strncpy((char*)calEvent->description, (char*)token, 1024);
         notfinished = 0;
         break;
       default: //unknown field. may add special handling later.
