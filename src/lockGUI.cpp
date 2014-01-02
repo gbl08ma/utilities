@@ -211,15 +211,11 @@ int lockCalc() {
     return 1;
   }
   int textX, textY;
-  int permanentX;
-  textX = 0;
   textY = LCD_HEIGHT_PX - 17 - 24;
-  PrintMini(&textX, &textY, (unsigned char*)"Calculator locked", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); //get length
-  permanentX = LCD_WIDTH_PX - textX;
   if(GetSetting(SETTING_LOCK_AUTOOFF)) PowerOff(1);
   SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return
   while(1) {
-    textX = permanentX;
+    textX = 212;
     int key;
     Bdisp_AllClr_VRAM();
     Bdisp_EnableColor(1);

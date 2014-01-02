@@ -14,6 +14,7 @@
 
 #include "graphicsProvider.hpp"
 #include "settingsProvider.hpp"
+#include "debugGUI.hpp"
 
 const short empty[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short color, const short bcolor )
@@ -205,14 +206,12 @@ void drawFkeyPopup(int Fkey, int darktheme, int showclosemessage) {
 
 
   if (showclosemessage) {
-    int textX = 0;
+    int textX = FKEY_C3X-111-4;
     int textY = FKEY_C3Y-14-20;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", (darktheme == 1 ? 4 : 0), TEXT_COLOR_BLACK, 1 ); //fake draw
-    textX = FKEY_C3X-textX-4;
     PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", (darktheme == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
   }
 }
-void CopySprite(const void* datar, int x, int y, int width, int height) { 
+/*void CopySprite(const void* datar, int x, int y, int width, int height) { 
    color_t*data = (color_t*) datar; 
    color_t* VRAM = (color_t*)0xA8000000; 
    VRAM += LCD_WIDTH_PX*y + x; 
@@ -222,7 +221,7 @@ void CopySprite(const void* datar, int x, int y, int width, int height) {
      } 
      VRAM += LCD_WIDTH_PX-width; 
    } 
-} 
+} */
 void CopySpriteMasked(const unsigned char* data, int x, int y, int width, int height, int maskcolor) { 
    char* VRAM = (char*)0xA8000000; 
    VRAM += 2*(LCD_WIDTH_PX*y + x); 

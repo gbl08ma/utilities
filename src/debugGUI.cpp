@@ -53,7 +53,7 @@ void showRAMused() {
   debugMessage((char*)"  MsgBox PUSHED", (char*)"  count:", getNumberOfMsgBoxPushed());
 }
 
-void showRAMusedStatus() {
+/*void showRAMusedStatus() {
   int usedStack = (int)GetStackPtr();
   int ramused = initStackPtr - usedStack;
   
@@ -69,7 +69,7 @@ void showRAMusedStatus() {
   
   DefineStatusMessage((char*)buffer2, 1, 0, 0);
   DisplayStatusArea();
-}
+}*/
 
 /*void mycallback() {
   debugMessage((char*)"  My menu", (char*)"  callback", 0);

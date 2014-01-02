@@ -21,7 +21,7 @@ void SetDebugMode(int val);
 void debugMessage(char* text1, char* text2, int value);
 void setInitStackPtr(int val);
 void showRAMused();
-void showRAMusedStatus();
+//void showRAMusedStatus();
 void masterControl();
 
 #endif

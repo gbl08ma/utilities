@@ -25,7 +25,7 @@ void darkenStatusbar();
 void darkenFkeys(int numkeys);
 void drawArrowDown(int bottomX, int bottomY, int color);
 void drawFkeyPopup(int Fkey, int darktheme, int showclosemessage);
-void CopySprite(const void* datar, int x, int y, int width, int height);
+//void CopySprite(const void* datar, int x, int y, int width, int height);
 void CopySpriteMasked(const unsigned char* data, int x, int y, int width, int height, int maskcolor);
 void CopySpriteNbit(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, unsigned int bitwidth);
 int drawRGB24toRGB565(int r, int g, int b);
