@@ -309,10 +309,7 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   // This basically deletes the events of startdate and replaces them with newEvents.
   // Allows for a way to edit an event on a day, when all the events for that day are in memory (including the edited one).
   // count: number of events in newEvents (number of events in old file doesn't matter). starts at 1.
-  int res = RemoveDay(startdate, folder);
-  if(res != 0) {
-    return 1;
-  }
+  RemoveDay(startdate, folder);
   
   //convert the calevents back to char
   unsigned char eventbuf[2048] = ""; 
@@ -366,24 +363,13 @@ void RemoveEvent(EventDate *startdate, CalendarEvent* events, const char* folder
   ReplaceEventFile(startdate, events, folder, count);
 }
 
-int RemoveDay(EventDate* date, const char* folder) {
+void RemoveDay(EventDate* date, const char* folder) {
   //remove all SMEM events for the day
   char filename[128] = "";
   smemFilenameFromDate(date, filename, folder);
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
-  
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle to check if exists
-
-  if(hFile < 0) { //error returned, file doesn't exist
-    return 1;
-  } else {
-    //file exists and is open, close it and delete.
-    Bfile_CloseFile_OS(hFile);
-    Bfile_DeleteEntry(pFile);
-    return 0;
-  }
-  return 0;
+  Bfile_DeleteEntry(pFile);
 }
 
 int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit, SimpleCalendarEvent* simpleCalEvents, int startArray) {
