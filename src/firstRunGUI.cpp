@@ -22,24 +22,18 @@
 #include "timeProvider.hpp"
 #include "firstRunGUI.hpp"
 #include "settingsProvider.hpp"
+#include "debugGUI.hpp"
 
 void firstRunWizard() {
   Bdisp_AllClr_VRAM();
-  int textX=0, textY=0;
 
   drawtnyimLogo( LCD_WIDTH_PX/2-138/2, LCD_HEIGHT_PX/2-42/2, 0);
-  PrintMini(&textX, &textY, (unsigned char*)"brought to you by", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); //get length
-  int textLen = textX;
-  textY = LCD_HEIGHT_PX/2-42/2-24 - 20;
-  textX = LCD_WIDTH_PX/2 - textLen/2;
-  
+  int textY = LCD_HEIGHT_PX/2-42/2-24 - 20;
+  int textX = 104;
   PrintMini(&textX, &textY, (unsigned char*)"brought to you by", 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 1, 0);
-  
-  textX=0;
-  PrintMini(&textX, &textY, (unsigned char*)"tny. internet media", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); //get length
-  textLen = textX;
+
   textY = LCD_HEIGHT_PX/2+42/2-24;
-  textX = LCD_WIDTH_PX/2 - textLen/2;
+  textX = 94;
   int orange = drawRGB24toRGB565(210, 68, 19);
   PrintMini(&textX, &textY, (unsigned char*)"tny. ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   PrintMini(&textX, &textY, (unsigned char*)"i", 0, 0xFFFFFFFF, 0, 0, orange, COLOR_WHITE, 1, 0);
@@ -85,25 +79,16 @@ void firstRunWizard() {
   elem[9].text = (char*)"The CPU clock adjustment tool is hidden by default. To enable it, turn on the \"Show advanced tools\" setting.";
   
   elem[10].newLine = 1;
-  elem[10].lineSpacing = 5;
-  elem[10].text = (char*)"There is a calculator lock function, that allows for locking your calculator with a password.";
-  
+  elem[10].lineSpacing = 8;
+  elem[10].text = (char*)"Thanks for reading these notes.";
   elem[11].newLine = 1;
-  elem[11].text = (char*)"Lock the calculator by pressing F5 on the home screen. You'll be prompted to set a password the first time you use this function.";
-  elem[11].spaceAtEnd = 1;
-  elem[12].text = (char*)"You can set a new password in the Settings menu.";
+  elem[11].text = (char*)"After pressing EXIT or EXE, you may be guided to adjust your calculator's clock.";
   
-  elem[13].newLine = 1;
-  elem[13].lineSpacing = 8;
-  elem[13].text = (char*)"Thanks for reading these notes.";
-  elem[14].newLine = 1;
-  elem[14].text = (char*)"After pressing EXIT or EXE, you will probably be guided to adjust your calculator's clock.";
+  elem[12].newLine = 1;
+  elem[12].lineSpacing = 3;
+  elem[12].text = (char*)"In case you need help with this software, contact info is on the \"About\" screen, to which you can get from the Settings menu.";
   
-  elem[15].newLine = 1;
-  elem[15].lineSpacing = 3;
-  elem[15].text = (char*)"In case you need help with this software, contact info is on the \"About\" screen, to which you can get from the Settings menu.";
-  
-  text.numelements = 16;
+  text.numelements = 13;
   doTextArea(&text);
   SetSetting(SETTING_IS_FIRST_RUN, 0, 1);
 }

@@ -181,7 +181,7 @@ int lockCalc() {
     textElement elem[10];
     text.elements = elem;
     
-    elem[0].text = (char*)"This is probably the first time you're using the calculator lock function. You need to set a password before you can use it.";
+    elem[0].text = (char*)"This is probably the first time you are using the calculator lock function, which lets you lock your calculator with a password. You must set that password before you can use it. Later, you can set a new password in the Settings menu.";
     
     elem[1].newLine = 1;
     elem[1].lineSpacing = 8;

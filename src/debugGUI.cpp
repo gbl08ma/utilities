@@ -50,7 +50,7 @@ void showRAMused() {
   int usedStack = (int)GetStackPtr();
   int ramused = initStackPtr - usedStack;
   debugMessage((char*)"  RAM", (char*)"  b:", ramused);
-  debugMessage((char*)"  MsgBox", (char*)"  c:", getNumberOfMsgBoxPushed());
+  debugMessage((char*)"  MB", (char*)"  c:", getNumberOfMsgBoxPushed());
 }
 
 /*void showRAMusedStatus() {
