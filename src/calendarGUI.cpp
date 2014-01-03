@@ -2169,7 +2169,7 @@ void repairCalendarDatabase() {
   Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
   Bfile_StrToName_ncpy(path, filter, MAX_FILENAME_SIZE+1);
-  int loopc = 0;
+  int loopc = 9;
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
     if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0) &&
@@ -2187,8 +2187,8 @@ void repairCalendarDatabase() {
         char buffer3[20] = "";
         itoa((int)problemsfound, (unsigned char*)buffer3);
         elem[6].text = buffer3;
-        doTextArea(&text);
         text.numelements = 7;
+        doTextArea(&text);
         Bdisp_PutDisp_DD();
         loopc = 0;
       } else loopc++;
@@ -2328,7 +2328,9 @@ void trimCalendarDatabase() {
             }
             strcat(tmpbuf, mainname);
             strcpy(mainname, tmpbuf);
-            stringToDate(mainname, (int*)thisday.year, (int*)thisday.month, (int*)thisday.day, 2);
+            int y, m, d;
+            stringToDate(mainname, &y, &m, &d, 2);
+            thisday.year=y; thisday.month=m; thisday.day=d;
             
             // see if the date in the filename is valid
             if(!isDateValid(thisday.year,thisday.month,thisday.day)) {

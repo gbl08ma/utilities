@@ -588,24 +588,10 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
         }
         strcat(tmpbuf, mainname);
         strcpy(mainname, tmpbuf);
-        
-        char datebuffer[10] = "";
-
-        datebuffer[0] = mainname[0];
-        datebuffer[1] = mainname[1];
-        datebuffer[2] = mainname[2];
-        datebuffer[3] = mainname[3];
-        datebuffer[4] = '\0';
         EventDate thisday;
-        thisday.year = atoi((const char*)datebuffer);
-        datebuffer[0] = mainname[4];
-        datebuffer[1] = mainname[5];
-        datebuffer[2] = '\0';
-        thisday.month = atoi((const char*)datebuffer);
-        datebuffer[0] = mainname[6];
-        datebuffer[1] = mainname[7];
-        datebuffer[2] = '\0';
-        thisday.day = atoi((const char*)datebuffer);
+        int y, m, d;
+        stringToDate(mainname, &y, &m, &d, 2);
+        thisday.year=y; thisday.month=m; thisday.day=d;
         
         // see if the date in the filename is valid, and that it is in the year we are searching in
         if(isDateValid(thisday.year,thisday.month,thisday.day) && thisday.year==(unsigned int)y && (m==0?1:thisday.month==(unsigned int)m)) {
@@ -736,24 +722,10 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   }
   strcat(tmpbuf, mainname);
   strcpy(mainname, tmpbuf);
-  
-  char datebuffer[10] = "";
-
-  datebuffer[0] = mainname[0];
-  datebuffer[1] = mainname[1];
-  datebuffer[2] = mainname[2];
-  datebuffer[3] = mainname[3];
-  datebuffer[4] = '\0';
   EventDate thisday;
-  thisday.year = atoi((const char*)datebuffer);
-  datebuffer[0] = mainname[4];
-  datebuffer[1] = mainname[5];
-  datebuffer[2] = '\0';
-  thisday.month = atoi((const char*)datebuffer);
-  datebuffer[0] = mainname[6];
-  datebuffer[1] = mainname[7];
-  datebuffer[2] = '\0';
-  thisday.day = atoi((const char*)datebuffer);
+  int y, m, d;
+  stringToDate(mainname, &y, &m, &d, 2);
+  thisday.year=y; thisday.month=m; thisday.day=d;
   
   // final step on filename checking: see if the date in the filename is valid
   // and that year is not zero (so we don't delete the tasks file)
@@ -765,9 +737,9 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   }
   
   int numitems = GetEventsForDate(&thisday, folder, NULL); //get event count only so we know how much to alloc
+  *checkedevents = *checkedevents + numitems;
   CalendarEvent* events = (CalendarEvent*)alloca(numitems*sizeof(CalendarEvent));
   numitems = GetEventsForDate(&thisday, folder, events);
-  *checkedevents = *checkedevents + numitems;
   int curitem = 0;
   int doneEdits = 0;
   while(curitem <= numitems-1) {
