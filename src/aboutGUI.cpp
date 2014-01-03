@@ -23,8 +23,6 @@ void showAbout() {
   Bdisp_AllClr_VRAM(); 
   DefineStatusMessage((char*)"About Utilities", 1, 0, 0);
   DisplayStatusArea();
-  //y increment between each line: 17; between paragraphs: 20
-  int orange = drawRGB24toRGB565(210, 68, 19);
   
   textArea ftext;
   strcpy(ftext.title, (char*)"");
@@ -60,13 +58,13 @@ void showAbout() {
   felem[4].spaceAtEnd = 1;
   
   felem[5].text = (char*)"i";
-  felem[5].color = orange;
+  felem[5].color = TNYIM_ORANGE;
   
   felem[6].text = (char*)"nternet";
   felem[6].spaceAtEnd = 1;
   
   felem[7].text = (char*)"m";
-  felem[7].color = orange;
+  felem[7].color = TNYIM_ORANGE;
   
   felem[8].text = (char*)"edia";
  
@@ -83,7 +81,7 @@ void showAbout() {
   
   ftext.numelements = 12;
   doTextArea(&ftext);
-  drawtnyimLogo(10, 59+24, 0); //24 pixels for the status bar
+  drawtnyimLogo(10, 59+24); //24 pixels for the status bar
   GetKey(&key);
 
   DisplayStatusArea();

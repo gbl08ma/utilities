@@ -256,50 +256,35 @@ void CopySpriteNbit(const unsigned char* data, int x, int y, int width, int heig
       VRAM += (LCD_WIDTH_PX-width);
    }
 } 
-int drawRGB24toRGB565(int r, int g, int b)  
-{  
-  return ((r / 8) << 11) | ((g / 4) << 5) | (b / 8);  
-}
 //the following does not update the screen automatically; it will draw the tny.im logo starting at screen coordinates x,y
 //the tny.im logo is great enough not to require any sprites! yay!
 //w:138
 //h:42
-int alphaBlend(int newcc, int oldcc, float alpha) {
-  return alpha*newcc+(1-alpha)*oldcc;
-}
-/* commented because isn't needed
-void alphaRGB(int r1, int g1, int b1, int r2, int g2, int b2, int* nr, int* ng, int* nb, float alpha) {
-  *nr = alphaBlend(r1, r2, alpha);
-  *ng = alphaBlend(g1, g2, alpha);
-  *nb = alphaBlend(b1, b2, alpha);
-}*/
-void drawtnyimLogo( int x, int y, float alpha) {
+void drawtnyimLogo( int x, int y) {
   //draw t
-  int black = drawRGB24toRGB565(alphaBlend(255, 0, alpha), alphaBlend(255, 0, alpha), alphaBlend(255, 0, alpha));
-  drawRectangle(x, y+6, 6, 24, black);
-  drawRectangle(x+6, y+12, 6, 6, black);
-  drawRectangle(x+6, y+30, 6, 6, black);
+  drawRectangle(x, y+6, 6, 24, COLOR_BLACK);
+  drawRectangle(x+6, y+12, 6, 6, COLOR_BLACK);
+  drawRectangle(x+6, y+30, 6, 6, COLOR_BLACK);
   //draw n
-  drawRectangle(x+18, y+12, 6, 24, black);
-  drawRectangle(x+24, y+12, 12, 6, black);
-  drawRectangle(x+36, y+18, 6, 18, black);
+  drawRectangle(x+18, y+12, 6, 24, COLOR_BLACK);
+  drawRectangle(x+24, y+12, 12, 6, COLOR_BLACK);
+  drawRectangle(x+36, y+18, 6, 18, COLOR_BLACK);
   //draw y
-  drawRectangle(x+48, y+12, 6, 18, black);
-  drawRectangle(x+60, y+12, 6, 18, black);
-  drawRectangle(x+54, y+30, 6, 6, black);
-  drawRectangle(x+48, y+36, 6, 6, black);
+  drawRectangle(x+48, y+12, 6, 18, COLOR_BLACK);
+  drawRectangle(x+60, y+12, 6, 18, COLOR_BLACK);
+  drawRectangle(x+54, y+30, 6, 6, COLOR_BLACK);
+  drawRectangle(x+48, y+36, 6, 6, COLOR_BLACK);
   //draw dot
-  drawRectangle(x+72, y+30, 6, 6, black);
-  int orange = drawRGB24toRGB565(alphaBlend(255, 210, alpha), alphaBlend(255, 68, alpha), alphaBlend(255, 19, alpha));
+  drawRectangle(x+72, y+30, 6, 6, COLOR_BLACK);
   //draw i (orange)
-  drawRectangle(x+84, y, 6, 6, orange);
-  drawRectangle(x+84, y+12, 6, 24, orange);
+  drawRectangle(x+84, y, 6, 6, TNYIM_ORANGE);
+  drawRectangle(x+84, y+12, 6, 24, TNYIM_ORANGE);
   //draw m (orange)
-  drawRectangle(x+96, y+12, 6, 24, orange);
-  drawRectangle(x+102, y+12, 12, 6, orange);
-  drawRectangle(x+114, y+18, 6, 18, orange);
-  drawRectangle(x+120, y+12, 12, 6, orange);
-  drawRectangle(x+132, y+18, 6, 18, orange);
+  drawRectangle(x+96, y+12, 6, 24, TNYIM_ORANGE);
+  drawRectangle(x+102, y+12, 12, 6, TNYIM_ORANGE);
+  drawRectangle(x+114, y+18, 6, 18, TNYIM_ORANGE);
+  drawRectangle(x+120, y+12, 12, 6, TNYIM_ORANGE);
+  drawRectangle(x+132, y+18, 6, 18, TNYIM_ORANGE);
 }
 
 int textColorToFullColor(int textcolor) {

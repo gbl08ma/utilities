@@ -21,6 +21,6 @@ void powerMenu();
 void lightMenu();
 void timeMenu(chronometer* chrono);
 void toolsMenu();
-void eventsPane(int textmode);
+void eventsPane();
 
 #endif

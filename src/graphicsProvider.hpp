@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define TNYIM_ORANGE 0xd222
 int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short color, const short bcolor ); 
 void plot(int x0, int y0, unsigned short color);
 void drawRectangle(int x, int y, int width, int height, unsigned short color);
@@ -28,9 +29,7 @@ void drawFkeyPopup(int Fkey, int darktheme, int showclosemessage);
 //void CopySprite(const void* datar, int x, int y, int width, int height);
 void CopySpriteMasked(const unsigned char* data, int x, int y, int width, int height, int maskcolor);
 void CopySpriteNbit(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, unsigned int bitwidth);
-int drawRGB24toRGB565(int r, int g, int b);
-int alphaBlend(int newcc, int oldcc, float alpha);
-void drawtnyimLogo( int x, int y, float alpha);
+void drawtnyimLogo( int x, int y);
 int textColorToFullColor(int textcolor);
 void progressMessage(char* message, int cur, int total);
 void closeProgressMessage();

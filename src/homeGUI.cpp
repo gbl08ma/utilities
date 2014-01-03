@@ -146,7 +146,6 @@ void showHome(chronometer* chrono) {
             DisplayStatusArea();
             char code[25] = "";
             textInput input;
-            input.x=1;
             input.y=8;
             input.charlimit=21;
             input.buffer = (char*)code;
@@ -162,7 +161,7 @@ void showHome(chronometer* chrono) {
           }
           break;
         case KEY_PRGM_RIGHT:
-          if(GetSetting(SETTING_HOME_PANES)) eventsPane((GetSetting(SETTING_THEME) ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND));
+          if(GetSetting(SETTING_HOME_PANES)) eventsPane();
           break;
         case 76: //x-0-theta key
           currentTimeToBasicVar();
@@ -188,12 +187,16 @@ void powerMenu() {
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=(GetSetting(SETTING_SHOW_ADVANCED) ? 5 : 4);
   menu.width=19;
   menu.height=4;
   menu.startX=2;
   menu.startY=3;
-  menu.scrollbar=(GetSetting(SETTING_SHOW_ADVANCED) ? 1 : 0);
+  if(GetSetting(SETTING_SHOW_ADVANCED)) {
+    menu.numitems=5;
+  } else {
+    menu.numitems=4;
+    menu.scrollbar=0;
+  }
   menu.darken=GetSetting(SETTING_THEME);
   
   while(1) {
@@ -368,7 +371,7 @@ void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int 
     PrintMini(&textX, &textY, (unsigned char*)"  No events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
   } 
 }
-void eventsPane(int textmode) {
+void eventsPane() {
   int key;
   EventDate thisday;
   const int eventsToDisplayInFull=6;
