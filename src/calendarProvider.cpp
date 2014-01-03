@@ -280,6 +280,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
     int newsize = oldsize + strlen(newevent);
     if (oldsize > MAX_EVENT_FILESIZE || newsize > MAX_EVENT_FILESIZE) { //file bigger than we can handle
       Bfile_CloseFile_OS(hAddFile);
+      setDBneedsRepairFlag(1);
       return 4;
     }
     unsigned char* oldcontents = (unsigned char*)alloca(newsize);
@@ -396,9 +397,11 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
     // Read file into a buffer which is then parsed and broke in multiple event strings.
     // These event strings are then turned into a CalendarEvent.
     if ((unsigned int)size > MAX_EVENT_FILESIZE) {
+      //file too big, set repair flag and return error.
       Bfile_CloseFile_OS(hFile);
+      setDBneedsRepairFlag(1);
       return -1;
-    } //file too big, return error.
+    }
     unsigned char asrc[MAX_EVENT_FILESIZE] = "";
     Bfile_ReadFile_OS(hFile, asrc, size, 0);
     Bfile_CloseFile_OS(hFile); //we got file contents, close it
@@ -449,7 +452,7 @@ void GetEventCountsForMonthHelper(EventDate* date, int count, int* busydays) {
         // events past this day up to the end day are all busy.
         for(unsigned int k = date->day; k<=events[curitem].enddate.day; k++) busydays[k] = events[curitem].category;
       }
-    } // else: end date is before start date, which is invalid. user should repair DB some day...
+    } else setDBneedsRepairFlag(1); //end date is before start date, which is invalid. user should repair DB...
   }
 }
 void GetEventCountsForMonth(int year, int month, int* buffer, int* busydays) {
@@ -817,4 +820,12 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
     // replace event file...
     ReplaceEventFile(&thisday, events, folder, numitems);
   }
+}
+int dbRepairFlag = 0; // 1 when needs repairing
+void setDBneedsRepairFlag(int value) {
+  dbRepairFlag=value;
+}
+
+int getDBneedsRepairFlag() {
+  return dbRepairFlag;
 }

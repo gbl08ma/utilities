@@ -65,6 +65,7 @@ int viewMonthCalendar(int dateselection) {
   int bufyear = 0;
   while (1)
   {
+    if(getDBneedsRepairFlag()) repairCalendarDatabase();
     if(y>9999||y<0) { y=getCurrentYear(); m=getCurrentMonth(); d=getCurrentDay(); } //protection: reset to today's date if somehow we're trying to access the calendar for an year after 9999, or before 0.
     drawCalendar(y,m,d, GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT), eventcount, busydays, &bufmonth, &bufyear);
     switch (menu)
@@ -279,6 +280,7 @@ int viewWeekCalendar() {
   int jumpToSel=1;
   int keepMenuSel=0;
   while(res) {
+    if(getDBneedsRepairFlag()) repairCalendarDatabase();
     if(!sy || !sm || !sd) {
       if(!y || !m || !d) {
         y = getCurrentYear();
@@ -293,7 +295,6 @@ int viewWeekCalendar() {
       sy=0; sm=0; sd=0;
       jumpToSel=1;
     }
-
     res = viewWeekCalendarSub(&menu, &y, &m, &d, &jumpToSel, &keepMenuSel);
     if(res==2) return 1;
   }
@@ -1949,6 +1950,7 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
       
       long int x = (width*start)/(24*60*60);
       long int duration = daysduration*24*60*60 + events[curitem].endtime.hour*60*60 + events[curitem].endtime.minute*60 + events[curitem].endtime.second - start;
+      if(duration<0) setDBneedsRepairFlag(1); //event ends before it starts, user should repair the DB
       bwidth = (width*duration)/(24*60*60);
       if(bwidth <= 0) bwidth = 1; // always make an event visible
       if((!isWeek) && x+bwidth > width) {
@@ -1962,6 +1964,7 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
       }
       drawRectangle(startx+x, starty, bwidth, height, categoryColors[events[curitem].category]);
     } else if(!events[curitem].timed && isWeek) {
+      if(daysduration<0) setDBneedsRepairFlag(1); //event ends before it starts, user should repair the DB
       bwidth = width*(daysduration+1);
       if(startx+bwidth > maxx) {
         bwidth = maxx-startx;
@@ -2112,11 +2115,12 @@ void repairCalendarDatabase() {
 
   textElement elem[15];
   text.elements = elem;
-  
-  elem[0].text = (char*)"Repairing the calendar events' database will delete or fix any corrupt or inconsistent data, such as events with an end time preceding their start time.";
+  if(getDBneedsRepairFlag()) elem[0].text = (char*)"Inconsistent data was detected in the calendar database. This situation is often experienced when a version of Utilities older than v1.1 has been used, or when events with invalid data are imported.";
+  else elem[0].text = (char*)"Repairing the calendar events' database will delete or fix any corrupt or inconsistent data, such as events with an end time preceding their start time.";
   elem[1].newLine = 1;
   elem[1].lineSpacing = 5;
-  elem[1].text = (char*)"Doing this is highly recommended if you used a version of Utilities older than v1.1, or if you experience problems viewing and manipulating calendar events.";
+  if(getDBneedsRepairFlag()) elem[1].text = (char*)"Repairing the database now is very important to avoid further problems. You should not see this message again once you repair the database.";
+  else elem[1].text = (char*)"Doing this is highly recommended if you used a version of Utilities older than v1.1, or if you experience problems viewing and manipulating calendar events.";
   elem[2].newLine = 1;
   elem[2].lineSpacing = 5;
   elem[2].text = (char*)"Repairing the database should not result in data loss, except for any corrupt entries that despite their state, are still partially readable (these will be deleted). You may want to create backups of such entries using pen and paper - never use Utilities to perform operations on corrupt events or others in their start date!";
@@ -2128,7 +2132,7 @@ void repairCalendarDatabase() {
   text.numelements = 4;
   if(!doTextArea(&text)) return;
   
-  
+  setDBneedsRepairFlag(0);
   text.type = TEXTAREATYPE_INSTANT_RETURN;
   text.allowF1 = 0;
   text.scrollbar=0;

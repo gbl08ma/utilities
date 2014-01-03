@@ -77,5 +77,7 @@ int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* 
 int SearchEventsOnMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit);
 int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int arraystart=0);
 void repairEventsFile(char* name, const char* folder, int* checkedevents, int* problemsfound);
+void setDBneedsRepairFlag(int value);
+int getDBneedsRepairFlag();
 
 #endif
