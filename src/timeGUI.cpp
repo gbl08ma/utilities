@@ -327,6 +327,7 @@ void setDateGUI(int canExit) {
     month.value = getCurrentMonth();
     month.min = 1;
     month.max = 12;
+    month.type = SELECTORTYPE_MONTH;
     month.allowMkey = 0;
     int res = doSelector(&month);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
