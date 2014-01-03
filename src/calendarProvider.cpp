@@ -312,14 +312,11 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   // count: number of events in newEvents (number of events in old file doesn't matter). starts at 1.
   RemoveDay(startdate, folder);
   
-  //convert the calevents back to char
-  unsigned char eventbuf[2048] = ""; 
-  unsigned char* newfilecontents = (unsigned char*)alloca(count*2048); //because the new file size can't be any bigger than the previous size, since we deleted a event
+  //convert the calevents back to char. assuming each event, as string, doesn't take more than 1250 bytes
+  unsigned char* newfilecontents = (unsigned char*)alloca(7+count*1250);
   strcpy((char*)newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
   for(int j = 0; j < count; j++) {
-    strcpy((char*)eventbuf, "");
-    calEventToChar(&newEvents[j], eventbuf);
-    strcat((char*)newfilecontents,(char*)eventbuf);
+    calEventToChar(&newEvents[j], newfilecontents); //calEventToChar only does strncat, so it can append directly.
   }
   
   char filename[128] = "";
