@@ -221,8 +221,6 @@ int lockCalc() {
     Bdisp_EnableColor(1);
     DisplayStatusArea();
     PrintMini(&textX, &textY, (unsigned char*)"Calculator locked", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
-    //Handle ALPHA (when user wants to unlock) and Shift+AC for power off
-    Bdisp_PutDisp_DD();
     GetKey(&key); //oh, the pleasure of using GetKey and still have the Menu blocked
     setBrightnessToStartupSetting();
     if (key == KEY_CTRL_ALPHA) {

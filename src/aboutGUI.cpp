@@ -20,7 +20,6 @@
 
 void showAbout() {
   int key;
-  Bdisp_AllClr_VRAM(); 
   DefineStatusMessage((char*)"About Utilities", 1, 0, 0);
   DisplayStatusArea();
   
@@ -83,8 +82,6 @@ void showAbout() {
   doTextArea(&ftext);
   drawtnyimLogo(10, 59+24); //24 pixels for the status bar
   GetKey(&key);
-
-  DisplayStatusArea();
   
   textArea text;
   strcpy(text.title, (char*)"");

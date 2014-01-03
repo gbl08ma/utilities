@@ -293,7 +293,6 @@ int deleteFilesGUI(File* files, Menu* menu) {
     mGetKey(&key);
     if (key==KEY_CTRL_F1) {
       mMsgBoxPop();
-      Bdisp_PutDisp_DD();
       deleteFiles(files, menu);
       return 1;
     } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
