@@ -49,8 +49,8 @@ void setInitStackPtr(int val) {
 void showRAMused() {
   int usedStack = (int)GetStackPtr();
   int ramused = initStackPtr - usedStack;
-  debugMessage((char*)"  RAM USED", (char*)"  bytes:", ramused);
-  debugMessage((char*)"  MsgBox PUSHED", (char*)"  count:", getNumberOfMsgBoxPushed());
+  debugMessage((char*)"  RAM", (char*)"  b:", ramused);
+  debugMessage((char*)"  MsgBox", (char*)"  c:", getNumberOfMsgBoxPushed());
 }
 
 /*void showRAMusedStatus() {
@@ -77,15 +77,15 @@ void showRAMused() {
 
 void masterControl() {
   MenuItem menuitems[10];
-  strcpy(menuitems[0].text, "SaveSettings()");;
-  strcpy(menuitems[1].text, "LoadSettings()");
-  strcpy(menuitems[2].text, "Lock Off");
-  strcpy(menuitems[3].text, "Lock On");
-  strcpy(menuitems[4].text, "Debug Off");
-  strcpy(menuitems[5].text, "Debug On");
-  strcpy(menuitems[6].text, "First Run Off");
-  strcpy(menuitems[7].text, "First Run On");
-  strcpy(menuitems[8].text, "Restart");
+  strcpy(menuitems[0].text, "SS()");;
+  strcpy(menuitems[1].text, "LS()");
+  strcpy(menuitems[2].text, "Lk Off");
+  strcpy(menuitems[3].text, "Lk On");
+  strcpy(menuitems[4].text, "Dbg Off");
+  strcpy(menuitems[5].text, "Dbg On");
+  strcpy(menuitems[6].text, "FR Off");
+  strcpy(menuitems[7].text, "FR On");
+  strcpy(menuitems[8].text, "Rst");
   
   Menu menu;
   menu.items=menuitems;
@@ -93,7 +93,7 @@ void masterControl() {
   menu.scrollout=1;
   menu.showtitle=1;
   menu.allowMkey=0;
-  strcpy(menu.title, "UTILITIES CONTROL");
+  strcpy(menu.title, "UTILS CTRL");
   while(1) {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
