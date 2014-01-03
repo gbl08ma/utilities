@@ -21,8 +21,6 @@
 int doSelector(Selector* selector) {
   int key;
   int initialValue = selector->value; // so we can restore later
-  char buffer1[50] = "";
-  char buffer2[50] = "";
 
   if(selector->clearVRAM) {
     Bdisp_AllClr_VRAM();
@@ -36,31 +34,26 @@ int doSelector(Selector* selector) {
   {
     if(selector->type == SELECTORTYPE_LONGDATEFORMAT) clearLine(1,4);
     clearLine(5,5);
-    strcpy(buffer1, "");
     if(selector->type != SELECTORTYPE_LONGDATEFORMAT) {
+      char buffer1[50] = "";
       if(selector->type == SELECTORTYPE_MONTH) {
-        strcat(buffer1, getMonthAsString(selector->value));
+        strcpy(buffer1, getMonthAsString(selector->value));
       } else if(selector->type == SELECTORTYPE_STARTUP_BRIGHTNESS) {
-        strcpy(buffer2, "");
-        if(selector->value == 250) strcpy(buffer2, "Do not force");
-        else itoa(selector->value, (unsigned char*)buffer2);
-        strcat(buffer1, buffer2);
+        if(selector->value == 250) strcpy(buffer1, "Do not force");
+        else itoa(selector->value, (unsigned char*)buffer1);
       } else if(selector->type == SELECTORTYPE_BACKLIGHT_DURATION) {
         if(selector->value % 2 == 0) { //even, so timeout is X min 0 sec.
-          itoa(selector->value/2, (unsigned char*)buffer2);
+          itoa(selector->value/2, (unsigned char*)buffer1);
         } else { // timeout is X min 30 sec.
-          itoa((selector->value-1)/2, (unsigned char*)buffer2);
+          itoa((selector->value-1)/2, (unsigned char*)buffer1);
         }
-        strcat(buffer1, buffer2);
         strcat(buffer1, " Minutes");
         if(selector->value % 2 != 0) strcat(buffer1, " 30 Sec.");
       } else if(selector->type == SELECTORTYPE_TIMEOUT_MINUTES) {
-        itoa(selector->value, (unsigned char*)buffer2);
-        strcat(buffer1, buffer2);
+        itoa(selector->value, (unsigned char*)buffer1);
         strcat(buffer1, " Minutes");
       } else {
-        itoa(selector->value, (unsigned char*)buffer2);
-        strcat(buffer1, buffer2);
+        itoa(selector->value, (unsigned char*)buffer1);
       }
       mPrintXY(5, 5, buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     } else {
