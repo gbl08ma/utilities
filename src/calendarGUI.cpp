@@ -2407,7 +2407,7 @@ void importCalendarEvents() {
   elem[1].text = (char*)"It assumes you have already used desktop software to convert events into an appropriate format, and that you followed that software's instructions as to where the resulting files should go in this calculator.";
   elem[2].newLine = 1;
   elem[2].lineSpacing = 5;
-  elem[2].text = (char*)"This operation may take a long time if there are many events events to import. Press F1 to start or EXIT to cancel.";
+  elem[2].text = (char*)"This operation may take a long time if there are many events to import. Press F1 to start or EXIT to cancel.";
   
   text.allowF1 = 1;
   text.numelements = 3;
