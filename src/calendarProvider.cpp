@@ -36,16 +36,16 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
      An event doesn't begin with any separators, and the last field ends with a field separator followed by an event separator.
      An event (as bytes) can take at most 1,3 KiB. The lengthy fields are obviously the title, the location and mainly the description.*/
   unsigned char smallbuf[50] = ""; 
-
+  int zero = 0;
   itoa(calEvent->category, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
-  /*itoa(calEvent->daterange, (unsigned char*)smallbuf);*/ itoa(0, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf,2); append(buf, FIELD_SEPARATOR);
+  /*itoa(calEvent->daterange, (unsigned char*)smallbuf);*/ itoa(zero, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf,2); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->startdate.day, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->startdate.month, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->startdate.year, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 5); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->enddate.day, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->enddate.month, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->enddate.year, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 5); append(buf, FIELD_SEPARATOR);
-  /*itoa(calEvent->dayofweek, (unsigned char*)smallbuf);*/ itoa(0, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
+  /*itoa(calEvent->dayofweek, (unsigned char*)smallbuf);*/ itoa(zero, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->repeat, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->timed, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
   itoa(calEvent->starttime.hour, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
