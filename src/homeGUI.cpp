@@ -191,6 +191,7 @@ void powerMenu() {
   menu.height=4;
   menu.startX=2;
   menu.startY=3;
+  menu.type=MENUTYPE_FKEYS;
   if(GetSetting(SETTING_SHOW_ADVANCED)) {
     menu.numitems=5;
   } else {
@@ -199,24 +200,21 @@ void powerMenu() {
   }
   menu.darken=GetSetting(SETTING_THEME);
   
-  while(1) {
-    int res = doMenu(&menu);
-    if(res == MENU_RETURN_SELECTION) {
-      DrawFrame(COLOR_WHITE);
-      if(menu.selection == 1) {
-        changePoweroffTimeout();
-      } else if(menu.selection == 2) {
-        changeBacklightTimeout();
-      } else if(menu.selection == 3) {
-        changeBacklightLevel();
-      } else if(menu.selection == 4) {
-        powerInformation();
-      } else if(menu.selection == 5) {
-        setCPUclock();
-      }
+  int res = doMenu(&menu);
+  if(res == MENU_RETURN_SELECTION) {
+    DrawFrame(COLOR_WHITE);
+    if(menu.selection == 1) {
+      changePoweroffTimeout();
+    } else if(menu.selection == 2) {
+      changeBacklightTimeout();
+    } else if(menu.selection == 3) {
+      changeBacklightLevel();
+    } else if(menu.selection == 4) {
+      powerInformation();
+    } else if(menu.selection == 5) {
+      setCPUclock();
     }
-    return;
-  }
+  } else if(res >= KEY_CTRL_F1) pane_keycache = res;
 }
 
 void lightMenu() {
@@ -237,24 +235,21 @@ void lightMenu() {
   menu.startX=2;
   menu.startY=3;
   menu.scrollbar=0;
+  menu.type=MENUTYPE_FKEYS;
   menu.darken=GetSetting(SETTING_THEME);
-  
-  while(1) {
-    int res = doMenu(&menu);
-    if(res == MENU_RETURN_SELECTION) {
-      DrawFrame(COLOR_WHITE);
-      if(menu.selection == 1) {
-        lantern();
-      } else if(menu.selection == 2) {
-        flashLight();
-      } else if(menu.selection == 3) {
-        morseLight();
-      } else if(menu.selection == 4) {
-        colorLight();
-      }
+  int res = doMenu(&menu);
+  if(res == MENU_RETURN_SELECTION) {
+    DrawFrame(COLOR_WHITE);
+    if(menu.selection == 1) {
+      lantern();
+    } else if(menu.selection == 2) {
+      flashLight();
+    } else if(menu.selection == 3) {
+      morseLight();
+    } else if(menu.selection == 4) {
+      colorLight();
     }
-    return;
-  }
+  } else if(res >= KEY_CTRL_F1) pane_keycache = res;
 }
 
 void timeMenu(chronometer* chrono) {
@@ -274,22 +269,20 @@ void timeMenu(chronometer* chrono) {
   menu.startX=2;
   menu.startY=3;
   menu.scrollbar=0;
+  menu.type=MENUTYPE_FKEYS;
   menu.darken=GetSetting(SETTING_THEME);
   
-  while(1) {
-    int res = doMenu(&menu);
-    if(res == MENU_RETURN_SELECTION) {
-      DrawFrame(COLOR_WHITE);
-      if(menu.selection == 1) {
-        viewCalendar();
-      } else if(menu.selection == 2) {
-        viewTasks();
-      } else if(menu.selection == 3) {
-        chronoScreen(chrono);
-      }
+  int res = doMenu(&menu);
+  if(res == MENU_RETURN_SELECTION) {
+    DrawFrame(COLOR_WHITE);
+    if(menu.selection == 1) {
+      viewCalendar();
+    } else if(menu.selection == 2) {
+      viewTasks();
+    } else if(menu.selection == 3) {
+      chronoScreen(chrono);
     }
-    return;
-  }
+  } else if(res >= KEY_CTRL_F1) pane_keycache = res;
 }
 
 void toolsMenu() {
@@ -311,28 +304,26 @@ void toolsMenu() {
   menu.height=4;
   menu.startX=2;
   menu.startY=3;
+  menu.type=MENUTYPE_FKEYS;
   menu.darken=GetSetting(SETTING_THEME);
-  
-  while(1) {
-    int res = doMenu(&menu);
-    if(res == MENU_RETURN_SELECTION) {
-      DrawFrame(COLOR_WHITE);
-      if(menu.selection == 1) {
-        fileManager();
-      } else if(menu.selection == 2) {
-        fileTextEditor();
-      } else if(menu.selection == 3) {
-        memoryCapacityViewer();
-      } else if(menu.selection == 4) {
-        addinManager();
-      } else if(menu.selection == 5) {
-        changeFKeyColor();
-      } else if(menu.selection == 6) {
-        systemInfo();
-      }
+
+  int res = doMenu(&menu);
+  if(res == MENU_RETURN_SELECTION) {
+    DrawFrame(COLOR_WHITE);
+    if(menu.selection == 1) {
+      fileManager();
+    } else if(menu.selection == 2) {
+      fileTextEditor();
+    } else if(menu.selection == 3) {
+      memoryCapacityViewer();
+    } else if(menu.selection == 4) {
+      addinManager();
+    } else if(menu.selection == 5) {
+      changeFKeyColor();
+    } else if(menu.selection == 6) {
+      systemInfo();
     }
-    return;
-  }
+  } else if(res >= KEY_CTRL_F1) pane_keycache = res;
 }
 void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
   color_t color_fg, color_bg, color_title;
