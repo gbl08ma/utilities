@@ -83,18 +83,23 @@ void settingsMenu() {
       }
       
       if(menu.selection == 3) { // set time format
-        Selector format;
-        strcpy(format.title, "Set time format");
-        strcpy(format.subtitle, "");
-        format.value = GetSetting(SETTING_TIMEFORMAT);
-        format.min = 0;
-        format.max = 1;
-        format.allowMkey = 0;
-        format.cycle = 1;
-        format.type = SELECTORTYPE_TIMEFORMAT;
-        int res = doSelector(&format);
-        if (res == SELECTOR_RETURN_EXIT) continue;
-        SetSetting(SETTING_TIMEFORMAT, format.value, 1);
+        MenuItem menuitems[5];
+        strcpy(menuitems[0].text, "24-hour: ");
+        currentTimeToString(menuitems[0].text, 0);
+        strcpy(menuitems[1].text, "12-hour: ");
+        currentTimeToString(menuitems[1].text, 1);
+        
+        Menu menu;
+        menu.items=menuitems;
+        menu.numitems=2;
+        menu.showtitle=1;
+        menu.scrollbar=0;
+        menu.width=22;
+        menu.selection=GetSetting(SETTING_TIMEFORMAT)+1;
+        strcpy(menu.title, "Set time format");
+        int res = doMenu(&menu);
+        if(res==MENU_RETURN_EXIT) continue;
+        SetSetting(SETTING_TIMEFORMAT, menu.selection-1, 1);
       }
       
       if(menu.selection == 4) { // set long date format
@@ -113,21 +118,28 @@ void settingsMenu() {
       }
       
       if(menu.selection == 5) { // set date format
-        Selector format;
-        strcpy(format.title, "Set date format");
-        strcpy(format.subtitle, "");
-        format.value = GetSetting(SETTING_DATEFORMAT);
-        format.min = 0;
-        format.max = 2;
-        format.allowMkey = 0;
-        format.cycle = 1;
-        format.type = SELECTORTYPE_DATEFORMAT;
-        int res = doSelector(&format);
-        if (res == SELECTOR_RETURN_EXIT) continue;
-        SetSetting(SETTING_DATEFORMAT, format.value, 1);
+        MenuItem menuitems[5];
+        strcpy(menuitems[0].text, "");
+        currentDateToString(menuitems[0].text, 0);
+        strcpy(menuitems[1].text, "");
+        currentDateToString(menuitems[1].text, 1);
+        strcpy(menuitems[2].text, "");
+        currentDateToString(menuitems[2].text, 2);
+        
+        Menu menu;
+        menu.items=menuitems;
+        menu.numitems=3;
+        menu.showtitle=1;
+        menu.scrollbar=0;
+        menu.width=22;
+        menu.selection=GetSetting(SETTING_DATEFORMAT)+1;
+        strcpy(menu.title, "Set date format");
+        int res = doMenu(&menu);
+        if(res==MENU_RETURN_EXIT) continue;
+        SetSetting(SETTING_DATEFORMAT, menu.selection-1, 1);
       }
       
-      if(menu.selection == 6) { // set homescreen clock type
+      if(menu.selection == 6) {
         clockSettingsMenu();
       }
       

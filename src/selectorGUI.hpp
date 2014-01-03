@@ -17,15 +17,11 @@
 
 #define SELECTORTYPE_NORMAL 0
 #define SELECTORTYPE_MONTH 1
-#define SELECTORTYPE_TIMEFORMAT 2
-#define SELECTORTYPE_LONGDATEFORMAT 3
-#define SELECTORTYPE_DATEFORMAT 4
-#define SELECTORTYPE_STARTUP_BRIGHTNESS 5
-#define SELECTORTYPE_BACKLIGHT_DURATION 6
-#define SELECTORTYPE_TIMEOUT_MINUTES 7
-#define SELECTORTYPE_INSTANT_RETURN 8 // this type of selector insantly returns even if user hasn't confirmed a value (allows for e.g. redrawing the GUI behind it). if user hasn't exited or confirmed a value, selector will return SELECTOR_RETURN_INSTANT
-#define SELECTORTYPE_TEXTCOLOR 9
-#define SELECTORTYPE_TIMERTYPE 10
+#define SELECTORTYPE_LONGDATEFORMAT 2
+#define SELECTORTYPE_STARTUP_BRIGHTNESS 3
+#define SELECTORTYPE_BACKLIGHT_DURATION 4
+#define SELECTORTYPE_TIMEOUT_MINUTES 5
+#define SELECTORTYPE_INSTANT_RETURN 6 // this type of selector insantly returns even if user hasn't confirmed a value (allows for e.g. redrawing the GUI behind it). if user hasn't exited or confirmed a value, selector will return SELECTOR_RETURN_INSTANT
 
 typedef struct
 {

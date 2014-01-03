@@ -91,28 +91,35 @@ void colorLight() {
   int gkey;
   unsigned int initlevel = GetBacklightSubLevel_RAW();
   
-  Selector sel;
-  strcpy(sel.title, "Color light");
-  strcpy(sel.subtitle, "");
-  sel.value = 0;
-  sel.min = 0;
-  sel.max = 7;
-  sel.cycle = 1;
-  sel.type = SELECTORTYPE_TEXTCOLOR;
-  int res = doSelector(&sel);
-  if (res == SELECTOR_RETURN_EXIT) return;
+  MenuItem menuitems[10];
+  strcpy(menuitems[0].text, "Blue");  
+  strcpy(menuitems[1].text, "Green");
+  strcpy(menuitems[2].text, "Red");
+  strcpy(menuitems[3].text, "Orange");
+  strcpy(menuitems[4].text, "Yellow");
+  strcpy(menuitems[5].text, "Cyan");
+  strcpy(menuitems[6].text, "Brown");
+  strcpy(menuitems[7].text, "Magenta");
+  
+  Menu menu;
+  menu.items=menuitems;
+  menu.numitems=8;
+  menu.showtitle=1;
+  strcpy(menu.title, "Color light");
+  int res = doMenu(&menu);
+  if (res == MENU_RETURN_EXIT) return;
   
   Bdisp_AllClr_VRAM();
   SetBacklightSubLevel_RAW(249);
-  switch (sel.value) {
-    case 0: Bdisp_Fill_VRAM( COLOR_BLUE, 3 ); DrawFrame( COLOR_BLUE  ); break;
-    case 1: Bdisp_Fill_VRAM( COLOR_GREEN, 3 ); DrawFrame( COLOR_GREEN  ); break;
-    case 2: Bdisp_Fill_VRAM( COLOR_RED, 3 ); DrawFrame( COLOR_RED  ); break;
-    case 3: Bdisp_Fill_VRAM( COLOR_ORANGE, 3 ); DrawFrame( COLOR_ORANGE  ); break;
-    case 4: Bdisp_Fill_VRAM( COLOR_YELLOW, 3 ); DrawFrame( COLOR_YELLOW  ); break;
-    case 5: Bdisp_Fill_VRAM( COLOR_CYAN, 3 ); DrawFrame( COLOR_CYAN  ); break;
-    case 6: Bdisp_Fill_VRAM( COLOR_BROWN, 3 ); DrawFrame( COLOR_BROWN  ); break;
-    case 7: Bdisp_Fill_VRAM( COLOR_MAGENTA, 3 ); DrawFrame( COLOR_MAGENTA  ); break;
+  switch (menu.selection) {
+    case 1: Bdisp_Fill_VRAM( COLOR_BLUE, 3 ); DrawFrame( COLOR_BLUE  ); break;
+    case 2: Bdisp_Fill_VRAM( COLOR_GREEN, 3 ); DrawFrame( COLOR_GREEN  ); break;
+    case 3: Bdisp_Fill_VRAM( COLOR_RED, 3 ); DrawFrame( COLOR_RED  ); break;
+    case 4: Bdisp_Fill_VRAM( COLOR_ORANGE, 3 ); DrawFrame( COLOR_ORANGE  ); break;
+    case 5: Bdisp_Fill_VRAM( COLOR_YELLOW, 3 ); DrawFrame( COLOR_YELLOW  ); break;
+    case 6: Bdisp_Fill_VRAM( COLOR_CYAN, 3 ); DrawFrame( COLOR_CYAN  ); break;
+    case 7: Bdisp_Fill_VRAM( COLOR_BROWN, 3 ); DrawFrame( COLOR_BROWN  ); break;
+    case 8: Bdisp_Fill_VRAM( COLOR_MAGENTA, 3 ); DrawFrame( COLOR_MAGENTA  ); break;
   }
 
   Bdisp_PutDisp_DD();

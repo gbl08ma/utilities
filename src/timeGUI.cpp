@@ -313,7 +313,7 @@ void setDateGUI(int canExit) {
     strcpy(year.title, "Set date");
     strcpy(year.subtitle, "Year");
     year.value = getCurrentYear();
-    year.min = 1970;
+    year.min = 1970; //don't allow to set below 1970 so it is Unix-time compatible and always has 4 digits
     year.max = 9999;
     year.allowMkey = 0;
     year.cycle = 0;

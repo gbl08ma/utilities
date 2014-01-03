@@ -40,14 +40,6 @@ int doSelector(Selector* selector) {
     if(selector->type != SELECTORTYPE_LONGDATEFORMAT) {
       if(selector->type == SELECTORTYPE_MONTH) {
         strcat(buffer1, getMonthAsString(selector->value));
-      } else if(selector->type == SELECTORTYPE_TIMEFORMAT) {
-        strcpy(buffer2, "");
-        currentTimeToString(buffer2, selector->value);
-        strcat(buffer1, buffer2);
-      } else if(selector->type == SELECTORTYPE_DATEFORMAT) {
-        strcpy(buffer2, "");
-        currentDateToString(buffer2, selector->value);
-        strcat(buffer1, buffer2);
       } else if(selector->type == SELECTORTYPE_STARTUP_BRIGHTNESS) {
         strcpy(buffer2, "");
         if(selector->value == 250) strcpy(buffer2, "Do not force");
@@ -66,24 +58,6 @@ int doSelector(Selector* selector) {
         itoa(selector->value, (unsigned char*)buffer2);
         strcat(buffer1, buffer2);
         strcat(buffer1, " Minutes");
-      } else if(selector->type == SELECTORTYPE_TEXTCOLOR) {
-        switch (selector->value) {
-          case 0: strcat(buffer1, "Blue"); break;
-          case 1: strcat(buffer1, "Green"); break;
-          case 2: strcat(buffer1, "Red"); break;
-          case 3: strcat(buffer1, "Orange"); break;
-          case 4: strcat(buffer1, "Yellow"); break;
-          case 5: strcat(buffer1, "Cyan"); break;
-          case 6: strcat(buffer1, "Brown"); break;
-          case 7: strcat(buffer1, "Magenta"); break;
-          default: strcat(buffer1, "Unknown"); break;
-        }
-      } else if(selector->type == SELECTORTYPE_TIMERTYPE) {
-        switch (selector->value) {
-          case 0: strcat(buffer1, "Upwards"); break;
-          case 1: strcat(buffer1, "Downwards"); break;
-          default: strcat(buffer1, "Unknown"); break;
-        }
       } else {
         itoa(selector->value, (unsigned char*)buffer2);
         strcat(buffer1, buffer2);
@@ -97,7 +71,7 @@ int doSelector(Selector* selector) {
     switch(key)
     {
       case KEY_CTRL_DOWN:
-        if (selector->value > selector->min) { //don't allow to set below 1970 so it is Unix-time compatible and always has 4 digits
+        if (selector->value > selector->min) {
           selector->value--;
         } else {
           if(selector->cycle) selector->value=selector->max;
