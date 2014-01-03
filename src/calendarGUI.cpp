@@ -2115,7 +2115,7 @@ void repairCalendarDatabase() {
 
   textElement elem[15];
   text.elements = elem;
-  if(getDBneedsRepairFlag()) elem[0].text = (char*)"Inconsistent data was detected in the calendar database. This situation is often experienced when a version of Utilities older than v1.1 has been used, or when events with invalid data are imported.";
+  if(getDBneedsRepairFlag()) elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This situation is often experienced when a version of Utilities older than v1.1 has been used, or when events with invalid data are imported.";
   else elem[0].text = (char*)"Repairing the calendar events' database will delete or fix any corrupt or inconsistent data, such as events with an end time preceding their start time.";
   elem[1].newLine = 1;
   elem[1].lineSpacing = 5;
