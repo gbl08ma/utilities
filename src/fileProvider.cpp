@@ -54,7 +54,6 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
           menuitems[*count].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
         } else {
           menuitems[*count].isfolder = 0;
-          menuitems[*count].isfolder = 0;
           menuitems[*count].icon = fileIconFromName((char*)buffer);
         }
         menuitems[*count].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
