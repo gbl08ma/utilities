@@ -589,9 +589,9 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
         strcat(tmpbuf, mainname);
         strcpy(mainname, tmpbuf);
         EventDate thisday;
-        int y, m, d;
-        stringToDate(mainname, &y, &m, &d, 2);
-        thisday.year=y; thisday.month=m; thisday.day=d;
+        int fy, fm, fd;
+        stringToDate(mainname, &fy, &fm, &fd, 2);
+        thisday.year=fy; thisday.month=fm; thisday.day=fd;
         
         // see if the date in the filename is valid, and that it is in the year we are searching in
         if(isDateValid(thisday.year,thisday.month,thisday.day) && thisday.year==(unsigned int)y && (m==0?1:thisday.month==(unsigned int)m)) {
