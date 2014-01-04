@@ -2404,7 +2404,7 @@ void importCalendarEvents() {
   
   elem[0].text = (char*)"This tool is responsible for the last step in importing events into the calendar database.";
   elem[1].newLine = 1;
-  elem[1].text = (char*)"It assumes you have already used desktop software to convert events into an appropriate format, and that you followed that software's instructions as to where the resulting files should go in this calculator.";
+  elem[1].text = (char*)"It assumes you have already used desktop software (for example, the web app at http://pce.tny.im) to convert events into an appropriate format, and that you followed that software's instructions as to where the resulting files should go in this calculator.";
   elem[2].newLine = 1;
   elem[2].lineSpacing = 5;
   elem[2].text = (char*)"This operation may take a long time if there are many events to import. Press F1 to start or EXIT to cancel.";
