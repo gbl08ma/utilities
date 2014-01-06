@@ -124,7 +124,6 @@ int doTextInput(textInput* input) {
         {
           input->key = input->key + 32; //so we switch to lowercase characters... Casio is smart
         }
-        //1st and 5th parameter are, respectively, whether selection is enabled and its starting point. 
         input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, input->key);
       } else if (input->type == INPUTTYPE_DATE || input->type == INPUTTYPE_TIME) {
         if (input->key >= KEY_CHAR_0 && input->key <= KEY_CHAR_9) {
