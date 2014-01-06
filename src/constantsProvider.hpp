@@ -23,7 +23,7 @@
 #endif
 
 #ifndef KNOWN_PAST_TIMESTAMP
-#define KNOWN_PAST_TIMESTAMP 1383782400*1000 // a timestamp that's known to be in the past for all timezones, so we can detect a unadjusted RTC
+#define KNOWN_PAST_TIMESTAMP 1388966400*1000 // a timestamp that's known to be in the past for all timezones, so we can detect a unadjusted RTC
 #endif
 
 #ifndef BUILD_EXPIRE_TIMESTAMP
