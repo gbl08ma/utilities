@@ -374,10 +374,7 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
 
 int fileInformation(char* filename, int allowEdit) {
   // returns 0 if user exits.
-  // returns 1 if user wants to edit the file
-  Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
-  
+  // returns 1 if user wants to edit the file  
   textArea text;
   text.type=TEXTAREATYPE_INSTANT_RETURN;
   text.scrollbar=0;
