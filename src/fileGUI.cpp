@@ -326,8 +326,6 @@ int makeFolderGUI(char* browserbasepath) {
       strcat(newfilename, newname);
       unsigned short newfilenameshort[0x10A];
       Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
-      mPrintXY(1,8,(char*)"Creating folder...       ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
       Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FOLDER, 0); //create a folder
       return 1;
     }
@@ -363,8 +361,6 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
       unsigned short oldfilenameshort[0x10A];
       Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)files[menu->selection-1].filename, 0x10A);
       Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
-      mPrintXY(1,8,(char*)"Renaming...           ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      Bdisp_PutDisp_DD();
       Bfile_RenameEntry(oldfilenameshort , newfilenameshort);
       return 1;
     }
