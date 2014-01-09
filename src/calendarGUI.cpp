@@ -869,7 +869,6 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
 void viewEvent(CalendarEvent* event, int istask) {
   DefineStatusMessage((char*)"", 1, 0, 0); // clear "press OPTN for more options" message
   char catbuffer[10]="";
-  char buffer[15]="";
   textArea text;
   strcpy(text.title, (char*)event->title);
   
@@ -886,6 +885,7 @@ void viewEvent(CalendarEvent* event, int istask) {
   text.numelements++;
   
   if(!istask) {
+    char buffer[15]="";
     elem[text.numelements].text = (char*)"Starts on";
     elem[text.numelements].newLine = 1;
     elem[text.numelements].lineSpacing = 8;

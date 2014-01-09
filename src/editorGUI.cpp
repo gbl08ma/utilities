@@ -37,10 +37,9 @@ void fileTextEditor(char* filename) {
     unsigned short pFile[MAX_FILENAME_SIZE];
     Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
     int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-    unsigned int filesize = 0;
     if(hFile >= 0) // Check if it opened
     { //opened
-      filesize = Bfile_GetFileSize_OS(hFile);
+      unsigned int filesize = Bfile_GetFileSize_OS(hFile);
       if(!filesize || filesize > TEXT_BUFFER_SIZE) {
         openerror = 1;
       } else {
