@@ -74,7 +74,7 @@ The calculator lock function will guide you through the process of setting a pas
 
 The CPU clock adjustment tool only becomes available when the "Show advanced tools" setting is enabled.
 
-The Add-In manager and the file copying function (the latter is not shown by default) are unstable because of technical limitations, and may cause system errors. If you see a System Error, you should try pressing Menu and then 1 to try to dismiss it, or you can press EXIT to reboot the calculator. 99% of the times no data is lost or serious damage is done in the event of System Errors.
+The Add-In manager is unstable because of technical limitations, and may cause system errors. If you see a System Error, you should try pressing Menu and then 1 to try to dismiss it, or you can press EXIT to reboot the calculator. 99% of the times no data is lost or serious damage is done in the event of System Errors.
 
 ## Checking for updates
 Utilities, like most software, receives updates from time to time. Starting with the v1.2 release, Utilities includes a little function that, assuming the calculator's clock is adjusted, will remind you to check for updates after a certain date in the future. However, you do not need to wait for that message to appear. You should check for updates to Utilities periodically, to ensure you have the greatest feature pack and the most stable version. To check for new versions, you should visit the following page:
