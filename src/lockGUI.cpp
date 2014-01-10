@@ -32,27 +32,24 @@ int passwordInput(int x, int y, unsigned char* buffer) {
   unsigned char dispbuffer[256] = ""; //will hold asterisks instead of real characters...
   //clean buffer and display buffer
   strcpy((char*)buffer, "");
-  strcpy((char*)dispbuffer, "");
   while(1)
   {   
     strcpy((char*)dispbuffer, "");
     int numchars = strlen((char*)buffer);
-    if(GetSetting(SETTING_PASSWORD_PRIVACY)) {
-      if(numchars > 0) {
-        for (int k = 0; k < numchars-1; k++) {
-          strcat((char*)dispbuffer, "*");
-        }
+
+    if(numchars > 0) {
+      for (int k = 0; k < numchars-1; k++) {
+        strcat((char*)dispbuffer, "*");
+      }
+      if(GetSetting(SETTING_PASSWORD_PRIVACY)) {
         //show last character for easier typing
         strcat((char*)dispbuffer, " ");
         dispbuffer[(strlen((char*)dispbuffer)-1)] = buffer[(strlen((char*)buffer)-1)];
-      }
-    } else {
-      if(numchars > 0) {
-        for (int k = 0; k < numchars; k++) {
-          strcat((char*)dispbuffer, "*");
-        }
+      } else {
+        strcat((char*)dispbuffer, "*");
       }
     }
+
     int iresult;
     GetFKeyPtr(0x0307, &iresult); // A<>a
     FKey_Display(4, (int*)iresult);
@@ -210,12 +207,10 @@ int lockCalc() {
     doTextArea(&text);
     return 1;
   }
-  int textX, textY;
-  textY = LCD_HEIGHT_PX - 17 - 24;
   if(GetSetting(SETTING_LOCK_AUTOOFF)) PowerOff(1);
   SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return
   while(1) {
-    textX = 212;
+    int textX = 212, textY = LCD_HEIGHT_PX - 17 - 24;
     int key;
     Bdisp_AllClr_VRAM();
     Bdisp_EnableColor(1);

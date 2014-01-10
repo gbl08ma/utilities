@@ -1387,10 +1387,10 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
 }
 
 void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* busydays, int* bufmonth, int* bufyear) {
-    Bdisp_AllClr_VRAM();
-    DisplayStatusArea();
-    int textX = 0;
-    int textY = 0;
+  Bdisp_AllClr_VRAM();
+  DisplayStatusArea();
+  int textX = 0;
+  int textY = 0;
 #define TOP 25
 #define BOTTOM (LCD_HEIGHT_PX - TOP-2)
 #define LEFT 25
@@ -1398,116 +1398,115 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
 #define THICKNESS 20
 #define TOPOFFSET 22
 #define WIDTH 47
-    int categoryBackColors[10] = {0xffd8, 0xffd8, 0x7bff, 0x7fef, 0x7fff, 0xfbef, 0xfbff, 0xffef};
-    drawLine(LEFT,TOP,RIGHT-1,TOP,COLOR_BLACK);
-    drawLine(LEFT,TOP,LEFT,BOTTOM-1,COLOR_BLACK);
-    drawLine(LEFT,BOTTOM-1,RIGHT-1,BOTTOM-1,COLOR_BLACK);
-    drawLine(RIGHT-1,BOTTOM-1,RIGHT-1,TOP,COLOR_BLACK);
-    drawRectangle(LEFT+2,TOP+2,RIGHT-2-2-LEFT,THICKNESS,COLOR_BLACK);
-    textX=LEFT+5; textY= TOP+2-TOPOFFSET;
-    PrintMini(&textX, &textY, (unsigned char*)getMonthAsString(month), 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
-    int x,y = 0; int k = 1;
-    drawRectangle(LEFT+2,TOP+2+THICKNESS,RIGHT-2-2-LEFT,THICKNESS,COLOR_LIGHTGRAY);
-    drawRectangle(RIGHT-2-WIDTH,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
-    drawRectangle(LEFT+2,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
-    drawLine(LEFT+2,TOP+2+THICKNESS,RIGHT-3,TOP+2+THICKNESS,COLOR_BLACK);
-    for (x = LEFT + 2+WIDTH; x < RIGHT - WIDTH;x+=WIDTH)
-    {
-        drawLine(x,TOP+2+THICKNESS,x,BOTTOM-3, COLOR_BLACK);
-    }
-    for (y = TOP+2+2*THICKNESS; y < BOTTOM - THICKNESS; y+=THICKNESS)
-    {
-        drawLine(LEFT+2,y,RIGHT-3,y,COLOR_BLACK);
-    }
-    for (x = LEFT+2; x < RIGHT - WIDTH; x+= WIDTH)
-    {
-      textX = x+2;
-      textY = TOP+2+THICKNESS-TOPOFFSET;
-      PrintMini(&textX, &textY, (unsigned char*)getDOWAsShortString(k++), 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_LIGHTGRAY, 1, 0);
-    }
+  int categoryBackColors[10] = {0xffd8, 0xffd8, 0x7bff, 0x7fef, 0x7fff, 0xfbef, 0xfbff, 0xffef};
+  drawLine(LEFT,TOP,RIGHT-1,TOP,COLOR_BLACK);
+  drawLine(LEFT,TOP,LEFT,BOTTOM-1,COLOR_BLACK);
+  drawLine(LEFT,BOTTOM-1,RIGHT-1,BOTTOM-1,COLOR_BLACK);
+  drawLine(RIGHT-1,BOTTOM-1,RIGHT-1,TOP,COLOR_BLACK);
+  drawRectangle(LEFT+2,TOP+2,RIGHT-2-2-LEFT,THICKNESS,COLOR_BLACK);
+  textX=LEFT+5; textY= TOP+2-TOPOFFSET;
+  PrintMini(&textX, &textY, (unsigned char*)getMonthAsString(month), 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
+  int x,y = 0; int k = 1;
+  drawRectangle(LEFT+2,TOP+2+THICKNESS,RIGHT-2-2-LEFT,THICKNESS,COLOR_LIGHTGRAY);
+  drawRectangle(RIGHT-2-WIDTH,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
+  drawRectangle(LEFT+2,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
+  drawLine(LEFT+2,TOP+2+THICKNESS,RIGHT-3,TOP+2+THICKNESS,COLOR_BLACK);
+  for (x = LEFT + 2+WIDTH; x < RIGHT - WIDTH;x+=WIDTH)
+  {
+      drawLine(x,TOP+2+THICKNESS,x,BOTTOM-3, COLOR_BLACK);
+  }
+  for (y = TOP+2+2*THICKNESS; y < BOTTOM - THICKNESS; y+=THICKNESS)
+  {
+      drawLine(LEFT+2,y,RIGHT-3,y,COLOR_BLACK);
+  }
+  for (x = LEFT+2; x < RIGHT - WIDTH; x+= WIDTH)
+  {
+    textX = x+2;
+    textY = TOP+2+THICKNESS-TOPOFFSET;
+    PrintMini(&textX, &textY, (unsigned char*)getDOWAsShortString(k++), 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_LIGHTGRAY, 1, 0);
+  }
 
-    int startingday = dow(year,month,1),day = 1;
-    int prevstart = getMonthDays((month == 1 ? 12 : month - 1)) - (startingday == 0 ? 7 : startingday) + ((month == 3 && isLeap(year)) ? 2 : 1);
-    char buffer[10];
-    if (startingday != 0) { //solve "overlapping days on months started on a sunday" bug
-      for (x = 0; x < (startingday == 0 ? 7 : startingday); x++)
-      {
-          itoa(prevstart++,(unsigned char*)buffer);
-          PrintMiniFix(LEFT+2+x*WIDTH+2,TOP+2+2*THICKNESS-TOPOFFSET,buffer,0,(x == 0 ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY),(x == 0 ? COLOR_LIGHTBLUE : COLOR_WHITE));
+  int startingday = dow(year,month,1),day = 1;
+  int prevstart = getMonthDays((month == 1 ? 12 : month - 1)) - (startingday == 0 ? 7 : startingday) + ((month == 3 && isLeap(year)) ? 2 : 1);
+  char buffer[10];
+  if (startingday != 0) { //solve "overlapping days on months started on a sunday" bug
+    for (x = 0; x < (startingday == 0 ? 7 : startingday); x++)
+    {
+        itoa(prevstart++,(unsigned char*)buffer);
+        PrintMiniFix(LEFT+2+x*WIDTH+2,TOP+2+2*THICKNESS-TOPOFFSET,buffer,0,(x == 0 ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY),(x == 0 ? COLOR_LIGHTBLUE : COLOR_WHITE));
+    }
+  }
+  x = startingday;
+  y = 2;
+  while (day <= getMonthDays(month) + (month == 2 && isLeap(year)) ? 1 : 0)
+  {
+      itoa(day,(unsigned char*)buffer);
+      if (day == d) {
+        drawRectangle(LEFT+2+WIDTH*x+1,TOP+1+2+y*THICKNESS,WIDTH-1,THICKNESS-1,COLOR_RED);
+        if(x == 0) drawRectangle(LEFT+2+WIDTH*x,TOP+1+2+y*THICKNESS,WIDTH,THICKNESS-1,COLOR_RED); //make sure the little pixels row on sundays is filled
       }
-    }
-    x = startingday;
-    y = 2;
-    while (day <= getMonthDays(month) + (month == 2 && isLeap(year)) ? 1 : 0)
-    {
-        itoa(day,(unsigned char*)buffer);
-        if (day == d) {
-          drawRectangle(LEFT+2+WIDTH*x+1,TOP+1+2+y*THICKNESS,WIDTH-1,THICKNESS-1,COLOR_RED);
-          if(x == 0) drawRectangle(LEFT+2+WIDTH*x,TOP+1+2+y*THICKNESS,WIDTH,THICKNESS-1,COLOR_RED); //make sure the little pixels row on sundays is filled
+      PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,(day == d ? COLOR_WHITE : COLOR_BLACK),(day == d ? COLOR_RED : (x == 0 || x == 6) ? COLOR_LIGHTBLUE : COLOR_WHITE));
+      //events indicator:            
+      if (show_event_count) {
+        if (*bufmonth!=month || *bufyear!=year) { //events in buffer are not for this month, refresh.
+          GetEventCountsForMonth(year, month, eventcount, busydays);
+          *bufmonth = month; //update which month is now in buffer
+          *bufyear = year; //update which year is now in buffer
         }
-        PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,(day == d ? COLOR_WHITE : COLOR_BLACK),(day == d ? COLOR_RED : (x == 0 || x == 6) ? COLOR_LIGHTBLUE : COLOR_WHITE));
-        //events indicator:            
-        if (show_event_count) {
-          if (*bufmonth!=month || *bufyear!=year) { //events in buffer are not for this month, refresh.
-            GetEventCountsForMonth(year, month, eventcount, busydays);
-            *bufmonth = month; //update which month is now in buffer
-            *bufyear = year; //update which year is now in buffer
+        if(eventcount[day] > 0) {
+          int textX = LEFT+2+WIDTH*x+2+12*2+2; //12+2 to have space to write the day and some padding
+          int textY = TOP+2+y*THICKNESS-TOPOFFSET+2; //+2 to have some padding
+          unsigned char eventstr[10] = "";
+          if (eventcount[day] < 100) {
+            itoa(eventcount[day], (unsigned char*)eventstr); 
+          } else {
+            strcpy((char*)eventstr, (char*)"++");
           }
-          if(eventcount[day] > 0) {
-            int textX = LEFT+2+WIDTH*x+2+12*2+2; //12+2 to have space to write the day and some padding
-            int textY = TOP+2+y*THICKNESS-TOPOFFSET+2; //+2 to have some padding
-            unsigned char eventstr[10] = "";
-            if (eventcount[day] < 100) {
-              itoa(eventcount[day], (unsigned char*)eventstr); 
-            } else {
-              strcpy((char*)eventstr, (char*)"++");
-            }
-            PrintMiniMini( &textX, &textY, (unsigned char*)eventstr, 0, TEXT_COLOR_BLACK, 0 );   
-            if(day == d) {
-              // color replacements for when background is red
-              VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_WHITE, COLOR_RED);
-              VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_BLACK, COLOR_WHITE);
-            }
-          }
-          if(busydays[day] > 0 && day != d) {
-            if(x == 0 || x == 6) {
-              VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_WHITE, categoryBackColors[busydays[day]]);
-              VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_LIGHTBLUE, categoryBackColors[busydays[day]]);
-            } else {
-              VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_WHITE, categoryBackColors[busydays[day]]);
-            }
+          PrintMiniMini( &textX, &textY, (unsigned char*)eventstr, 0, TEXT_COLOR_BLACK, 0 );   
+          if(day == d) {
+            // color replacements for when background is red
+            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_WHITE, COLOR_RED);
+            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_BLACK, COLOR_WHITE);
           }
         }
-        //end of events indicator
-        
-        x++;
-        day++;
-        if (x == 7)
-        {
-            x = 0;
-            y++;
+        if(busydays[day] > 0 && day != d) {
+          if(x == 0 || x == 6) {
+            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_WHITE, categoryBackColors[busydays[day]]);
+            VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_LIGHTBLUE, categoryBackColors[busydays[day]]);
+          } else {
+            VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_WHITE, categoryBackColors[busydays[day]]);
+          }
         }
-    }
-    day = 1;
-    while (y != 8)
-    {
-        itoa(day++,(unsigned char*)buffer);
-        PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,((x == 0) | (x == 6)) ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY,(x == 0 || x == 6) ? COLOR_LIGHTBLUE : COLOR_WHITE);
-        x++;
-        if (x == 7)
-        {
-            x = 0;
-            y++;
-        }
-    }
-    itoa(year,(unsigned char*)buffer);
-    textX = 0; //RIGHT-5-50;
-    textY = TOP+2-TOPOFFSET;
-    PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 0, 0);
-    textX = RIGHT-4-textX;
-    PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
+      }
+      //end of events indicator
+      
+      x++;
+      day++;
+      if (x == 7)
+      {
+          x = 0;
+          y++;
+      }
+  }
+  day = 1;
+  while (y != 8)
+  {
+      itoa(day++,(unsigned char*)buffer);
+      PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,((x == 0) | (x == 6)) ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY,(x == 0 || x == 6) ? COLOR_LIGHTBLUE : COLOR_WHITE);
+      x++;
+      if (x == 7)
+      {
+          x = 0;
+          y++;
+      }
+  }
+  itoa(year,(unsigned char*)buffer);
+  textX = 0; //RIGHT-5-50;
+  textY = TOP+2-TOPOFFSET;
+  PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 0, 0);
+  textX = RIGHT-4-textX;
+  PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
 }
-
 
 int deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
@@ -1928,6 +1927,7 @@ void searchEventsGUI(int y, int m, int d) {
     }
   }
 }
+
 void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int height, int showHourMarks, int isWeek, int maxx) {
   if(!isWeek) drawRectangle(startx, starty, width, height, COLOR_LIGHTGRAY);
   if(showHourMarks) {
@@ -2115,12 +2115,15 @@ void repairCalendarDatabase() {
 
   textElement elem[15];
   text.elements = elem;
-  if(getDBneedsRepairFlag()) elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This situation is often experienced when a version of Utilities older than v1.1 has been used, or when events with invalid data are imported.";
-  else elem[0].text = (char*)"Repairing the calendar events' database will delete or fix any corrupt or inconsistent data, such as events with an end time preceding their start time.";
+  if(getDBneedsRepairFlag()) {
+    elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This situation is often experienced when a version of Utilities older than v1.1 has been used, or when events with invalid data are imported.";
+    elem[1].text = (char*)"Repairing the database now is very important to avoid further problems. You should not see this message again once you repair the database.";
+  } else {
+    elem[0].text = (char*)"Repairing the calendar events' database will delete or fix any corrupt or inconsistent data, such as events with an end time preceding their start time.";
+    elem[1].text = (char*)"Doing this is highly recommended if you used a version of Utilities older than v1.1, or if you experience problems viewing and manipulating calendar events.";
+  } 
   elem[1].newLine = 1;
   elem[1].lineSpacing = 5;
-  if(getDBneedsRepairFlag()) elem[1].text = (char*)"Repairing the database now is very important to avoid further problems. You should not see this message again once you repair the database.";
-  else elem[1].text = (char*)"Doing this is highly recommended if you used a version of Utilities older than v1.1, or if you experience problems viewing and manipulating calendar events.";
   elem[2].newLine = 1;
   elem[2].lineSpacing = 5;
   elem[2].text = (char*)"Repairing the database should not result in data loss, except for any corrupt entries that despite their state, are still partially readable (these will be deleted). You may want to create backups of such entries using pen and paper - never use Utilities to perform operations on corrupt events or others in their start date!";
