@@ -263,8 +263,8 @@ void lockApp() {
       } else if (GetSetting(SETTING_UNLOCK_RUNMAT) == 2) {
         mMsgBoxPush(4);
         mPrintXY(3, 2, (char*)"Open Run-Mat?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 4, (char*)"   Yes:[F1]/[1]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 5, (char*)"   No :Other key", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(6, 4, (char*)"Yes:[F1]/[1]", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(6, 5, (char*)"No :Other key", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int key,inscreen=1;
         while(inscreen) {
           mGetKey(&key);
