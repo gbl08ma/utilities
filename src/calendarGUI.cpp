@@ -1385,7 +1385,16 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
     }
   }
 }
-
+inline static void PrintMiniFix( int x, int y, const char*Msg, const int flags, const short color, const short bcolor ) {
+  int i=0;
+  while (Msg[i]) {
+    int textX = x;
+    unsigned char sb[2] = {(unsigned char)Msg[i], '\0'};
+    PrintMini(&textX, &y, (unsigned char*)sb, 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+    x += 12;
+    i++;
+  }
+}
 void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* busydays, int* bufmonth, int* bufyear) {
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();

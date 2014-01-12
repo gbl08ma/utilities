@@ -16,19 +16,6 @@
 #include "settingsProvider.hpp"
 #include "debugGUI.hpp"
 
-const short empty[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short color, const short bcolor )
-{
-  int i=0;
-  while (Msg[i]) {
-    int textX = x;
-    unsigned char sb[2] = {(unsigned char)Msg[i], '\0'};
-    PrintMini(&textX, &y, (unsigned char*)sb, 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
-    x += 12;
-    i++;
-  }
-  return x;
-}
 //draws a point of color color at (x0, y0) 
 void plot(int x0, int y0, unsigned short color) {
   unsigned short* VRAM = (unsigned short*)0xA8000000; 
