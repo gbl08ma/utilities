@@ -260,6 +260,7 @@ void CopySpriteNbit(const unsigned char* data, int x, int y, int width, int heig
 //the tny.im logo is great enough not to require any sprites! yay!
 //w:138
 //h:42
+/*
 void drawtnyimLogo( int x, int y) {
   //draw t
   drawRectangle(x, y+6, 6, 24, COLOR_BLACK);
@@ -285,6 +286,39 @@ void drawtnyimLogo( int x, int y) {
   drawRectangle(x+114, y+18, 6, 18, TNYIM_ORANGE);
   drawRectangle(x+120, y+12, 12, 6, TNYIM_ORANGE);
   drawRectangle(x+132, y+18, 6, 18, TNYIM_ORANGE);
+*/
+static const unsigned char logoB[]={
+//draw t
+0, 6, 6, 24,
+6, 12, 6, 6,
+6, 30, 6, 6,
+//draw n
+18, 12, 6, 24,
+24, 12, 12, 6,
+36, 18, 6, 18,
+//draw y
+48, 12, 6, 18,
+60, 12, 6, 18,
+54, 30, 6, 6,
+48, 36, 6, 6,
+//draw dot
+72, 30, 6, 6 };
+static const unsigned char logoO[]={
+//draw i (orange)
+84, 0, 6, 6,
+84, 12, 6, 24,
+//draw m (orange)
+96, 12, 6, 24,
+102, 12, 12, 6,
+114, 18, 6, 18,
+120, 12, 12, 6,
+132, 18, 6, 18 };
+void drawtnyimLogo(int x, int y) {
+  int i;
+  for(i=0;i<11*4;i+=4)
+    drawRectangle(x+logoB[i], y+logoB[i+1], logoB[i+2], logoB[i+3], COLOR_BLACK);
+  for(i=0;i<7*4;i+=4)
+    drawRectangle(x+logoO[i], y+logoO[i+1], logoO[i+2], logoO[i+3], TNYIM_ORANGE);
 }
 
 int textColorToFullColor(int textcolor) {
