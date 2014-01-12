@@ -74,9 +74,9 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
             ) {
               if (menu->items[curitem].isfolder == 1) {
                 // assumes first icon in icontable is the folder icon
-                CopySpriteMasked((unsigned char*)icontable[0].data, (menu->startX)*18, (curitem+itemsStartY-menu->scroll)*24, 0x12, 0x18, 0xf81f  );
+                CopySpriteMasked(icontable[0].data, (menu->startX)*18, (curitem+itemsStartY-menu->scroll)*24, 0x12, 0x18, 0xf81f  );
               } else {
-                if(menu->items[curitem].icon >= 0) CopySpriteMasked((unsigned char*)icontable[menu->items[curitem].icon].data, (menu->startX)*18, (curitem+itemsStartY-menu->scroll)*24, 0x12, 0x18, 0xf81f  );
+                if(menu->items[curitem].icon >= 0) CopySpriteMasked(icontable[menu->items[curitem].icon].data, (menu->startX)*18, (curitem+itemsStartY-menu->scroll)*24, 0x12, 0x18, 0xf81f  );
               }
             }
             if (menu->items[curitem].isselected) {

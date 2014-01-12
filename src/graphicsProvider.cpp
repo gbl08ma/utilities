@@ -222,18 +222,21 @@ void drawFkeyPopup(int Fkey, int darktheme, int showclosemessage) {
      VRAM += LCD_WIDTH_PX-width; 
    } 
 } */
-void CopySpriteMasked(const unsigned char* data, int x, int y, int width, int height, int maskcolor) { 
-   char* VRAM = (char*)0xA8000000; 
-   VRAM += 2*(LCD_WIDTH_PX*y + x); 
-   for(int j=y; j<y+height; j++) { 
-      for(int i=x; i<x+width;  i++) { 
-         if ((((((int)(*data))&0x000000FF)<<8) | ((((int)(*(data+1))))&0x000000FF)) != maskcolor) { 
-            *(VRAM++) = *(data++); 
-            *(VRAM++) = *(data++); 
-         } else { VRAM += 2; data += 2; } 
-      } 
-      VRAM += 2*(LCD_WIDTH_PX-width); 
-   } 
+void CopySpriteMasked(unsigned short* data, int x, int y, int width, int height, unsigned short maskcolor){
+        unsigned short* VRAM = (unsigned short*)0xA8000000; 
+        VRAM += (LCD_WIDTH_PX*y + x); 
+        while(height--){
+                int i=width;
+                while(i--){
+                        if(*data!=maskcolor){
+                                *(VRAM++) = *(data++);
+                        }else{
+                                ++VRAM;
+                                ++data;
+                        }
+                }
+                VRAM += (LCD_WIDTH_PX-width);
+        }
 }
 void CopySpriteNbit(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, unsigned int bitwidth) {
    color_t* VRAM = (color_t*)0xA8000000;
@@ -260,33 +263,6 @@ void CopySpriteNbit(const unsigned char* data, int x, int y, int width, int heig
 //the tny.im logo is great enough not to require any sprites! yay!
 //w:138
 //h:42
-/*
-void drawtnyimLogo( int x, int y) {
-  //draw t
-  drawRectangle(x, y+6, 6, 24, COLOR_BLACK);
-  drawRectangle(x+6, y+12, 6, 6, COLOR_BLACK);
-  drawRectangle(x+6, y+30, 6, 6, COLOR_BLACK);
-  //draw n
-  drawRectangle(x+18, y+12, 6, 24, COLOR_BLACK);
-  drawRectangle(x+24, y+12, 12, 6, COLOR_BLACK);
-  drawRectangle(x+36, y+18, 6, 18, COLOR_BLACK);
-  //draw y
-  drawRectangle(x+48, y+12, 6, 18, COLOR_BLACK);
-  drawRectangle(x+60, y+12, 6, 18, COLOR_BLACK);
-  drawRectangle(x+54, y+30, 6, 6, COLOR_BLACK);
-  drawRectangle(x+48, y+36, 6, 6, COLOR_BLACK);
-  //draw dot
-  drawRectangle(x+72, y+30, 6, 6, COLOR_BLACK);
-  //draw i (orange)
-  drawRectangle(x+84, y, 6, 6, TNYIM_ORANGE);
-  drawRectangle(x+84, y+12, 6, 24, TNYIM_ORANGE);
-  //draw m (orange)
-  drawRectangle(x+96, y+12, 6, 24, TNYIM_ORANGE);
-  drawRectangle(x+102, y+12, 12, 6, TNYIM_ORANGE);
-  drawRectangle(x+114, y+18, 6, 18, TNYIM_ORANGE);
-  drawRectangle(x+120, y+12, 12, 6, TNYIM_ORANGE);
-  drawRectangle(x+132, y+18, 6, 18, TNYIM_ORANGE);
-*/
 static const unsigned char logoB[]={
 //draw t
 0, 6, 6, 24,
