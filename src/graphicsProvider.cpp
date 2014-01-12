@@ -19,25 +19,11 @@
 const short empty[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 int PrintMiniFix( int x, int y, const char*Msg, const int flags, const short color, const short bcolor )
 {
-  int i = 0, dx;
-  unsigned short width;
-  void*p;
-
-  while ( Msg[ i ] )
-  {
-    p = GetMiniGlyphPtr( Msg[ i ], &width );
-    dx = ( 12 - width ) / 2;
-    if ( dx > 0 )
-    {
-      PrintMiniGlyph( x, y, (void*)empty, flags, dx, 0, 0, 0, 0, color, bcolor, 0 );
-    }
-   
-    else dx = 0;
-    PrintMiniGlyph( x + dx, y, p, flags, width, 0, 0, 0, 0, color, bcolor, 0 );
-    if ( width + dx < 12 )
-    {
-      PrintMiniGlyph( x + width + dx, y, (void*)empty, flags, 12 - width - dx, 0, 0, 0, 0, color, bcolor, 0 );
-    }
+  int i=0;
+  while (Msg[i]) {
+    int textX = x;
+    unsigned char sb[2] = {(unsigned char)Msg[i], '\0'};
+    PrintMini(&textX, &y, (unsigned char*)sb, 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
     x += 12;
     i++;
   }
@@ -211,32 +197,21 @@ void drawFkeyPopup(int Fkey, int darktheme, int showclosemessage) {
     PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", (darktheme == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
   }
 }
-/*void CopySprite(const void* datar, int x, int y, int width, int height) { 
-   color_t*data = (color_t*) datar; 
-   color_t* VRAM = (color_t*)0xA8000000; 
-   VRAM += LCD_WIDTH_PX*y + x; 
-   for(int j=y; j<y+height; j++) { 
-      for(int i=x; i<x+width; i++) { 
-         *(VRAM++) = *(data++); 
-     } 
-     VRAM += LCD_WIDTH_PX-width; 
-   } 
-} */
-void CopySpriteMasked(unsigned short* data, int x, int y, int width, int height, unsigned short maskcolor){
-        unsigned short* VRAM = (unsigned short*)0xA8000000; 
-        VRAM += (LCD_WIDTH_PX*y + x); 
-        while(height--){
-                int i=width;
-                while(i--){
-                        if(*data!=maskcolor){
-                                *(VRAM++) = *(data++);
-                        }else{
-                                ++VRAM;
-                                ++data;
-                        }
-                }
-                VRAM += (LCD_WIDTH_PX-width);
-        }
+void CopySpriteMasked(unsigned short* data, int x, int y, int width, int height, unsigned short maskcolor) {
+  unsigned short* VRAM = (unsigned short*)0xA8000000; 
+  VRAM += (LCD_WIDTH_PX*y + x); 
+  while(height--) {
+    int i=width;
+    while(i--){
+      if(*data!=maskcolor) {
+        *(VRAM++) = *(data++);
+      } else {
+        ++VRAM;
+        ++data;
+      }
+    }
+    VRAM += (LCD_WIDTH_PX-width);
+  }
 }
 void CopySpriteNbit(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, unsigned int bitwidth) {
    color_t* VRAM = (color_t*)0xA8000000;
