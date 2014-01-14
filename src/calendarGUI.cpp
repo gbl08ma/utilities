@@ -2060,20 +2060,11 @@ void calendarTools(int y, int m, int d) {
         int y2=sy, m2=sm, d2=sd;
         long int daysdiff = DateToDays(y2, m2, d2) - DateToDays(y1, m1, d1);
         long int businessdiff = 0;
-        if(daysdiff > 0) {
-          for(long int i = 0; i < daysdiff; i++) {
-            long int ny, nm, nd;
-            DaysToDate(DateToDays(y1, m1, d1)+i, &ny, &nm, &nd);
-            int dw = dow(ny, nm, nd);
-            if(dw != 0 && dw != 6) businessdiff++;
-          }
-        } else if(daysdiff < 0) {
-          for(long int i = 0; i > daysdiff; i--) {
-            long int ny, nm, nd;
-            DaysToDate(DateToDays(y1, m1, d1)+i, &ny, &nm, &nd);
-            int dw = dow(ny, nm, nd);
-            if(dw != 0 && dw != 6) businessdiff--;
-          }
+        for(long int i = 0; (daysdiff < 0 ? i > daysdiff : i < daysdiff); (daysdiff < 0 ? i-- : i++)) {
+          long int ny, nm, nd;
+          DaysToDate(DateToDays(y1, m1, d1)+i, &ny, &nm, &nd);
+          int dw = dow(ny, nm, nd);
+          if(dw != 0 && dw != 6) (daysdiff < 0 ? businessdiff-- : businessdiff++ );
         }
         textArea text;
         strcpy(text.title, (char*)"Date difference");
