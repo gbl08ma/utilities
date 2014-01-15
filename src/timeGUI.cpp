@@ -168,7 +168,7 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
   return;
 }
 
-double sine(double x)
+inline static double sine(double x)
 {
     // useful to pre-calculate
     double x2 = x*x;
@@ -205,10 +205,10 @@ double sine(double x)
     
     return result;
 }
-double cosine(double x) {
+inline static double cosine(double x) {
   return sine(M_PI/2-x);
 }
-void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg) {
+inline static void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg) {
   // may be extended in the future
   drawFilledCircle(cx, cy, radius, colorfg);
   drawFilledCircle(cx, cy, radius-2, colorbg);
@@ -226,7 +226,7 @@ void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg) {
 
   } while(i!=12); //LIMIT NUMERIC POINTS UPTO =12= Numbers.
 }
-void drawAnalogClockSecondNeedle(int s, int cx, int cy, double radius, int colorfg) {
+inline static void drawAnalogClockSecondNeedle(int s, int cx, int cy, double radius, int colorfg) {
   double angle=-90.0;
   double sx,sy;
   double length = radius - radius/8.0;
@@ -235,7 +235,7 @@ void drawAnalogClockSecondNeedle(int s, int cx, int cy, double radius, int color
   drawLine(cx,cy,sx,sy,colorfg);
 }
 
-void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, int colorfg) {
+inline static void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, int colorfg) {
   double angle=-90;
   double sx,sy;
   double length = radius - radius/5.0;
@@ -244,7 +244,7 @@ void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, in
   drawLine(cx,cy,sx,sy, colorfg);
 }
 
-void drawAnalogClockHourNeedle(int h, int m, int s, int cx, int cy, double radius, int colorfg) {
+inline static void drawAnalogClockHourNeedle(int h, int m, int s, int cx, int cy, double radius, int colorfg) {
   double angle=-90;
   double sx,sy;
   double length = radius - radius/2.5;
