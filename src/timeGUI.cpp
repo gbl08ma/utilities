@@ -469,24 +469,15 @@ void drawHomeClock(int format, int fgcolor, int bgcolor) {
     printCentered((unsigned char*)timeStr, 4*24, fgcolor, bgcolor);
   } else if (format == 5) {
     // show analog clock only
-    int cx = LCD_WIDTH_PX/2;
-    int cy = LCD_HEIGHT_PX/2;
-    int radius = 70;
-    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+    drawAnalogClock(LCD_WIDTH_PX/2, LCD_HEIGHT_PX/2, 70, bgcolor, fgcolor);
   } else if (format == 6) {
     // show analog clock with digital time
-    int cx = 80;
-    int cy = LCD_HEIGHT_PX/2;
-    int radius = 70;
-    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+    drawAnalogClock(80, LCD_HEIGHT_PX/2, 70, bgcolor, fgcolor);
     currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
     mPrintXY(10, 4, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
   } else if (format == 7) {
     // show analog clock with digital time and long date
-    int cx = 89;
-    int cy = 58+24;
-    int radius = 50;
-    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+    drawAnalogClock(89, 58+24, 50, bgcolor, fgcolor);
     currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
     mPrintXY(10, 3, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
     if (GetSetting(SETTING_THEME) == 1) {
@@ -496,20 +487,14 @@ void drawHomeClock(int format, int fgcolor, int bgcolor) {
     }
   } else if (format == 8) {
     // show analog clock with digital time and short date
-    int cx = 80;
-    int cy = LCD_HEIGHT_PX/2;
-    int radius = 70;
-    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+    drawAnalogClock(80, LCD_HEIGHT_PX/2, 70, bgcolor, fgcolor);
     currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
     mPrintXY(10, 3, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
     currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
     mPrintXY(10, 5, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
   } else if (format == 9) {
     // show analog clock with long date
-    int cx = LCD_WIDTH_PX/2;
-    int cy = 58+24;
-    int radius = 50;
-    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+    drawAnalogClock(LCD_WIDTH_PX/2, 58+24, 50, bgcolor, fgcolor);
     if (GetSetting(SETTING_THEME) == 1) {
       drawLongDate(120, NULL, COLOR_WHITE, COLOR_BLACK, 1);
     } else {
@@ -517,10 +502,7 @@ void drawHomeClock(int format, int fgcolor, int bgcolor) {
     }
   } else if (format == 10) {
     // show analog clock with short date
-    int cx = LCD_WIDTH_PX/2;
-    int cy = 58+24;
-    int radius = 50;
-    drawAnalogClock(cx, cy, radius, bgcolor, fgcolor);
+    drawAnalogClock(LCD_WIDTH_PX/2, 58+24, 50, bgcolor, fgcolor);
     currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
     printCentered((unsigned char*)timeStr, 120+24, fgcolor, bgcolor);
   }
