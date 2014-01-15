@@ -417,13 +417,9 @@ void RTCunadjustedWizard(int helpMessage) {
 
 void currentTimeToBasicVar() {
   TBCD Src;
-  int ihour = getCurrentHour();
-  int iminute = getCurrentMinute();
-  int isecond = getCurrentSecond();
-  int imillisecond = getCurrentMillisecond();
   double fhour=0.0,fminute=0.0,fsecond=0.0,fmillisecond=0.0,hourfraction = 0;
   
-  fhour = ihour; fminute = iminute; fsecond = isecond; fmillisecond = imillisecond;
+  fhour = getCurrentHour(); fminute = getCurrentMinute(); fsecond = getCurrentSecond(); fmillisecond = getCurrentMillisecond();
   hourfraction = fhour+fminute/60.0+fsecond/(60.0*60.0)+fmillisecond/(60.0*60.0*1000.0);
   Src.Set( hourfraction );
   Alpha_SetData( 'T', &Src );
