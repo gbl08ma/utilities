@@ -32,8 +32,6 @@ typedef struct {
   long long int type=CHRONO_TYPE_DOWN; // whether it's counting up or down
 } chronometer;
 
-void chronoToBuffer(chronometer* tchrono, long long int* buffer);
-void bufferToChrono(long long int* buffer, chronometer* tchrono);
 void saveChronoArray(chronometer* chronoarray, int count);
 void loadChronoArray(chronometer* chronoarray, int count);
 void setChrono(chronometer* tchrono, long long int duration, long long int type);
