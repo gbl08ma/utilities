@@ -29,7 +29,7 @@
 #include "calendarGUI.hpp"
 #include "inputGUI.hpp"
 
-void formatChronoString(chronometer* tchrono, int num, unsigned char* string)
+inline void formatChronoString(chronometer* tchrono, int num, unsigned char* string)
 {
   long long int unixtime = currentUnixTime();
   long long int unixdiff;

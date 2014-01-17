@@ -174,7 +174,7 @@ void showHome(chronometer* chrono) {
   }
 }
 
-void powerMenu() {
+inline void powerMenu() {
   drawFkeyPopup(0, GetSetting(SETTING_THEME), 1);
   mPrintXY(2, 2, (char*)"Power options", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
@@ -222,7 +222,7 @@ void powerMenu() {
   }
 }
 
-void lightMenu() {
+inline void lightMenu() {
   drawFkeyPopup(1, GetSetting(SETTING_THEME), 1);
   mPrintXY(2, 2, (char*)"Light tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
@@ -263,7 +263,7 @@ void lightMenu() {
   }
 }
 
-void timeMenu(chronometer* chrono) {
+inline void timeMenu(chronometer* chrono) {
   drawFkeyPopup(2, GetSetting(SETTING_THEME), 1);
   mPrintXY(2, 2, (char*)"Time tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
@@ -302,7 +302,7 @@ void timeMenu(chronometer* chrono) {
   }
 }
 
-void toolsMenu() {
+inline void toolsMenu() {
   drawFkeyPopup(3, GetSetting(SETTING_THEME), 1);
   mPrintXY(2, 2, (char*)"Tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   
@@ -348,7 +348,7 @@ void toolsMenu() {
     } else if(res == MENU_RETURN_EXIT) return;
   }
 }
-void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
+inline void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
   color_t color_fg, color_bg, color_title;
   if (GetSetting(SETTING_THEME)) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; color_title = COLOR_ORANGE; } else
   { color_fg = COLOR_BLACK; color_bg = COLOR_WHITE; color_title = COLOR_BLUE; }
