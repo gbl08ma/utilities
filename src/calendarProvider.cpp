@@ -262,33 +262,35 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   // This basically deletes the events of startdate and replaces them with newEvents.
   // Allows for a way to edit an event on a day, when all the events for that day are in memory (including the edited one).
   // count: number of events in newEvents (number of events in old file doesn't matter). starts at 1.
-  RemoveDay(startdate, folder);
-  
+
   //convert the calevents back to char. assuming each event, as string, doesn't take more than 1250 bytes
   unsigned char* newfilecontents = (unsigned char*)alloca(7+count*1250);
   strcpy((char*)newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
   for(int j = 0; j < count; j++) {
     calEventToChar(&newEvents[j], newfilecontents); //calEventToChar only does strncat, so it can append directly.
   }
-  
+  int newsize = strlen((char*)newfilecontents);
+
   char filename[128] = "";
   smemFilenameFromDate(startdate, filename, folder);
-  
   unsigned short pFile[256];
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
-  
-  // we already deleted the file for this day on RemoveDay
-  // now recreate it with new size and write new contents to it.
-  int newsize = strlen((char*)newfilecontents);
-  int nBCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize);
-  if(nBCEres >= 0) // Did it create?
-  {
-    int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0);
-    Bfile_WriteFile_OS(hFile, newfilecontents, newsize);
-    Bfile_CloseFile_OS(hFile);
-  } else {
-    return 2;
+
+  int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  if(hAddFile < 0) return 1;
+  int oldsize = Bfile_GetFileSize_OS(hAddFile);
+  if(newsize < oldsize) {
+    // new file is smaller than old file; we must recreate with new size.
+    Bfile_CloseFile_OS(hAddFile);
+    Bfile_DeleteEntry(pFile);
+    if(Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize) < 0) return 2;
+    hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle again
+    if(hAddFile < 0) return 3;
   }
+  
+  // write new contents. WriteFile will take care of expanding the file if needed.
+  Bfile_WriteFile_OS(hAddFile, newfilecontents, newsize);
+  Bfile_CloseFile_OS(hAddFile);
   return 0;
 }
 
