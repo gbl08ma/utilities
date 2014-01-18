@@ -186,80 +186,80 @@ void updateCurrentFreq() {
   drawRectangle(0, 65, 384, 20, COLOR_WHITE);
   
   switch((*FRQCR & 0x3F000000) >> 24) {
-      case PLL_28x:
-        cur = (char*)"101.5";
-        desc = (char*)"Overclocked";
-        break;
-      case PLL_26x:
-        cur = (char*)"94.3";
-        desc = (char*)"Overclocked";
-        drawArrowDown(368, arrowBottom, COLOR_ORANGE);
-        break;
-      case PLL_24x:
-        cur = (char*)"87";
-        desc = (char*)"Overclocked";
-        drawArrowDown(331, arrowBottom, COLOR_ORANGE);
-        break;
-      case PLL_20x:
-        cur = (char*)"72.5";
-        desc = (char*)"Overclocked";
-        drawArrowDown(274, arrowBottom, COLOR_ORANGE);
-        break;
-      case PLL_18x:
-        cur = (char*)"65.3";
-        desc = (char*)"Overclocked";
-        drawArrowDown(246, arrowBottom, COLOR_ORANGE);
-        break;
-      case PLL_16x:
-        cur = (char*)"58";
-        desc = (char*)"Normal speed";
-        drawArrowDown(217, arrowBottom, COLOR_LIMEGREEN);
-        break;
-      case PLL_15x:
-        cur = (char*)"54.4";
-        desc = (char*)"Underclocked";
-        drawArrowDown(203, arrowBottom, COLOR_LIGHTBLUE);
-        break;
-      case PLL_12x:
-        cur = (char*)"43.5";
-        desc = (char*)"Underclocked";
-        drawArrowDown(169, arrowBottom, COLOR_LIGHTBLUE);
-        break;
-      case PLL_8x:
-        cur = (char*)"29";
-        desc = (char*)"Underclocked";
-        drawArrowDown(112, arrowBottom, COLOR_LIGHTBLUE);
-        break;
-      case PLL_6x:
-        cur = (char*)"21.7";
-        desc = (char*)"Underclocked";
-        drawArrowDown(84, arrowBottom, COLOR_LIGHTBLUE);
-        break;
-      case PLL_4x:
-        cur = (char*)"14.5";
-        desc = (char*)"Underclocked";
-        drawArrowDown(56, arrowBottom, COLOR_LIGHTBLUE);
-        break;
-      case PLL_3x:
-        cur = (char*)"10.8";
-        desc = (char*)"Underclocked";
-        drawArrowDown(41, arrowBottom, COLOR_LIGHTBLUE);
-        break;
-      case PLL_2x:
-        cur = (char*)"7.25";
-        desc = (char*)"Underclocked";
-        drawArrowDown(27, arrowBottom, COLOR_LIGHTBLUE);
-        break;
-      case PLL_1x:
-        cur = (char*)"3.6";
-        desc = (char*)"Underclocked";
-        drawArrowDown(13, arrowBottom, COLOR_LIGHTBLUE);
-        break;
-      default:
-        cur = (char*)"INVALID CPU SPEED";
-        desc = (char*)"Oops...";
-        break;
-    }
+    case PLL_28x:
+      cur = (char*)"101.5";
+      desc = (char*)"Overclocked";
+      break;
+    case PLL_26x:
+      cur = (char*)"94.3";
+      desc = (char*)"Overclocked";
+      drawArrowDown(368, arrowBottom, COLOR_ORANGE);
+      break;
+    case PLL_24x:
+      cur = (char*)"87";
+      desc = (char*)"Overclocked";
+      drawArrowDown(331, arrowBottom, COLOR_ORANGE);
+      break;
+    case PLL_20x:
+      cur = (char*)"72.5";
+      desc = (char*)"Overclocked";
+      drawArrowDown(274, arrowBottom, COLOR_ORANGE);
+      break;
+    case PLL_18x:
+      cur = (char*)"65.3";
+      desc = (char*)"Overclocked";
+      drawArrowDown(246, arrowBottom, COLOR_ORANGE);
+      break;
+    case PLL_16x:
+      cur = (char*)"58";
+      desc = (char*)"Normal speed";
+      drawArrowDown(217, arrowBottom, COLOR_LIMEGREEN);
+      break;
+    case PLL_15x:
+      cur = (char*)"54.4";
+      desc = (char*)"Underclocked";
+      drawArrowDown(203, arrowBottom, COLOR_LIGHTBLUE);
+      break;
+    case PLL_12x:
+      cur = (char*)"43.5";
+      desc = (char*)"Underclocked";
+      drawArrowDown(169, arrowBottom, COLOR_LIGHTBLUE);
+      break;
+    case PLL_8x:
+      cur = (char*)"29";
+      desc = (char*)"Underclocked";
+      drawArrowDown(112, arrowBottom, COLOR_LIGHTBLUE);
+      break;
+    case PLL_6x:
+      cur = (char*)"21.7";
+      desc = (char*)"Underclocked";
+      drawArrowDown(84, arrowBottom, COLOR_LIGHTBLUE);
+      break;
+    case PLL_4x:
+      cur = (char*)"14.5";
+      desc = (char*)"Underclocked";
+      drawArrowDown(56, arrowBottom, COLOR_LIGHTBLUE);
+      break;
+    case PLL_3x:
+      cur = (char*)"10.8";
+      desc = (char*)"Underclocked";
+      drawArrowDown(41, arrowBottom, COLOR_LIGHTBLUE);
+      break;
+    case PLL_2x:
+      cur = (char*)"7.25";
+      desc = (char*)"Underclocked";
+      drawArrowDown(27, arrowBottom, COLOR_LIGHTBLUE);
+      break;
+    case PLL_1x:
+      cur = (char*)"3.6";
+      desc = (char*)"Underclocked";
+      drawArrowDown(13, arrowBottom, COLOR_LIGHTBLUE);
+      break;
+    default:
+      cur = (char*)"INVALID CPU SPEED";
+      desc = (char*)"Oops...";
+      break;
+  }
   int textX = 0; int textY = 145;
   char buffer[50] = "";
   strcpy(buffer, (char*)"Running at ");
