@@ -397,19 +397,54 @@ void GetEventCountsForMonthHelper(EventDate* date, int count, int* busydays) {
     } else setDBneedsRepairFlag(1); //end date is before start date, which is invalid. user should repair DB...
   }
 }
-void GetEventCountsForMonth(int year, int month, int* buffer, int* busydays) {
-  int day = 1;
+void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   for(unsigned int k = 0; k<=31; k++) {
-    busydays[k] = 0; //clean array
+    //clean arrays
+    busydays[k] = 0;
+    dbuffer[k] = 0;
   }
-  while (day <= getMonthDays(month) + ((month == 2 && isLeap(year)) ? 1 : 0))
-  {
-    EventDate thisday;
-    thisday.day = day; thisday.month = month; thisday.year = year;
-    buffer[day] = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //NULL means it will only count and not parse
-    if(buffer[day] > 0) GetEventCountsForMonthHelper(&thisday, buffer[day], busydays);
-    day++;
+
+  unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
+  unsigned char buffer[MAX_FILENAME_SIZE+1];
+  unsigned char* filter = (unsigned char*)"*.pce";
+
+  // make the buffer
+  strcpy((char*)buffer, "\\\\fls0\\");
+  strcat((char*)buffer, CALENDARFOLDER);
+  strcat((char*)buffer, "\\");
+  char smallbuf[5] = "";
+  itoa(year, (unsigned char*)smallbuf);
+  strcat((char*)buffer, smallbuf);
+  strcpy((char*)smallbuf, "");
+  itoa(month, (unsigned char*)smallbuf);
+  if (month < 10) strcat((char*)buffer, "0");  //if month below 10, add leading 0
+  strcat((char*)buffer, smallbuf);
+  strcat((char*)buffer, "*");
+  
+  file_type_t fileinfo;
+  int findhandle;
+  Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
+  int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
+  Bfile_StrToName_ncpy(path, filter, MAX_FILENAME_SIZE+1);
+  while(!ret) {
+    Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
+    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 ) && Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) {      
+      // get the start day from the filename
+      int nlen = strlen((char*)buffer);
+      if(isdigit(buffer[nlen-4-2]) && isdigit(buffer[nlen-4-1])) {
+        char day[5] = {(char)buffer[nlen-4-2], (char)buffer[nlen-4-1], '\0'};
+        int fd = sys_atoi(day);
+        if(fd >= 1 && fd <= 31) {
+          EventDate thisday;
+          thisday.year=year; thisday.month=month; thisday.day=fd;
+          dbuffer[fd] = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //NULL means it will only count and not parse
+          if(dbuffer[fd] > 0) GetEventCountsForMonthHelper(&thisday, dbuffer[fd], busydays);
+        }
+      }
+    }
+    ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
+  Bfile_FindClose(findhandle);
 }
 
 int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
