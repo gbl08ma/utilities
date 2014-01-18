@@ -447,45 +447,6 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   Bfile_FindClose(findhandle);
 }
 
-int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
-  /* reads the events on storage memory for a certain day
-   * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)
-   * if calEvents is NULL simply returns the number of results
-   * returns the search results count */
-  int daynumevents = GetEventsForDate(date, folder, NULL); //get event count only so we know how much to alloc
-  if(daynumevents==0) return 0;
-  CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
-  daynumevents = GetEventsForDate(date, folder, dayEvents);
-  int curitem = 0;
-  int resCount = 0;
-  while(curitem <= daynumevents-1) {
-    int match = 0;
-    if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
-      match = 1;
-    } else {
-      if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
-        match = 1;
-      } else {
-        if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
-          match = 1;
-        }
-      }
-    }
-    if(match) {
-      if(calEvents != NULL) {
-        strcpy((char*)calEvents[resCount].title, (char*)dayEvents[curitem].title);
-        calEvents[resCount].startdate = *date;
-        calEvents[resCount].category = dayEvents[curitem].category;
-        calEvents[resCount].origpos = curitem;
-      }
-      resCount++;
-    }
-    if(resCount == limit) break;
-    curitem++;
-  }
-  return resCount;
-}
-
 void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resCount, int daynumevents, const char* folder, char* needle, int limit, int* curfpos) {
   CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
   daynumevents = GetEventsForDate(date, folder, dayEvents);
@@ -516,6 +477,18 @@ void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resC
     if(*resCount >= limit) return;
     curitem++;
   }
+}
+
+int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
+  /* reads the events on storage memory for a certain day
+   * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)
+   * if calEvents is NULL simply returns the number of results
+   * returns the search results count */
+  int curfpos = 0, resCount = 0;
+  int daynumevents = GetEventsForDate(date, folder, NULL); //get event count only so we know how much to alloc
+  if(daynumevents==0) return 0;
+  SearchYearHelper(date, calEvents, &resCount, daynumevents, folder, needle, limit, &curfpos);
+  return resCount;
 }
 
 int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int arraystart) {
