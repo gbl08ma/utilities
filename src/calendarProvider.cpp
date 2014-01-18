@@ -531,6 +531,15 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   strcpy((char*)buffer, "\\\\fls0\\");
   strcat((char*)buffer, folder);
   strcat((char*)buffer, "\\");
+  char smallbuf[5] = "";
+  itoa(y, (unsigned char*)smallbuf);
+  strcat((char*)buffer, smallbuf);
+  if(m!=0) {
+    strcpy((char*)smallbuf, "");
+    itoa(m, (unsigned char*)smallbuf);
+    if (m < 10) strcat((char*)buffer, "0");  //if month below 10, add leading 0
+    strcat((char*)buffer, smallbuf);
+  }
   strcat((char*)buffer, "*");
   
   file_type_t fileinfo;
@@ -541,9 +550,7 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
     // the 00000.pce strcmp is there so we don't search on the tasks file
-    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "00000.pce") == 0) &&
-      (fileinfo.fsize == 0 || Bfile_Name_MatchMask((const short int*)path, (const short int*)found)))
-    {      
+    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0) && Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) {
       // get the start date from the filename
       char mainname[20] = "";
       int nlen = strlen((char*)buffer);
@@ -574,7 +581,7 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
         thisday.year=fy; thisday.month=fm; thisday.day=fd;
         
         // see if the date in the filename is valid, and that it is in the year we are searching in
-        if(isDateValid(thisday.year,thisday.month,thisday.day) && thisday.year==(unsigned int)y && (m==0?1:thisday.month==(unsigned int)m)) {
+        if(isDateValid(thisday.year,thisday.month,thisday.day)) {
           int daynumevents = GetEventsForDate(&thisday, folder, NULL); //get event count only so we know how much to alloc
           if(daynumevents>0) {
             SearchYearHelper(&thisday, calEvents, &resCount, daynumevents, folder, needle, limit, &curfpos);
