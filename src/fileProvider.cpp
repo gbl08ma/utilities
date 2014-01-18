@@ -99,13 +99,9 @@ void deleteFiles(File* files, Menu* menu) {
 void nameFromFilename(char* filename, char* name) {
   //this function takes a full filename like \\fls0\Folder\file.123
   //and puts file.123 in name.
-  strcpy(name, (char*)"");
   int i=strlen(filename)-1;
-  while (i>=0 && filename[i] != '\\')
-          i--;
-  if (filename[i] == '\\') {
-    strcpy(name, filename+i+1);
-  }
+  while (i>=0 && filename[i] != '\\') i--;
+  if (filename[i] == '\\') strcpy(name, filename+i+1);
 }
 
 void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard) {

@@ -23,7 +23,7 @@
 #include "fileProvider.hpp" 
 #include "debugGUI.hpp" 
 
-void append(unsigned char* s, char c) //beacuse strcat seems to have problems with 1-byte non-null-terminated chars like the field and event separators
+inline void append(unsigned char* s, char c) //beacuse strcat seems to have problems with 1-byte non-null-terminated chars like the field and event separators
 {
   int len = strlen((char*)s);
   s[len] = c;
@@ -58,29 +58,6 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
   strncat((char*)buf, (char*)calEvent->location,128); append(buf, FIELD_SEPARATOR);
   strncat((char*)buf, (char*)calEvent->description,1024); append(buf, EVENT_SEPARATOR);
   //the last field ends with an event separator (EVENT_SEPARATOR), without a field separator.
-  
-  /*sprintf((char*)buf, "%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%d%c%s%c%s%c%s%c" ,
-        calEvent->category,                             FIELD_SEPARATOR,
-        calEvent->daterange,                            FIELD_SEPARATOR,
-        calEvent->startdate.day,                        FIELD_SEPARATOR,
-        calEvent->startdate.month,                      FIELD_SEPARATOR,
-        calEvent->startdate.year,                       FIELD_SEPARATOR,
-        calEvent->enddate.day,                          FIELD_SEPARATOR,
-        calEvent->enddate.month,                        FIELD_SEPARATOR,
-        calEvent->enddate.year,                         FIELD_SEPARATOR,
-        calEvent->dayofweek,                            FIELD_SEPARATOR,
-        calEvent->repeat,                               FIELD_SEPARATOR,
-        calEvent->timed,                                FIELD_SEPARATOR,
-        calEvent->starttime.hour,                       FIELD_SEPARATOR,
-        calEvent->starttime.minute,                     FIELD_SEPARATOR,
-        calEvent->starttime.second,                     FIELD_SEPARATOR,
-        calEvent->endtime.hour,                         FIELD_SEPARATOR,
-        calEvent->endtime.minute,                       FIELD_SEPARATOR,
-        calEvent->endtime.second,                       FIELD_SEPARATOR,
-        (char*)calEvent->title,                         FIELD_SEPARATOR,
-        (char*)calEvent->location,                      FIELD_SEPARATOR,
-        (char*)calEvent->description,                   EVENT_SEPARATOR
-  );*/
 }
 
 void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
