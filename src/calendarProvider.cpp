@@ -248,7 +248,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
     int newsize = oldsize + strlen(newevent);
     if (oldsize > MAX_EVENT_FILESIZE || newsize > MAX_EVENT_FILESIZE) { //file bigger than we can handle
       Bfile_CloseFile_OS(hAddFile);
-      setDBneedsRepairFlag(1);
+      if(oldsize > MAX_EVENT_FILESIZE) setDBneedsRepairFlag(1);
       return 4;
     }
     Bfile_SeekFile_OS(hAddFile, oldsize); //move cursor to end
