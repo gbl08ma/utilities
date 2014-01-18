@@ -184,28 +184,27 @@ void filenameFromDate(EventDate* date, char* filename) {
   if (date->day < 10) strcat(filename, "0"); //if day below 10, add leading 0
   strcat(filename, smallbuf);
 }
-void smemFilenameFromDate(EventDate* date, char* filename, const char* folder) {
+void smemFilenameFromDate(EventDate* date, unsigned short* shortfn, const char* folder) {
+  unsigned char filename[128] = "";
   char buffer[10] = "";
-  strcpy(filename, "\\\\fls0\\");
-  strcat(filename, folder);
-  strcat(filename, "\\");
+  strcpy((char*)filename, "\\\\fls0\\");
+  strcat((char*)filename, folder);
+  strcat((char*)filename, "\\");
   filenameFromDate(date, buffer);
-  strcat(filename, buffer);
-  strcat(filename, ".pce"); //filenameFromDate does not include file extension, so add it
+  strcat((char*)filename, buffer);
+  strcat((char*)filename, ".pce"); //filenameFromDate does not include file extension, so add it
+  Bfile_StrToName_ncpy(shortfn, (unsigned char*)filename, strlen((char*)filename)+1); 
 }
 
 int AddEvent(CalendarEvent* calEvent, const char* folder) {
   //Saves a calendar event on an existing calendar with specified file name.
   //If the specified file doesn't exist, it is created and the event is added to it.
   //Returns 0 on success, other values on error.
-  char filename[128] = "";
-  smemFilenameFromDate(&calEvent->startdate, filename, folder);
-  
   char newevent[2048] = "";
   calEventToChar(calEvent, (unsigned char*)newevent);
   int size = strlen(FILE_HEADER) + strlen(newevent);
   unsigned short pFile[256];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
+  smemFilenameFromDate(&calEvent->startdate, pFile, folder);
   int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hAddFile < 0) // Check if it opened
   {
@@ -271,11 +270,8 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   }
   int newsize = strlen((char*)newfilecontents);
 
-  char filename[128] = "";
-  smemFilenameFromDate(startdate, filename, folder);
   unsigned short pFile[256];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1);
-
+  smemFilenameFromDate(startdate, pFile, folder);
   int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hAddFile < 0) return 1;
   int oldsize = Bfile_GetFileSize_OS(hAddFile);
@@ -314,10 +310,8 @@ void RemoveEvent(EventDate *startdate, CalendarEvent* events, const char* folder
 
 void RemoveDay(EventDate* date, const char* folder) {
   //remove all SMEM events for the day
-  char filename[128] = "";
-  smemFilenameFromDate(date, filename, folder);
   unsigned short pFile[256];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+  smemFilenameFromDate(date, pFile, folder);
   Bfile_DeleteEntry(pFile);
 }
 
@@ -333,11 +327,8 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
   returns number of events found for the specified day, 0 if error or no events. */
 
   // Generate filename from given date
-  char filename[128] = "";
-  smemFilenameFromDate(startdate, filename, folder);
-  
   unsigned short pFile[256];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+  smemFilenameFromDate(startdate, pFile, folder);
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   // Check for file existence
   if(hFile >= 0) // Check if it opened
