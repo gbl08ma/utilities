@@ -226,9 +226,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
       Bfile_WriteFile_OS(hAddFile, finalcontents, strlen(finalcontents));
       Bfile_CloseFile_OS(hAddFile);
       return 0;
-    }
-    else
-    {
+    } else {
       // file doesn't exist, but can't be created?
       // it's probably because the DB has never been used and is not initialized (i.e. we haven't created the calendar folder).
       // create the folder:
@@ -244,15 +242,8 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
       else return 0; //event was added without error, now that we created the folder
     }
   } else {
-    /*File exists and is open.
-      1. Read its contents and size and save them.
-      2. Close, delete the file.
-      3. Create the same file with the previous size plus the size for the new event.
-      4. Open the new file.
-      5. Write header and previous contents.
-      6. Write new contents (new event).
-      7. Close file.
-      It must be done this way because once a file is created, its size cannot be changed...*/
+    /*File exists and is open. Check its size and if its OK, append new event to it.
+    (one does not need to recreate the file with new size when increasing the size) */
     int oldsize = Bfile_GetFileSize_OS(hAddFile);
     int newsize = oldsize + strlen(newevent);
     if (oldsize > MAX_EVENT_FILESIZE || newsize > MAX_EVENT_FILESIZE) { //file bigger than we can handle
@@ -260,25 +251,9 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
       setDBneedsRepairFlag(1);
       return 4;
     }
-    unsigned char* oldcontents = (unsigned char*)alloca(newsize);
-    if(oldsize) {
-          Bfile_ReadFile_OS(hAddFile, oldcontents, oldsize, 0);
-    }
+    Bfile_SeekFile_OS(hAddFile, oldsize); //move cursor to end
+    Bfile_WriteFile_OS(hAddFile, newevent, strlen(newevent)); // write new event
     Bfile_CloseFile_OS(hAddFile);
-    Bfile_DeleteEntry(pFile);
-    // we already read the previous contents and size, closed the file and deleted it.
-    // now recreate it with new size and write new contents to it.
-
-    int nBCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize);
-    if(nBCEres >= 0) // Did it create?
-    {
-      hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // we always closed above
-      Bfile_WriteFile_OS(hAddFile, oldcontents, oldsize);
-      Bfile_WriteFile_OS(hAddFile, newevent, strlen(newevent));
-      Bfile_CloseFile_OS(hAddFile);
-    } else {
-      return 3;
-    }
   }
   return 0;
 }
