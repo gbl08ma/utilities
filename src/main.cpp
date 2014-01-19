@@ -23,6 +23,7 @@
 #include "chronoGUI.hpp"
 #include "firstRunGUI.hpp"
 #include "aboutGUI.hpp"
+#include "graphicsProvider.hpp"
 #include "setjmp.h"
 #include "debugGUI.hpp"
 jmp_buf utilities_return;
@@ -44,6 +45,14 @@ int main()
     const unsigned int default_fkeys[] = { 0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0 };
     Set_FKeys1( 0, (unsigned int*)default_fkeys );
     Set_FKeys2( 0 );
+    Bdisp_EnableColor(1);
+    // workaround to enable color: we must use GetKey once, otherwise color might not be enabled
+    int key;
+    Bdisp_AllClr_VRAM();
+    DisplayStatusArea();
+    mPrintXY(1, 1, (char*)"Return to Utilities", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+    mPrintXY(1, 2, (char*)"Please press any key", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    GetKey(&key);
   }
   //Load settings
   LoadSettings();
