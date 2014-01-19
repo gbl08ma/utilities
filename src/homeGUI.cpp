@@ -215,7 +215,7 @@ inline void powerMenu() {
         setCPUclock();
       }
       return;
-    } else if(res >= KEY_CTRL_F2 && res <= KEY_CTRL_F6) {
+    } else if(res >= KEY_CTRL_F2 && res <= KEY_CTRL_F5) {
       pane_keycache = res;
       return;
     } else if(res == MENU_RETURN_EXIT) return;
@@ -256,7 +256,7 @@ inline void lightMenu() {
         colorLight();
       }
       return;
-    } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F2 && res <= KEY_CTRL_F6) {
+    } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F2 && res <= KEY_CTRL_F5) {
       pane_keycache = res;
       return;
     } else if(res == MENU_RETURN_EXIT) return;
@@ -295,7 +295,7 @@ inline void timeMenu(chronometer* chrono) {
         chronoScreen(chrono);
       }
       return;
-    } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F3 && res <= KEY_CTRL_F6) {
+    } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F3 && res <= KEY_CTRL_F5) {
       pane_keycache = res;
       return;
     } else if(res == MENU_RETURN_EXIT) return;
@@ -342,7 +342,7 @@ inline void toolsMenu() {
         systemInfo();
       }
       return;
-    } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F4 && res <= KEY_CTRL_F6) {
+    } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F4 && res <= KEY_CTRL_F5) {
       pane_keycache = res;
       return;
     } else if(res == MENU_RETURN_EXIT) return;
