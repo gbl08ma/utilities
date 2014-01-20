@@ -52,11 +52,13 @@ void settingsMenu() {
   
   strcpy(menuitems[10].text, "Calendar settings");
   
-  strcpy(menuitems[11].text, "About this add-in");
+  strcpy(menuitems[11].text, "Chrono. notification");
+
+  strcpy(menuitems[12].text, "About this add-in");
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=12;
+  menu.numitems=13;
   menu.scrollout=1;
   menu.allowMkey=0;
   while(1) {
@@ -167,6 +169,34 @@ void settingsMenu() {
         calendarSettingsMenu();
       }
       if(menu.selection == 12) {
+        mMsgBoxPush(5);
+        MenuItem smallmenuitems[3];
+        strcpy(smallmenuitems[0].text, "No notification");        
+        strcpy(smallmenuitems[1].text, "Flashing pop-up");        
+        strcpy(smallmenuitems[2].text, "Simple pop-up");
+        strcpy(smallmenuitems[3].text, "Note on home");
+        
+        Menu smallmenu;
+        smallmenu.items=smallmenuitems;
+        smallmenu.numitems=4;
+        smallmenu.width=17;
+        smallmenu.height=5;
+        smallmenu.startX=3;
+        smallmenu.startY=2;
+        smallmenu.scrollbar=0;
+        smallmenu.scrollout=1;
+        smallmenu.showtitle=1;
+        smallmenu.selection=GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE)+1;
+        smallmenu.allowMkey=0;
+        strcpy(smallmenu.title, "Chrono. notif.");
+
+        int sres = doMenu(&smallmenu);
+        if(sres == MENU_RETURN_SELECTION) {
+          SetSetting(SETTING_CHRONO_NOTIFICATION_TYPE, smallmenu.selection-1, 1);
+        }
+        mMsgBoxPop();
+      }
+      if(menu.selection == 13) {
         showAbout();
       }
     }

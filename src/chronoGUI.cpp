@@ -551,19 +551,28 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
         //clear this chrono
         clearChrono(&chronoarray[cur]);
         saveChronoArray(chronoarray, NUMBER_OF_CHRONO);
-        mMsgBoxPush(4);
-        mPrintXY(3,2,(char*)"Timer Complete", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        char buffer1[10] = "";
-        itoa(cur+1, (unsigned char*)buffer1);
-        char buffer2[25] = "";
-        strcpy(buffer2, "Chronometer: ");
-        strcat(buffer2, buffer1);
-        mPrintXY(3,3,(char*)buffer2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-        
-        Bdisp_PutDisp_DD();
-        flashLight(1); // with parameter set to 1, it doesn't change VRAM, and since it returns on pressing EXIT...
-        mMsgBoxPop();
+        if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) && GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) != 3) {
+          // user wants notification with pop-up
+          mMsgBoxPush(4);
+          mPrintXY(3,2,(char*)"Timer Complete", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          char buffer1[10] = "";
+          itoa(cur+1, (unsigned char*)buffer1);
+          char buffer2[25] = "";
+          strcpy(buffer2, "Chronometer: ");
+          strcat(buffer2, buffer1);
+          mPrintXY(3,3,(char*)buffer2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+          
+          if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 1) {
+            // notification with screen flashing
+            Bdisp_PutDisp_DD();
+            flashLight(1); // with parameter set to 1, it doesn't change VRAM, and since it returns on pressing EXIT...
+            mMsgBoxPop();
+          } else {
+            // without screen flashing
+            closeMsgBox();
+          }
+        }
         //and return
         return;
       }
