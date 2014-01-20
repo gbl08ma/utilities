@@ -184,7 +184,6 @@ void settingsMenu() {
         smallmenu.startX=3;
         smallmenu.startY=2;
         smallmenu.scrollbar=0;
-        smallmenu.scrollout=1;
         smallmenu.showtitle=1;
         smallmenu.selection=GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE)+1;
         smallmenu.allowMkey=0;
@@ -265,7 +264,6 @@ inline static void lockSettingsMenu() {
         smallmenu.startX=3;
         smallmenu.startY=2;
         smallmenu.scrollbar=0;
-        smallmenu.scrollout=1;
         smallmenu.showtitle=1;
         smallmenu.selection=GetSetting(SETTING_UNLOCK_RUNMAT)+1;
         smallmenu.allowMkey=0;

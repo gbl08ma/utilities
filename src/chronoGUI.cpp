@@ -29,6 +29,8 @@
 #include "calendarGUI.hpp"
 #include "inputGUI.hpp"
 
+static int lastChronoComplete=0; // 1-based. 0 means no chrono completed. for notification on home screen.
+
 inline void formatChronoString(chronometer* tchrono, int num, unsigned char* string)
 {
   long long int unixtime = currentUnixTime();
@@ -104,6 +106,7 @@ void stopAndUninstallStubTimer() {
   }
 }
 void chronoScreen(chronometer* chrono) {
+  lastChronoComplete = 0; // clear possible notification on home screen
   // setting a timer is needed to change some aspects of GetKeyWait_OS
   stubTimer = Timer_Install(0, doNothing, 50);
   if (stubTimer > 0) { Timer_Start(stubTimer); }
@@ -541,6 +544,8 @@ void setBuiltinChrono(Menu* menu, chronometer* tchrono) {
   Bdisp_AllClr_VRAM();
 }
 
+int getLastChronoComplete() { return lastChronoComplete; }
+
 void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
   int cur = 0;
   while(cur <= count-1) {
@@ -551,6 +556,7 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
         //clear this chrono
         clearChrono(&chronoarray[cur]);
         saveChronoArray(chronoarray, NUMBER_OF_CHRONO);
+        lastChronoComplete = cur+1; // lastChronoComplete is one-based
         if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) && GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) != 3) {
           // user wants notification with pop-up
           mMsgBoxPush(4);

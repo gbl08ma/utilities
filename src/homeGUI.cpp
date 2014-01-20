@@ -58,6 +58,15 @@ void showHome(chronometer* chrono) {
       fgcolor = COLOR_BLACK;
     }
     DefineStatusMessage((char*)"", 1, 0, 0);
+    if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 3 && getLastChronoComplete()) {
+      char buffer[10] = "";
+      char message[50] = "";
+      itoa(getLastChronoComplete(), (unsigned char*)buffer);
+      strcpy(message, "Chronometer ");
+      strcat(message, buffer);
+      strcat(message, " complete");
+      DefineStatusMessage(message, 1, 4, 0);
+    }
     DisplayStatusArea();
     
     // Print time
