@@ -23,6 +23,9 @@
 #include "timeGUI.hpp"
 #include "lockGUI.hpp"
 
+inline static void lockSettingsMenu();
+inline static void clockSettingsMenu();
+
 void settingsMenu() {
   MenuItem menuitems[15];
   strcpy(menuitems[0].text, "Set time");
@@ -170,7 +173,7 @@ void settingsMenu() {
   }
 }
 
-void lockSettingsMenu() {
+inline static void lockSettingsMenu() {
   MenuItem menuitems[5];
   strcpy(menuitems[0].text, "Set lock code");  
   
@@ -247,7 +250,7 @@ void lockSettingsMenu() {
   }
 }
 
-void clockSettingsMenu() {
+inline static void clockSettingsMenu() {
   MenuItem menuitems[5];
   strcpy(menuitems[0].text, "Set clock type");
   

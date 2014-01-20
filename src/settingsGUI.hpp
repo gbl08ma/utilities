@@ -16,8 +16,6 @@
 #include <math.h>
 
 void settingsMenu();
-void lockSettingsMenu();
-void clockSettingsMenu();
 void calendarSettingsMenu();
 
 #endif
