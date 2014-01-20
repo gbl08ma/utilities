@@ -774,12 +774,13 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         FKey_Display(0, (int*)iresult);
         GetFKeyPtr(0x04D2, &iresult); // MOVE
         FKey_Display(1, (int*)iresult);
-        VRAMInvertArea(67, 195, 58, 18);
-        drawLine(125, 214, 126, 213, COLOR_WHITE);
-        drawLine(124, 214, 126, 212, COLOR_WHITE);
-        drawLine(123, 214, 126, 211, COLOR_WHITE);
-        drawLine(122, 214, 126, 210, COLOR_WHITE);
-        drawLine(121, 214, 126, 209, COLOR_WHITE);
+        unsigned short fgc = Bdisp_GetPoint_VRAM(66, 195); // get color in which function keys are drawn
+        VRAMReplaceColorInRect(67, 195, 58, 18, COLOR_WHITE, COLOR_GREEN);
+        VRAMReplaceColorInRect(67, 195, 58, 18, fgc, COLOR_WHITE);
+        VRAMReplaceColorInRect(67, 195, 58, 18, COLOR_GREEN, fgc);
+        for(int x = 0; x < 5; x++) {
+          drawLine(125-x, 214, 126, 213-x, COLOR_WHITE);
+        }
         GetFKeyPtr(0x0470, &iresult); // MEMO
         FKey_Display(2, (int*)iresult);
       } else { menu = 0; } //because if there are no events, 2nd menu is empty.
