@@ -110,6 +110,18 @@ int doTextArea(textArea* text) {
           if(scroll < -totalTextY+scrollableHeight-(text->showtitle ? 0 : 17)) scroll = -totalTextY+scrollableHeight-(text->showtitle ? 0 : 17);
         }
         break;
+      case KEY_CTRL_PAGEDOWN:
+        if (textY > scrollableHeight-(text->showtitle ? 0 : 17)) {
+          scroll = scroll - scrollableHeight;
+          if(scroll < -totalTextY+scrollableHeight-(text->showtitle ? 0 : 17)) scroll = -totalTextY+scrollableHeight-(text->showtitle ? 0 : 17);
+        }
+        break;
+      case KEY_CTRL_PAGEUP:
+        if (scroll < 0) {
+          scroll = scroll + scrollableHeight;
+          if(scroll > 0) scroll = 0;
+        }
+        break;
       case KEY_CTRL_EXE:
         if(text->allowEXE) return TEXTAREA_RETURN_EXE;
         break;
