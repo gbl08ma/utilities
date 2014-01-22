@@ -20,7 +20,7 @@
 #include "chronoGUI.hpp"
 
 // Converts a chronometer to a char array which can then be saved
-inline static void chronoToBuffer(chronometer* tchrono, long long int* buffer) {
+void chronoToBuffer(chronometer* tchrono, long long int* buffer) {
   buffer[0] = tchrono->starttime;
   buffer[1] = tchrono->duration;
   buffer[2] = tchrono->laststop;
@@ -29,7 +29,7 @@ inline static void chronoToBuffer(chronometer* tchrono, long long int* buffer) {
 }
 
 // Converts a char array to a chronometer struct
-inline static void bufferToChrono(long long int* buffer, chronometer* tchrono) {
+void bufferToChrono(long long int* buffer, chronometer* tchrono) {
   tchrono->starttime = buffer[0];
   tchrono->duration = buffer[1];
   tchrono->laststop = buffer[2];
