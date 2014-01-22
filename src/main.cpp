@@ -48,10 +48,7 @@ int main()
     Bdisp_EnableColor(1);
     // workaround to enable color: we must use GetKey once, otherwise color might not be enabled
     int key;
-    Bdisp_AllClr_VRAM();
-    DisplayStatusArea();
-    mPrintXY(1, 1, (char*)"Return to Utilities", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-    mPrintXY(1, 2, (char*)"Please press any key", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    Keyboard_PutKeycode( -1, -1, KEY_CTRL_EXIT);
     GetKey(&key);
   }
   //Load settings
