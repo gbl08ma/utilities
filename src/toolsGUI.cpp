@@ -104,7 +104,50 @@ void memoryCapacityViewer() {
   VRAMReplaceColorInRect(0, textY+24, LCD_WIDTH_PX, 20, COLOR_WHITE, COLOR_GRAY);  
   VRAMReplaceColorInRect(0, textY+24, barwidthcpl, 20, COLOR_GRAY, COLOR_BLUE);
   VRAMReplaceColorInRect(0, textY+24, LCD_WIDTH_PX, 20, COLOR_CYAN, COLOR_WHITE);
+  textX = 0; textY = textY + 5;
 #endif
+
+  int PWmaxspace=0x1FFFF;
+  char* flagpointer = (char*)0x80BE0000;
+  int PWcurrentload = 0;
+  while(*flagpointer == 0x0F) {
+    flagpointer = flagpointer + 0x40;
+    PWcurrentload += 0x40;
+  }
+  int PWfreespace = PWmaxspace - PWcurrentload;
+  barwidthcpl = (LCD_WIDTH_PX*(PWmaxspace-PWfreespace))/PWmaxspace;
+  itoa(PWfreespace, buffer);
+  textY = textY + 17; textX = 0;
+  PrintMini(&textX, &textY, (unsigned char*)"Password: ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, (unsigned char*)" bytes free", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  textY = textY + 17; textX = 60;
+  PrintMiniMini( &textX, &textY, (unsigned char*)"out of ", 0, TEXT_COLOR_BLACK, 0 );
+  itoa(PWmaxspace, buffer);
+  PrintMiniMini( &textX, &textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)" bytes (", 0, TEXT_COLOR_BLACK, 0 );
+  itoa(PWcurrentload, buffer);
+  PrintMiniMini( &textX, &textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)" bytes used)", 0, TEXT_COLOR_BLACK, 0 );
+
+#ifdef DRAW_MEMUSAGE_GRAPHS
+  textY = textY + 12;
+  drawRectangle(0, textY+24, LCD_WIDTH_PX, 20, COLOR_GRAY);
+  drawRectangle(0, textY+24, barwidthcpl, 20, COLOR_BLUE);
+
+  newTextX = 0;
+  newTextY = textY+5;
+  itoa(100*PWcurrentload/PWmaxspace, buffer);
+  strcat((char*)buffer, "% used");
+  PrintMiniMini( &newTextX, &newTextY, (unsigned char*)buffer, 0, TEXT_COLOR_CYAN, 1 ); //fake draw
+  textX = LCD_WIDTH_PX/2 - newTextX/2;
+  PrintMiniMini( &textX, &newTextY, (unsigned char*)buffer, 0, TEXT_COLOR_CYAN, 0 ); //draw  
+  
+  VRAMReplaceColorInRect(0, textY+24, LCD_WIDTH_PX, 20, COLOR_WHITE, COLOR_GRAY);  
+  VRAMReplaceColorInRect(0, textY+24, barwidthcpl, 20, COLOR_GRAY, COLOR_BLUE);
+  VRAMReplaceColorInRect(0, textY+24, LCD_WIDTH_PX, 20, COLOR_CYAN, COLOR_WHITE);
+#endif
+
   while(1) {
     int key;
     mGetKey(&key);
