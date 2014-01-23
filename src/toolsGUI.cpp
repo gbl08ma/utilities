@@ -361,7 +361,7 @@ void systemInfo() {
   textArea text;
   strcpy(text.title, (char*)"System Information");
   
-  textElement elem[30];
+  textElement elem[512];
   text.elements = elem;
   
   elem[0].text = (char*)"Operating System:";
@@ -432,7 +432,48 @@ void systemInfo() {
   elem[22].text = (char*)"Device ID:";
   elem[22].spaceAtEnd=1;
   elem[23].text = devID;
-  
-  text.numelements = 24;
+
+  elem[24].lineSpacing = 5;
+  elem[24].newLine = 1;
+  elem[24].text = (char*)"User information log (oldest first):";
+  elem[24].color=COLOR_BLUE;
+
+  text.numelements = 25;
+
+  char* orgpointer = (char*)0x80BE0004;
+  char* namepointer = (char*)0x80BE0018;
+  char* pwdpointer = (char*)0x80BE002C;
+  int counter = 0;
+  while(text.numelements < 512) {
+    if(*orgpointer == '\0') break;
+    elem[text.numelements].lineSpacing = 5;
+    elem[text.numelements].newLine = 1;
+    elem[text.numelements].text = (char*)"Username:";
+    elem[text.numelements].spaceAtEnd=1;
+    text.numelements++;
+    elem[text.numelements].text = namepointer;
+    text.numelements++;
+    elem[text.numelements].newLine = 1;
+    elem[text.numelements].text = (char*)"Organization:";
+    elem[text.numelements].spaceAtEnd=1;
+    text.numelements++;
+    elem[text.numelements].text = orgpointer;
+    text.numelements++;
+    elem[text.numelements].newLine = 1;
+    elem[text.numelements].text = (char*)"Password:";
+    elem[text.numelements].spaceAtEnd=1;
+    text.numelements++;
+    elem[text.numelements].text = pwdpointer;
+    text.numelements++;
+    orgpointer = orgpointer + 0x40;
+    namepointer = namepointer + 0x40;
+    pwdpointer = pwdpointer + 0x40;
+    counter++;
+  }
+  if(!counter) {
+    elem[text.numelements].newLine = 1;
+    elem[text.numelements].text = (char*)"No information has ever been registered.";
+    text.numelements++;
+  }
   doTextArea(&text);
 }
