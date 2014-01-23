@@ -23,5 +23,5 @@ void RTCunadjustedWizard(int helpMessage);
 void setTimeGUI(int canExit = 1);
 void setDateGUI(int canExit = 1);
 void currentTimeToBasicVar();
-void drawHomeClock(int format, int fgcolor, int bgcolor);
+void drawHomeClock(int format, int theme=GetSetting(SETTING_THEME));
 #endif

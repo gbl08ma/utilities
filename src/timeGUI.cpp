@@ -431,17 +431,19 @@ void currentTimeToBasicVar() {
   closeMsgBox();
 }
 
-void drawHomeClock(int format, int fgcolor, int bgcolor) {
+void drawHomeClock(int format, int theme) {
   char timeStr[14] = "";
+  int fgcolor = COLOR_BLACK;
+  int bgcolor = COLOR_WHITE;
+  if(theme == 1) { 
+    fgcolor = COLOR_WHITE;
+    bgcolor = COLOR_BLACK;
+  }
   if(format == 0) {
     // show digital time and long date
     currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
     printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
-    if (GetSetting(SETTING_THEME) == 1) {
-      drawLongDate(90, NULL, COLOR_WHITE, COLOR_BLACK, 1);
-    } else {
-      drawLongDate(90, NULL, COLOR_BLACK, COLOR_WHITE, NULL);
-    }
+    drawLongDate(90, NULL, fgcolor, bgcolor, theme);
   } else if (format == 1) {
     // show digital time only
     currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
@@ -454,11 +456,7 @@ void drawHomeClock(int format, int fgcolor, int bgcolor) {
     printCentered((unsigned char*)timeStr, 5*24, fgcolor, bgcolor);
   } else if (format == 3) {
     // show long date only
-    if (GetSetting(SETTING_THEME) == 1) {
-      drawLongDate(LCD_HEIGHT_PX/2-30, NULL, COLOR_WHITE, COLOR_BLACK, 1);
-    } else {
-      drawLongDate(LCD_HEIGHT_PX/2-30, NULL, COLOR_BLACK, COLOR_WHITE, NULL);
-    }
+    drawLongDate(LCD_HEIGHT_PX/2-30, NULL, fgcolor, bgcolor, theme);
   } else if (format == 4) {
     // show short date only
     currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
@@ -476,11 +474,7 @@ void drawHomeClock(int format, int fgcolor, int bgcolor) {
     drawAnalogClock(89, 58+24, 50, bgcolor, fgcolor);
     currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
     mPrintXY(10, 3, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
-    if (GetSetting(SETTING_THEME) == 1) {
-      drawLongDate(120, NULL, COLOR_WHITE, COLOR_BLACK, 1);
-    } else {
-      drawLongDate(120, NULL, COLOR_BLACK, COLOR_WHITE, NULL);
-    }
+    drawLongDate(120, NULL, fgcolor, bgcolor, theme);
   } else if (format == 8) {
     // show analog clock with digital time and short date
     drawAnalogClock(80, LCD_HEIGHT_PX/2, 70, bgcolor, fgcolor);
@@ -491,11 +485,7 @@ void drawHomeClock(int format, int fgcolor, int bgcolor) {
   } else if (format == 9) {
     // show analog clock with long date
     drawAnalogClock(LCD_WIDTH_PX/2, 58+24, 50, bgcolor, fgcolor);
-    if (GetSetting(SETTING_THEME) == 1) {
-      drawLongDate(120, NULL, COLOR_WHITE, COLOR_BLACK, 1);
-    } else {
-      drawLongDate(120, NULL, COLOR_BLACK, COLOR_WHITE, NULL);
-    }
+    drawLongDate(120, NULL, fgcolor, bgcolor, theme);
   } else if (format == 10) {
     // show analog clock with short date
     drawAnalogClock(LCD_WIDTH_PX/2, 58+24, 50, bgcolor, fgcolor);

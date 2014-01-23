@@ -70,7 +70,7 @@ void showHome(chronometer* chrono) {
     DisplayStatusArea();
     
     // Print time
-    drawHomeClock(GetSetting(SETTING_CLOCK_TYPE), fgcolor, bgcolor);
+    drawHomeClock(GetSetting(SETTING_CLOCK_TYPE));
     if (GetSetting(SETTING_THEME)) darkenStatusbar();
 
     //Show FKeys
