@@ -41,8 +41,6 @@ void showHome(chronometer* chrono) {
   unsigned short key = 0;
   unsigned short prevkey = 0;
   int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
-  int fgcolor;
-  int bgcolor;
   while (1) {
     Bdisp_AllClr_VRAM();
 
@@ -50,12 +48,8 @@ void showHome(chronometer* chrono) {
     if (GetSetting(SETTING_THEME) == 1) {
       Bdisp_Fill_VRAM( COLOR_BLACK, 3 );
       DrawFrame( 0x000000  );
-      bgcolor = COLOR_BLACK;
-      fgcolor = COLOR_WHITE;
     } else {
       DrawFrame( 0xFFFFFF  );
-      bgcolor = COLOR_WHITE;
-      fgcolor = COLOR_BLACK;
     }
     DefineStatusMessage((char*)"", 1, 0, 0);
     if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 3 && getLastChronoComplete()) {
@@ -317,15 +311,14 @@ inline void toolsMenu() {
   
   MenuItem menuitems[6];
   strcpy(menuitems[0].text, "File manager");
-  strcpy(menuitems[1].text, "Text editor");
-  strcpy(menuitems[2].text, "Memory usage");
-  strcpy(menuitems[3].text, "Add-In manager");
-  strcpy(menuitems[4].text, "Function key color");
-  strcpy(menuitems[5].text, "System information");
+  strcpy(menuitems[1].text, "Memory usage");
+  strcpy(menuitems[2].text, "Add-In manager");
+  strcpy(menuitems[3].text, "Function key color");
+  strcpy(menuitems[4].text, "System information");
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=6;
+  menu.numitems=5;
   menu.width=19;
   menu.height=4;
   menu.startX=2;
@@ -340,14 +333,12 @@ inline void toolsMenu() {
       if(menu.selection == 1) {
         fileManager();
       } else if(menu.selection == 2) {
-        fileTextEditor();
-      } else if(menu.selection == 3) {
         memoryCapacityViewer();
-      } else if(menu.selection == 4) {
+      } else if(menu.selection == 3) {
         addinManager();
-      } else if(menu.selection == 5) {
+      } else if(menu.selection == 4) {
         changeFKeyColor();
-      } else if(menu.selection == 6) {
+      } else if(menu.selection == 5) {
         systemInfo();
       }
       return;

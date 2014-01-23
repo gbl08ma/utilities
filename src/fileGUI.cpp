@@ -135,7 +135,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         GetFKeyPtr(0x0038, &iresult); // DELETE
         FKey_Display(5, (int*)iresult);
       }
-      GetFKeyPtr(0x038E, &iresult); // MKFLDR
+      GetFKeyPtr(0x0186, &iresult); // NEW
       FKey_Display(3, (int*)iresult);
     }
     res = doMenu(&menu, icontable);
@@ -260,9 +260,34 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           }
         }
         break;
-      case KEY_CTRL_F4:
-        if(makeFolderGUI(browserbasepath)) return 1; // if user said yes and a folder was created, reload file list
+      case KEY_CTRL_F4: {
+        mMsgBoxPush(4);
+        MenuItem smallmenuitems[5];
+        strcpy(smallmenuitems[0].text, "Folder");
+        strcpy(smallmenuitems[1].text, "Text File");
+        
+        Menu smallmenu;
+        smallmenu.items=smallmenuitems;
+        smallmenu.numitems=2;
+        smallmenu.width=17;
+        smallmenu.height=4;
+        smallmenu.startX=3;
+        smallmenu.startY=2;
+        smallmenu.scrollbar=0;
+        smallmenu.showtitle=1;
+        strcpy(smallmenu.title, "Create new:");
+        int sres = doMenu(&smallmenu);
+        mMsgBoxPop();
+        
+        if(sres == MENU_RETURN_SELECTION) {
+          if(smallmenu.selection == 1) {
+            if(makeFolderGUI(browserbasepath)) return 1; // if user said yes and a folder was created, reload file list
+          } else if(smallmenu.selection == 2) {
+            fileTextEditor(); return 1;
+          }
+        }
         break;
+      }
       case KEY_CTRL_F5:
         if(menu.numitems>0) { if(renameFileGUI(files, &menu, browserbasepath)) return 1; }
         break;
