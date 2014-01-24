@@ -121,6 +121,11 @@ void showHome(chronometer* chrono) {
           if (GetSetupSetting( (unsigned int)0x14) == 1) {
             SetSetupSetting( (unsigned int)0x14, 0);
             DisplayStatusArea();
+            // make sure GetKey (and thus, the whole "multitasking"/power/setup system) "gets" the fact that we have disabled Shift,
+            // otherwise Shift may still be enabled when resuming from standby:
+            int gkey;
+            Keyboard_PutKeycode( -1, -1, KEY_CTRL_EXIT);
+            GetKey(&gkey);
             PowerOff(1);
             SetSetupSetting( (unsigned int)0x14, 0);
             DisplayStatusArea();
