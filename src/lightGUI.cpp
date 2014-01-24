@@ -39,7 +39,7 @@ void flashLight(int noDraw) { // if noDraw is true, this function will just chan
   while (1) {
     if(!noDraw) Bdisp_PutDisp_DD();
     //the following getkeywait does not process MENU so we always have a chance to set the brightness correctly
-    if (0 != GetKeyWait_OS(&keyCol,&keyRow,KEYWAIT_HALTOFF_TIMEROFF,0,1, &key) ) {
+    if (0 != GetKeyWait_OS(&keyCol,&keyRow,2,0,1, &key) ) {
       if(keyCol == 4 && keyRow == 8) {
         SetBacklightSubLevel_RAW(initlevel);
         if(!noDraw) DrawFrame( COLOR_WHITE );
