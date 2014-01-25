@@ -484,9 +484,6 @@ void systemInfo() {
   text.numelements = 25;
 
   char* flagpointer = (char*)0x80BE0000;
-  char* orgpointer = (char*)0x80BE0004;
-  char* namepointer = (char*)0x80BE0018;
-  char* pwdpointer = (char*)0x80BE002C;
   int counter = 0;
   while(text.numelements < 10240) {
     if(*flagpointer != 0x0F) break;
@@ -495,8 +492,8 @@ void systemInfo() {
     elem[text.numelements].text = (char*)"Username:";
     elem[text.numelements].spaceAtEnd=1;
     text.numelements++;
-    if(*namepointer != '\0') {
-      elem[text.numelements].text = namepointer;
+    if(*(flagpointer+0x04) != '\0') {
+      elem[text.numelements].text = (flagpointer+0x18);
     } else {
       elem[text.numelements].text = (char*)"[Empty]";
       elem[text.numelements].color = COLOR_LIGHTGRAY;
@@ -506,8 +503,8 @@ void systemInfo() {
     elem[text.numelements].text = (char*)"Organization:";
     elem[text.numelements].spaceAtEnd=1;
     text.numelements++;
-    if(*orgpointer != '\0') {
-      elem[text.numelements].text = orgpointer;
+    if(*(flagpointer+0x04) != '\0') {
+      elem[text.numelements].text = (flagpointer+0x04);
     } else {
       elem[text.numelements].text = (char*)"[Empty]";
       elem[text.numelements].color = COLOR_LIGHTGRAY;
@@ -517,17 +514,14 @@ void systemInfo() {
     elem[text.numelements].text = (char*)"Password:";
     elem[text.numelements].spaceAtEnd=1;
     text.numelements++;
-    if(*pwdpointer != '\0') {
-      elem[text.numelements].text = pwdpointer;
+    if(*(flagpointer+0x2C) != '\0') {
+      elem[text.numelements].text = (flagpointer+0x2C);
     } else {
       elem[text.numelements].text = (char*)"[Empty]";
       elem[text.numelements].color = COLOR_LIGHTGRAY;
     }
     text.numelements++;
     flagpointer = flagpointer + 0x40;
-    orgpointer = orgpointer + 0x40;
-    namepointer = namepointer + 0x40;
-    pwdpointer = pwdpointer + 0x40;
     counter++;
   }
   if(!counter) {
