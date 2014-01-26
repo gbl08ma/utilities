@@ -478,56 +478,120 @@ void systemInfo() {
 
   elem[24].lineSpacing = 5;
   elem[24].newLine = 1;
-  elem[24].text = (char*)"User information log (oldest first):";
-  elem[24].color=COLOR_BLUE;
+  elem[24].text = (char*)"Press F1 to see the registered user information log, or EXIT.";
 
   text.numelements = 25;
+  text.allowF1=1;
+  while(1) {
+    if(doTextArea(&text) == TEXTAREA_RETURN_F1) {
+      userInfo();
+    } else return;
+  }
+}
+
+void userInfo() {
+  textArea text;
+  strcpy(text.title, (char*)"User Information");
+
+  textElement elem[10240];
+  text.elements = elem;
+  text.numelements=0;
+  elem[text.numelements].text = (char*)"Current information:";
+  elem[text.numelements].color = COLOR_BLUE;
+  text.numelements++;
+  elem[text.numelements].newLine = 1;
+  elem[text.numelements].text = (char*)"Username:";
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
+  // here goes the username field, to be set in the loop.
+  int usernamefield = text.numelements;
+  text.numelements++;
+  elem[text.numelements].newLine = 1;
+  elem[text.numelements].text = (char*)"Organization:";
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
+  // here goes the organization field, to be set in the loop.
+  int organizationfield = text.numelements;
+  text.numelements++;
+  elem[text.numelements].newLine = 1;
+  elem[text.numelements].text = (char*)"Password:";
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
+  // here goes the password field, to be set in the loop.
+  int passwordfield = text.numelements;
+  text.numelements++;
+  elem[text.numelements].newLine = 1;
+  elem[text.numelements].lineSpacing = 5;
+  elem[text.numelements].text = (char*)"Historical information (oldest first):";
+  elem[text.numelements].color = COLOR_BLUE;
+  text.numelements++;
 
   char* flagpointer = (char*)0x80BE0000;
   int counter = 0;
-  while(text.numelements < 10240) {
-    if(*flagpointer != 0x0F) break;
-    elem[text.numelements].lineSpacing = 5;
-    elem[text.numelements].newLine = 1;
-    elem[text.numelements].text = (char*)"Username:";
-    elem[text.numelements].spaceAtEnd=1;
-    text.numelements++;
-    if(*(flagpointer+0x04) != '\0') {
-      elem[text.numelements].text = (flagpointer+0x18);
-    } else {
-      elem[text.numelements].text = (char*)"[Empty]";
-      elem[text.numelements].color = COLOR_LIGHTGRAY;
+  while(*flagpointer == 0x0F) {
+    if(text.numelements < 10240-6) { // minus six because on every run we use six elements.
+      elem[text.numelements].lineSpacing = 5;
+      elem[text.numelements].newLine = 1;
+      elem[text.numelements].text = (char*)"Username:";
+      elem[text.numelements].spaceAtEnd=1;
+      text.numelements++;
+      if(*(flagpointer+0x18) != '\0') {
+        elem[text.numelements].text = (flagpointer+0x18);
+      } else {
+        elem[text.numelements].text = (char*)"[Empty]";
+        elem[text.numelements].color = COLOR_LIGHTGRAY;
+      }
+      text.numelements++;
+      elem[text.numelements].newLine = 1;
+      elem[text.numelements].text = (char*)"Organization:";
+      elem[text.numelements].spaceAtEnd=1;
+      text.numelements++;
+      if(*(flagpointer+0x04) != '\0') {
+        elem[text.numelements].text = (flagpointer+0x04);
+      } else {
+        elem[text.numelements].text = (char*)"[Empty]";
+        elem[text.numelements].color = COLOR_LIGHTGRAY;
+      }
+      text.numelements++;
+      elem[text.numelements].newLine = 1;
+      elem[text.numelements].text = (char*)"Password:";
+      elem[text.numelements].spaceAtEnd=1;
+      text.numelements++;
+      if(*(flagpointer+0x2C) != '\0') {
+        elem[text.numelements].text = (flagpointer+0x2C);
+      } else {
+        elem[text.numelements].text = (char*)"[Empty]";
+        elem[text.numelements].color = COLOR_LIGHTGRAY;
+      }
+      text.numelements++;
     }
-    text.numelements++;
-    elem[text.numelements].newLine = 1;
-    elem[text.numelements].text = (char*)"Organization:";
-    elem[text.numelements].spaceAtEnd=1;
-    text.numelements++;
-    if(*(flagpointer+0x04) != '\0') {
-      elem[text.numelements].text = (flagpointer+0x04);
-    } else {
-      elem[text.numelements].text = (char*)"[Empty]";
-      elem[text.numelements].color = COLOR_LIGHTGRAY;
-    }
-    text.numelements++;
-    elem[text.numelements].newLine = 1;
-    elem[text.numelements].text = (char*)"Password:";
-    elem[text.numelements].spaceAtEnd=1;
-    text.numelements++;
-    if(*(flagpointer+0x2C) != '\0') {
-      elem[text.numelements].text = (flagpointer+0x2C);
-    } else {
-      elem[text.numelements].text = (char*)"[Empty]";
-      elem[text.numelements].color = COLOR_LIGHTGRAY;
-    }
-    text.numelements++;
     flagpointer = flagpointer + 0x40;
     counter++;
   }
   if(!counter) {
-    elem[text.numelements].newLine = 1;
-    elem[text.numelements].text = (char*)"No information has ever been registered.";
-    text.numelements++;
+    elem[0].text = (char*)"No information has ever been registered.";
+    elem[0].color = COLOR_BLACK;
+    text.numelements = 1;
+  } else {
+    flagpointer = flagpointer - 0x40;
+    if(*(flagpointer+0x18) != '\0') {
+      elem[usernamefield].text = (flagpointer+0x18);
+    } else {
+      elem[usernamefield].text = (char*)"[Empty]";
+      elem[usernamefield].color = COLOR_LIGHTGRAY;
+    }
+    if(*(flagpointer+0x04) != '\0') {
+      elem[organizationfield].text = (flagpointer+0x04);
+    } else {
+      elem[organizationfield].text = (char*)"[Empty]";
+      elem[organizationfield].color = COLOR_LIGHTGRAY;
+    }
+    if(*(flagpointer+0x2C) != '\0') {
+      elem[passwordfield].text = (flagpointer+0x2C);
+    } else {
+      elem[passwordfield].text = (char*)"[Empty]";
+      elem[passwordfield].color = COLOR_LIGHTGRAY;
+    }
   }
   doTextArea(&text);
 }
