@@ -67,10 +67,12 @@ void fileTextEditor(char* filename) {
   while(1) {
     input.key=0;
     clearLine(1,2);
+    mPrintXY(1, 2, (char*)"File contents:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     int res = doTextInput(&input);
     if (res==INPUT_RETURN_EXIT) return; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
       if(newfile) {
+        clearLine(1,2);
         mPrintXY(1, 2, (char*)"Save file as:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         textInput ninput;
         ninput.forcetext=1;
