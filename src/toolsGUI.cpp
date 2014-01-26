@@ -404,7 +404,7 @@ void systemInfo() {
   textArea text;
   strcpy(text.title, (char*)"System Information");
   
-  textElement elem[10240];
+  textElement elem[25];
   text.elements = elem;
   
   elem[0].text = (char*)"Operating System:";
