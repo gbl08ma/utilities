@@ -20,10 +20,10 @@
 #include "menuGUI.hpp"
 #include "homeGUI.hpp"
 #include "chronoProvider.hpp"
-#include "chronoGUI.hpp"
 #include "firstRunGUI.hpp"
 #include "aboutGUI.hpp"
 #include "graphicsProvider.hpp"
+#include "timeProvider.hpp"
 #include "setjmp.h"
 #include "debugGUI.hpp"
 jmp_buf utilities_return;
@@ -76,6 +76,42 @@ int main()
   // NOTE: the following debug timer is disabled because it makes many things become much slower, and causes system errors on Bfile. only enable if needed.
   //int ramUsedDbgTimer = Timer_Install(0, showRAMusedStatus, 50);
   //if (ramUsedDbgTimer > 0) { Timer_Start(ramUsedDbgTimer); }
+
+#ifdef LOG_BATTERY_VOLTAGE
+  // log battery voltage on every start-up
+  char smemfile[50] = "";
+  strcpy(smemfile, "\\\\fls0\\battlog.txt");
+  unsigned short pFile[sizeof(smemfile)*2]; // Make buffer
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)smemfile, strlen(smemfile)+1); 
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  int size = 1, justcreated=0;
+  if(hFile < 0) // Check if it opened
+  {
+    justcreated=1;
+    //error, file doesn't exist. create it
+    int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
+    if(BCEres < 0) // Did it create?
+    {
+      return 2; //error: file doesn't exist and yet can't be created.
+    }
+    hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+    // Check if it opened now that we created it:
+    if(hFile < 0) return 3;
+  }
+  //file exists (even if it didn't exist before) and is open. write new contents
+  char newentry[50] = "";
+  itoa(currentUnixTime()/1000, (unsigned char*)newentry);
+  strcat(newentry, (char*)",");
+  unsigned char voltbuffer[20] = "";
+  itoa(GetMainBatteryVoltage(1), voltbuffer);
+  strcat(newentry, (char*)voltbuffer);
+  strcat(newentry, (char*)"\r\n");
+
+  int oldsize = Bfile_GetFileSize_OS(hFile);
+  if(!justcreated) Bfile_SeekFile_OS(hFile, oldsize); //move cursor to end
+  Bfile_WriteFile_OS(hFile, newentry, strlen(newentry));
+  Bfile_CloseFile_OS(hFile);
+#endif
   
   while(1) {
     showHome(chrono);
