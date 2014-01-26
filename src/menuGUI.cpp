@@ -178,6 +178,10 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           }
           if(menu->type == MENUTYPE_INSTANT_RETURN) return MENU_RETURN_INSTANT;
           break;
+        case KEY_CTRL_RIGHT:
+          if(menu->type == MENUTYPE_MULTISELECT)
+            if(menu->numitems>0 && !menu->items[menu->selection-1].isfolder) { return MENU_RETURN_SELECTION; }
+          break;
         case KEY_CTRL_F1:
           if(menu->type==MENUTYPE_MULTISELECT && menu->fkeypage == 0 && menu->numitems > 0) {
             if(menu->items[menu->selection-1].isselected) {
