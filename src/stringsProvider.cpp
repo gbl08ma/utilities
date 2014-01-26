@@ -55,10 +55,10 @@ char *strcasestr(const char *s, const char *find)
 }
 
 
-/* copy over the next token from an input string, after
-skipping leading blanks (or other whitespace?). The
-token is terminated by the first appearance of tokchar,
-or by the end of the source string.
+/* copy over the next token from an input string, WITHOUT
+skipping leading blanks. The token is terminated by the
+first appearance of tokchar, or by the end of the source
+string.
 
 The caller must supply sufficient space in token to
 receive any token, Otherwise tokens will be truncated.
@@ -74,6 +74,7 @@ for the system namespace. Change to that at your risk.
 
 released to Public Domain, by C.B. Falconer.
 Published 2006-02-20. Attribution appreciated.
+Modified by gbl08ma not to skip blanks at the beginning.
 */
 
 unsigned char *toksplit(unsigned char *src, /* Source of tokens */
@@ -83,9 +84,6 @@ int lgh) /* length token can receive */
 /* not including final '\0' */
 {
   if (src) {
-    //while (' ' == *src) *src++;
-    while (' ' == *src) *src=*src+1; // avoids a compiler warning
-
     while (*src && (tokchar != *src)) {
       if (lgh) {
         *token++ = *src;
