@@ -100,49 +100,24 @@ int savePassword(unsigned char* password) {
   strcat(smemfile, CALENDARFOLDER);
   strcat(smemfile, "\\Hash.plp");
   unsigned short pFile[sizeof(smemfile)*2]; // Make buffer
-  int hFile;
   Bfile_StrToName_ncpy(pFile, (unsigned char*)smemfile, strlen(smemfile)+1); 
-  hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   int size = 32;
   if(hFile < 0) // Check if it opened
   {
     //error, file doesn't exist. create it
     int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
-    if(BCEres >= 0) // Did it create?
+    if(BCEres < 0) // Did it create?
     {
-      hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0);
-      if(hFile < 0) // Still failing?
-      {
-        return 1; //error: file doesn't exist, was created but still can't be opened.
-      } else {
-        //file didn't exist, but was created. save hash.
-        Bfile_WriteFile_OS(hFile, hash, size);
-        Bfile_CloseFile_OS(hFile);
-      }
-    } else {
       return 2; //error: file doesn't exist and yet can't be created.
     }
-  } else {
-    //file exists. delete it and create a new one with the new hash.
-    Bfile_CloseFile_OS(hFile);
-    Bfile_DeleteEntry(pFile);
-    if(Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size) >= 0) // Did it create?
-    {
-      hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0);
-      if(hFile < 0) // Still failing?
-      {
-        return 3; //error: file doesn't exist (because it was deleted), was created but still can't be opened.
-      } else {
-        //file didn't exist, but was created. save hash.
-        Bfile_WriteFile_OS(hFile, hash, size);
-        Bfile_CloseFile_OS(hFile);
-      }
-    }
-    else
-    {
-      return 4; //error: file doesn't exist (it was deleted) and yet can't be created.
-    }
+    hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+    // Check if it opened now that we created it:
+    if(hFile < 0) return 3;
   }
+  //file exists (even if it didn't exist before) and is open. overwrite its contents with the new hash.
+  Bfile_WriteFile_OS(hFile, hash, size);
+  Bfile_CloseFile_OS(hFile);
   
   //----------
   //Now, the MCS.
