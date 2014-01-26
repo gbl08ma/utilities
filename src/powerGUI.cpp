@@ -103,7 +103,7 @@ void powerInformation() {
   strcpy(text.title, (char*)"Power Information");
   text.showtitle=1;
 
-  textElement elem[15];
+  textElement elem[16];
   text.elements = elem;
   text.scrollbar=0;
   
@@ -175,24 +175,25 @@ void powerInformation() {
   elem[13].text = (char*)"CPU clock:";
   elem[13].spaceAtEnd = 1;
   switch((*FRQCR & 0x3F000000) >> 24) {
-    case PLL_28x: elem[14].text = (char*)"101.5 MHz"; break;
-    case PLL_26x: elem[14].text = (char*)"94.3 MHz"; break;
-    case PLL_24x: elem[14].text = (char*)"87 MHz"; break;
-    case PLL_20x: elem[14].text = (char*)"72.5 MHz"; break;
-    case PLL_18x: elem[14].text = (char*)"65.3 MHz"; break;
-    case PLL_16x: elem[14].text = (char*)"58 MHz"; break;
-    case PLL_15x: elem[14].text = (char*)"54.4 MHz"; break;
-    case PLL_12x: elem[14].text = (char*)"43.5 MHz"; break;
-    case PLL_8x: elem[14].text = (char*)"29 MHz"; break;
-    case PLL_6x: elem[14].text = (char*)"21.7 MHz"; break;
-    case PLL_4x: elem[14].text = (char*)"14.5 MHz"; break;
-    case PLL_3x: elem[14].text = (char*)"10.8 MHz"; break;
-    case PLL_2x: elem[14].text = (char*)"7.25 MHz"; break;
-    case PLL_1x: elem[14].text = (char*)"3.6 MHz"; break;
+    case PLL_28x: elem[14].text = (char*)"101.5"; break;
+    case PLL_26x: elem[14].text = (char*)"94.3"; break;
+    case PLL_24x: elem[14].text = (char*)"87"; break;
+    case PLL_20x: elem[14].text = (char*)"72.5"; break;
+    case PLL_18x: elem[14].text = (char*)"65.3"; break;
+    case PLL_16x: elem[14].text = (char*)"58"; break;
+    case PLL_15x: elem[14].text = (char*)"54.4"; break;
+    case PLL_12x: elem[14].text = (char*)"43.5"; break;
+    case PLL_8x: elem[14].text = (char*)"29"; break;
+    case PLL_6x: elem[14].text = (char*)"21.7"; break;
+    case PLL_4x: elem[14].text = (char*)"14.5"; break;
+    case PLL_3x: elem[14].text = (char*)"10.8"; break;
+    case PLL_2x: elem[14].text = (char*)"7.25"; break;
+    case PLL_1x: elem[14].text = (char*)"3.6"; break;
     default: elem[14].text = (char*)"Unknown"; break;
   }
-  
-  text.numelements = 15;
+  elem[14].spaceAtEnd = 1;
+  elem[15].text = (char*)"MHz";
+  text.numelements = 16;
   doTextArea(&text);
 }
 const unsigned int PLLs[] = {PLL_1x, PLL_2x, PLL_3x, PLL_4x, PLL_6x, PLL_8x, PLL_12x, PLL_15x, PLL_16x, PLL_18x, PLL_20x, PLL_24x, PLL_26x, PLL_28x};
@@ -278,8 +279,8 @@ void updateCurrentFreq() {
       drawArrowDown(13, arrowBottom, COLOR_LIGHTBLUE);
       break;
     default:
-      cur = (char*)"INVALID CPU SPEED";
-      desc = (char*)"Oops...";
+      cur = (char*)"UNKNOWN";
+      desc = (char*)"???";
       break;
   }
   int textX = 0; int textY = 145;
