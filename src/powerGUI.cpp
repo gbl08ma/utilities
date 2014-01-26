@@ -148,29 +148,51 @@ void powerInformation() {
   unsigned char blevel[5];
   itoa(backlightlevel, blevel);
   elem[8].text = (char*)blevel;
-  
+
   elem[9].newLine = 1;
-  elem[9].text = (char*)"CPU clock:";
+  elem[9].text = (char*)"Backlight timeout:";
   elem[9].spaceAtEnd = 1;
+  char btimeout[20] = "";
+  int btimeoutval = GetBacklightDuration();
+  if(btimeoutval % 2 == 0) { //even, so timeout is X min 0 sec.
+    itoa(btimeoutval/2, (unsigned char*)btimeout);
+  } else { // timeout is X min 30 sec.
+    itoa((btimeoutval-1)/2, (unsigned char*)btimeout);
+  }
+  strcat(btimeout, " Minutes");
+  if(btimeoutval % 2 != 0) strcat(btimeout, " 30 Sec.");
+  elem[10].text = btimeout;
+
+  elem[11].newLine = 1;
+  elem[11].text = (char*)"Power off timeout:";
+  elem[11].spaceAtEnd = 1;
+  char ptimeout[20] = "";
+  itoa(GetAutoPowerOffTime(), (unsigned char*)ptimeout);
+  strcat(ptimeout, " Minutes");
+  elem[12].text = ptimeout;
+  
+  elem[13].newLine = 1;
+  elem[13].text = (char*)"CPU clock:";
+  elem[13].spaceAtEnd = 1;
   switch((*FRQCR & 0x3F000000) >> 24) {
-    case PLL_28x: elem[10].text = (char*)"101.5 MHz"; break;
-    case PLL_26x: elem[10].text = (char*)"94.3 MHz"; break;
-    case PLL_24x: elem[10].text = (char*)"87 MHz"; break;
-    case PLL_20x: elem[10].text = (char*)"72.5 MHz"; break;
-    case PLL_18x: elem[10].text = (char*)"65.3 MHz"; break;
-    case PLL_16x: elem[10].text = (char*)"58 MHz"; break;
-    case PLL_15x: elem[10].text = (char*)"54.4 MHz"; break;
-    case PLL_12x: elem[10].text = (char*)"43.5 MHz"; break;
-    case PLL_8x: elem[10].text = (char*)"29 MHz"; break;
-    case PLL_6x: elem[10].text = (char*)"21.7 MHz"; break;
-    case PLL_4x: elem[10].text = (char*)"14.5 MHz"; break;
-    case PLL_3x: elem[10].text = (char*)"10.8 MHz"; break;
-    case PLL_2x: elem[10].text = (char*)"7.25 MHz"; break;
-    case PLL_1x: elem[10].text = (char*)"3.6 MHz"; break;
-    default: elem[10].text = (char*)"Unknown"; break;
+    case PLL_28x: elem[14].text = (char*)"101.5 MHz"; break;
+    case PLL_26x: elem[14].text = (char*)"94.3 MHz"; break;
+    case PLL_24x: elem[14].text = (char*)"87 MHz"; break;
+    case PLL_20x: elem[14].text = (char*)"72.5 MHz"; break;
+    case PLL_18x: elem[14].text = (char*)"65.3 MHz"; break;
+    case PLL_16x: elem[14].text = (char*)"58 MHz"; break;
+    case PLL_15x: elem[14].text = (char*)"54.4 MHz"; break;
+    case PLL_12x: elem[14].text = (char*)"43.5 MHz"; break;
+    case PLL_8x: elem[14].text = (char*)"29 MHz"; break;
+    case PLL_6x: elem[14].text = (char*)"21.7 MHz"; break;
+    case PLL_4x: elem[14].text = (char*)"14.5 MHz"; break;
+    case PLL_3x: elem[14].text = (char*)"10.8 MHz"; break;
+    case PLL_2x: elem[14].text = (char*)"7.25 MHz"; break;
+    case PLL_1x: elem[14].text = (char*)"3.6 MHz"; break;
+    default: elem[14].text = (char*)"Unknown"; break;
   }
   
-  text.numelements = 11;
+  text.numelements = 15;
   doTextArea(&text);
 }
 const unsigned int PLLs[] = {PLL_1x, PLL_2x, PLL_3x, PLL_4x, PLL_6x, PLL_8x, PLL_12x, PLL_15x, PLL_16x, PLL_18x, PLL_20x, PLL_24x, PLL_26x, PLL_28x};
