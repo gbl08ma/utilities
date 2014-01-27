@@ -118,11 +118,11 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
       strcpy((char*)menu.statusText, "Clipboard: ");
       itoa(*itemsinclip, (unsigned char*)titleBuffer);
       strcat((char*)menu.statusText, titleBuffer);
-      if(*itemsinclip == 1) { strcat((char*)menu.statusText, " item, Shift\xe6\x91"); strcat((char*)menu.statusText, "9=Paste"); }
-      else { strcat((char*)menu.statusText, " items, Shift\xe6\x91"); strcat((char*)menu.statusText, "9=Paste"); }
+      strcat((char*)menu.statusText, (*itemsinclip == 1 ? " item, Shift\xe6\x91" : " items, Shift\xe6\x91"));
+      strcat((char*)menu.statusText, "9=Paste");
     }
-    int iresult;
     if(menu.fkeypage == 0) {
+      int iresult;
       if(menu.numitems>0) {
         GetFKeyPtr(0x0188, &iresult); // RENAME
         FKey_Display(4, (int*)iresult);
@@ -283,7 +283,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           if(smallmenu.selection == 1) {
             if(makeFolderGUI(browserbasepath)) return 1; // if user said yes and a folder was created, reload file list
           } else if(smallmenu.selection == 2) {
-            fileTextEditor(); return 1;
+            fileTextEditor(NULL, browserbasepath); return 1;
           }
         }
         break;

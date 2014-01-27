@@ -23,7 +23,7 @@
 #include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
 
-void fileTextEditor(char* filename) {
+void fileTextEditor(char* filename, char* basefolder) {
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
   mPrintXY(1, 1, (char*)"Text Editor", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
@@ -94,7 +94,7 @@ void fileTextEditor(char* filename) {
             } else {
               // create and save file
               char newfilename[MAX_FILENAME_SIZE] = "";
-              strcpy(newfilename, (char*)"\\\\fls0\\");
+              strcpy(newfilename, basefolder);
               strcat(newfilename, nfilename);
               unsigned short newfilenameshort[0x10A];
               Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
