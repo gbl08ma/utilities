@@ -70,7 +70,6 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
     menu.items = menuitems;
   }
   
-  char titleBuffer[23] = ""; 
   int smemfree = 0;
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
@@ -110,10 +109,11 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   menu.showtitle=1;
   while(1) {
     Bdisp_AllClr_VRAM();
+    char titleBuffer[88] = "";
     if(*itemsinclip==0) {
       itoa(smemfree, (unsigned char*)menu.statusText);
       LocalizeMessage1( 340, titleBuffer ); //"bytes free"
-      strcat((char*)menu.statusText, (char*)titleBuffer);
+      strncat((char*)menu.statusText, (char*)titleBuffer, 65);
     } else {
       strcpy((char*)menu.statusText, "Clipboard: ");
       itoa(*itemsinclip, (unsigned char*)titleBuffer);
