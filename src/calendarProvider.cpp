@@ -387,12 +387,14 @@ void GetEventCountsForMonthHelper(EventDate* date, int count, int* busydays) {
     if(datediff == 0) {
       busydays[date->day] = events[curitem].category;
     } else if(datediff > 0) {
-      if(events[curitem].enddate.month > date->month || events[curitem].enddate.year > date->year) {
+      unsigned int endday = 0;
+      if(events[curitem].enddate.month > date->month || events[curitem].enddate.year > date->year)
         // event ends after this month. which means the current month days are all busy past this day.
-        for(unsigned int k = date->day; k<=31; k++) busydays[k] = events[curitem].category;
-      } else {
-        // events past this day up to the end day are all busy.
-        for(unsigned int k = date->day; k<=events[curitem].enddate.day; k++) busydays[k] = events[curitem].category;
+        endday = 31;
+      else // events past this day up to the end day are all busy.
+        endday =  events[curitem].enddate.day;
+      for(unsigned int k = date->day; k<=endday; k++) {
+        if(!busydays[k]) busydays[k] = events[curitem].category;
       }
     } else setDBneedsRepairFlag(1); //end date is before start date, which is invalid. user should repair DB...
   }
