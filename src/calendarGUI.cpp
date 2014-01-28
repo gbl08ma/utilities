@@ -1596,13 +1596,15 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
     DefineStatusMessage(message, 1, 0, 0);
     viewCalendar(1);
     DefineStatusMessage((char*)"", 1, 0, 0);
-    sy = 0; //avoid jumping again
+    
     if(dateselRes) {
       *yr=sy;
       *m=sm;
       *d=sd;
+      sy = 0; //avoid jumping again
       return 0;
     } else {
+      sy = 0; //avoid jumping again
       return 1;
     }
   } else {

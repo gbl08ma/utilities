@@ -425,8 +425,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
       if(bmenu.selection == 3) {
         int y, m, d;
         if(chooseCalendarDate(&y, &m, &d, (char*)"Select chronometer end date", (char*)"", 1)) return;
-        long int daysdiff = DateToDays(y, m, d) - DateToDays(getCurrentYear(), getCurrentMonth(), getCurrentDay());
-        if(daysdiff < 0) {
+        if(DateToDays(y, m, d) - DateToDays(getCurrentYear(), getCurrentMonth(), getCurrentDay()) < 0) {
           mMsgBoxPush(4);
           mPrintXY(3, 2, (char*)"Date is in the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(3, 3, (char*)"past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
