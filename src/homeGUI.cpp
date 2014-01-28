@@ -58,7 +58,7 @@ void showHome(chronometer* chrono) {
       itoa(getLastChronoComplete(), (unsigned char*)buffer);
       strcpy(message, "Chronometer ");
       strcat(message, buffer);
-      strcat(message, " complete");
+      strcat(message, " ended");
       DefineStatusMessage(message, 1, 4, 0);
     }
     DisplayStatusArea();
