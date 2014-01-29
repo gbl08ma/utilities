@@ -24,7 +24,10 @@ void lantern() {
   unsigned int prevlevel = GetBacklightSubLevel_RAW();
   SetBacklightSubLevel_RAW(249);
   Bdisp_AllClr_VRAM();
-  GetKey(&key);
+  while(1) {
+    GetKey(&key);
+    if(key==KEY_CTRL_EXIT) break;
+  }
   SetBacklightSubLevel_RAW(prevlevel);
   return;
 }
@@ -109,7 +112,6 @@ void colorLight() {
   int res = doMenu(&menu);
   if (res == MENU_RETURN_EXIT) return;
   
-  Bdisp_AllClr_VRAM();
   SetBacklightSubLevel_RAW(249);
   switch (menu.selection) {
     case 1: Bdisp_Fill_VRAM( COLOR_BLUE, 3 ); DrawFrame( COLOR_BLUE  ); break;
@@ -121,8 +123,9 @@ void colorLight() {
     case 7: Bdisp_Fill_VRAM( COLOR_BROWN, 3 ); DrawFrame( COLOR_BROWN  ); break;
     case 8: Bdisp_Fill_VRAM( COLOR_MAGENTA, 3 ); DrawFrame( COLOR_MAGENTA  ); break;
   }
-
-  Bdisp_PutDisp_DD();
-  GetKey(&gkey);
+  while(1) {
+    GetKey(&gkey);
+    if(gkey==KEY_CTRL_EXIT) break;
+  }
   SetBacklightSubLevel_RAW(initlevel);
 }
