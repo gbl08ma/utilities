@@ -23,6 +23,11 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
   if (menu->showtitle) itemsStartY++;
   int itemsHeight=menu->height;
   if (menu->showtitle) itemsHeight--;
+
+  if(menu->selection > menu->scroll+(menu->numitems>itemsHeight ? itemsHeight : menu->numitems))
+    menu->scroll = menu->selection -(menu->numitems>itemsHeight ? itemsHeight : menu->numitems);
+  if(menu->selection-1 < menu->scroll)
+    menu->scroll = menu->selection -1;
   
   // prepare item background filler string according to menu width
   char itemBackFiller[23] = "";
