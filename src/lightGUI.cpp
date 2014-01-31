@@ -113,16 +113,19 @@ void colorLight() {
   if (res == MENU_RETURN_EXIT) return;
   
   SetBacklightSubLevel_RAW(249);
+  color_t color = COLOR_WHITE;
   switch (menu.selection) {
-    case 1: Bdisp_Fill_VRAM( COLOR_BLUE, 3 ); DrawFrame( COLOR_BLUE  ); break;
-    case 2: Bdisp_Fill_VRAM( COLOR_GREEN, 3 ); DrawFrame( COLOR_GREEN  ); break;
-    case 3: Bdisp_Fill_VRAM( COLOR_RED, 3 ); DrawFrame( COLOR_RED  ); break;
-    case 4: Bdisp_Fill_VRAM( COLOR_ORANGE, 3 ); DrawFrame( COLOR_ORANGE  ); break;
-    case 5: Bdisp_Fill_VRAM( COLOR_YELLOW, 3 ); DrawFrame( COLOR_YELLOW  ); break;
-    case 6: Bdisp_Fill_VRAM( COLOR_CYAN, 3 ); DrawFrame( COLOR_CYAN  ); break;
-    case 7: Bdisp_Fill_VRAM( COLOR_BROWN, 3 ); DrawFrame( COLOR_BROWN  ); break;
-    case 8: Bdisp_Fill_VRAM( COLOR_MAGENTA, 3 ); DrawFrame( COLOR_MAGENTA  ); break;
+    case 1: color = COLOR_BLUE; break;
+    case 2: color = COLOR_GREEN; break;
+    case 3: color = COLOR_RED; break;
+    case 4: color = COLOR_ORANGE; break;
+    case 5: color = COLOR_YELLOW; break;
+    case 6: color = COLOR_CYAN; break;
+    case 7: color = COLOR_BROWN; break;
+    case 8: color = COLOR_MAGENTA; break;
   }
+  Bdisp_Fill_VRAM(color, 3 );
+  DrawFrame(color);
   while(1) {
     GetKey(&gkey);
     if(gkey==KEY_CTRL_EXIT) break;
