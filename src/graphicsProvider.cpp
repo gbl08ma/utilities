@@ -269,7 +269,6 @@ int textColorToFullColor(int textcolor) {
     case TEXT_COLOR_PURPLE: return COLOR_MAGENTA;
     case TEXT_COLOR_YELLOW: return COLOR_YELLOW;
     case TEXT_COLOR_WHITE: return COLOR_LIGHTGRAY;
-    case 8: return 0x08; // used in menu separators in week view.
     default: return COLOR_BLACK;
   }
 }
