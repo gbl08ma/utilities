@@ -224,31 +224,15 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         case KEY_CTRL_EXIT: return MENU_RETURN_EXIT;
           break;
         case KEY_CHAR_1:
-          if(menu->numitems>=1) {menu->selection = 1; return MENU_RETURN_SELECTION; }
-          break;
         case KEY_CHAR_2:
-          if(menu->numitems>=2) {menu->selection = 2; return MENU_RETURN_SELECTION; }
-          break;
         case KEY_CHAR_3:
-          if(menu->numitems>=3) {menu->selection = 3; return MENU_RETURN_SELECTION; }
-          break;
         case KEY_CHAR_4:
-          if(menu->numitems>=4) {menu->selection = 4; return MENU_RETURN_SELECTION; }
-          break;
         case KEY_CHAR_5:
-          if(menu->numitems>=5) {menu->selection = 5; return MENU_RETURN_SELECTION; }
-          break;
         case KEY_CHAR_6:
-          if(menu->numitems>=6) {menu->selection = 6; return MENU_RETURN_SELECTION; }
-          break;
         case KEY_CHAR_7:
-          if(menu->numitems>=7) {menu->selection = 7; return MENU_RETURN_SELECTION; }
-          break;
         case KEY_CHAR_8:
-          if(menu->numitems>=8) {menu->selection = 8; return MENU_RETURN_SELECTION; }
-          break;
         case KEY_CHAR_9:
-          if(menu->numitems>=9) {menu->selection = 9; return MENU_RETURN_SELECTION; }
+          if(menu->numitems>=(key-0x30)) {menu->selection = (key-0x30); return MENU_RETURN_SELECTION; }
           break;
         case KEY_CHAR_0:
           if(menu->numitems>=10) {menu->selection = 10; return MENU_RETURN_SELECTION; }
