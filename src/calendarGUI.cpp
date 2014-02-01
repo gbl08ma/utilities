@@ -403,15 +403,14 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   menu->numitems = curmenu;
   menu->items = menuitems;
   if(*jumpToSel==0) {
-    if(!*keepMenuSel) {
-      menu->selection = 1;
-    } else *keepMenuSel=0;
+    if(!*keepMenuSel) menu->selection = 1;
+    else *keepMenuSel=0;
   }
-  Bdisp_AllClr_VRAM();
   int hasBusyMap = 0;
   unsigned short busyMapBuffer[LCD_WIDTH_PX*12];
   if(GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) {
     menu->miniMiniTitle = 1;
+    clearLine(1, 1); //clear background for the map
     drawWeekBusyMap(*y, *m, *d, 0, 24+14, LCD_WIDTH_PX, 10);
     // backup busy map so we don't need to redraw it again every time its VRAM location gets overwritten.
     MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 1);
