@@ -217,7 +217,6 @@ int addinManagerSub(Menu* menu) {
   menu->items = menuitems;
  
   Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
   int curaddin = 0; //current processing addin
   if (menu->numitems>0) {
     while(curaddin < menu->numitems) {

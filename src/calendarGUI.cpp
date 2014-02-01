@@ -731,7 +731,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
   unsigned short busyMapBuffer[LCD_WIDTH_PX*12];
   if(GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) {
     menu->miniMiniTitle = 1;
-    drawRectangle(0, 24, LCD_WIDTH_PX, 24, COLOR_WHITE);
+    clearLine(1, 1); //clear background for the map
     drawDayBusyMap(&thisday, 0, 24+14, LCD_WIDTH_PX, 10, 2,0,0);
     // backup busy map so we don't need to redraw it again every time its VRAM location gets overwritten.
     MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 1);
@@ -741,7 +741,6 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
   }
   while(1) {
     Bdisp_AllClr_VRAM();
-    DisplayStatusArea();
     if(hasBusyMap) MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 0);
     
     int iresult;

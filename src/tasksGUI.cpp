@@ -70,7 +70,6 @@ int viewTasksSub(Menu* menu) {
   menu->subtitle = subtitle;
   while(1) {
     Bdisp_AllClr_VRAM();
-    DisplayStatusArea();
     int iresult;
     if (menu->fkeypage == 0) {
       if(menu->numitems>0) {
