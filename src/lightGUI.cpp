@@ -24,11 +24,13 @@ void lantern() {
   unsigned int prevlevel = GetBacklightSubLevel_RAW();
   SetBacklightSubLevel_RAW(249);
   Bdisp_AllClr_VRAM();
+  SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return so that we always have a chance to set the brightness correctly
   while(1) {
     GetKey(&key);
-    if(key==KEY_CTRL_EXIT) break;
+    if(key==KEY_CTRL_EXIT || key==KEY_CTRL_MENU) break;
   }
   SetBacklightSubLevel_RAW(prevlevel);
+  SetGetkeyToMainFunctionReturnFlag(1); //Enable menu return
   return;
 }
 
@@ -126,9 +128,11 @@ void colorLight() {
   }
   Bdisp_Fill_VRAM(color, 3 );
   DrawFrame(color);
+  SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return so that we always have the chance to set the brightness correctly
   while(1) {
     GetKey(&gkey);
     if(gkey==KEY_CTRL_EXIT) break;
   }
+  SetGetkeyToMainFunctionReturnFlag(1); //Enable menu return
   SetBacklightSubLevel_RAW(initlevel);
 }
