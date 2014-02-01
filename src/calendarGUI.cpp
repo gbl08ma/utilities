@@ -382,10 +382,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
     strcat(menuitems[curmenu].text, (char*)")");
     menuitems[curmenu].type = MENUITEM_SEPARATOR;
     menuitems[curmenu].color = TEXT_COLOR_BLACK;
-    if(ny==oy&&nm==om&&nd==od&&*jumpToSel==1) {
-      menu->selection=curmenu+1;
-      menu->scroll = menu->selection -1;
-    }
+    if(ny==oy&&nm==om&&nd==od&&*jumpToSel==1) menu->selection=curmenu+1;
     curmenu++;
     if(fevcount[curday]) {
       EventDate date;
@@ -408,11 +405,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   if(*jumpToSel==0) {
     if(!*keepMenuSel) {
       menu->selection = 1;
-      menu->scroll = 0;
     } else *keepMenuSel=0;
-  } else {
-    if(menu->scroll > menu->numitems-6) 
-        menu->scroll = menu->numitems-6;
   }
   Bdisp_AllClr_VRAM();
   int hasBusyMap = 0;
