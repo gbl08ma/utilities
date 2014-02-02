@@ -59,7 +59,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           } else {
             int textX = (menu->startX-1) * 18;
             int textY = curitem*24+itemsStartY*24-menu->scroll*24-24+6;
-            PrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"                          ", (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
+            clearLine(menu->startX, curitem+itemsStartY-menu->scroll, (menu->selection == curitem+1 ? textColorToFullColor(menu->items[curitem].color) : COLOR_WHITE));
             drawLine(textX, textY+24-4, LCD_WIDTH_PX-2, textY+24-4, COLOR_GRAY);
             PrintMini(&textX, &textY, (unsigned char*)menuitem, 0, 0xFFFFFFFF, 0, 0, (menu->selection == curitem+1 ? COLOR_WHITE : textColorToFullColor(menu->items[curitem].color)), (menu->selection == curitem+1 ? textColorToFullColor(menu->items[curitem].color) : COLOR_WHITE), 1, 0);
           }
