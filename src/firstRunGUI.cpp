@@ -45,7 +45,7 @@ void firstRunWizard() {
   textArea text;
   strcpy(text.title, (char*)"Welcome to Utilities");
   
-  textElement elem[20];
+  textElement elem[14];
   text.elements = elem;
   text.allowEXE = 1;
   text.allowMkey = 0;

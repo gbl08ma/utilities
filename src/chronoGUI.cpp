@@ -376,8 +376,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         Selector sel;
         strcpy(sel.title, "Set downwards chrono.");
         strcpy(sel.subtitle, "Days");
-        sel.value = 0;
-        sel.min = 0;
         sel.max = -1; // no limit. long long int is big enough to accomodate a chronometer with a duration of over 2 million days.
         sel.cycle = 0;
         sel.type = SELECTORTYPE_NORMAL;
@@ -387,8 +385,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         
         strcpy(sel.title, "Set downwards chrono.");
         strcpy(sel.subtitle, "Hours");
-        sel.value = 0;
-        sel.min = 0;
         sel.max = 23;
         sel.cycle = 0;
         res = doSelector(&sel);
@@ -397,8 +393,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         
         strcpy(sel.title, "Set downwards chrono.");
         strcpy(sel.subtitle, "Minutes");
-        sel.value = 0;
-        sel.min = 0;
         sel.max = 59;
         sel.cycle = 0;
         res = doSelector(&sel);

@@ -46,7 +46,6 @@ void changeBacklightTimeout() {
   sel.value = GetBacklightDuration();
   sel.min = 1;
   sel.max = 40;
-  sel.cycle = 1;
   sel.type = SELECTORTYPE_BACKLIGHT_DURATION;
   int res = doSelector(&sel);
   if (res == SELECTOR_RETURN_EXIT) return;
@@ -59,10 +58,7 @@ void changeBacklightLevel() {
   strcpy(sel.title, "Backlight Level");
   strcpy(sel.subtitle, "");
   sel.value = initValue;
-  sel.min = 0;
   sel.max = 249;
-  sel.allowMkey = 1;
-  sel.cycle = 1;
   sel.type = SELECTORTYPE_INSTANT_RETURN;
   sel.clearVRAM = 0;
   

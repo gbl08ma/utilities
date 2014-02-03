@@ -115,7 +115,6 @@ void settingsMenu() {
         format.min = 0;
         format.max = 9;
         format.allowMkey = 0;
-        format.cycle = 1;
         format.type = SELECTORTYPE_LONGDATEFORMAT;
         int res = doSelector(&format);
         if (res == SELECTOR_RETURN_EXIT) continue;
@@ -156,7 +155,6 @@ void settingsMenu() {
         sel.min = 1;
         sel.max = 250;
         sel.allowMkey = 0;
-        sel.cycle = 1;
         sel.type = SELECTORTYPE_STARTUP_BRIGHTNESS;
         int res = doSelector(&sel);
         if (res == SELECTOR_RETURN_EXIT) continue;

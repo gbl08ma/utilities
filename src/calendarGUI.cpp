@@ -2063,7 +2063,7 @@ void calendarTools(int y, int m, int d) {
         strcpy(text.title, (char*)"Date difference");
         text.showtitle=1;
 
-        textElement elem[15];
+        textElement elem[5];
         text.elements = elem;
         text.scrollbar=0;
         
@@ -2112,7 +2112,7 @@ void repairCalendarDatabase() {
   strcpy(text.title, (char*)"Database repair");
   text.showtitle=1;
 
-  textElement elem[15];
+  textElement elem[8];
   text.elements = elem;
   if(getDBneedsRepairFlag()) {
     elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This situation is often experienced when a version of Utilities older than v1.1 has been used, or when events with invalid data are imported.";
@@ -2230,7 +2230,7 @@ void trimCalendarDatabase() {
   text.showtitle=1;
   text.type = TEXTAREATYPE_INSTANT_RETURN;
 
-  textElement elem[5];
+  textElement elem[4];
   text.elements = elem;
   text.scrollbar=0;
   
@@ -2244,7 +2244,7 @@ void trimCalendarDatabase() {
   text.numelements = 3;
   doTextArea(&text);
   
-  MenuItem menuitems[5];
+  MenuItem menuitems[4];
   strcpy(menuitems[0].text, "Older than 6 months");
   strcpy(menuitems[1].text, "Older than 1 month");
   strcpy(menuitems[2].text, "Events in the past");
@@ -2401,7 +2401,7 @@ void importCalendarEvents() {
   strcpy(text.title, (char*)"Import events");
   text.showtitle=1;
 
-  textElement elem[15];
+  textElement elem[4];
   text.elements = elem;
   
   elem[0].text = (char*)"This tool is responsible for the last step in importing events into the calendar database.";
@@ -2426,7 +2426,6 @@ void importCalendarEvents() {
   // elem[2] is set in loop
   elem[2].lineSpacing = 0;
   elem[2].newLine = 0;
-  text.numelements = 3;
   
   // User accepted, let the importing operation begin.
   // the import tool assumes the events to import to be in up to 99 files, up to 100 events each
@@ -2456,7 +2455,6 @@ void importCalendarEvents() {
   elem[2].lineSpacing = 5;
   elem[2].newLine = 1;
   elem[2].text = (char*)"Press EXIT.";
-  text.numelements = 3;
   doTextArea(&text);
   bufmonth = 0; // because apart from editing dates, database repair also deletes invalid files that may influence event counts.
   searchValid = 0; // invalidate week view results

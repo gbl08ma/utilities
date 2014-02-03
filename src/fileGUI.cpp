@@ -401,7 +401,7 @@ int fileInformation(char* filename, int allowEdit) {
   text.scrollbar=0;
   strcpy(text.title, (char*)"File information");
   
-  textElement elem[15];
+  textElement elem[10];
   text.elements = elem;
   text.numelements = 0; //we will use this as element cursor
   

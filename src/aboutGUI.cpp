@@ -29,7 +29,7 @@ void showAbout() {
   ftext.scrollbar=0;
   ftext.type=TEXTAREATYPE_INSTANT_RETURN;
 
-  textElement felem[15];
+  textElement felem[14];
   ftext.elements = felem;
   
   char verBuffer[100] = "";

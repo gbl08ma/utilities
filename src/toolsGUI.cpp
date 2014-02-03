@@ -291,7 +291,7 @@ int addinManagerSub(Menu* menu) {
         textArea text;
         strcpy(text.title, (char*)"Add-In Manager");
         
-        textElement elem[10];
+        textElement elem[5];
         text.elements = elem;
         
         elem[0].text = (char*)"This tool lets you hide add-ins from the Main Menu without the need for deleting them from your calculator. To hide an add-in, press [F1] when it is selected.";
