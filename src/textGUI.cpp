@@ -64,10 +64,8 @@ int doTextArea(textArea* text) {
       free(singleword);
       if(isFirstDraw) {
         totalTextY = textY+(text->showtitle ? 0 : 24);
-      } else {
-        if(textY>LCD_HEIGHT_PX) {
-          break;
-        }
+      } else if(textY>LCD_HEIGHT_PX) {
+        break;
       }
       cur++;
     }

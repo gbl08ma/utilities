@@ -111,8 +111,6 @@ void showAbout() {
 }
 
 void buildExpiredMessage() {
-  if(!getBuildIsExpired()) return;
-
   textArea text;
   strcpy(text.title, (char*)"Check for updates");
   

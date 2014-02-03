@@ -64,19 +64,13 @@ int doSelector(Selector* selector) {
     switch(key)
     {
       case KEY_CTRL_DOWN:
-        if (selector->value > selector->min) {
-          selector->value--;
-        } else {
-          if(selector->cycle) selector->value=selector->max;
-        }
+        if (selector->value > selector->min) selector->value--;
+        else if(selector->cycle) selector->value=selector->max;
         if(selector->type == SELECTORTYPE_INSTANT_RETURN) return SELECTOR_RETURN_INSTANT;
         break;
       case KEY_CTRL_UP:
-        if (selector->max == -1 || selector->value < selector->max) {
-          selector->value++;
-        } else {
-          if(selector->cycle) selector->value=selector->min;
-        }
+        if (selector->max == -1 || selector->value < selector->max) selector->value++;
+        else if(selector->cycle) selector->value=selector->min;
         if(selector->type == SELECTORTYPE_INSTANT_RETURN) return SELECTOR_RETURN_INSTANT;
         break;
       case KEY_CTRL_EXE:

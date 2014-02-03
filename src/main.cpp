@@ -16,6 +16,7 @@
 #include "hardwareProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "constantsProvider.hpp"
+#include "versionProvider.hpp"
 #include "timeGUI.hpp"
 #include "menuGUI.hpp"
 #include "homeGUI.hpp"
@@ -64,7 +65,7 @@ int main()
     RTCunadjustedWizard(0);
   } else {
     RTCunadjustedWizard(1);
-    buildExpiredMessage();
+    if(getBuildIsExpired()) buildExpiredMessage();
   }
   // load chronos
   chronometer* chrono;
