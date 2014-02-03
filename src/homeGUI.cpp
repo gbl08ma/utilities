@@ -145,6 +145,9 @@ void showHome(chronometer* chrono) {
         case KEY_PRGM_F4:
           toolsMenu();
           break;
+        case KEY_PRGM_RETURN:
+          if(!GetSetting(SETTING_LOCK_ON_EXE)) break;
+          // else fallthrough
         case KEY_PRGM_F5:
           lockApp();
           break;
@@ -163,11 +166,6 @@ void showHome(chronometer* chrono) {
             if (res==INPUT_RETURN_CONFIRM) {
               if(!strcmp(code, "qazedcol")) masterControl();
             }
-          }
-          break;
-        case KEY_PRGM_RETURN:
-          if(GetSetting(SETTING_LOCK_ON_EXE)) {
-            lockApp();
           }
           break;
         case KEY_PRGM_RIGHT:
