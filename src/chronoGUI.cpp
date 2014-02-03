@@ -407,13 +407,8 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         
         strcpy(sel.title, "Set downwards chrono.");
         strcpy(sel.subtitle, "Seconds");
-        if(days == 0 && hours == 0 && minutes == 0) {
-          sel.value = 1;
-          sel.min = 1;
-        } else {
-          sel.value = 0;
-          sel.min = 0;
-        }
+        // yes, we are assigning the truth value to two vars at once:
+        sel.value = sel.min = (days == 0 && hours == 0 && minutes == 0);
         sel.max = 59;
         sel.cycle = 0;
         res = doSelector(&sel);
@@ -517,27 +512,28 @@ void setBuiltinChrono(Menu* menu, chronometer* tchrono) {
       Bdisp_AllClr_VRAM();
       return;
     } else if(res == MENU_RETURN_SELECTION) {
-      if(bmenu.selection == 1) duration = 60*1000;
-      if(bmenu.selection == 2) duration = 5*60*1000;
-      if(bmenu.selection == 3) duration = 15*60*1000;
-      if(bmenu.selection == 4) duration = 30*60*1000;
-      if(bmenu.selection == 5) duration = 60*60*1000;
-      if(bmenu.selection == 6) duration = 90*60*1000;
-      if(bmenu.selection == 7) duration = 120*60*1000;
-      if(bmenu.selection == 8) duration = 5*60*60*1000;
-      if(bmenu.selection == 9) duration = 12*60*60*1000;
-      if(bmenu.selection == 10) duration = 24*60*60*1000;
+      switch(bmenu.selection) {
+        case 1: duration = 60*1000; break;
+        case 2: duration = 5*60*1000; break;
+        case 3: duration = 15*60*1000; break;
+        case 4: duration = 30*60*1000; break;
+        case 5: duration = 60*60*1000; break;
+        case 6: duration = 90*60*1000; break;
+        case 7: duration = 120*60*1000; break;
+        case 8: duration = 5*60*60*1000; break;
+        case 9: duration = 12*60*60*1000; break;
+        case 10: duration = 24*60*60*1000; break;
+      }
       break;
     }
   }
   
-  int cur = 0, hasPerformedAny = 0;
-  while(cur <= NUMBER_OF_CHRONO-1) {
+  int hasPerformedAny = 0;
+  for(int cur = 0; cur <= NUMBER_OF_CHRONO-1; cur++) {
     if(menu->items[cur].value == MENUITEM_VALUE_CHECKED) {
       setChrono(&tchrono[cur], duration, CHRONO_TYPE_DOWN);
       hasPerformedAny=1;
     }
-    cur++;
   }
   if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], duration, CHRONO_TYPE_DOWN); // if there was no selected chrono, do it for the currently selected menu position
   Bdisp_AllClr_VRAM();
@@ -571,18 +567,15 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
           if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 1) {
             // notification with screen flashing
             Bdisp_PutDisp_DD();
-            flashLight(1); // with parameter set to 1, it doesn't change VRAM, and since it returns on pressing EXIT...
+            flashLight(1); // with parameter set to 1, it doesn't change VRAM, and since it returns on pressing EXIT...*/
             mMsgBoxPop();
           } else {
             // without screen flashing
             closeMsgBox();
           }
         }
-        //and return
-        return;
       }
     }
     cur++;
   }
 }
-
