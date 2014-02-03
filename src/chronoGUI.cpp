@@ -383,7 +383,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         if (res == SELECTOR_RETURN_EXIT) return;
         long int days = sel.value;
         
-        strcpy(sel.title, "Set downwards chrono.");
         strcpy(sel.subtitle, "Hours");
         sel.max = 23;
         sel.cycle = 0;
@@ -391,7 +390,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         if (res == SELECTOR_RETURN_EXIT) return;
         int hours = sel.value;
         
-        strcpy(sel.title, "Set downwards chrono.");
         strcpy(sel.subtitle, "Minutes");
         sel.max = 59;
         sel.cycle = 0;
@@ -399,7 +397,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         if (res == SELECTOR_RETURN_EXIT) return;
         int minutes = sel.value;
         
-        strcpy(sel.title, "Set downwards chrono.");
         strcpy(sel.subtitle, "Seconds");
         // yes, we are assigning the truth value to two vars at once:
         sel.value = sel.min = (days == 0 && hours == 0 && minutes == 0);
@@ -538,35 +535,32 @@ int getLastChronoComplete() { return lastChronoComplete; }
 void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
   int cur = 0;
   while(cur <= count-1) {
-    if(chronoarray[cur].state == CHRONO_STATE_RUNNING && chronoarray[cur].type == CHRONO_TYPE_DOWN) {
+    if(chronoarray[cur].state == CHRONO_STATE_RUNNING && chronoarray[cur].type == CHRONO_TYPE_DOWN && //...
     // check if chrono is complete
     // if end time of chrono (start+duration) <= current time and chrono is running, chrono is complete
-      if(chronoarray[cur].starttime+chronoarray[cur].duration<=currentUnixTime()) {
-        //clear this chrono
-        clearChrono(&chronoarray[cur]);
-        saveChronoArray(chronoarray, NUMBER_OF_CHRONO);
-        lastChronoComplete = cur+1; // lastChronoComplete is one-based
-        if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) && GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) != 3) {
-          // user wants notification with pop-up
-          mMsgBoxPush(4);
-          char buffer1[10] = "";
-          itoa(cur+1, (unsigned char*)buffer1);
-          char buffer2[25] = "";
-          strcpy(buffer2, "Chronometer ");
-          strcat(buffer2, buffer1);
-          mPrintXY(3,2,(char*)buffer2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          mPrintXY(3,3,(char*)"ended.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-          
-          if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 1) {
-            // notification with screen flashing
-            Bdisp_PutDisp_DD();
-            flashLight(1); // with parameter set to 1, it doesn't change VRAM, and since it returns on pressing EXIT...*/
-            mMsgBoxPop();
-          } else {
-            // without screen flashing
-            closeMsgBox();
-          }
+    /*...*/  chronoarray[cur].starttime+chronoarray[cur].duration<=currentUnixTime()) {
+      //clear this chrono
+      clearChrono(&chronoarray[cur]);
+      saveChronoArray(chronoarray, NUMBER_OF_CHRONO);
+      lastChronoComplete = cur+1; // lastChronoComplete is one-based
+      if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) && GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) != 3) {
+        // user wants notification with pop-up
+        mMsgBoxPush(4);
+        char buffer1[10] = "";
+        itoa(cur+1, (unsigned char*)buffer1);
+        mPrintXY(3,2,(char*)"Chronometer ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(15,2,(char*)buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3,3,(char*)"ended.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+        
+        if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 1) {
+          // notification with screen flashing
+          Bdisp_PutDisp_DD();
+          flashLight(1); // with parameter set to 1, it doesn't change VRAM, and since it returns on pressing EXIT...*/
+          mMsgBoxPop();
+        } else {
+          // without screen flashing
+          closeMsgBox();
         }
       }
     }
