@@ -163,9 +163,7 @@ void showHome(chronometer* chrono) {
             input.charlimit=21;
             input.buffer = (char*)code;
             int res = doTextInput(&input);
-            if (res==INPUT_RETURN_CONFIRM) {
-              if(!strcmp(code, "qazedcol")) masterControl();
-            }
+            if (res==INPUT_RETURN_CONFIRM && !strcmp(code, "qazedcol")) masterControl();
           }
           break;
         case KEY_PRGM_RIGHT:
@@ -211,16 +209,12 @@ inline void powerMenu() {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_SELECTION) {
       DrawFrame(COLOR_WHITE);
-      if(menu.selection == 1) {
-        changePoweroffTimeout();
-      } else if(menu.selection == 2) {
-        changeBacklightTimeout();
-      } else if(menu.selection == 3) {
-        changeBacklightLevel();
-      } else if(menu.selection == 4) {
-        powerInformation();
-      } else if(menu.selection == 5) {
-        setCPUclock();
+      switch(menu.selection) {
+        case 1: changePoweroffTimeout(); break;
+        case 2: changeBacklightTimeout(); break;
+        case 3: changeBacklightLevel(); break;
+        case 4: powerInformation(); break;
+        case 5: setCPUclock(); break;
       }
       return;
     } else if(res >= KEY_CTRL_F2 && res <= KEY_CTRL_F5) {
@@ -254,14 +248,11 @@ inline void lightMenu() {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_SELECTION) {
       DrawFrame(COLOR_WHITE);
-      if(menu.selection == 1) {
-        lantern();
-      } else if(menu.selection == 2) {
-        flashLight();
-      } else if(menu.selection == 3) {
-        morseLight();
-      } else if(menu.selection == 4) {
-        colorLight();
+      switch(menu.selection) {
+        case 1: lantern(); break;
+        case 2: flashLight(); break;
+        case 3: morseLight(); break;
+        case 4: colorLight(); break;
       }
       return;
     } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F2 && res <= KEY_CTRL_F5) {
@@ -295,12 +286,10 @@ inline void timeMenu(chronometer* chrono) {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_SELECTION) {
       DrawFrame(COLOR_WHITE);
-      if(menu.selection == 1) {
-        viewCalendar();
-      } else if(menu.selection == 2) {
-        viewTasks();
-      } else if(menu.selection == 3) {
-        chronoScreen(chrono);
+      switch(menu.selection) {
+        case 1: viewCalendar(); break;
+        case 2: viewTasks(); break;
+        case 3: chronoScreen(chrono); break;
       }
       return;
     } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F3 && res <= KEY_CTRL_F5) {
@@ -335,16 +324,12 @@ inline void toolsMenu() {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_SELECTION) {
       DrawFrame(COLOR_WHITE);
-      if(menu.selection == 1) {
-        fileManager();
-      } else if(menu.selection == 2) {
-        memoryCapacityViewer();
-      } else if(menu.selection == 3) {
-        addinManager();
-      } else if(menu.selection == 4) {
-        changeFKeyColor();
-      } else if(menu.selection == 5) {
-        systemInfo();
+      switch(menu.selection) {
+        case 1: fileManager(); break;
+        case 2: memoryCapacityViewer(); break;
+        case 3: addinManager(); break;
+        case 4: changeFKeyColor(); break;
+        case 5: systemInfo(); break;
       }
       return;
     } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F4 && res <= KEY_CTRL_F5) {

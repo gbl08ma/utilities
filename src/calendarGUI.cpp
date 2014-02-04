@@ -2029,80 +2029,79 @@ void calendarTools(int y, int m, int d) {
   mMsgBoxPop();
   
   if(sres == MENU_RETURN_SELECTION) {
-    if(smallmenu.selection == 1) {
-      sy = y;
-      sm = m;
-      sd = d;
-      DefineStatusMessage((char*)"Select first date", 1, 0, 0);
-      viewCalendar(1);
-      int y1, m1, d1;
-      if(dateselRes) {
-        y1=sy;
-        m1=sm;
-        d1=sd;
-      } else {
-        DefineStatusMessage((char*)"", 1, 0, 0);
-        sy = 0; //avoid jumping again
-        return;
-      }
-      DefineStatusMessage((char*)"Select second date", 1, 0, 0);
-      viewCalendar(1);
-      DefineStatusMessage((char*)"", 1, 0, 0);
-      DisplayStatusArea();
-      if(dateselRes) {
-        int y2=sy, m2=sm, d2=sd;
-        long int daysdiff = DateToDays(y2, m2, d2) - DateToDays(y1, m1, d1);
-        long int businessdiff = 0;
-        for(long int i = 0; (daysdiff < 0 ? i > daysdiff : i < daysdiff); (daysdiff < 0 ? i-- : i++)) {
-          long int ny, nm, nd;
-          DaysToDate(DateToDays(y1, m1, d1)+i, &ny, &nm, &nd);
-          int dw = dow(ny, nm, nd);
-          if(dw != 0 && dw != 6) (daysdiff < 0 ? businessdiff-- : businessdiff++ );
+    switch(smallmenu.selection) {
+      case 1: {
+        sy = y;
+        sm = m;
+        sd = d;
+        DefineStatusMessage((char*)"Select first date", 1, 0, 0);
+        viewCalendar(1);
+        int y1, m1, d1;
+        if(dateselRes) {
+          y1=sy;
+          m1=sm;
+          d1=sd;
+        } else {
+          DefineStatusMessage((char*)"", 1, 0, 0);
+          sy = 0; //avoid jumping again
+          return;
         }
-        textArea text;
-        strcpy(text.title, (char*)"Date difference");
-        text.showtitle=1;
+        DefineStatusMessage((char*)"Select second date", 1, 0, 0);
+        viewCalendar(1);
+        DefineStatusMessage((char*)"", 1, 0, 0);
+        DisplayStatusArea();
+        if(dateselRes) {
+          int y2=sy, m2=sm, d2=sd;
+          long int daysdiff = DateToDays(y2, m2, d2) - DateToDays(y1, m1, d1);
+          long int businessdiff = 0;
+          for(long int i = 0; (daysdiff < 0 ? i > daysdiff : i < daysdiff); (daysdiff < 0 ? i-- : i++)) {
+            long int ny, nm, nd;
+            DaysToDate(DateToDays(y1, m1, d1)+i, &ny, &nm, &nd);
+            int dw = dow(ny, nm, nd);
+            if(dw != 0 && dw != 6) (daysdiff < 0 ? businessdiff-- : businessdiff++ );
+          }
+          textArea text;
+          strcpy(text.title, (char*)"Date difference");
+          text.showtitle=1;
 
-        textElement elem[5];
-        text.elements = elem;
-        text.scrollbar=0;
-        
-        char line1[50] = "";
-        strcpy(line1, (char*)"Between ");
-        char buffer[20] = "";
-        dateToString(buffer, y1, m1, d1, GetSetting(SETTING_DATEFORMAT));
-        strcat(line1, buffer);
-        strcat(line1, (char*)" and ");
-        dateToString(buffer, y2, m2, d2, GetSetting(SETTING_DATEFORMAT));
-        strcat(line1, buffer);
-        strcat(line1, (char*)":");
-        elem[0].text = line1;
-        
-        
-        elem[1].newLine = 1;
-        char line2[50] = "";
-        itoa((int)daysdiff, (unsigned char*)line2);
-        strcat(line2, (char*)" days");
-        elem[1].text = line2;
-        
-        elem[2].newLine = 1;
-        char line3[50] = "";
-        itoa((int)businessdiff, (unsigned char*)line3);
-        strcat(line3, (char*)" business days");
-        elem[2].text = line3;
-        
-        text.numelements = 3;
-        doTextArea(&text);
+          textElement elem[5];
+          text.elements = elem;
+          text.scrollbar=0;
+          
+          char line1[50] = "";
+          strcpy(line1, (char*)"Between ");
+          char buffer[20] = "";
+          dateToString(buffer, y1, m1, d1, GetSetting(SETTING_DATEFORMAT));
+          strcat(line1, buffer);
+          strcat(line1, (char*)" and ");
+          dateToString(buffer, y2, m2, d2, GetSetting(SETTING_DATEFORMAT));
+          strcat(line1, buffer);
+          strcat(line1, (char*)":");
+          elem[0].text = line1;
+          
+          
+          elem[1].newLine = 1;
+          char line2[50] = "";
+          itoa((int)daysdiff, (unsigned char*)line2);
+          strcat(line2, (char*)" days");
+          elem[1].text = line2;
+          
+          elem[2].newLine = 1;
+          char line3[50] = "";
+          itoa((int)businessdiff, (unsigned char*)line3);
+          strcat(line3, (char*)" business days");
+          elem[2].text = line3;
+          
+          text.numelements = 3;
+          doTextArea(&text);
+        }
+        sy = 0; //avoid jumping again
+        break;
       }
-      sy = 0; //avoid jumping again
-    } else if(smallmenu.selection == 2) {
-      repairCalendarDatabase();
-    } else if(smallmenu.selection == 3) {
-      trimCalendarDatabase();
-    } else if(smallmenu.selection == 4) {
-      importCalendarEvents();
-    } else if(smallmenu.selection == 5) {
-      calendarSettingsMenu();
+      case 2: repairCalendarDatabase(); break;
+      case 3: trimCalendarDatabase(); break;
+      case 4: importCalendarEvents(); break;
+      case 5: calendarSettingsMenu(); break;
     }
   }  
 }

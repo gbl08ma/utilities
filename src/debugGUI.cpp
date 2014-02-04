@@ -37,10 +37,7 @@ void debugMessage(char* text1, char* text2, int value) {
   strcpy(buffer2, text2);
   strcat(buffer2, buffer1);
   PrintXY(3,3,(char*)buffer2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  while(1) {
-    GetKey(&key);
-    break;
-  } 
+  GetKey(&key);
   MsgBoxPop();
 }
 void setInitStackPtr(int val) {
@@ -98,33 +95,27 @@ void masterControl() {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
-      if(menu.selection == 1) {
-        SaveSettings();
-      }
-      if(menu.selection == 2) { 
-        LoadSettings();
-      }
-      if(menu.selection == 3) { 
-        SetSetting(SETTING_ENABLE_LOCK, 0, 0); // do not autosave, to allow full control of the operator
-      }
-      if(menu.selection == 4) { 
-        SetSetting(SETTING_ENABLE_LOCK, 1, 0); // do not autosave, to allow full control of the operator
-      }
-      if(menu.selection == 5) { 
-        SetDebugMode(0);
-      }
-      if(menu.selection == 6) { 
-        SetDebugMode(1);
-      }
-      if(menu.selection == 7) { 
-        SetSetting(SETTING_IS_FIRST_RUN, 0, 0); // do not autosave, to allow full control of the operator
-      }
-      if(menu.selection == 8) { 
-        SetSetting(SETTING_IS_FIRST_RUN, 1, 0); // do not autosave, to allow full control of the operator
-      }
-      if(menu.selection == 9) {
-        //CallbackAtQuitMainFunction( mycallback );
-        Restart();
+      switch(menu.selection) {
+        case 1: SaveSettings(); break;
+        case 2: LoadSettings(); break;
+        case 3: 
+          SetSetting(SETTING_ENABLE_LOCK, 0, 0); // do not autosave, to allow full control of the operator
+          break;
+        case 4:
+          SetSetting(SETTING_ENABLE_LOCK, 1, 0); // do not autosave, to allow full control of the operator
+          break;
+        case 5: SetDebugMode(0); break;
+        case 6: SetDebugMode(1); break;
+        case 7:
+          SetSetting(SETTING_IS_FIRST_RUN, 0, 0); // do not autosave, to allow full control of the operator
+          break;
+        case 8:
+          SetSetting(SETTING_IS_FIRST_RUN, 1, 0); // do not autosave, to allow full control of the operator
+          break;
+        case 9:
+          //CallbackAtQuitMainFunction( mycallback );
+          Restart();
+          break;
       }
     }
   }

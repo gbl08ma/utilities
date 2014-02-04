@@ -748,15 +748,7 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
       // check if end datetime is past start datetime. if not, modify end datetime to be the same as start datetime.
       long int timediff = (events[curitem].endtime.hour*60*60+events[curitem].endtime.minute*60+events[curitem].endtime.second) - (events[curitem].starttime.hour*60*60+events[curitem].starttime.minute*60+events[curitem].starttime.second);
       long int datediff = DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
-      int dwrong = 0;
-      if(0<=datediff) {
-        if(datediff==0) {
-          if(0>timediff) dwrong=1;
-        }
-      } else {
-        dwrong=1;
-      }
-      if(dwrong) {
+      if(datediff < 0 || (datediff==0 && timediff<0)) {
         doneEdits=1;
         events[curitem].enddate.year = events[curitem].startdate.year;
         events[curitem].enddate.month = events[curitem].startdate.month;
