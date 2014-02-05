@@ -26,8 +26,6 @@
 #define RWKCNT (unsigned char*)0xA413FEC8
 #define RCR2 (unsigned char*)0xA413FEDE
 
-unsigned int bcd_to_2digit(unsigned char* bcd);
-unsigned int bcd_to_4digit(unsigned char* bcd);
 int getMonthDays(int month);
 const char* getCurrentDOWAsString();
 const char* getCurrentDOWAsShortString();

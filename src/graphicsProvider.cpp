@@ -140,11 +140,6 @@ void darkenStatusbar() {
     VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_BLUE, COLOR_ORANGE);
   }
 }
-void darkenFkeys(int numkeys) {
-  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_BLACK, COLOR_CYAN);
-  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_WHITE, COLOR_BLACK);
-  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_CYAN, COLOR_GRAY);  
-}
 void drawArrowDown(int bottomX, int bottomY, int color) {
   drawLine(bottomX-7,bottomY-7,bottomX,bottomY,color);
   drawLine(bottomX-8,bottomY-7,bottomX,bottomY+1,color); //double thickness of line

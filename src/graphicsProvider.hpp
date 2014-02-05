@@ -22,7 +22,6 @@ void drawFilledCircle(int centerx, int centery, int radius, color_t color);
 void VRAMReplaceColorInRect(int x, int y, int width, int height, color_t color_old, color_t color_new);
 void VRAMInvertArea(short x, short y, short width, short height);
 void darkenStatusbar();
-void darkenFkeys(int numkeys);
 void drawArrowDown(int bottomX, int bottomY, int color);
 void drawFkeyPopup(int Fkey, int darktheme, int showclosemessage);
 //void CopySprite(const void* datar, int x, int y, int width, int height);

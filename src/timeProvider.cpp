@@ -16,8 +16,6 @@
 #include "constantsProvider.hpp"
 #include "settingsProvider.hpp"
 
-#include "debugGUI.hpp"
-
 const char *dayofweek[] = {"Sunday",
                            "Monday",
                            "Tuesday",
@@ -52,10 +50,7 @@ const char monthDays[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 // RTC, CLOCK and CALENDAR CODE
 
 unsigned int bcd_to_2digit(unsigned char* bcd) {
-        return ((((*(bcd))&0xf0)>>4)*10) + ((*(bcd))&0x0f);
-}
-unsigned int bcd_to_4digit(unsigned char* bcd) {
-        return bcd_to_2digit(bcd)*100 + bcd_to_2digit(bcd+1);
+  return ((((*(bcd))&0xf0)>>4)*10) + ((*(bcd))&0x0f);
 }
 int getMonthDays(int month) {
   return monthDays[month-1]; 
@@ -323,7 +318,7 @@ void setDate(int year, int month, int day) {
   *RDAYCNT = ((day / 10) << 4) | (day % 10);
   // set day of week
   *RWKCNT = dow(year, month, day) & 0b111;
-  
+
   // start RTC
   *RCR2 |= 1;
 }
