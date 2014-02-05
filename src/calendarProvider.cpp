@@ -196,7 +196,7 @@ void smemFilenameFromDate(EventDate* date, unsigned short* shortfn, const char* 
   Bfile_StrToName_ncpy(shortfn, (unsigned char*)filename, strlen((char*)filename)+1); 
 }
 
-int AddEvent(CalendarEvent* calEvent, const char* folder) {
+int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
   //Saves a calendar event on an existing calendar with specified file name.
   //If the specified file doesn't exist, it is created and the event is added to it.
   //Returns 0 on success, other values on error.
@@ -227,6 +227,8 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
       return 0;
     } else {
       // file doesn't exist, but can't be created?
+      // if we're calling ourselves for the second time, return:
+      if(secondCall) return 2;
       // it's probably because the DB has never been used and is not initialized (i.e. we haven't created the calendar folder).
       // create the folder:
       char foldername[128] = "";
@@ -236,8 +238,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder) {
       Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
       Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0);
       // now let's call ourselves again, then according to the return value of our second instance, decide if there was an error or not.
-      int ret = AddEvent(calEvent, folder);
-      if(ret) return 2; // another error ocurred
+      if(AddEvent(calEvent, folder,1)) return 2; // another error ocurred
       else return 0; //event was added without error, now that we created the folder
     }
   } else {
