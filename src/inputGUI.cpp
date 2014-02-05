@@ -19,12 +19,12 @@
 #include "settingsProvider.hpp" 
 
 int doTextInput(textInput* input) {
-  int iresult;
-  if(input->symbols && input->type==INPUTTYPE_NORMAL) {
-    GetFKeyPtr(0x02A1, &iresult); // CHAR
-    FKey_Display(3, (int*)iresult);
-  }
   if(input->type==INPUTTYPE_NORMAL) {
+    int iresult;
+    if(input->symbols) {
+      GetFKeyPtr(0x02A1, &iresult); // CHAR
+      FKey_Display(3, (int*)iresult);
+    }
     GetFKeyPtr(0x0307, &iresult); // A<>a
     FKey_Display(4, (int*)iresult);
   }
@@ -57,8 +57,7 @@ int doTextInput(textInput* input) {
           drawLine((input->x*18-18)+18*6+1, input->y*24-1, (input->x*18-18)+18*6+1, input->y*24+23, COLOR_GRAY);
           break;
       }
-    }
-    if(input->type==INPUTTYPE_TIME) {
+    } else if(input->type==INPUTTYPE_TIME) {
       //vertical lines, start and end
       drawLine(input->x*18-18, input->y*24-1, input->x*18-18, input->y*24+23, COLOR_GRAY);
       drawLine((input->x*18-18)+18*input->width, input->y*24-1, (input->x*18-18)+18*input->width, input->y*24+23, COLOR_GRAY);
@@ -73,8 +72,7 @@ int doTextInput(textInput* input) {
       keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.
       //we can't update always because that way alpha-not-lock will cancel when F5 is pressed.
     }
-    if(input->key == KEY_CTRL_EXE || (input->key == KEY_CTRL_F6 && input->acceptF6))
-    {
+    if(input->key == KEY_CTRL_EXE || (input->key == KEY_CTRL_F6 && input->acceptF6)) {
       // Next step
       if(input->forcetext) {
         if (strlen((char*)input->buffer) > 0 && input->buffer[0]!='\xd8') {

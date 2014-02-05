@@ -24,7 +24,6 @@ void showAbout() {
   DisplayStatusArea();
   
   textArea ftext;
-  strcpy(ftext.title, (char*)"");
   ftext.showtitle=0;
   ftext.scrollbar=0;
   ftext.type=TEXTAREATYPE_INSTANT_RETURN;
@@ -32,19 +31,14 @@ void showAbout() {
   textElement felem[14];
   ftext.elements = felem;
   
-  char verBuffer[100] = "";
-  getVersion(verBuffer);
   felem[0].text = (char*)"Version";
   felem[0].spaceAtEnd = 1;
   felem[0].color=COLOR_BLUE;
-  felem[1].text = (char*)verBuffer;
+  felem[1].text = (char*)getVersion();
   felem[1].color=COLOR_BLUE;
   
-  char verTime[100] = "";
-  getTimestamp(verTime);
-  
   felem[2].newLine = 1;
-  felem[2].text = (char*)verTime;
+  felem[2].text = (char*)getTimestamp();
   felem[2].color=COLOR_GRAY;
   
   felem[3].newLine = 1;
@@ -84,7 +78,6 @@ void showAbout() {
   GetKey(&key);
   
   textArea text;
-  strcpy(text.title, (char*)"");
   text.showtitle=0;
 
   textElement elem[5];

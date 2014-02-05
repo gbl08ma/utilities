@@ -381,13 +381,6 @@ void calendarSettingsMenu() {
         case 3: {
           mMsgBoxPush(4);
           MenuItem smallmenuitems[3];
-          if(menu.selection == 2) {
-            strcpy(smallmenuitems[0].text, "Week");
-            strcpy(smallmenuitems[1].text, "Month");
-          } else {
-            strcpy(smallmenuitems[0].text, getDOWAsString(1)); // Sunday
-            strcpy(smallmenuitems[1].text, getDOWAsString(2)); // Monday
-          }
           
           Menu smallmenu;
           smallmenu.items=smallmenuitems;
@@ -398,16 +391,21 @@ void calendarSettingsMenu() {
           smallmenu.startY=2;
           smallmenu.scrollbar=0;
           smallmenu.showtitle=1;
-          if(menu.selection == 2) smallmenu.selection=GetSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;
-          else smallmenu.selection=GetSetting(SETTING_WEEK_START_DAY)+1;
           smallmenu.allowMkey=0;
-          if(menu.selection == 2) strcpy(smallmenu.title, "Default Calendar");
-          else strcpy(smallmenu.title, "Week starts on");
-          int sres = doMenu(&smallmenu);
-          if(sres == MENU_RETURN_SELECTION) {
-            if(menu.selection == 2) SetSetting(SETTING_DEFAULT_CALENDAR_VIEW, smallmenu.selection-1, 1);
-            else SetSetting(SETTING_WEEK_START_DAY, smallmenu.selection-1, 1);
+          if(menu.selection == 2) {
+            strcpy(smallmenu.title, "Default Calendar");
+            smallmenu.selection=GetSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;
+            strcpy(smallmenuitems[0].text, "Week");
+            strcpy(smallmenuitems[1].text, "Month");
+          } else {
+            strcpy(smallmenu.title, "Week starts on");
+            smallmenu.selection=GetSetting(SETTING_WEEK_START_DAY)+1;
+            strcpy(smallmenuitems[0].text, getDOWAsString(1)); // Sunday
+            strcpy(smallmenuitems[1].text, getDOWAsString(2)); // Monday
           }
+          int sres = doMenu(&smallmenu);
+          if(sres == MENU_RETURN_SELECTION)
+            SetSetting((menu.selection == 2 ? SETTING_DEFAULT_CALENDAR_VIEW : SETTING_WEEK_START_DAY), smallmenu.selection-1, 1);
           mMsgBoxPop();
           break;
         }

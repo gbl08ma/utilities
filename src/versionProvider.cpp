@@ -5,11 +5,11 @@
 #include "constantsProvider.hpp"
 #include "timeProvider.hpp"
 
-void getVersion(char* buffer) {
-  strcpy(buffer, __GIT_VERSION);
+const char* getVersion() {
+  return __GIT_VERSION;
 }
-void getTimestamp(char* buffer) {
-  strcpy(buffer, __GIT_TIMESTAMP);
+const char* getTimestamp() {
+  return __GIT_TIMESTAMP;
 }
 
 int getBuildIsExpired() {

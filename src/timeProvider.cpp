@@ -251,125 +251,64 @@ void timeToString(char *buffer, int h, int min, int sec, int format, int showSec
   char hour[2];
   char minute[2];
   char second[2];
-  itoa(h, (unsigned char*)hour);
   itoa(min, (unsigned char*)minute);
   itoa(sec, (unsigned char*)second);
-  switch(format)
-  {
-    case 0: // HH:MM:SS 24-hour
+
+  int pm = 0;
+  if(format && h >= 12) { 
+    pm = 1;
+    h = h - 12;
+    if (h == 0) h = 12;
+  }
+  itoa(h, (unsigned char*)hour);
+  if (h < 10) { strcat(buffer, "0"); }
+  strcat(buffer, hour);
+  strcat(buffer, ":");
+  
+  if (min < 10) { strcat(buffer, "0"); }
+  strcat(buffer, minute);
+  if(showSeconds) {
+    strcat(buffer, ":");
     
-      if (h < 10) { strcat(buffer, "0"); }
-      strcat(buffer, hour);
-      strcat(buffer, ":");
-      
-      if (min < 10) { strcat(buffer, "0"); }
-      strcat(buffer, minute);
-      if(showSeconds) {
-        strcat(buffer, ":");
-        
-        if (sec < 10) { strcat(buffer, "0"); }
-        strcat(buffer, second);
-      }
-      break;
-    case 1: // HH:MM:SS AM/PM 12-hour
-      int pm = 0;
-      if (h >= 12) {
-        pm = 1;
-        h = h - 12;
-        if (h == 0) h = 12;
-        itoa(h, (unsigned char*)hour);
-      }
-      if (h < 10) { strcat(buffer, "0"); }
-      strcat(buffer, hour);
-      strcat(buffer, ":");
-      
-      if (min < 10) { strcat(buffer, "0"); }
-      strcat(buffer, minute);
-      if(showSeconds) {
-        strcat(buffer, ":");
-        
-        if (sec < 10) { strcat(buffer, "0"); }
-        strcat(buffer, second);
-      }
-      
-      if(pm) {
-        strcat(buffer, " PM");
-      } else {
-        strcat(buffer, " AM");
-      }
-      break;
+    if (sec < 10) { strcat(buffer, "0"); }
+    strcat(buffer, second);
+  }
+
+  if(format) {
+    if(pm) strcat(buffer, " PM");
+    else strcat(buffer, " AM");
   }
 }
 
 
-long long int currentUnixTime() // please note, this is milliseconds from epoch and not seconds
-{
-  long long int year = ((*RYRCNT >> 12) & 0b1111)*1000 + ((*RYRCNT >> 8) & 0b1111)*100 + ((*RYRCNT >> 4) & 0b1111)*10 + (*RYRCNT & 0b1111);
-  long long int month = ((*RMONCNT & 0b10000)>>4)*10 + (*RMONCNT & 0b1111);
-  long long int day = ((*RDAYCNT >> 4) & 0b11)*10 + (*RDAYCNT & 0b1111);
-  long long int hour = bcd_to_2digit(RHRCNT);
-  long long int minute = bcd_to_2digit(RMINCNT);
-  long long int second = bcd_to_2digit(RSECCNT);
+long long int currentUnixTime() { // please note, this is milliseconds from epoch and not seconds
   unsigned int fhour=0,fminute=0,fsecond=0,millisecond=0;
   RTC_GetTime( &fhour, &fminute, &fsecond, &millisecond );
-  return DateTime2Unix(year, month, day, hour, minute, second, millisecond);
+  return DateTime2Unix(getCurrentYear(), getCurrentMonth(), getCurrentDay(), getCurrentHour(), getCurrentMinute(), getCurrentSecond(), millisecond);
 } 
 
 void setTime(int hour, int minute, int second) {
-  char hr[2];
-  char min[2];
-  char sec[2];
-  char buffer2[10];
   char temp = *RCR2; //for rtc stopping/starting
-  itoa(hour, (unsigned char*) buffer2);
-  if (hour < 10)
-  { strcpy(hr, "0"); strcat(hr, buffer2); }
-  else { strcpy(hr, buffer2);}
-
-  itoa(minute, (unsigned char*) buffer2);
-  if (minute < 10)
-  { strcpy(min, "0"); strcat(min, buffer2); }
-  else { strcpy(min, buffer2);}
-
-  itoa(second, (unsigned char*) buffer2);
-  if (second < 10)
-  { strcpy(sec, "0"); strcat(sec, buffer2); }
-  else { strcpy(sec, buffer2);}
-
+  
   //stop RTC
   temp |= 0b10;
   temp &= 0b11111110;
   *RCR2 = temp;
 
   // hour
-  *RHRCNT  = ((hr[0] - '0') << 4) | (hr[1] - '0');
+  *RHRCNT  = ((hour / 10) << 4) | (hour % 10);
   // minute
-  *RMINCNT = ((min[0] - '0') << 4) | (min[1] - '0');
+  *RMINCNT = ((minute / 10) << 4) | (minute % 10);
   // second
-  *RSECCNT = ((sec[0] - '0') << 4) | (sec[1] - '0');
+  *RSECCNT = ((second / 10) << 4) | (second % 10);
 
 
   // start RTC
   *RCR2 |= 1;
 }
 
-void setDate(int selyear, int selmonth, int selday) {
-  char day[2];
-  char month[2];
-  char year[4];
-  char buffer2[10];
+void setDate(int year, int month, int day) {
   char temp = *RCR2; //for rtc stopping/starting
-  itoa(selyear, (unsigned char*) year); //we already know this has four digits
-
-  itoa(selmonth, (unsigned char*) buffer2);
-  if (selmonth < 10)
-  { strcpy(month, "0"); strcat(month, buffer2); }
-  else { strcpy(month, buffer2);}
-
-  itoa(selday, (unsigned char*) buffer2);
-  if (selday < 10)
-  { strcpy(day, "0"); strcat(day, buffer2); }
-  else { strcpy(day, buffer2);}
 
   //stop RTC
   temp |= 0b10;
@@ -377,13 +316,14 @@ void setDate(int selyear, int selmonth, int selday) {
   *RCR2 = temp;
 
   // set year
-  *RYRCNT  = ((year[0] - '0') << 12) | ((year[1] - '0') << 8) | ((year[2] - '0') << 4) | (year[3] - '0');
+  *RYRCNT  = ((year / 1000) << 12) | (((year % 1000)/100) << 8) | (((year % 100) / 10) << 4) | (year % 10);
   // set month
-  *RMONCNT = ((month[0] - '0') << 4) | (month[1] - '0');
+  *RMONCNT = ((month / 10) << 4) | (month % 10);
   // set day
-  *RDAYCNT = ((day[0] - '0') << 4) | (day[1] - '0');
+  *RDAYCNT = ((day / 10) << 4) | (day % 10);
   // set day of week
-  *RWKCNT = dow(selyear, selmonth, selday) & 0b111;
+  *RWKCNT = dow(year, month, day) & 0b111;
+  
   // start RTC
   *RCR2 |= 1;
 }

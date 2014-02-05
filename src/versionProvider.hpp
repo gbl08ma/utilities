@@ -4,8 +4,8 @@
 # ifdef __cplusplus
 extern "C" {
 # endif
-void getVersion(char* buffer);
-void getTimestamp(char* buffer);
+const char* getVersion();
+const char* getTimestamp();
 # ifdef __cplusplus
 }
 # endif

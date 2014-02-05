@@ -883,7 +883,6 @@ void viewEvent(CalendarEvent* event, int istask) {
   text.numelements++;
   
   if(!istask) {
-    char buffer[15]="";
     elem[text.numelements].text = (char*)"Starts on";
     elem[text.numelements].newLine = 1;
     elem[text.numelements].lineSpacing = 8;
@@ -892,13 +891,11 @@ void viewEvent(CalendarEvent* event, int istask) {
     text.numelements++;
     
     unsigned char startson[50] = "";
-    strcpy(buffer, (char*)"");
-    dateToString((char*)buffer, event->startdate.year, event->startdate.month, event->startdate.day, GetSetting(SETTING_DATEFORMAT));
-    strcpy((char*)startson, buffer);
+    dateToString((char*)startson, event->startdate.year, event->startdate.month, event->startdate.day, GetSetting(SETTING_DATEFORMAT));
     strcat((char*)startson, (char*)" ");
     
     if(event->timed) {
-      strcpy(buffer, (char*)"");
+      char buffer[15]="";
       timeToString((char*)buffer, event->starttime.hour, event->starttime.minute, event->starttime.second, GetSetting(SETTING_TIMEFORMAT));
       strcat((char*)startson, (char*)buffer);
     } else {
@@ -918,7 +915,7 @@ void viewEvent(CalendarEvent* event, int istask) {
     dateToString((char*)endson, event->enddate.year, event->enddate.month, event->enddate.day, GetSetting(SETTING_DATEFORMAT));
     
     if(event->timed) {
-      strcpy(buffer, (char*)"");
+      char buffer[15]="";
       timeToString((char*)buffer, event->endtime.hour, event->endtime.minute, event->endtime.second, GetSetting(SETTING_TIMEFORMAT));
       strcat((char*)endson, (char*)" ");
       strcat((char*)endson, (char*)buffer);
@@ -934,7 +931,6 @@ void viewEvent(CalendarEvent* event, int istask) {
   elem[text.numelements].spaceAtEnd=1;
   text.numelements++;
   
-  strcpy(catbuffer, (char*)"");
   itoa(event->category, (unsigned char*)catbuffer);
   elem[text.numelements].text = (char*)catbuffer;
   elem[text.numelements].color = textColorToFullColor((event->category == 0 ? 7 : event->category-1));
@@ -955,53 +951,39 @@ void viewEvent(CalendarEvent* event, int istask) {
 
 void fillInputDate(int yr, int m, int d, char* buffer) {
   if(yr != 0 || m != 0 || d != 0) {
-    buffer[0] = '\0'; // This sets the first character to \0, also represented by "", an empty string
     char buffer2[8] = "";
+    char day[5] = "";
+    char month[5] = "";
+    char year[5] = "";
+    if (d < 10) { strcat(day, "0"); }
+    itoa(d, (unsigned char*) buffer2);
+    strcat(day, buffer2);
+    
+    if (m < 10) { strcat(month, "0"); }
+    itoa(m, (unsigned char*) buffer2);
+    strcat(month, buffer2);
+    
+    if (yr < 1000) { strcat(year, "0"); }
+    if (yr < 100) { strcat(year, "0"); }
+    if (yr < 10) { strcat(year, "0"); }
+    itoa(yr, (unsigned char*) buffer2);
+    strcat(year, buffer2);
+
     switch(GetSetting(SETTING_DATEFORMAT)) {
       case 0:
-        if (d < 10) { strcat(buffer, "0"); }
-        itoa(d, (unsigned char*) buffer2);
-        strcat(buffer, buffer2);
-        
-        if (m < 10) { strcat(buffer, "0"); }
-        itoa(m, (unsigned char*) buffer2);
-        strcat(buffer, buffer2);
-        
-        if (yr < 1000) { strcat(buffer, "0"); }
-        if (yr < 100) { strcat(buffer, "0"); }
-        if (yr < 10) { strcat(buffer, "0"); }
-        itoa(yr, (unsigned char*) buffer2);
-        strcat(buffer, buffer2);
+        strcpy(buffer, day);
+        strcat(buffer, month);
+        strcat(buffer, year);
         break;
       case 1:
-        if (m < 10) { strcat(buffer, "0"); }
-        itoa(m, (unsigned char*) buffer2);
-        strcat(buffer, buffer2);
-        
-        if (d < 10) { strcat(buffer, "0"); }
-        itoa(d, (unsigned char*) buffer2);
-        strcat(buffer, buffer2);
-        
-        if (yr < 1000) { strcat(buffer, "0"); }
-        if (yr < 100) { strcat(buffer, "0"); }
-        if (yr < 10) { strcat(buffer, "0"); }
-        itoa(yr, (unsigned char*) buffer2);
-        strcat(buffer, buffer2);
+        strcpy(buffer, month);
+        strcat(buffer, day);
+        strcat(buffer, year);
         break;
       case 2:
-        if (yr < 1000) { strcat(buffer, "0"); }
-        if (yr < 100) { strcat(buffer, "0"); }
-        if (yr < 10) { strcat(buffer, "0"); }
-        itoa(yr, (unsigned char*) buffer2);
-        strcat(buffer, buffer2);
-    
-        if (m < 10) { strcat(buffer, "0"); }
-        itoa(m, (unsigned char*) buffer2);
-        strcat(buffer, buffer2);
-        
-        if (d < 10) { strcat(buffer, "0"); }
-        itoa(d, (unsigned char*) buffer2);
-        strcat(buffer, buffer2);
+        strcpy(buffer, year);
+        strcat(buffer, month);
+        strcat(buffer, day);
         break;
     }
   }
@@ -1354,7 +1336,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         if(type == EVENTEDITORTYPE_ADD) {
           event->repeat = 0;
           int res = AddEvent(event, CALENDARFOLDER);
-          if(res > 0) {
+          if(res) {
             mMsgBoxPush(4);
             if (res == 4) {
               mPrintXY(3, 2, (char*)"Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -1787,65 +1769,69 @@ void searchEventsGUI(int y, int m, int d) {
   int sres = doMenu(&smallmenu);
   mMsgBoxPop();
   
-  if(sres == MENU_RETURN_SELECTION) {
-    char needle[55] = "";
-    
-    Bdisp_AllClr_VRAM();
-    mPrintXY(1, 1, (char*)"Event Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-    DisplayStatusArea();
-    mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    int iresult;
-    GetFKeyPtr(0x04A3, &iresult); // Next
-    FKey_Display(5, (int*)iresult);
-    
-    textInput input;
-    input.forcetext=1; //force text so title must be at least one char.
-    input.charlimit=50;
-    input.acceptF6=1;
-    input.buffer = needle;
-    while(1) {
-      input.key=0;
-      int res = doTextInput(&input);
-      if (res==INPUT_RETURN_EXIT) return; // user aborted
-      else if (res==INPUT_RETURN_CONFIRM) break; // continue to search
-    }
-    SimpleCalendarEvent* events;
-    MenuItem* menuitems;
-    
-    Menu menu;
-    menu.scrollout=1;
-    menu.showtitle=1;
-    menu.height=7;
-    menu.type=MENUTYPE_FKEYS;
-    strcpy(menu.nodatamsg, "No events found");
-    strcpy(menu.title, "Search results");
+  if(sres != MENU_RETURN_SELECTION) return;
+  char needle[55] = "";
+  
+  Bdisp_AllClr_VRAM();
+  mPrintXY(1, 1, (char*)"Event Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  DisplayStatusArea();
+  mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  int iresult;
+  GetFKeyPtr(0x04A3, &iresult); // Next
+  FKey_Display(5, (int*)iresult);
+  
+  textInput input;
+  input.forcetext=1; //force text so title must be at least one char.
+  input.charlimit=50;
+  input.acceptF6=1;
+  input.buffer = needle;
+  while(1) {
+    input.key=0;
+    int res = doTextInput(&input);
+    if (res==INPUT_RETURN_EXIT) return; // user aborted
+    else if (res==INPUT_RETURN_CONFIRM) break; // continue to search
+  }
+  SimpleCalendarEvent* events;
+  MenuItem* menuitems;
+  
+  Menu menu;
+  menu.scrollout=1;
+  menu.showtitle=1;
+  menu.height=7;
+  menu.type=MENUTYPE_FKEYS;
+  strcpy(menu.nodatamsg, "No events found");
+  strcpy(menu.title, "Search results");
 
-    if(smallmenu.selection == 1) {
+  switch(smallmenu.selection) {
+    case 1:
       menu.numitems = SearchEventsOnYearOrMonth(y, 0, CALENDARFOLDER, NULL, needle, 200); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
       menu.numitems = SearchEventsOnYearOrMonth(y, 0, CALENDARFOLDER, events, needle, 200);
-    } else if(smallmenu.selection == 2) {
+      break;
+    case 2:
       menu.numitems = SearchEventsOnYearOrMonth(y, m, CALENDARFOLDER, NULL, needle, 200); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
       menu.numitems = SearchEventsOnYearOrMonth(y, m, CALENDARFOLDER, events, needle, 200);
-    } else if(smallmenu.selection == 3) {
-      EventDate sday;
+      break;
+    case 3:
+    { EventDate sday;
       sday.day = d; sday.month = m; sday.year = y;
       menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
       menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
-    } else {
-      int userStartYear = y-2;
+      break;
+    }
+    //case 4:
+    default: //avoids compiler warning
+    { int userStartYear = y-2;
       int userEndYear = y+2;
-      int res;
       Selector sel;
       strcpy(sel.title, "Search on year range");
       strcpy(sel.subtitle, "Start year");
       sel.value = userStartYear;
       sel.min = 1;
       sel.max = 9999;
-      res = doSelector(&sel);
-      if (res == SELECTOR_RETURN_EXIT) return;
+      if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
       userStartYear = sel.value;
       
       strcpy(sel.subtitle, "End year");
@@ -1854,8 +1840,7 @@ void searchEventsGUI(int y, int m, int d) {
       sel.max = (userStartYear+254 > 9999 ? 9999 : userStartYear+254); //do not allow for more than 255 years, otherwise maximum will be less than an event per year
       // also, if more than 255 years it would definitely take too much time, and user would certainly reboot the calculator
       sel.cycle = 0;
-      res = doSelector(&sel);
-      if (res == SELECTOR_RETURN_EXIT) return;
+      if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
       userEndYear = sel.value;
       
       int yc = userEndYear-userStartYear+1;
@@ -1884,54 +1869,55 @@ void searchEventsGUI(int y, int m, int d) {
       }
       closeProgressMessage();
       menu.numitems = ic;
+      break;
     }
-    menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
-    int curitem = 0;
-    while(curitem <= menu.numitems-1) {
-      strcpy(menuitems[curitem].text, (char*)events[curitem].title);
-      menuitems[curitem].type = MENUITEM_NORMAL;
-      menuitems[curitem].color = events[curitem].category-1;
-      curitem++;
+  }
+  menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
+  int curitem = 0;
+  while(curitem <= menu.numitems-1) {
+    strcpy(menuitems[curitem].text, (char*)events[curitem].title);
+    menuitems[curitem].type = MENUITEM_NORMAL;
+    menuitems[curitem].color = events[curitem].category-1;
+    curitem++;
+  }
+  menu.items=menuitems;
+  while(1) {
+    Bdisp_AllClr_VRAM();
+    int iresult;
+    if(menu.numitems>0) {
+      GetFKeyPtr(0x049F, &iresult); // VIEW
+      FKey_Display(0, (int*)iresult);
+      GetFKeyPtr(0x015F, &iresult); // DATE
+      FKey_Display(1, (int*)iresult);
+      GetFKeyPtr(0x01FC, &iresult); // JUMP
+      FKey_Display(2, (int*)iresult);
     }
-    menu.items=menuitems;
-    while(1) {
-      Bdisp_AllClr_VRAM();
-      int iresult;
-      if(menu.numitems>0) {
-        GetFKeyPtr(0x049F, &iresult); // VIEW
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x015F, &iresult); // DATE
-        FKey_Display(1, (int*)iresult);
-        GetFKeyPtr(0x01FC, &iresult); // JUMP
-        FKey_Display(2, (int*)iresult);
-      }
-      int res = doMenu(&menu);
-      switch(res) {
-        case MENU_RETURN_EXIT:
+    int res = doMenu(&menu);
+    switch(res) {
+      case MENU_RETURN_EXIT:
+        return;
+        break;
+      case KEY_CTRL_F1:
+      case MENU_RETURN_SELECTION:
+        if(menu.numitems>0) {
+          viewNthEventOnDay(&events[menu.selection-1].startdate, events[menu.selection-1].origpos);
+        }
+        break;
+      case KEY_CTRL_F2:
+        if(menu.numitems>0) {
+          searchValid = 1;
+          viewEvents(events[menu.selection-1].startdate.year, events[menu.selection-1].startdate.month, events[menu.selection-1].startdate.day);
+          if(!searchValid) return;
+        }
+        break;
+      case KEY_CTRL_F3:
+        if(menu.numitems>0) {
+          sy=events[menu.selection-1].startdate.year;
+          sm=events[menu.selection-1].startdate.month;
+          sd=events[menu.selection-1].startdate.day;
           return;
-          break;
-        case KEY_CTRL_F1:
-        case MENU_RETURN_SELECTION:
-          if(menu.numitems>0) {
-            viewNthEventOnDay(&events[menu.selection-1].startdate, events[menu.selection-1].origpos);
-          }
-          break;
-        case KEY_CTRL_F2:
-          if(menu.numitems>0) {
-            searchValid = 1;
-            viewEvents(events[menu.selection-1].startdate.year, events[menu.selection-1].startdate.month, events[menu.selection-1].startdate.day);
-            if(!searchValid) return;
-          }
-          break;
-        case KEY_CTRL_F3:
-          if(menu.numitems>0) {
-            sy=events[menu.selection-1].startdate.year;
-            sm=events[menu.selection-1].startdate.month;
-            sd=events[menu.selection-1].startdate.day;
-            return;
-          }
-          break;
-      }
+        }
+        break;
     }
   }
 }
@@ -2345,12 +2331,16 @@ void trimCalendarDatabase() {
           }
           if(!deleteThisFile) {
             long int datediff = DateToDays(y, m, d) - DateToDays(thisday.year, thisday.month, thisday.day);
-            if(menu.selection == 1) {
-              if(datediff > 30+31+30+31+30+31) deleteThisFile=1;
-            } else if(menu.selection == 2) {
-              if(datediff > 30) deleteThisFile=1;
-            } else if(menu.selection == 3) {
-              if(datediff > 0) deleteThisFile=1;
+            switch(menu.selection) {
+              case 1:
+                if(datediff > 30+31+30+31+30+31) deleteThisFile=1;
+                break;
+              case 2:
+                if(datediff > 30) deleteThisFile=1;
+                break;
+              case 3:
+                if(datediff > 0) deleteThisFile=1;
+                break;
             }
           }
         }

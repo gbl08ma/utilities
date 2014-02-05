@@ -32,9 +32,11 @@ int doSelector(Selector* selector) {
   mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
   while(1)
   {
-    if(selector->type == SELECTORTYPE_LONGDATEFORMAT) clearLine(1,4);
     clearLine(5,5);
-    if(selector->type != SELECTORTYPE_LONGDATEFORMAT) {
+    if(selector->type == SELECTORTYPE_LONGDATEFORMAT) {
+      clearLine(1,4);
+      drawLongDate(82,selector->value, COLOR_BLACK, COLOR_WHITE, NULL);
+    } else {
       char buffer1[50] = "";
       if(selector->type == SELECTORTYPE_MONTH) {
         strcpy(buffer1, getMonthAsString(selector->value));
@@ -56,8 +58,6 @@ int doSelector(Selector* selector) {
         itoa(selector->value, (unsigned char*)buffer1);
       }
       mPrintXY(5, 5, buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    } else {
-      drawLongDate(82,selector->value, COLOR_BLACK, COLOR_WHITE, NULL);
     }
     if (selector->allowMkey) mGetKey(&key);
     else GetKey(&key);

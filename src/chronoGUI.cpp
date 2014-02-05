@@ -371,30 +371,28 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
       if(bmenu.selection == 1) {
         type=CHRONO_TYPE_UP;
         break;
-      }
-      if(bmenu.selection == 2) {
+      } else if(bmenu.selection == 2) {
         Selector sel;
         strcpy(sel.title, "Set downwards chrono.");
         strcpy(sel.subtitle, "Days");
         sel.max = -1; // no limit. long long int is big enough to accomodate a chronometer with a duration of over 2 million days.
         sel.cycle = 0;
         sel.type = SELECTORTYPE_NORMAL;
-        res = doSelector(&sel);
-        if (res == SELECTOR_RETURN_EXIT) return;
+        if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
         long int days = sel.value;
         
         strcpy(sel.subtitle, "Hours");
         sel.max = 23;
+        sel.value = 0;
         sel.cycle = 0;
-        res = doSelector(&sel);
-        if (res == SELECTOR_RETURN_EXIT) return;
+        if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
         int hours = sel.value;
         
         strcpy(sel.subtitle, "Minutes");
         sel.max = 59;
+        sel.value = 0;
         sel.cycle = 0;
-        res = doSelector(&sel);
-        if (res == SELECTOR_RETURN_EXIT) return;
+        if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
         int minutes = sel.value;
         
         strcpy(sel.subtitle, "Seconds");
@@ -402,13 +400,11 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         sel.value = sel.min = (days == 0 && hours == 0 && minutes == 0);
         sel.max = 59;
         sel.cycle = 0;
-        res = doSelector(&sel);
-        if (res == SELECTOR_RETURN_EXIT) return;
+        if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
         seconds = sel.value + 60*minutes + 60*60*hours + 60*60*24*days;
         type=CHRONO_TYPE_DOWN;
         break;
-      }
-      if(bmenu.selection == 3) {
+      } else if(bmenu.selection == 3) {
         int y, m, d;
         if(chooseCalendarDate(&y, &m, &d, (char*)"Select chronometer end date", (char*)"", 1)) return;
         if(DateToDays(y, m, d) - DateToDays(getCurrentYear(), getCurrentMonth(), getCurrentDay()) < 0) {
