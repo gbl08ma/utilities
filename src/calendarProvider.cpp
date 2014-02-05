@@ -383,7 +383,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
 void GetEventCountsForMonthHelper(EventDate* date, int count, int* busydays) {
   CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
   count = GetEventsForDate(date, CALENDARFOLDER, events);
-  for(int curitem = 0; curitem <= count - 1; curitem++) {
+  for(int curitem = 0; curitem < count; curitem++) {
     long int datediff = DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
     if(datediff == 0) {
       busydays[date->day] = events[curitem].category;
@@ -454,7 +454,7 @@ void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resC
   CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
   daynumevents = GetEventsForDate(date, folder, dayEvents);
   int curitem = 0;
-  while(curitem <= daynumevents-1) {
+  while(curitem < daynumevents) {
     int match = 0;
     if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
       match = 1;
@@ -705,7 +705,7 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   numitems = GetEventsForDate(&thisday, folder, events);
   int curitem = 0;
   int doneEdits = 0;
-  while(curitem <= numitems-1) {
+  while(curitem < numitems) {
     // first of all, check that this is not a task:
     if(events[curitem].startdate.year || events[curitem].startdate.month || events[curitem].startdate.day) {
       // check validity of start date, start time, end date and end time individually

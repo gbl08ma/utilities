@@ -31,7 +31,7 @@ int doTextArea(textArea* text) {
     int textY = scroll+(text->showtitle ? 24 : 0)+text->y; // 24 pixels for title (or not)
     int temptextY = 0;
     int temptextX = 0;
-    while(cur <= text->numelements-1) {
+    while(cur < text->numelements) {
       if(text->elements[cur].newLine) {
         textX=text->x;
         textY=textY+text->lineHeight+text->elements[cur].lineSpacing; 

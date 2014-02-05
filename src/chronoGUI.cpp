@@ -115,16 +115,17 @@ void chronoScreen(chronometer* chrono) {
   MenuItem menuitems[NUMBER_OF_CHRONO];
   int curitem = 0;
   int curcolor = TEXT_COLOR_BLUE;
-  while(curitem <= NUMBER_OF_CHRONO-1) {
+  for(int curitem=0; curitem < NUMBER_OF_CHRONO; curitem++) {
     menuitems[curitem].type = MENUITEM_CHECKBOX;
     menuitems[curitem].value = MENUITEM_VALUE_NONE;
     menuitems[curitem].color = curcolor;
-    if (curcolor==TEXT_COLOR_BLUE) curcolor = TEXT_COLOR_RED;
-    else if (curcolor==TEXT_COLOR_RED) curcolor = TEXT_COLOR_GREEN;
-    else if (curcolor==TEXT_COLOR_GREEN) curcolor = TEXT_COLOR_PURPLE;
-    else if (curcolor==TEXT_COLOR_PURPLE) curcolor = TEXT_COLOR_BLACK;
-    else if (curcolor==TEXT_COLOR_BLACK) curcolor = TEXT_COLOR_BLUE;
-    curitem++;
+    switch(curcolor) {
+      case TEXT_COLOR_BLUE: curcolor = TEXT_COLOR_RED; break;
+      case TEXT_COLOR_RED: curcolor = TEXT_COLOR_GREEN; break;
+      case TEXT_COLOR_GREEN: curcolor = TEXT_COLOR_PURPLE; break;
+      case TEXT_COLOR_PURPLE: curcolor = TEXT_COLOR_BLACK; break;
+      case TEXT_COLOR_BLACK: curcolor = TEXT_COLOR_BLUE; break;
+    }
   }
   Menu menu;
   menu.items=menuitems;
@@ -141,12 +142,10 @@ void chronoScreen(chronometer* chrono) {
   unsigned short prevkey = 0;
   while(1) {
     checkChronoComplete();
-    curitem=0;
-    while(curitem <= NUMBER_OF_CHRONO-1) {
+    for(curitem=0; curitem < NUMBER_OF_CHRONO; curitem++) {
       unsigned char text[42] = "";
       formatChronoString(&chrono[curitem], curitem+1, text);
       strcpy(menuitems[curitem].text, (char*)text);
-      curitem++;
     }
     if(menu.fkeypage==0) {
       GetFKeyPtr(0x0037, &iresult); // SELECT (white)
@@ -239,33 +238,21 @@ void chronoScreen(chronometer* chrono) {
           if(menu.fkeypage==0) { setChronoGUI(&menu, chrono); saveChronoArray(chrono, NUMBER_OF_CHRONO); }
           else if (menu.fkeypage==1) {
             // select all
-            int cur = 0;
-            while(cur <= NUMBER_OF_CHRONO-1) {
-              menu.items[cur].value = MENUITEM_VALUE_CHECKED;
-              cur++;
-            } 
+            for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = MENUITEM_VALUE_CHECKED;
           }
           break;
         case KEY_PRGM_F3:
           if(menu.fkeypage==0) clearSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
           else if (menu.fkeypage==1) {
             // select none
-            int cur = 0;
-            while(cur <= NUMBER_OF_CHRONO-1) {
-              menu.items[cur].value = MENUITEM_VALUE_NONE;
-              cur++;
-            } 
+            for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = MENUITEM_VALUE_NONE;
           }
           break;
         case KEY_PRGM_F4:
           if(menu.fkeypage==0) startSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
           else if (menu.fkeypage==1) {
             // reverse selection
-            int cur = 0;
-            while(cur <= NUMBER_OF_CHRONO-1) {
-              menu.items[cur].value = !menu.items[cur].value;
-              cur++;
-            } 
+            for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = !menu.items[cur].value;
           }
           break;
         case KEY_PRGM_F5:
@@ -289,13 +276,12 @@ void chronoScreen(chronometer* chrono) {
 
 void startSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
   // do action for each selected timer
-  int cur = 0, hasPerformedAny = 0;
-  while(cur <= count-1) {
-    if(menu->items[cur].value == MENUITEM_VALUE_CHECKED) {
+  int hasPerformedAny = 0;
+  for(int cur = 0; cur < count; cur++) {
+    if(menu->items[cur].value) {
       startChrono(&tchrono[cur]);
       hasPerformedAny = 1;
     }
-    cur++;
   }
   if(!hasPerformedAny) startChrono(&tchrono[menu->selection-1]); // if there was no selected chrono, do it for the currently selected menu position
   saveChronoArray(tchrono, NUMBER_OF_CHRONO); 
@@ -303,13 +289,12 @@ void startSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
 
 void stopSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
   // do action for each selected timer
-  int cur = 0, hasPerformedAny = 0;
-  while(cur <= count-1) {
-    if(menu->items[cur].value == MENUITEM_VALUE_CHECKED) {
+  int hasPerformedAny = 0;
+  for(int cur = 0; cur < count; cur++) {
+    if(menu->items[cur].value) {
       stopChrono(&tchrono[cur]);
       hasPerformedAny = 1;
     }
-    cur++;
   }
   if(!hasPerformedAny) stopChrono(&tchrono[menu->selection-1]); // if there was no selected chrono, do it for the currently selected menu position
   saveChronoArray(tchrono, NUMBER_OF_CHRONO); 
@@ -317,13 +302,12 @@ void stopSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
 
 void clearSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
   // do action for each selected timer
-  int cur = 0, hasPerformedAny = 0;
-  while(cur <= count-1) {
-    if(menu->items[cur].value == MENUITEM_VALUE_CHECKED) {
+  int hasPerformedAny = 0;
+  for(int cur = 0; cur < count; cur++) {
+    if(menu->items[cur].value) {
       clearChrono(&tchrono[cur]);
       hasPerformedAny = 1;
     }
-    cur++;
   }
   if(!hasPerformedAny) clearChrono(&tchrono[menu->selection-1]); // if there was no selected chrono, do it for the currently selected menu position
   saveChronoArray(tchrono, NUMBER_OF_CHRONO); 
@@ -463,13 +447,12 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
     }
   }
   
-  int cur = 0, hasPerformedAny = 0;
-  while(cur <= NUMBER_OF_CHRONO-1) {
+  int hasPerformedAny = 0;
+  for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) {
     if(menu->items[cur].value == MENUITEM_VALUE_CHECKED) {
       setChrono(&tchrono[cur], seconds*1000, type);
       hasPerformedAny=1;
     }
-    cur++;
   }
   if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], seconds*1000, type); // if there was no selected chrono, do it for the currently selected menu position
 }
@@ -515,7 +498,7 @@ void setBuiltinChrono(Menu* menu, chronometer* tchrono) {
   }
   
   int hasPerformedAny = 0;
-  for(int cur = 0; cur <= NUMBER_OF_CHRONO-1; cur++) {
+  for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) {
     if(menu->items[cur].value == MENUITEM_VALUE_CHECKED) {
       setChrono(&tchrono[cur], duration, CHRONO_TYPE_DOWN);
       hasPerformedAny=1;
@@ -528,8 +511,7 @@ void setBuiltinChrono(Menu* menu, chronometer* tchrono) {
 int getLastChronoComplete() { return lastChronoComplete; }
 
 void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
-  int cur = 0;
-  while(cur <= count-1) {
+  for(int cur = 0; cur < count; cur++) {
     if(chronoarray[cur].state == CHRONO_STATE_RUNNING && chronoarray[cur].type == CHRONO_TYPE_DOWN && //...
     // check if chrono is complete
     // if end time of chrono (start+duration) <= current time and chrono is running, chrono is complete
@@ -559,6 +541,5 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
         }
       }
     }
-    cur++;
   }
 }

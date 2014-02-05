@@ -719,7 +719,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
   MenuItem* menuitems = (MenuItem*)alloca(menu->numitems*sizeof(MenuItem));
   menu->numitems = GetEventsForDate(&thisday, CALENDARFOLDER, events);
   int curitem = 0;
-  while(curitem <= menu->numitems-1) {
+  while(curitem < menu->numitems) {
     strcpy(menuitems[curitem].text, (char*)events[curitem].title);
     menuitems[curitem].type = MENUITEM_NORMAL;
     menuitems[curitem].value = events[curitem].repeat;
@@ -1874,7 +1874,7 @@ void searchEventsGUI(int y, int m, int d) {
   }
   menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
   int curitem = 0;
-  while(curitem <= menu.numitems-1) {
+  while(curitem < menu.numitems) {
     strcpy(menuitems[curitem].text, (char*)events[curitem].title);
     menuitems[curitem].type = MENUITEM_NORMAL;
     menuitems[curitem].color = events[curitem].category-1;
@@ -1936,7 +1936,7 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
   count = GetEventsForDate(thisday, CALENDARFOLDER, events);
   int categoryColors[10] = {COLOR_GRAY, COLOR_BLACK, COLOR_BLUE, COLOR_GREEN, COLOR_CYAN, COLOR_RED, COLOR_MAGENTA, COLOR_YELLOW};
   int curitem = 0;
-  while(curitem <= count-1) {
+  while(curitem < count) {
     long int daysduration = DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
     long int bwidth = 0;
     if(events[curitem].timed) {
@@ -2373,7 +2373,7 @@ int importHelper(EventDate* date, int count, textArea* text, textElement* elem, 
   GetEventsForDate(date, CALENDARFOLDER, events);
   int curitem = 0;
   int successful = initSuc;
-  while(curitem <= count-1) {
+  while(curitem < count) {
     char buffer1[20] = "";
     itoa((int)successful, (unsigned char*)buffer1);
     elem[2].text = buffer1;
