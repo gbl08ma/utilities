@@ -446,8 +446,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
             }
           } 
         }
-        long long int endunix = DateTime2Unix(y, m, d, h, mi, s, 0);
-        long long int duration = endunix - currentUnixTime();
+        long long int duration = DateTime2Unix(y, m, d, h, mi, s, 0) - currentUnixTime();
         if(duration < 0) {
           mMsgBoxPush(4);
           mPrintXY(3, 2, (char*)"Time is in the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);

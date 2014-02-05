@@ -57,7 +57,6 @@ void showHome(chronometer* chrono) {
     } else {
       DrawFrame( 0xFFFFFF  );
     }
-    DefineStatusMessage((char*)"", 1, 0, 0);
     if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 3 && getLastChronoComplete()) {
       char buffer[10] = "";
       char message[50] = "";
@@ -66,7 +65,7 @@ void showHome(chronometer* chrono) {
       strcat(message, buffer);
       strcat(message, " ended");
       DefineStatusMessage(message, 1, 4, 0);
-    }
+    } else DefineStatusMessage((char*)"", 1, 0, 0);
     DisplayStatusArea();
     
     // Print time
