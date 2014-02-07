@@ -42,13 +42,12 @@ void saveChronoArray(chronometer* chronoarray, int count) { // count is the amou
   unsigned char* finalbuffer = (unsigned char*)alloca(count*sizeof(buffer));
 
   // convert each chrono in chronoarray to a buffer, and concat it to finalbuffer
-  int cur = 0;
+  
   int allClear = 1;
-  while(cur < count) {
+  for(int cur = 0; cur < count; cur++) {
     if(chronoarray[cur].state != CHRONO_STATE_CLEARED) allClear=0;
     chronoToBuffer(&chronoarray[cur], buffer);
     memcpy(finalbuffer+cur*8*5,buffer,8*5);
-    cur++;
   }
   if(allClear) {
     // all chronos are clear
@@ -57,12 +56,10 @@ void saveChronoArray(chronometer* chronoarray, int count) { // count is the amou
     MCSDelVar2(DIRNAME, CHRONOFILE);
     return;
   }
+  // Check if directory exists:
   int createResult = MCS_CreateDirectory( DIRNAME );
-
-  if(createResult != 0) // Check if directory exists
-  { // directory already exists, so delete the exiting file that may be there
+  if(createResult != 0) // directory already exists, so delete the exiting file that may be there
     MCSDelVar2(DIRNAME, CHRONOFILE);
-  }
   MCSPutVar2(DIRNAME, CHRONOFILE, count*8*5, finalbuffer);
 }
 
@@ -75,11 +72,7 @@ void loadChronoArray(chronometer* chronoarray, int count) { // count is the amou
   if (size == 0 || size != count*(int)sizeof(buffer)) {
     // doesn't exist or is incompatible. We could return right now, but other code may be expecting a "clean" chronoarray,
     // so we must clear each chrono manually
-    int cur=0;
-    while(cur < count) {
-      clearChrono(&chronoarray[cur]);
-      cur++;
-    }
+    for(int cur=0; cur < count; cur++) clearChrono(&chronoarray[cur]);
     return;
   }
 
@@ -87,12 +80,7 @@ void loadChronoArray(chronometer* chronoarray, int count) { // count is the amou
   MCSGetData1(0, count*8*5, finalbuffer);
   
   // convert each chrono (as string) in finalbuffer to a chrono in chronoarray
-  int cur = 0;
-  while(cur < count) {
-    bufferToChrono((long long int*)(finalbuffer+cur*8*5), &chronoarray[cur]);
-    cur++;
-  }
-  return;
+  for(int cur=0; cur < count; cur++) bufferToChrono((long long int*)(finalbuffer+cur*8*5), &chronoarray[cur]);
 }
 
 void setChrono(chronometer* tchrono, long long int duration, long long int type) {
