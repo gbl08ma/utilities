@@ -39,7 +39,6 @@ typedef struct
   int scrollbar=1;
   int allowEXE=0; //whether to allow EXE to exit the screen
   int allowF1=0; //whether to allow F1 to exit the screen
-  int allowMkey=1; //whether to allow managed GetKey (allow to go into settings, do Shift+Exit...)
   int type=TEXTAREATYPE_NORMAL;
 } textArea;
 

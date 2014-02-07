@@ -123,8 +123,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
     }
     if(menu->type == MENUTYPE_NO_KEY_HANDLING) return MENU_RETURN_INSTANT; // we don't want to handle keys
     int res = 0, key;
-    if(menu->allowMkey) res = mGetKey(&key);
-    else GetKey(&key);
+    res = mGetKey(&key);
     if(res == MGETKEY_RETURN_INTOSETTINGS && (menu->type==MENUTYPE_MULTISELECT || menu->type==MENUTYPE_FKEYS)) {
       return MENU_RETURN_INTOSETTINGS;
     }
@@ -281,12 +280,11 @@ int getMenuSelectionOnlySeparators(Menu* menu) {
 
 // not really related to the menu, but had to go somewhere as a general GUI helper:
 
-void closeMsgBox(int mgetkey) {
+void closeMsgBox() {
   // waits for user to exit a simple info box, and calls MsgBoxPop for you!
   int key,inscreen=1;
   while(inscreen) {
-    if(mgetkey) mGetKey(&key);
-    else GetKey(&key);
+    mGetKey(&key);
     switch(key)
     {
       case KEY_CTRL_EXIT:

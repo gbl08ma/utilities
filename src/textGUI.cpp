@@ -91,8 +91,7 @@ int doTextArea(textArea* text) {
       Scrollbar(&sb);
     }
     if(text->type == TEXTAREATYPE_INSTANT_RETURN) return 0;
-    if(text->allowMkey) mGetKey(&key);
-    else GetKey(&key);
+    mGetKey(&key);
     
     switch(key)
     {

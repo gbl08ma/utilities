@@ -275,7 +275,6 @@ void setTimeGUI(int canExit) {
     hour.value = getCurrentHour();
     hour.min = 0;
     hour.max = 23;
-    hour.allowMkey = 0;
     int res = doSelector(&hour);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;
@@ -286,7 +285,6 @@ void setTimeGUI(int canExit) {
     minute.value = getCurrentMinute();
     minute.min = 0;
     minute.max = 59;
-    minute.allowMkey = 0;
     int res = doSelector(&minute);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;
@@ -297,7 +295,6 @@ void setTimeGUI(int canExit) {
     second.value = getCurrentSecond();
     second.min = 0;
     second.max = 59;
-    second.allowMkey = 0;
     int res = doSelector(&second);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop time adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;
@@ -315,7 +312,6 @@ void setDateGUI(int canExit) {
     year.value = getCurrentYear();
     year.min = 1970; //don't allow to set below 1970 so it is Unix-time compatible and always has 4 digits
     year.max = 9999;
-    year.allowMkey = 0;
     year.cycle = 0;
     int res = doSelector(&year);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
@@ -328,7 +324,6 @@ void setDateGUI(int canExit) {
     month.min = 1;
     month.max = 12;
     month.type = SELECTORTYPE_MONTH;
-    month.allowMkey = 0;
     int res = doSelector(&month);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;
@@ -339,7 +334,6 @@ void setDateGUI(int canExit) {
     day.value = getCurrentDay();
     day.min = 1;
     day.max = ( month.value==2? (isLeap(year.value)? 29 : 28) : getMonthDays(month.value));
-    day.allowMkey = 0;
     int res = doSelector(&day);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;

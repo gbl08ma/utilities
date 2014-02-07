@@ -67,7 +67,7 @@ int doTextInput(textInput* input) {
     }
   
     int keyflag = GetSetupSetting( (unsigned int)0x14);
-    if(input->allowMkey) mGetKey(&input->key); else GetKey(&input->key);
+    mGetKey(&input->key);
     if (GetSetupSetting( (unsigned int)0x14) == 0x01 || GetSetupSetting( (unsigned int)0x14) == 0x04 || GetSetupSetting( (unsigned int)0x14) == 0x84) {
       keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.
       //we can't update always because that way alpha-not-lock will cancel when F5 is pressed.
@@ -82,7 +82,7 @@ int doTextInput(textInput* input) {
           mPrintXY(3, 2, (char*)"Field can't be", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(3, 3, (char*)"left blank.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-          closeMsgBox(input->allowMkey);
+          closeMsgBox();
         }
       } else {
         Cursor_SetFlashOff(); return INPUT_RETURN_CONFIRM;

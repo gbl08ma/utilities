@@ -98,7 +98,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
         mPrintXY(3, 3, (char*)"Code can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         mPrintXY(3, 4, (char*)"empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-        closeMsgBox(0);
+        closeMsgBox();
       }
     }
     if(key && key < 30000)
@@ -153,14 +153,14 @@ int unlockCalc() {
       mPrintXY(3, 3, (char*)"Data tampering", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       mPrintXY(3, 4, (char*)"detected!", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-      closeMsgBox(0);
+      closeMsgBox();
       return 0;
       break;
     case 4:
       mMsgBoxPush(3);
       mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-      closeMsgBox(0);
+      closeMsgBox();
       return 0;
       break;
     default: break;
@@ -256,7 +256,9 @@ void openRunMat() {
 }
 void lockApp() {
   if (GetSetting(SETTING_ENABLE_LOCK)) {
+    setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS_RESTART);
     int lockres = lockCalc();
+    setmGetKeyMode(MGETKEY_MODE_NORMAL);
     if(lockres == 0) {
       if (GetSetting(SETTING_UNLOCK_RUNMAT) == 1) {
         openRunMat();

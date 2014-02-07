@@ -59,8 +59,7 @@ int doSelector(Selector* selector) {
       }
       mPrintXY(5, 5, buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     }
-    if (selector->allowMkey) mGetKey(&key);
-    else GetKey(&key);
+    mGetKey(&key);
     switch(key)
     {
       case KEY_CTRL_DOWN:

@@ -60,13 +60,16 @@ void settingsMenu() {
   menu.items=menuitems;
   menu.numitems=13;
   menu.scrollout=1;
-  menu.allowMkey=0;
+  setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
   while(1) {
     menuitems[6].value = GetSetting(SETTING_DISPLAY_STATUSBAR);
     menuitems[7].value = GetSetting(SETTING_SHOW_ADVANCED);
     
     int res = doMenu(&menu);
-    if(res == MENU_RETURN_EXIT) return;
+    if(res == MENU_RETURN_EXIT) {
+      setmGetKeyMode(MGETKEY_MODE_NORMAL);
+      return;
+    }
     else if(res == MENU_RETURN_SELECTION) {
       switch(menu.selection) {
         case 1:
@@ -101,7 +104,6 @@ void settingsMenu() {
           format.value = GetSetting(SETTING_LONGDATEFORMAT);
           format.min = 0;
           format.max = 9;
-          format.allowMkey = 0;
           format.type = SELECTORTYPE_LONGDATEFORMAT;
           int res = doSelector(&format);
           if (res == SELECTOR_RETURN_EXIT) continue;
@@ -147,7 +149,6 @@ void settingsMenu() {
           sel.value = GetSetting(SETTING_STARTUP_BRIGHTNESS);
           sel.min = 1;
           sel.max = 250;
-          sel.allowMkey = 0;
           sel.type = SELECTORTYPE_STARTUP_BRIGHTNESS;
           int res = doSelector(&sel);
           if (res == SELECTOR_RETURN_EXIT) continue;
@@ -178,7 +179,6 @@ void settingsMenu() {
           smallmenu.scrollbar=0;
           smallmenu.showtitle=1;
           smallmenu.selection=GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE)+1;
-          smallmenu.allowMkey=0;
           strcpy(smallmenu.title, "Chrono. notif.");
 
           int sres = doMenu(&smallmenu);
@@ -213,7 +213,6 @@ inline static void lockSettingsMenu() {
   menu.items=menuitems;
   menu.numitems=5;
   menu.scrollout=1;
-  menu.allowMkey=0;
   while(1) {
     menuitems[1].value = GetSetting(SETTING_PASSWORD_PRIVACY);
     menuitems[2].value = GetSetting(SETTING_LOCK_AUTOOFF);
@@ -254,7 +253,6 @@ inline static void lockSettingsMenu() {
           smallmenu.scrollbar=0;
           smallmenu.showtitle=1;
           smallmenu.selection=GetSetting(SETTING_UNLOCK_RUNMAT)+1;
-          smallmenu.allowMkey=0;
           strcpy(smallmenu.title, "Run-Mat on unlock");
           int sres = doMenu(&smallmenu);
           if(sres == MENU_RETURN_SELECTION) {
@@ -288,7 +286,6 @@ inline static void clockSettingsMenu() {
   menu.items=menuitems;
   menu.numitems=5;
   menu.scrollout=1;
-  menu.allowMkey=0;
   while(1) {
     menuitems[1].value = GetSetting(SETTING_CLOCK_SECONDS);
     menuitems[2].value = GetSetting(SETTING_HOME_PANES);
@@ -365,7 +362,6 @@ void calendarSettingsMenu() {
   menu.items=menuitems;
   menu.numitems=4;
   menu.scrollout=1;
-  menu.allowMkey=0;
   while(1) {
     menuitems[0].value = GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT);
     menuitems[3].value = GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP);
@@ -391,7 +387,6 @@ void calendarSettingsMenu() {
           smallmenu.startY=2;
           smallmenu.scrollbar=0;
           smallmenu.showtitle=1;
-          smallmenu.allowMkey=0;
           if(menu.selection == 2) {
             strcpy(smallmenu.title, "Default Calendar");
             smallmenu.selection=GetSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;

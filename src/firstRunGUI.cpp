@@ -25,6 +25,7 @@
 #include "debugGUI.hpp"
 
 void firstRunWizard() {
+  setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
   Bdisp_AllClr_VRAM();
 
   drawtnyimLogo( LCD_WIDTH_PX/2-138/2, LCD_HEIGHT_PX/2-42/2);
@@ -41,6 +42,8 @@ void firstRunWizard() {
   PrintMini(&textX, &textY, (unsigned char*)"edia", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   Bdisp_PutDisp_DD();
   blockForMilliseconds(3500);
+
+
   
   textArea text;
   strcpy(text.title, (char*)"Welcome to Utilities");
@@ -48,7 +51,6 @@ void firstRunWizard() {
   textElement elem[14];
   text.elements = elem;
   text.allowEXE = 1;
-  text.allowMkey = 0;
   
   elem[0].text = (char*)"This add-in provides functionality not originally present on Casio Prizm (fx-CG 10/20) calculators:";
   elem[1].newLine = 1;
@@ -90,5 +92,6 @@ void firstRunWizard() {
   text.numelements = 13;
   doTextArea(&text);
   SetSetting(SETTING_IS_FIRST_RUN, 0, 1);
+  setmGetKeyMode(MGETKEY_MODE_NORMAL);
 }
  

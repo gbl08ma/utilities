@@ -32,7 +32,6 @@ typedef struct {
   int charlimit; // maximum number of chars to admit in bytes (which means that if users enter multibyte it will allow for less chars)
   int symbols=1; // if 1, user will be able to enter symbols with the OS's character select screen
   int key=0; // put a key here to provide for the initial keypress. also, when input returns INPUT_RETURN_KEYCODE, the keycode is here.
-  int allowMkey=1;
   int acceptF6=0; // accept F6 as a way to confirm the input (useful for wizards)
   int cursor=0;
   int start=0;

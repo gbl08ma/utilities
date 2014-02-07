@@ -89,7 +89,6 @@ void masterControl() {
   menu.numitems=9;
   menu.scrollout=1;
   menu.showtitle=1;
-  menu.allowMkey=0;
   strcpy(menu.title, "UTILS CTRL");
   while(1) {
     int res = doMenu(&menu);

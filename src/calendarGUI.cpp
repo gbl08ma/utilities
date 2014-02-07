@@ -2083,7 +2083,12 @@ void calendarTools(int y, int m, int d) {
       case 2: repairCalendarDatabase(); break;
       case 3: trimCalendarDatabase(); break;
       case 4: importCalendarEvents(); break;
-      case 5: calendarSettingsMenu(); break;
+      case 5: {
+        setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
+        calendarSettingsMenu();
+        setmGetKeyMode(MGETKEY_MODE_NORMAL);
+        break;
+      }
     }
   }  
 }

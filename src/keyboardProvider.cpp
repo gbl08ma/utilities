@@ -21,22 +21,25 @@
 #include "setjmp.h"
 
 extern jmp_buf utilities_return;
+static int mGetKeyMode = MGETKEY_MODE_NORMAL;
 int mGetKey(int* key) {
   //managed GetKey. allows for entering the settings menu from most points in the add-in.
   while (1) {
     checkChronoComplete();
     GetKey(key);
-    if (*key == KEY_CTRL_SETUP) {
+    if (*key == KEY_CTRL_SETUP && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {
       Cursor_SetFlashOff(); // in case we were in an input
       SaveVRAM_1();
       settingsMenu();
       LoadVRAM_1();
+      DisplayStatusArea();
       return MGETKEY_RETURN_INTOSETTINGS;
-    } else if (*key == KEY_CTRL_QUIT) {
+    } else if (*key == KEY_CTRL_QUIT && mGetKeyMode != MGETKEY_MODE_RESTRICT_RESTART && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {
       Cursor_SetFlashOff(); // in case we were in an input
       stopAndUninstallStubTimer(); // in case we were in some timer screen, where the timer has been set
       // having timers running breaks Bfile functions
       popAllMsgBoxes();
+      mGetKeyMode = MGETKEY_MODE_NORMAL;
       longjmp(utilities_return, 1); // this is also used for returning from Run-Mat. Basically equates to restarting the add-in.
       break;
     } else if (*key == KEY_SHIFT_OPTN && GetDebugMode()) {
@@ -54,6 +57,10 @@ int mGetKey(int* key) {
     }
   }
   return MGETKEY_RETURN_KEY;
+}
+
+void setmGetKeyMode(int mode) {
+  mGetKeyMode = mode;
 }
 
 /* CODE BY SIMON LOTHAR, AVAILABLE ON "fx_calculators_SuperH_based.chm" version 16 */

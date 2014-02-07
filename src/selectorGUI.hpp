@@ -30,7 +30,6 @@ typedef struct
   int value=0; // value of the selector
   int max; // maximum value. -1 for unlimited
   int min=0; // minimum value
-  int allowMkey=1; // 1: allow for usage of mGetKey to retrieve keyboard input when user is in the selector
   int cycle=1; //1: when value is max, pressing up key sets value as min (and vice-versa)
   int type=SELECTORTYPE_NORMAL; // set using SELECTORTYPE_*
   int clearVRAM=1; // 1: clears all screen before drawing; 0: only writes on screen areas that are changed (and VRAM clearing must be done by something else)
