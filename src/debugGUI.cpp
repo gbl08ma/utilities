@@ -26,7 +26,6 @@ void SetDebugMode(int val) {
   debugMode = val;
 }
 
-static int initStackPtr;
 void debugMessage(char* text1, char* text2, int value) {
   int key;
   MsgBoxPush(4);
@@ -40,12 +39,8 @@ void debugMessage(char* text1, char* text2, int value) {
   GetKey(&key);
   MsgBoxPop();
 }
-void setInitStackPtr(int val) {
-  initStackPtr = val;
-}
 void showRAMused() {
-  int usedStack = (int)GetStackPtr();
-  int ramused = initStackPtr - usedStack;
+  int ramused = 0x881E0000 - (int)GetStackPtr();
   debugMessage((char*)"  RAM", (char*)"  b:", ramused);
   debugMessage((char*)"  MB", (char*)"  c:", getNumberOfMsgBoxPushed());
 }

@@ -31,7 +31,6 @@ jmp_buf utilities_return;
 int main()
 {
   // Add-in entry point
-  setInitStackPtr((int)GetStackPtr()); // set pointer for monitoring stack usage
   
   if(setjmp(utilities_return)) {
     // we are returning from RunMat after the calc was locked.
