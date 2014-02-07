@@ -64,8 +64,7 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
   /* Parses a string containing a single event and turns it into a CalendarEvent which the program can work with.
   */
   int curfield = 0; //field we are parsing currently. starts at the category, which is 0.
-  unsigned char token[1024];
-  strcpy((char*)token, "");
+  unsigned char token[1024] = "";
   src = toksplit(src, FIELD_SEPARATOR, token, 1024);
   int notfinished = 1;
   while (notfinished) {
@@ -144,8 +143,7 @@ void charToSimpleCalEvent(unsigned char* src, SimpleCalendarEvent* calEvent) {
      Skips all the fields not necessary to a SimpleCalendarEvent
   */
   int curfield = 0; //field we are parsing currently. starts at the category, which is 0.
-  unsigned char token[1024];
-  strcpy((char*)token, "");
+  unsigned char token[1024] = "";
   src = toksplit(src, FIELD_SEPARATOR, token, 1024);
   int notfinished = 1;
   while (notfinished) {
@@ -545,7 +543,6 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
       }
       if(isValid) {
         char tmpbuf[10] = "";
-        strcpy(tmpbuf, "");
         for(int i = 0; i<8-nlen; i++) {
           strcat(tmpbuf, "0");
         }
@@ -679,7 +676,6 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
     }
   }
   char tmpbuf[10] = "";
-  strcpy(tmpbuf, "");
   for(int i = 0; i<8-nlen; i++) {
     strcat(tmpbuf, "0");
   }

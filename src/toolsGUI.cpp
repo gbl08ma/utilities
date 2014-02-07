@@ -31,7 +31,7 @@ void drawCapacityBar(int textY, long long int cur, long long int full) {
   
   int newTextX = 0;
   int newTextY = textY+5;
-  unsigned char buffer[50] ="";
+  unsigned char buffer[50] = "";
   itoa(100*cur/full, buffer);
   strcat((char*)buffer, "% used");
   PrintMiniMini( &newTextX, &newTextY, (unsigned char*)buffer, 0, TEXT_COLOR_CYAN, 1 ); //fake draw
@@ -100,17 +100,15 @@ void memoryCapacityViewer() {
 int GetAddins(AddIn addins[]) {
   /*searches storage memory for active and inactive add-ins, returns their count*/
   unsigned short path[0x10A], path2[0x10A], found[0x10A];
-  unsigned char buffer[0x10A], buffer2[0x10A];
+  unsigned char buffer[0x10A];
 
   // make the buffer
   strcpy((char*)buffer, "\\\\fls0\\*");
-  strcpy((char*)buffer2, "\\\\fls0\\*");
   
   int curitem = 0;
   file_type_t fileinfo;
   int findhandle;
   Bfile_StrToName_ncpy(path, buffer, 0x10A);
-  Bfile_StrToName_ncpy(path2, buffer2, 0x10A);
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
   Bfile_StrToName_ncpy(path, (unsigned char*)"*.g3a", 0x10A);
   Bfile_StrToName_ncpy(path2, (unsigned char*)"*.h3a", 0x10A);

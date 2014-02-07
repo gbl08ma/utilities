@@ -1148,7 +1148,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         input.acceptF6=1;
         input.type=INPUTTYPE_TIME;
         char stbuffer[15] = "";
-        strcpy(stbuffer, (char*)"");
         if(event->timed) fillInputTime(event->starttime.hour, event->starttime.minute, event->starttime.second, stbuffer);
         input.buffer = (char*)stbuffer;
         while(1) {
@@ -1199,7 +1198,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         input.acceptF6=1;
         input.type=INPUTTYPE_DATE;
         char edbuffer[15] = "";
-        strcpy(edbuffer, (char*)"");
         fillInputDate(event->enddate.year, event->enddate.month, event->enddate.day, edbuffer);
         input.buffer = (char*)edbuffer;
         while(1) {
@@ -1252,7 +1250,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           input.acceptF6=1;
           input.type=INPUTTYPE_TIME;
           char etbuffer[15] = "";
-          strcpy(etbuffer, (char*)"");
           fillInputTime(event->endtime.hour, event->endtime.minute, event->endtime.second, etbuffer);
           input.buffer = (char*)etbuffer;
           while(1) {
@@ -1596,7 +1593,6 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
     input.acceptF6=0;
     input.type=INPUTTYPE_DATE;
     char buffer[15] = "";
-    strcpy(buffer, (char*)"");
     fillInputDate(*yr, *m, *d, buffer);
     input.buffer = (char*)buffer;
     while(1) {
@@ -2313,7 +2309,6 @@ void trimCalendarDatabase() {
           EventDate thisday;
           if(!deleteThisFile) {
             char tmpbuf[10] = "";
-            strcpy(tmpbuf, "");
             for(int i = 0; i<8-nlen; i++) {
               strcat(tmpbuf, "0");
             }
