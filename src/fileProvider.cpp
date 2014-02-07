@@ -92,8 +92,8 @@ void deleteFiles(File* files, Menu* menu) {
         progressMessage((char*)" Deleting...", delfiles, menu->numselitems);
       curfile++;
     }
+    closeProgressMessage();
   }
-  closeProgressMessage();
 }
 
 void nameFromFilename(char* filename, char* name) {
