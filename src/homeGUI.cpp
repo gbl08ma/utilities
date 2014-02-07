@@ -122,7 +122,7 @@ void showHome(chronometer* chrono) {
         case KEY_PRGM_MENU:
           if (GetSetupSetting( (unsigned int)0x14) == 1) {
             SetSetupSetting( (unsigned int)0x14, 0);
-            settingsMenu();
+            saveVRAMandCallSettings();
           }
         case KEY_PRGM_ACON:
           if (GetSetupSetting( (unsigned int)0x14) == 1) {

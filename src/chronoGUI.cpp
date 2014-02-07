@@ -192,8 +192,7 @@ void chronoScreen(chronometer* chrono) {
         case KEY_PRGM_MENU:
           if (GetSetupSetting( (unsigned int)0x14) == 1) {
             SetSetupSetting( (unsigned int)0x14, 0);
-            settingsMenu();
-            Bdisp_AllClr_VRAM();
+            saveVRAMandCallSettings();
           }
           break;
         case KEY_PRGM_DOWN:

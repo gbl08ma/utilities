@@ -22,6 +22,26 @@
 
 extern jmp_buf utilities_return;
 static int mGetKeyMode = MGETKEY_MODE_NORMAL;
+
+void saveVRAMandCallSettings() {
+  int stackused = 0x881E0000 - (int)GetStackPtr();
+  // if(stackused > 300000) then there's not enough free stack for us to save the screen
+  // and still keep enough stack to call settings safely, so ask the system to save instead
+  // (it will be discarded if the user accesses the menu)
+  // if we have enough stack, we save it ourselves so that the screen can still be restored
+  // even if the user accesses the Main Menu while in the settings.
+  char* vrambackup = NULL;
+  if(stackused > 300000) SaveVRAM_1();
+  else {
+    // no need to save status bar, because it's easy to redraw
+    vrambackup = (char*)alloca((384*(216-24)*2)*sizeof(char)); // 2 bytes per pixel
+    // MsgBoxMoveWB automatically accounts for a 24 pixels offset at the top
+    MsgBoxMoveWB(vrambackup, 0, 0, LCD_WIDTH_PX-1, LCD_HEIGHT_PX-24-1, 1);
+  }
+  settingsMenu();
+  if(stackused > 300000) LoadVRAM_1();
+  else if(vrambackup!=NULL) MsgBoxMoveWB(vrambackup, 0, 0, LCD_WIDTH_PX-1, LCD_HEIGHT_PX-1, 0);
+}
 int mGetKey(int* key) {
   //managed GetKey. allows for entering the settings menu from most points in the add-in.
   while (1) {
@@ -29,9 +49,7 @@ int mGetKey(int* key) {
     GetKey(key);
     if (*key == KEY_CTRL_SETUP && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {
       Cursor_SetFlashOff(); // in case we were in an input
-      SaveVRAM_1();
-      settingsMenu();
-      LoadVRAM_1();
+      saveVRAMandCallSettings();
       DisplayStatusArea();
       return MGETKEY_RETURN_INTOSETTINGS;
     } else if (*key == KEY_CTRL_QUIT && mGetKeyMode != MGETKEY_MODE_RESTRICT_RESTART && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {

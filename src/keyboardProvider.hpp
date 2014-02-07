@@ -22,6 +22,7 @@
 #define MGETKEY_MODE_RESTRICT_SETTINGS 1
 #define MGETKEY_MODE_RESTRICT_RESTART 2 // when set, user can't jump to home with Shift+Exit
 #define MGETKEY_MODE_RESTRICT_SETTINGS_RESTART 3 // same as above but user can't open settings either.
+void saveVRAMandCallSettings();
 int mGetKey(int* key);
 void setmGetKeyMode(int mode);
 unsigned int SetGetkeyToMainFunctionReturnFlag( unsigned int enabled );
