@@ -42,7 +42,7 @@ void saveVRAMandCallSettings() {
   if(stackused > 300000) LoadVRAM_1();
   else if(vrambackup!=NULL) MsgBoxMoveWB(vrambackup, 0, 0, LCD_WIDTH_PX-1, LCD_HEIGHT_PX-1, 0);
 }
-int mGetKey(int* key) {
+void mGetKey(int* key) {
   //managed GetKey. allows for entering the settings menu from most points in the add-in.
   while (1) {
     checkChronoComplete();
@@ -51,7 +51,7 @@ int mGetKey(int* key) {
       Cursor_SetFlashOff(); // in case we were in an input
       saveVRAMandCallSettings();
       DisplayStatusArea();
-      return MGETKEY_RETURN_INTOSETTINGS;
+      return;
     } else if (*key == KEY_CTRL_QUIT && mGetKeyMode != MGETKEY_MODE_RESTRICT_RESTART && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {
       Cursor_SetFlashOff(); // in case we were in an input
       stopAndUninstallStubTimer(); // in case we were in some timer screen, where the timer has been set
@@ -74,7 +74,7 @@ int mGetKey(int* key) {
       break; 
     }
   }
-  return MGETKEY_RETURN_KEY;
+  return;
 }
 
 void setmGetKeyMode(int mode) {

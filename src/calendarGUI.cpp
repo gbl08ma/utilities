@@ -403,8 +403,8 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   menu->numitems = curmenu;
   menu->items = menuitems;
   if(*jumpToSel==0) {
-    if(!*keepMenuSel) menu->selection = 1;
-    else *keepMenuSel=0;
+    if(*keepMenuSel) *keepMenuSel=0;
+    else menu->selection = 1;
   }
   int hasBusyMap = 0;
   unsigned short busyMapBuffer[LCD_WIDTH_PX*12];

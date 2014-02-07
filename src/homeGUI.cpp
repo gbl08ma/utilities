@@ -416,11 +416,9 @@ void eventsPane() {
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
       case KEY_CTRL_F4:
+      case KEY_CTRL_F5:
         pane_keycache = key;
         return; //exit to main pane
-      case KEY_CTRL_F5:
-        if(GetSetting(SETTING_ENABLE_LOCK)) { pane_keycache = key; return; }
-        break;
       case KEY_CTRL_LEFT:
       case KEY_CTRL_EXIT:
         return; //return to the pane to the left (main)

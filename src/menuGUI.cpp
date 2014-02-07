@@ -122,11 +122,8 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
       VRAMInvertArea(menu->startX*18-18, menu->startY*24, menu->width*18-(menu->scrollout || !menu->scrollbar ? 0 : 5), menu->height*24);
     }
     if(menu->type == MENUTYPE_NO_KEY_HANDLING) return MENU_RETURN_INSTANT; // we don't want to handle keys
-    int res = 0, key;
-    res = mGetKey(&key);
-    if(res == MGETKEY_RETURN_INTOSETTINGS && (menu->type==MENUTYPE_MULTISELECT || menu->type==MENUTYPE_FKEYS)) {
-      return MENU_RETURN_INTOSETTINGS;
-    }
+    int key;
+    mGetKey(&key);
     switch(key) {
       case KEY_CTRL_DOWN:
         if(menu->selection == menu->numitems)

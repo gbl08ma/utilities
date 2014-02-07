@@ -627,7 +627,7 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
     int len = strlen((char*)asrc);
     for(int i = 0; i<len; i++) {
       if(asrc[i] == FIELD_SEPARATOR) fieldsep++;
-      if(asrc[i] == EVENT_SEPARATOR) eventsep++;
+      else if(asrc[i] == EVENT_SEPARATOR) eventsep++;
     }
     // there should be 19 field separators per event.
     // each event has a field separator in the end, even if it is the last event on file
