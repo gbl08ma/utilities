@@ -433,58 +433,76 @@ void drawHomeClock(int format, int theme) {
     fgcolor = COLOR_WHITE;
     bgcolor = COLOR_BLACK;
   }
-  if(format == 0) {
-    // show digital time and long date
-    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
-    printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
-    drawLongDate(90, NULL, fgcolor, bgcolor, theme);
-  } else if (format == 1) {
-    // show digital time only
-    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
-    printCentered((unsigned char*)timeStr, 4*24, fgcolor, bgcolor);
-  } else if (format == 2) {
-    // show digital time and short date
-    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
-    printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
-    currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
-    printCentered((unsigned char*)timeStr, 5*24, fgcolor, bgcolor);
-  } else if (format == 3) {
-    // show long date only
-    drawLongDate(LCD_HEIGHT_PX/2-30, NULL, fgcolor, bgcolor, theme);
-  } else if (format == 4) {
-    // show short date only
-    currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
-    printCentered((unsigned char*)timeStr, 4*24, fgcolor, bgcolor);
-  } else if (format == 5) {
-    // show analog clock only
-    drawAnalogClock(LCD_WIDTH_PX/2, LCD_HEIGHT_PX/2, 70, bgcolor, fgcolor);
-  } else if (format == 6) {
-    // show analog clock with digital time
-    drawAnalogClock(80, LCD_HEIGHT_PX/2, 70, bgcolor, fgcolor);
-    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
-    mPrintXY(10, 4, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
-  } else if (format == 7) {
-    // show analog clock with digital time and long date
-    drawAnalogClock(89, 58+24, 50, bgcolor, fgcolor);
-    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
-    mPrintXY(10, 3, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
-    drawLongDate(120, NULL, fgcolor, bgcolor, theme);
-  } else if (format == 8) {
-    // show analog clock with digital time and short date
-    drawAnalogClock(80, LCD_HEIGHT_PX/2, 70, bgcolor, fgcolor);
-    currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
-    mPrintXY(10, 3, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
-    currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
-    mPrintXY(10, 5, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
-  } else if (format == 9) {
-    // show analog clock with long date
-    drawAnalogClock(LCD_WIDTH_PX/2, 58+24, 50, bgcolor, fgcolor);
-    drawLongDate(120, NULL, fgcolor, bgcolor, theme);
-  } else if (format == 10) {
-    // show analog clock with short date
-    drawAnalogClock(LCD_WIDTH_PX/2, 58+24, 50, bgcolor, fgcolor);
-    currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
-    printCentered((unsigned char*)timeStr, 120+24, fgcolor, bgcolor);
+  switch(format) {
+    case 0:
+    case 1:
+    case 2:
+    case 6:
+    case 7:
+    case 8:
+      currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
+      break;
+    case 4:
+    case 10:
+      currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
+      break;
   }
-  // 11 is for showing nothing at all... so put nothing in VRAM.
+  switch(format) {
+    case 0:
+      // show digital time and long date
+      printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
+      drawLongDate(90, NULL, fgcolor, bgcolor, theme);
+      break;
+    case 1:
+      // show digital time only
+      printCentered((unsigned char*)timeStr, 4*24, fgcolor, bgcolor);
+      break;
+    case 2:
+      // show digital time and short date
+      printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
+      currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
+      printCentered((unsigned char*)timeStr, 5*24, fgcolor, bgcolor);
+      break;
+    case 3:
+      // show long date only
+      drawLongDate(LCD_HEIGHT_PX/2-30, NULL, fgcolor, bgcolor, theme);
+      break;
+    case 4:
+      // show short date only
+      printCentered((unsigned char*)timeStr, 4*24, fgcolor, bgcolor);
+      break;
+    case 5:
+      // show analog clock only
+      drawAnalogClock(LCD_WIDTH_PX/2, LCD_HEIGHT_PX/2, 70, bgcolor, fgcolor);
+      break;
+    case 6:
+      // show analog clock with digital time
+      drawAnalogClock(80, LCD_HEIGHT_PX/2, 70, bgcolor, fgcolor);
+      mPrintXY(10, 4, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+      break;
+    case 7:
+      // show analog clock with digital time and long date
+      drawAnalogClock(89, 58+24, 50, bgcolor, fgcolor);
+      mPrintXY(10, 3, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+      drawLongDate(120, NULL, fgcolor, bgcolor, theme);
+      break;
+    case 8:
+      // show analog clock with digital time and short date
+      drawAnalogClock(80, LCD_HEIGHT_PX/2, 70, bgcolor, fgcolor);
+      mPrintXY(10, 3, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+      currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
+      mPrintXY(10, 5, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
+      break;
+    case 9:
+      // show analog clock with long date
+      drawAnalogClock(LCD_WIDTH_PX/2, 58+24, 50, bgcolor, fgcolor);
+      drawLongDate(120, NULL, fgcolor, bgcolor, theme);
+      break;
+    case 10:
+      // show analog clock with short date
+      drawAnalogClock(LCD_WIDTH_PX/2, 58+24, 50, bgcolor, fgcolor);
+      printCentered((unsigned char*)timeStr, 120+24, fgcolor, bgcolor);
+      break;
+    // 11 is for showing nothing at all... so put nothing in VRAM.
+  }
 }
