@@ -199,23 +199,27 @@ int addinManagerSub(Menu* menu) {
     case KEY_CTRL_F2:
       if(menu->numitems > 0) {
         mMsgBoxPush(4);
-        while (1) {
+        int inloop = 1;
+        while (inloop) {
           int key;
           mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(3, 3, (char*)"Selected Add-In?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
           PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
           mGetKey(&key);
-          if (key==KEY_CTRL_F1) {
-            mMsgBoxPop();
-            strcpy(buffer, "\\\\fls0\\");
-            strcat(buffer, addins[menu->selection-1].filename);
-            Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, MAX_FILENAME_SIZE+1);
-            Bfile_DeleteEntry( oldpath );
-            return 1;
-          } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
-            mMsgBoxPop();
-            break;
+          switch(key) {
+            case KEY_CTRL_F1:
+              mMsgBoxPop();
+              strcpy(buffer, "\\\\fls0\\");
+              strcat(buffer, addins[menu->selection-1].filename);
+              Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, MAX_FILENAME_SIZE+1);
+              Bfile_DeleteEntry( oldpath );
+              return 1;
+            case KEY_CTRL_F6:
+            case KEY_CTRL_EXIT:
+              mMsgBoxPop();
+              inloop=0;
+              break;
           }
         }
       }

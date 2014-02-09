@@ -279,16 +279,15 @@ int getMenuSelectionOnlySeparators(Menu* menu) {
 
 void closeMsgBox() {
   // waits for user to exit a simple info box, and calls MsgBoxPop for you!
-  int key,inscreen=1;
-  while(inscreen) {
+  int key;
+  while(1) {
     mGetKey(&key);
     switch(key)
     {
       case KEY_CTRL_EXIT:
       case KEY_CTRL_AC:
-        inscreen=0;
-        break;
+        mMsgBoxPop(); 
+        return;
     }
   }
-  mMsgBoxPop(); 
 }

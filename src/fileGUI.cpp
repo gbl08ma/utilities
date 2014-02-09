@@ -316,13 +316,15 @@ int deleteFilesGUI(File* files, Menu* menu) {
     PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
     PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
     mGetKey(&key);
-    if (key==KEY_CTRL_F1) {
-      mMsgBoxPop();
-      deleteFiles(files, menu);
-      return 1;
-    } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
-      mMsgBoxPop();
-      return 0;
+    switch(key) {
+      case KEY_CTRL_F1:
+        mMsgBoxPop();
+        deleteFiles(files, menu);
+        return 1;
+      case KEY_CTRL_F6:
+      case KEY_CTRL_EXIT:
+        mMsgBoxPop();
+        return 0;
     }
   } 
 }
