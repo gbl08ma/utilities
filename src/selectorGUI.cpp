@@ -35,24 +35,30 @@ int doSelector(Selector* selector) {
       drawLongDate(82,selector->value, COLOR_BLACK, COLOR_WHITE, NULL);
     } else {
       char buffer1[50] = "";
-      if(selector->type == SELECTORTYPE_MONTH) {
-        strcpy(buffer1, getMonthAsString(selector->value));
-      } else if(selector->type == SELECTORTYPE_STARTUP_BRIGHTNESS) {
-        if(selector->value == 250) strcpy(buffer1, "Do not force");
-        else itoa(selector->value, (unsigned char*)buffer1);
-      } else if(selector->type == SELECTORTYPE_BACKLIGHT_DURATION) {
-        if(selector->value % 2 == 0) { //even, so timeout is X min 0 sec.
-          itoa(selector->value/2, (unsigned char*)buffer1);
-        } else { // timeout is X min 30 sec.
-          itoa((selector->value-1)/2, (unsigned char*)buffer1);
-        }
-        strcat(buffer1, " Minutes");
-        if(selector->value % 2 != 0) strcat(buffer1, " 30 Sec.");
-      } else if(selector->type == SELECTORTYPE_TIMEOUT_MINUTES) {
-        itoa(selector->value, (unsigned char*)buffer1);
-        strcat(buffer1, " Minutes");
-      } else {
-        itoa(selector->value, (unsigned char*)buffer1);
+      switch(selector->type) {
+        case SELECTORTYPE_MONTH:
+          strcpy(buffer1, getMonthAsString(selector->value));
+          break;
+        case SELECTORTYPE_STARTUP_BRIGHTNESS:
+          if(selector->value == 250) strcpy(buffer1, "Do not force");
+          else itoa(selector->value, (unsigned char*)buffer1);
+          break;
+        case SELECTORTYPE_BACKLIGHT_DURATION:
+          if(selector->value % 2 == 0) { //even, so timeout is X min 0 sec.
+            itoa(selector->value/2, (unsigned char*)buffer1);
+          } else { // timeout is X min 30 sec.
+            itoa((selector->value-1)/2, (unsigned char*)buffer1);
+          }
+          strcat(buffer1, " Minutes");
+          if(selector->value % 2 != 0) strcat(buffer1, " 30 Sec.");
+          break;
+        case SELECTORTYPE_TIMEOUT_MINUTES:
+          itoa(selector->value, (unsigned char*)buffer1);
+          strcat(buffer1, " Minutes");
+          break;
+        default:
+          itoa(selector->value, (unsigned char*)buffer1);
+          break;
       }
       mPrintXY(5, 5, buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     }
