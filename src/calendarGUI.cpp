@@ -2259,9 +2259,6 @@ void trimCalendarDatabase() {
         }
       }
     }
-    int y = getCurrentYear();
-    int m = getCurrentMonth();
-    int d = getCurrentDay();
     unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
     unsigned char buffer[MAX_FILENAME_SIZE+1];
     unsigned char* filter = (unsigned char*)"*.pce";
@@ -2322,7 +2319,7 @@ void trimCalendarDatabase() {
             }
           }
           if(!deleteThisFile) {
-            long int datediff = DateToDays(y, m, d) - DateToDays(thisday.year, thisday.month, thisday.day);
+            long int datediff = DateToDays(getCurrentYear(), getCurrentMonth(), getCurrentDay()) - DateToDays(thisday.year, thisday.month, thisday.day);
             switch(menu.selection) {
               case 1:
                 if(datediff > 30+31+30+31+30+31) deleteThisFile=1;

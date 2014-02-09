@@ -98,8 +98,8 @@ void memoryCapacityViewer() {
 
 int GetAddins(AddIn addins[]) {
   /*searches storage memory for active and inactive add-ins, returns their count*/
-  unsigned short path[0x10A], path2[0x10A], found[0x10A];
-  unsigned char buffer[0x10A];
+  unsigned short path[MAX_FILENAME_SIZE+1], path2[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
+  unsigned char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
   strcpy((char*)buffer, "\\\\fls0\\*");
@@ -107,12 +107,12 @@ int GetAddins(AddIn addins[]) {
   int curitem = 0;
   file_type_t fileinfo;
   int findhandle;
-  Bfile_StrToName_ncpy(path, buffer, 0x10A);
+  Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
-  Bfile_StrToName_ncpy(path, (unsigned char*)"*.g3a", 0x10A);
-  Bfile_StrToName_ncpy(path2, (unsigned char*)"*.h3a", 0x10A);
+  Bfile_StrToName_ncpy(path, (unsigned char*)"*.g3a", MAX_FILENAME_SIZE+1);
+  Bfile_StrToName_ncpy(path2, (unsigned char*)"*.h3a", MAX_FILENAME_SIZE+1);
   while(!ret) {
-    Bfile_NameToStr_ncpy(buffer, found, 0x10A);
+    Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
     if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "utilities.g3a") == 0) &&
         ((Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) || (Bfile_Name_MatchMask((const short int*)path2, (const short int*)found))))
     {
@@ -176,28 +176,23 @@ int addinManagerSub(Menu* menu) {
   FKey_Display(5, (int*)iresult);
   int res = doMenu(menu);
   
-  unsigned short newpath[0x10A];
-  char buffer[0x10A] = "";
-  unsigned short oldpath[0x10A];
+  unsigned short newpath[MAX_FILENAME_SIZE+1];
+  char buffer[MAX_FILENAME_SIZE+1] = "";
+  unsigned short oldpath[MAX_FILENAME_SIZE+1];
   switch(res)
   {
     case KEY_CTRL_F1:
       if(menu->numitems > 0) {
+        strcpy(buffer, "\\\\fls0\\");
+        strcat(buffer, addins[menu->selection-1].filename);
+        Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, MAX_FILENAME_SIZE+1);
         if(addins[menu->selection-1].active) { //disable
-          strcpy(buffer, "\\\\fls0\\");
-          strcat(buffer, addins[menu->selection-1].filename);
-          Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, 0x10A);
           buffer[strlen((char*)buffer)-3] = 'h'; //so it goes from g3a to h3a
-          Bfile_StrToName_ncpy(newpath, (unsigned char*)buffer, 0x10A);
-          Bfile_RenameEntry( oldpath , newpath );
         } else { //enable
-          strcpy(buffer, "\\\\fls0\\");
-          strcat(buffer, addins[menu->selection-1].filename);
-          Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, 0x10A);
           buffer[strlen((char*)buffer)-3] = 'g'; //so it goes from h3a to g3a
-          Bfile_StrToName_ncpy(newpath, (unsigned char*)buffer, 0x10A);
-          Bfile_RenameEntry( oldpath , newpath );
         }
+        Bfile_StrToName_ncpy(newpath, (unsigned char*)buffer, MAX_FILENAME_SIZE+1);
+        Bfile_RenameEntry( oldpath , newpath );
         return 1; //reload list
       }
       break;
@@ -215,7 +210,7 @@ int addinManagerSub(Menu* menu) {
             mMsgBoxPop();
             strcpy(buffer, "\\\\fls0\\");
             strcat(buffer, addins[menu->selection-1].filename);
-            Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, 0x10A);
+            Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, MAX_FILENAME_SIZE+1);
             Bfile_DeleteEntry( oldpath );
             return 1;
           } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
