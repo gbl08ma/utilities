@@ -399,7 +399,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
           return;
         }
         Bdisp_AllClr_VRAM();
-        DisplayStatusArea();
         mPrintXY(1, 1, (char*)"Set downwards chrono.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
         mPrintXY(1, 2, (char*)"Chronometer end time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);

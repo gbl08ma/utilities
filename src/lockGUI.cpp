@@ -59,6 +59,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
     DisplayMBString((unsigned char*)dispbuffer, start, cursor, x,y);
 
     int keyflag = GetSetupSetting( (unsigned int)0x14);
+    DisplayStatusArea();
     GetKey(&key);
     if (GetSetupSetting( (unsigned int)0x14) == 0x01 || GetSetupSetting( (unsigned int)0x14) == 0x04 || GetSetupSetting( (unsigned int)0x14) == 0x84) {
       keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.
@@ -70,11 +71,9 @@ int passwordInput(int x, int y, unsigned char* buffer) {
         // ^only applies if some sort of alpha (not locked) is already on
         if (keyflag == 0x08 || keyflag == 0x88) { //if lowercase
           SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
-          DisplayStatusArea();
           continue; //do not process the key, because otherwise we will leave alpha status
         } else {
           SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
-          DisplayStatusArea();
           continue; //do not process the key, because otherwise we will leave alpha status
         }
       }
@@ -121,7 +120,6 @@ int passwordInput(int x, int y, unsigned char* buffer) {
 int setPassword() {
   unsigned char password[256] = "";
   Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
   mPrintXY(1, 1, (char*)"Calculator lock", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
   mPrintXY(1, 2, (char*)"Set new code:", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
   int res = passwordInput(1, 3, password);
@@ -134,7 +132,6 @@ int unlockCalc() {
   unsigned char password[256] = "";
   
   Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
   mPrintXY(1, 1, (char*)"Calculator lock", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
   mPrintXY(1, 2, (char*)"Input code:", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
   int res = passwordInput(1, 3, password);

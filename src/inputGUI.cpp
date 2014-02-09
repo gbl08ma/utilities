@@ -67,6 +67,7 @@ int doTextInput(textInput* input) {
     }
   
     int keyflag = GetSetupSetting( (unsigned int)0x14);
+    DisplayStatusArea();
     mGetKey(&input->key);
     if (GetSetupSetting( (unsigned int)0x14) == 0x01 || GetSetupSetting( (unsigned int)0x14) == 0x04 || GetSetupSetting( (unsigned int)0x14) == 0x84) {
       keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.
@@ -104,17 +105,13 @@ int doTextInput(textInput* input) {
         // ^only applies if some sort of alpha (not locked) is already on
         if (keyflag == 0x08 || keyflag == 0x88) { //if lowercase
           SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
-          DisplayStatusArea();
           continue; //do not process the key, because otherwise we will leave alpha status
         } else {
           SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
-          DisplayStatusArea();
           continue; //do not process the key, because otherwise we will leave alpha status
         }
       }
-    }
-
-    DisplayStatusArea(); 
+    } 
     if(input->key && input->key < 30000)
     {
       if(input->type == INPUTTYPE_NORMAL) {

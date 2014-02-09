@@ -25,7 +25,6 @@
 
 void fileTextEditor(char* filename, char* basefolder) {
   Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
   mPrintXY(1, 1, (char*)"Text Editor", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   mPrintXY(1, 2, (char*)"File contents:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   char sText[TEXT_BUFFER_SIZE] = "";
