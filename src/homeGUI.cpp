@@ -52,8 +52,8 @@ void showHome(chronometer* chrono) {
     }
     if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 3 && getLastChronoComplete()) {
       char buffer[10] = "";
-      char message[50] = "";
       itoa(getLastChronoComplete(), (unsigned char*)buffer);
+      char message[50];
       strcpy(message, "Chronometer ");
       strcat(message, buffer);
       strcat(message, " ended");
@@ -342,7 +342,7 @@ inline void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int start
   int textY = starty;
   if (numevents>0) {
     int curevent = 0; //current processing event
-    unsigned char itemtext[25] = "";
+    unsigned char itemtext[25];
     PrintMini(&textX, &textY, (unsigned char*)"Events starting today", 0, 0xFFFFFFFF, 0, 0, color_title, color_bg, 1, 0); //draw
     while(curevent < numevents && curevent < maxevents) {
       textX = startx + 5;

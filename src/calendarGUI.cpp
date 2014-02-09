@@ -276,7 +276,6 @@ int viewWeekCalendar() {
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnInfiniteScrolling=1;
-  menu.useStatusText=0;
   int jumpToSel=1;
   int keepMenuSel=0;
   while(res) {
@@ -354,9 +353,9 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   ddays=DateToDays(*y, *m, *d);
   for(curday=0; curday < 7; curday++) {
     // one menuitem for day header
-    char buffer[15] = "";
     long int ny, nm, nd;
     DaysToDate(ddays, &ny, &nm, &nd);
+    char buffer[15];
     dateToString(buffer, ny, nm, nd);
     // the following string only fits in the menuitem.text because:
     //  1 - graphically, it's printed with PrintMini
@@ -695,7 +694,7 @@ void viewEvents(int y, int m, int d) {
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   strcpy(menu.nodatamsg, "No events - press F2");
-  char buffer[15] = "";
+  char buffer[15];
   dateToString(buffer, y, m, d);
   strcpy(menu.title, "Events for ");
   strcat(menu.title, buffer);
@@ -889,7 +888,7 @@ void viewEvent(CalendarEvent* event, int istask) {
     elem[text.numelements].color=COLOR_LIGHTGRAY;
     text.numelements++;
     
-    unsigned char startson[50] = "";
+    unsigned char startson[50];
     dateToString((char*)startson, event->startdate.year, event->startdate.month, event->startdate.day);
     strcat((char*)startson, (char*)" ");
     
@@ -910,7 +909,7 @@ void viewEvent(CalendarEvent* event, int istask) {
     elem[text.numelements].color=COLOR_LIGHTGRAY; 
     text.numelements++;
     
-    unsigned char endson[50] = "";
+    unsigned char endson[50];
     dateToString((char*)endson, event->enddate.year, event->enddate.month, event->enddate.day);
     
     if(event->timed) {
@@ -2001,6 +2000,9 @@ void calendarTools(int y, int m, int d) {
   smallmenu.startY=2;
   smallmenu.scrollbar=0;
   smallmenu.showtitle=1;
+  // clear "press OPTN..." message
+  strcpy(smallmenu.statusText, "");
+  smallmenu.useStatusText=1;
   strcpy(smallmenu.title, "Calendar tools");
   int sres = doMenu(&smallmenu);
   mMsgBoxPop();
@@ -2044,9 +2046,9 @@ void calendarTools(int y, int m, int d) {
           text.elements = elem;
           text.scrollbar=0;
           
-          char line1[50] = "";
+          char line1[50];
           strcpy(line1, (char*)"Between ");
-          char buffer[20] = "";
+          char buffer[20];
           dateToString(buffer, y1, m1, d1);
           strcat(line1, buffer);
           strcat(line1, (char*)" and ");
@@ -2286,7 +2288,7 @@ void trimCalendarDatabase() {
           deleteThisFile = 1;
         } else {
           // user wants to do something that depends on the start date, so we need to get it from the filename
-          char mainname[20] = "";
+          char mainname[20];
           int nlen = strlen((char*)buffer);
           strncpy(mainname, (char*)buffer, nlen-4); //strip the file extension out
           // strcpy will not add a \0 at the end if the limit is reached, let's add it ourselves
@@ -2334,7 +2336,7 @@ void trimCalendarDatabase() {
           }
         }
         if(deleteThisFile) {
-          unsigned char delfname[MAX_FILENAME_SIZE+1] = "";
+          unsigned char delfname[MAX_FILENAME_SIZE+1];
           strcpy((char*)delfname, CALENDARFOLDER);
           strcat((char*)delfname, "\\");
           strcat((char*)delfname, (char*)buffer);

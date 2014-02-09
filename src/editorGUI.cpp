@@ -92,7 +92,7 @@ void fileTextEditor(char* filename, char* basefolder) {
               closeMsgBox();
             } else {
               // create and save file
-              char newfilename[MAX_FILENAME_SIZE] = "";
+              char newfilename[MAX_FILENAME_SIZE];
               strcpy(newfilename, basefolder);
               strcat(newfilename, nfilename);
               unsigned short newfilenameshort[0x10A];

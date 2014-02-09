@@ -143,7 +143,7 @@ void chronoScreen(chronometer* chrono) {
   while(1) {
     checkChronoComplete();
     for(curitem=0; curitem < NUMBER_OF_CHRONO; curitem++) {
-      unsigned char text[42] = "";
+      unsigned char text[42];
       formatChronoString(&chrono[curitem], curitem+1, text);
       strcpy(menuitems[curitem].text, (char*)text);
     }

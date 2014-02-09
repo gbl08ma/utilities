@@ -183,8 +183,8 @@ void filenameFromDate(EventDate* date, char* filename) {
   strcat(filename, smallbuf);
 }
 void smemFilenameFromDate(EventDate* date, unsigned short* shortfn, const char* folder) {
-  unsigned char filename[128] = "";
-  char buffer[10] = "";
+  unsigned char filename[128];
+  char buffer[10];
   strcpy((char*)filename, folder);
   strcat((char*)filename, "\\");
   filenameFromDate(date, buffer);
@@ -569,7 +569,7 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   // folder does not include \\fls0\ or anything, just the user friendly name for the folder
   
   // before anything, build a complete filename for the file
-  char filename[128] = "";
+  char filename[128];
   strcpy(filename, folder);
   strcat(filename, "\\");
   strcat(filename, name);
@@ -651,7 +651,7 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
     *problemsfound = *problemsfound + 1;
     return;
   }
-  char mainname[20] = "";
+  char mainname[20];
   strncpy(mainname, name, nlen-4); //strip the file extension out
   // strcpy will not add a \0 at the end if the limit is reached, let's add it ourselves
   mainname[nlen-4] = '\0';

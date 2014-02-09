@@ -113,12 +113,12 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
     int curfile = 0;
     progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
     while(curfile < itemsInClipboard) {
-      char name[MAX_NAME_SIZE] = "";
+      char name[MAX_NAME_SIZE];
       nameFromFilename(clipboard[curfile].filename, name);
       if(curfile > 0) progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
       if (clipboard[curfile].action) {
         //copy file
-        char newfilename[MAX_FILENAME_SIZE] = "";
+        char newfilename[MAX_FILENAME_SIZE];
         strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
         unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
         strncat(newfilename, name, maxcatlen);
@@ -198,7 +198,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         } //else: create failed, but we're going to skip anyway
       } else {
         //move file
-        char newfilename[MAX_FILENAME_SIZE] = "";
+        char newfilename[MAX_FILENAME_SIZE];
         strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
         unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
         strncat(newfilename, name, maxcatlen);

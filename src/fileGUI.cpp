@@ -74,7 +74,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
   
-  char friendlypath[MAX_FILENAME_SIZE] = "";
+  char friendlypath[MAX_FILENAME_SIZE];
   strcpy(friendlypath, browserbasepath+6);
   friendlypath[strlen(friendlypath)-1] = '\0'; //remove ending slash like OS does
   // test to see if friendlypath is too big
@@ -84,7 +84,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
     int temptextY=0;
     PrintMini(&temptextX, &temptextY, (unsigned char*)friendlypath, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); // fake draw
     if(temptextX>LCD_WIDTH_PX-6) {
-      char newfriendlypath[MAX_FILENAME_SIZE] = "";
+      char newfriendlypath[MAX_FILENAME_SIZE];
       shortenDisplayPath(friendlypath, newfriendlypath, (jump4 ? 4 : 1));
       if(strlen(friendlypath) > strlen(newfriendlypath) && strlen(newfriendlypath) > 3) { // check if len > 3 because shortenDisplayPath may return just "..." when the folder name is too big
         // shortenDisplayPath still managed to shorten, copy and continue
@@ -107,6 +107,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   strcpy(menu.nodatamsg, "No Data");
   strcpy(menu.title, "Files");
   menu.showtitle=1;
+  menu.useStatusText=1;
   while(1) {
     Bdisp_AllClr_VRAM();
     char titleBuffer[88] = "";
@@ -347,7 +348,7 @@ int makeFolderGUI(char* browserbasepath) {
     if (res==INPUT_RETURN_EXIT) return 0; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
       // create folder
-      char newfilename[MAX_FILENAME_SIZE] = "";
+      char newfilename[MAX_FILENAME_SIZE];
       strcpy(newfilename, browserbasepath);
       strcat(newfilename, newname);
       unsigned short newfilenameshort[0x10A];
@@ -364,11 +365,11 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   //returns 0 if user aborts, 1 if renames.
   Bdisp_AllClr_VRAM();
   mPrintXY(1, 1, (char*)"Rename item", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  char title[MAX_NAME_SIZE+6] = "";
+  char title[MAX_NAME_SIZE+6];
   strcpy(title, (char*)menu->items[menu->selection-1].text);
   strcat(title, " to:");
   mPrintXY(1, 2, (char*)title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  char newname[MAX_NAME_SIZE] = "";
+  char newname[MAX_NAME_SIZE];
   strcpy(newname, (char*)menu->items[menu->selection-1].text);
   textInput input;
   input.forcetext=1;
@@ -379,7 +380,7 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
     int res = doTextInput(&input);
     if (res==INPUT_RETURN_EXIT) return 0; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
-      char newfilename[MAX_FILENAME_SIZE] = "";
+      char newfilename[MAX_FILENAME_SIZE];
       strcpy(newfilename, browserbasepath);
       strcat(newfilename, newname);
       unsigned short newfilenameshort[0x10A];
@@ -410,7 +411,7 @@ int fileInformation(char* filename, int allowEdit) {
   text.numelements++;
   
   elem[text.numelements].newLine=1;
-  char name[MAX_NAME_SIZE] = "";
+  char name[MAX_NAME_SIZE];
   nameFromFilename(filename, name);
   elem[text.numelements].text = name;
   text.numelements++;
@@ -551,7 +552,7 @@ int fileInformation(char* filename, int allowEdit) {
 }
 
 void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e. not full path
-  char name[MAX_NAME_SIZE] = "";
+  char name[MAX_NAME_SIZE];
   nameFromFilename(filename, name);
   
   unsigned char* asrc = NULL;
@@ -585,7 +586,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   } else if (strstr((char*)asrc, "\n")) {
     newlinemode = 3; //Unix
   }
-  char titlebuf[MAX_NAME_SIZE+20] ="";
+  char titlebuf[MAX_NAME_SIZE+20];
   strcpy((char*)titlebuf, "Viewing ");
   strcat((char*)titlebuf, (char*)name);
   strcat((char*)titlebuf, " as text");
@@ -683,7 +684,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     menu.items = menuitems;
     int curitem = 0;
     while(curitem < *itemsinclip) {
-      char buffer[MAX_FILENAME_SIZE] = "";
+      char buffer[MAX_FILENAME_SIZE];
       nameFromFilename(clipboard[curitem].filename, buffer);
       strncpy(menuitems[curitem].text, (char*)buffer, 40);
       if(clipboard[curitem].action == 1) menuitems[curitem].color = TEXT_COLOR_RED;

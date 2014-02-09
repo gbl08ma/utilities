@@ -32,7 +32,7 @@ void debugMessage(char* text1, char* text2, int value) {
   PrintXY(3,2,(char*)text1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   char buffer1[10] = "";
   itoa(value, (unsigned char*)buffer1);
-  char buffer2[15] = "";
+  char buffer2[15];
   strcpy(buffer2, text2);
   strcat(buffer2, buffer1);
   PrintXY(3,3,(char*)buffer2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
