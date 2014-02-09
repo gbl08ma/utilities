@@ -163,7 +163,7 @@ void settingsMenu() {
           break;
         case 12:
         { mMsgBoxPush(5);
-          MenuItem smallmenuitems[3];
+          MenuItem smallmenuitems[4];
           strcpy(smallmenuitems[0].text, "No notification");        
           strcpy(smallmenuitems[1].text, "Flashing pop-up");        
           strcpy(smallmenuitems[2].text, "Simple pop-up");
