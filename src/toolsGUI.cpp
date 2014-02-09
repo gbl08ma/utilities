@@ -159,7 +159,6 @@ int addinManagerSub(Menu* menu) {
   for(int curaddin = 0; curaddin < menu->numitems; curaddin++) {
     strcpy(menuitems[curaddin].text, (char*)addins[curaddin].name);
     menuitems[curaddin].color = (addins[curaddin].active ? TEXT_COLOR_BLACK : TEXT_COLOR_CYAN);
-    curaddin++;
   }
   
   int iresult;  

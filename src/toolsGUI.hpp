@@ -16,6 +16,7 @@
 #include <math.h>
 
 #include "menuGUI.hpp"
+#include "fileProvider.hpp"
 
 #define TOTAL_SMEM 16801792 //as seen on the TEST MODE, on the emulator, OS 1.02, and on the TEST MODE of a real fx-CG 20, OS 1.04.
 #define DRAW_MEMUSAGE_GRAPHS
@@ -23,8 +24,8 @@
 typedef struct
 {
   int active; //whether the add-in is set to show in menu (.g3a) or hidden (.h3a)
-  char filename[128]; //filename, not proper for use with Bfile.
-  char name[50]; //friendly name
+  char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
+  char name[MAX_NAME_SIZE]; //friendly name
 } AddIn;
 
 void memoryCapacityViewer();
