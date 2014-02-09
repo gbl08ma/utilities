@@ -48,13 +48,12 @@ void showHome(chronometer* chrono) {
   unsigned short prevkey = 0;
   int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
   while (1) {
-    Bdisp_AllClr_VRAM();
-
     //black theme, or not?
     if (GetSetting(SETTING_THEME) == 1) {
       Bdisp_Fill_VRAM( COLOR_BLACK, 3 );
       DrawFrame( 0x000000  );
     } else {
+      Bdisp_AllClr_VRAM();
       DrawFrame( 0xFFFFFF  );
     }
     if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 3 && getLastChronoComplete()) {
