@@ -45,7 +45,7 @@ typedef struct
 #define MENUTYPE_NO_KEY_HANDLING 3 //this type of menu doesn't handle any keys, only draws.
 #define MENUTYPE_FKEYS 4 // returns GetKey value of a Fkey when one is pressed
 typedef struct {
-  char statusText[75] = ""; // text to be shown on the status bar, may be empty
+  char statusText[75]; // text to be shown on the status bar, may be empty
   int showtitle=0; // whether to show a title as the first line
   char title[42]; // title to be shown on the first line if showtitle is !=0
   char* subtitle;
