@@ -63,21 +63,35 @@ void changeBacklightLevel() {
   sel.clearVRAM = 0;
   
   Bdisp_AllClr_VRAM();
-  int textX=0; int textY=150;
+  /*int textX=0; int textY=150;
   PrintMiniMini( &textX, &textY, (unsigned char*)"This setting is volatile because it is changed by the OS on", 0, TEXT_COLOR_BLACK, 0 );
   textY=textY+12; textX=0;
   PrintMiniMini( &textX, &textY, (unsigned char*)"poweroff, on backlight timeout and when the user changes", 0, TEXT_COLOR_BLACK, 0 );
   textY=textY+12; textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"the setting in the OS's System menu.", 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, &textY, (unsigned char*)"the setting in the OS's System menu.", 0, TEXT_COLOR_BLACK, 0 );*/
+  textArea text;
+  text.type = TEXTAREATYPE_INSTANT_RETURN;
+  text.showtitle = 0;
+  text.y = 150;
+  text.lineHeight=12;
+  textElement elem[2];
+  text.elements = elem;
+  text.scrollbar=0;
+  
+  elem[0].text = (char*)"This setting is volatile because it is changed by the OS on poweroff, on backlight timeout and when the user changes the setting in the OS's System menu.";
+  elem[0].minimini = 1;
+  text.numelements = 1;
+  doTextArea(&text);
   while(1) {
-    int res = doSelector(&sel);
-    if (res == SELECTOR_RETURN_EXIT) {
-      SetBacklightSubLevel_RAW(initValue);
-      return; 
-    } else if (res == SELECTOR_RETURN_INSTANT) {
-      SetBacklightSubLevel_RAW(sel.value);
-    } else if (res == SELECTOR_RETURN_SELECTION) {
-      return; // bl level was already set with the instant return
+    switch(doSelector(&sel)) {
+      case SELECTOR_RETURN_EXIT:
+        SetBacklightSubLevel_RAW(initValue);
+        //deliberate fallthrough: bl level was already set with the instant return, so if user is confirming, just return.
+      case SELECTOR_RETURN_SELECTION:
+        return;
+      case SELECTOR_RETURN_INSTANT:
+        SetBacklightSubLevel_RAW(sel.value);
+        break;
     }
   }
 }
