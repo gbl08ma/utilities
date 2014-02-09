@@ -115,7 +115,7 @@ int viewMonthCalendar(int dateselection) {
         if (menu == 2) {
           if (y != 0)
               m--;
-          else { if (m!=1) m--; } 
+          else if (m!=1) m--;
           if (m == 0)
           {
               m = 12;
@@ -129,7 +129,7 @@ int viewMonthCalendar(int dateselection) {
         if (menu == 2) {
           if (y != 9999)
               m++;
-          else { if (m!=12) m++; }
+          else if (m!=12) m++;
           if (m == 13)
           {
               m = 1;

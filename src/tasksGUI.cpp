@@ -49,14 +49,13 @@ int viewTasksSub(Menu* menu) {
   CalendarEvent* tasks = (CalendarEvent*)alloca(menu->numitems*sizeof(CalendarEvent));
   MenuItem* menuitems = (MenuItem*)alloca(menu->numitems*sizeof(MenuItem));
   menu->numitems = GetEventsForDate(&taskday, CALENDARFOLDER, tasks);
-  int curitem = 0; int activecount = 0;
-  while(curitem < menu->numitems) {
+  int activecount = 0;
+  for(int curitem = 0; curitem < menu->numitems; curitem++) {
     strcpy(menuitems[curitem].text, (char*)tasks[curitem].title);
     menuitems[curitem].type = MENUITEM_CHECKBOX;
     menuitems[curitem].value = tasks[curitem].repeat;
     if(menuitems[curitem].value) activecount++;
     menuitems[curitem].color = tasks[curitem].category-1;
-    curitem++;
   }
   menu->items=menuitems;
   
@@ -108,18 +107,18 @@ int viewTasksSub(Menu* menu) {
         }
         break;
       case KEY_CTRL_F3:
-        if(menu->numitems > 0)
+        if(menu->numitems > 0) {
           if(eventEditor(0, 0, 0, EVENTEDITORTYPE_EDIT, &tasks[menu->selection-1], 1) == EVENTEDITOR_RETURN_CONFIRM) {
             ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
           }
           return 1;
+        }
         break;
       case KEY_CTRL_F4:
-        if(menu->numitems > 0) {
+        if(menu->numitems > 0)
           if(EVENTDELETE_RETURN_CONFIRM == deleteEventUI(0, 0, 0, tasks, menu->numitems, menu->selection-1, 1)) {
             return 1;
           }
-        }
         break;
       case KEY_CTRL_F5:
         if(menu->numitems > 0) {
