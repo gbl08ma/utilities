@@ -24,13 +24,6 @@ void plot(int x0, int y0, unsigned short color) {
   return; 
 }
 
-/*inline static void plot(int x0, int y0, unsigned short color) {
-  unsigned short* VRAM = (unsigned short*)0xA8000000; 
-  VRAM += (y0*LCD_WIDTH_PX + x0); 
-  *VRAM = color;
-  return; 
-}*/
-
 void drawRectangle(int x, int y, int width, int height, unsigned short color) {
   unsigned short*VRAM = (unsigned short*)0xA8000000;
   for(int j = y; j < y+height; j++) {
@@ -139,6 +132,11 @@ void darkenStatusbar() {
     VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_CYAN, COLOR_GRAY);
     VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_BLUE, COLOR_ORANGE);
   }
+}
+void darkenFkeys(int numkeys) {
+  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_BLACK, COLOR_CYAN);
+  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_WHITE, COLOR_BLACK);
+  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_CYAN, COLOR_GRAY);  
 }
 void drawArrowDown(int bottomX, int bottomY, int color) {
   drawLine(bottomX-7,bottomY-7,bottomX,bottomY,color);
@@ -273,7 +271,7 @@ void progressMessage(char* message, int cur, int total) {
   // otherwise, resources won't be freed.
   // always call with cur==0 and total > 0 first, so that the progressbar is initialized!
   // if message is empty, the default OS "please wait" message will be used.
-  if(strlen(message) == 0) {
+  if(!strlen(message)) {
     ProgressBar( cur, total );
   } else {
     ProgressBar2( (unsigned char*)message, cur, total );

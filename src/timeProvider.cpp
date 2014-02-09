@@ -386,7 +386,7 @@ void stringToDate(char* string, int* yr, int* m, int *d, int format) {
   char year[6] = "";
   char month[3] = "";
   char day[3] = "";
-  switch(format == -1? GetSetting(SETTING_DATEFORMAT) : format) {
+  switch(format) {
     case 0:
       day[0] = string[0]; day[1] = string[1]; day[2] = '\0';
       month[0] = string[2]; month[1] = string[3]; month[2] = '\0';

@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "settingsProvider.hpp"
+
 // Thanks to AHelper and http://prizm.cemetech.net/index.php?title=RTC_Unit for these
 #define RYRCNT  (unsigned short*)0xA413FECE
 #define RMONCNT (unsigned char*)0xA413FECC
@@ -50,10 +52,10 @@ long long int DateTime2Unix(long long int year, long long int month, long long i
 
 int getRTCisUnadjusted();
 
-void currentDateToString(char *buffer, int format); // usually one just specifies GetSetting(SETTING_DATEFORMAT) for the format
-void dateToString(char *buffer, int y, int m, int d, int format); // same here
-void currentTimeToString(char *buffer, int format); // usually one just specifies GetSetting(SETTING_TIMEFORMAT) for the format
-void timeToString(char *buffer, int h, int min, int sec, int format, int showSeconds=1); // same here
+void currentDateToString(char *buffer, int format=GetSetting(SETTING_DATEFORMAT));
+void dateToString(char *buffer, int y, int m, int d, int format=GetSetting(SETTING_DATEFORMAT));
+void currentTimeToString(char *buffer, int format=GetSetting(SETTING_TIMEFORMAT));
+void timeToString(char *buffer, int h, int min, int sec, int format=GetSetting(SETTING_TIMEFORMAT), int showSeconds=1);
 
 long long int currentUnixTime(); // please note, this is milliseconds from epoch and not seconds
 
@@ -70,7 +72,7 @@ int isDateValid(int y, int m, int d);
 void DaysToDate(long int d, long int* eyear, long int* emonth, long int* eday);
 long int DateToDays(int y, int m, int d);
 
-void stringToDate(char* string, int* yr, int* m, int *d, int format = -1);
+void stringToDate(char* string, int* yr, int* m, int *d, int format = GetSetting(SETTING_DATEFORMAT));
 void stringToTime(char* string, int* h, int* m, int *s);
 
 const char* dateSettingToInputDisplay(int setting=-1);

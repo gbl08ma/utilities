@@ -354,10 +354,8 @@ void RTCunadjustedWizard(int helpMessage) {
     elem[2].text = (char*)"Press EXE or F1 to start setting the time and date, or EXIT to ignore and continue.";
     
     text.numelements = 3;
-    int res = doTextArea(&text);
-    if(res == 0) {
-      return;
-    } // else keep with program execution
+    if(!doTextArea(&text)) return;
+    // else keep with program execution
   }
   
   textArea text;
@@ -431,11 +429,11 @@ void drawHomeClock(int format, int theme) {
     case 6:
     case 7:
     case 8:
-      currentTimeToString(timeStr,GetSetting(SETTING_TIMEFORMAT));
+      currentTimeToString(timeStr);
       break;
     case 4:
     case 10:
-      currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
+      currentDateToString(timeStr);
       break;
   }
   switch(format) {
@@ -451,7 +449,7 @@ void drawHomeClock(int format, int theme) {
     case 2:
       // show digital time and short date
       printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
-      currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
+      currentDateToString(timeStr);
       printCentered((unsigned char*)timeStr, 5*24, fgcolor, bgcolor);
       break;
     case 3:
@@ -481,7 +479,7 @@ void drawHomeClock(int format, int theme) {
       // show analog clock with digital time and short date
       drawAnalogClock(80, LCD_HEIGHT_PX/2, 70, bgcolor, fgcolor);
       mPrintXY(10, 3, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
-      currentDateToString(timeStr, GetSetting(SETTING_DATEFORMAT));
+      currentDateToString(timeStr);
       mPrintXY(10, 5, timeStr, TEXT_MODE_TRANSPARENT_BACKGROUND, fgcolor);
       break;
     case 9:

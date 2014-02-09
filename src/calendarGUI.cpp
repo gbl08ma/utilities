@@ -357,7 +357,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
     char buffer[15] = "";
     long int ny, nm, nd;
     DaysToDate(ddays, &ny, &nm, &nd);
-    dateToString(buffer, ny, nm, nd, GetSetting(SETTING_DATEFORMAT));
+    dateToString(buffer, ny, nm, nd);
     // the following string only fits in the menuitem.text because:
     //  1 - graphically, it's printed with PrintMini
     //  2 - the text variable has a size of 42 bytes, to account for the possibility that all the items are multibyte characters.
@@ -696,7 +696,7 @@ void viewEvents(int y, int m, int d) {
   menu.type=MENUTYPE_FKEYS;
   strcpy(menu.nodatamsg, "No events - press F2");
   char buffer[15] = "";
-  dateToString(buffer, y, m, d, GetSetting(SETTING_DATEFORMAT));
+  dateToString(buffer, y, m, d);
   strcpy(menu.title, "Events for ");
   strcat(menu.title, buffer);
   strcat(menu.title, " (");
@@ -890,12 +890,12 @@ void viewEvent(CalendarEvent* event, int istask) {
     text.numelements++;
     
     unsigned char startson[50] = "";
-    dateToString((char*)startson, event->startdate.year, event->startdate.month, event->startdate.day, GetSetting(SETTING_DATEFORMAT));
+    dateToString((char*)startson, event->startdate.year, event->startdate.month, event->startdate.day);
     strcat((char*)startson, (char*)" ");
     
     if(event->timed) {
       char buffer[15]="";
-      timeToString((char*)buffer, event->starttime.hour, event->starttime.minute, event->starttime.second, GetSetting(SETTING_TIMEFORMAT));
+      timeToString((char*)buffer, event->starttime.hour, event->starttime.minute, event->starttime.second);
       strcat((char*)startson, (char*)buffer);
     } else {
       strcat((char*)startson, (char*)"(all day)");
@@ -911,11 +911,11 @@ void viewEvent(CalendarEvent* event, int istask) {
     text.numelements++;
     
     unsigned char endson[50] = "";
-    dateToString((char*)endson, event->enddate.year, event->enddate.month, event->enddate.day, GetSetting(SETTING_DATEFORMAT));
+    dateToString((char*)endson, event->enddate.year, event->enddate.month, event->enddate.day);
     
     if(event->timed) {
       char buffer[15]="";
-      timeToString((char*)buffer, event->endtime.hour, event->endtime.minute, event->endtime.second, GetSetting(SETTING_TIMEFORMAT));
+      timeToString((char*)buffer, event->endtime.hour, event->endtime.minute, event->endtime.second);
       strcat((char*)endson, (char*)" ");
       strcat((char*)endson, (char*)buffer);
     }
@@ -2047,10 +2047,10 @@ void calendarTools(int y, int m, int d) {
           char line1[50] = "";
           strcpy(line1, (char*)"Between ");
           char buffer[20] = "";
-          dateToString(buffer, y1, m1, d1, GetSetting(SETTING_DATEFORMAT));
+          dateToString(buffer, y1, m1, d1);
           strcat(line1, buffer);
           strcat(line1, (char*)" and ");
-          dateToString(buffer, y2, m2, d2, GetSetting(SETTING_DATEFORMAT));
+          dateToString(buffer, y2, m2, d2);
           strcat(line1, buffer);
           strcat(line1, (char*)":");
           elem[0].text = line1;

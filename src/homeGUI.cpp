@@ -37,12 +37,6 @@
 
 int pane_keycache = 0; // TODO: see if it's possible not to have this being a global var
 
-// this is inline and here, because it's only used on the home screen.
-inline void darkenFkeys(int numkeys) {
-  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_BLACK, COLOR_CYAN);
-  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_WHITE, COLOR_BLACK);
-  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_CYAN, COLOR_GRAY);  
-}
 void showHome(chronometer* chrono) {
   unsigned short key = 0;
   unsigned short prevkey = 0;
