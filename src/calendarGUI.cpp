@@ -2145,8 +2145,7 @@ void repairCalendarDatabase() {
   unsigned char* filter = (unsigned char*)"*.pce";
 
   // make the buffer
-  strcpy((char*)buffer, "\\\\fls0\\");
-  strcat((char*)buffer, CALENDARFOLDER);
+  strcpy((char*)buffer, CALENDARFOLDER);
   strcat((char*)buffer, "\\");
   strcat((char*)buffer, "*");
   
@@ -2268,8 +2267,7 @@ void trimCalendarDatabase() {
     unsigned char* filter = (unsigned char*)"*.pce";
 
     // make the buffer
-    strcpy((char*)buffer, "\\\\fls0\\");
-    strcat((char*)buffer, CALENDARFOLDER);
+    strcpy((char*)buffer, CALENDARFOLDER);
     strcat((char*)buffer, "\\");
     strcat((char*)buffer, "*");
     
@@ -2340,8 +2338,7 @@ void trimCalendarDatabase() {
         }
         if(deleteThisFile) {
           unsigned char delfname[MAX_FILENAME_SIZE+1] = "";
-          strcpy((char*)delfname, "\\\\fls0\\");
-          strcat((char*)delfname, CALENDARFOLDER);
+          strcpy((char*)delfname, CALENDARFOLDER);
           strcat((char*)delfname, "\\");
           strcat((char*)delfname, (char*)buffer);
           unsigned short path2[MAX_FILENAME_SIZE+1];

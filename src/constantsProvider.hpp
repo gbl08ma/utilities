@@ -11,11 +11,15 @@
 #endif
 
 #ifndef CALENDARFOLDER
-#define CALENDARFOLDER (char*)"@UTILS"
+#define CALENDARFOLDER (char*)"\\\\fls0\\@UTILS"
 #endif
 
 #ifndef HASHFILE
 #define HASHFILE (unsigned char*)"Hash"
+#endif
+
+#ifndef SMEMHASHFILE
+#define SMEMHASHFILE (unsigned char*)"\\\\fls0\\@UTILS\\Hash.plp"
 #endif
 
 #ifndef SELFFILE

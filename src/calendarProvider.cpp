@@ -185,8 +185,7 @@ void filenameFromDate(EventDate* date, char* filename) {
 void smemFilenameFromDate(EventDate* date, unsigned short* shortfn, const char* folder) {
   unsigned char filename[128] = "";
   char buffer[10] = "";
-  strcpy((char*)filename, "\\\\fls0\\");
-  strcat((char*)filename, folder);
+  strcpy((char*)filename, folder);
   strcat((char*)filename, "\\");
   filenameFromDate(date, buffer);
   strcat((char*)filename, buffer);
@@ -229,11 +228,8 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
       if(secondCall) return 2;
       // it's probably because the DB has never been used and is not initialized (i.e. we haven't created the calendar folder).
       // create the folder:
-      char foldername[128] = "";
       unsigned short pFolder[256];
-      strcpy(foldername, "\\\\fls0\\");
-      strcat(foldername, folder);
-      Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
+      Bfile_StrToName_ncpy(pFolder, (unsigned char*)folder, strlen(folder)+1);
       Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0);
       // now let's call ourselves again, then according to the return value of our second instance, decide if there was an error or not.
       if(AddEvent(calEvent, folder,1)) return 2; // another error ocurred
@@ -410,8 +406,7 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   unsigned char* filter = (unsigned char*)"*.pce";
 
   // make the buffer
-  strcpy((char*)buffer, "\\\\fls0\\");
-  strcat((char*)buffer, CALENDARFOLDER);
+  strcpy((char*)buffer, CALENDARFOLDER);
   strcat((char*)buffer, "\\");
   char smallbuf[5] = "";
   itoa(year, (unsigned char*)smallbuf);
@@ -501,8 +496,7 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   unsigned char* filter = (unsigned char*)"*.pce";
 
   // make the buffer
-  strcpy((char*)buffer, "\\\\fls0\\");
-  strcat((char*)buffer, folder);
+  strcpy((char*)buffer, folder);
   strcat((char*)buffer, "\\");
   char smallbuf[5] = "";
   itoa(y, (unsigned char*)smallbuf);
@@ -576,8 +570,7 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   
   // before anything, build a complete filename for the file
   char filename[128] = "";
-  strcpy(filename, "\\\\fls0\\");
-  strcat(filename, folder);
+  strcpy(filename, folder);
   strcat(filename, "\\");
   strcat(filename, name);
   

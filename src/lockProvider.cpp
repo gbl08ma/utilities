@@ -43,13 +43,9 @@ int comparePasswordHash(unsigned char* inputPassword) {
   //returns 3 if hashes stored don't match
   //returns 4 if hashed password and stored hashes don't match
   //Load hash from SMEM
-  char smemfile[50] = "";
-  strcpy(smemfile, "\\\\fls0\\");
-  strcat(smemfile, CALENDARFOLDER);
-  strcat(smemfile, "\\Hash.plp");
-  unsigned short pFile[sizeof(smemfile)*2]; // Make buffer
+  unsigned short pFile[256]; // Make buffer
   int hFile;
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)smemfile, strlen(smemfile)+1); 
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)SMEMHASHFILE, strlen((char*)SMEMHASHFILE)+1); 
   hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   unsigned char smemHash[32] = "";
   if(hFile < 0) // Check if it opened
@@ -88,29 +84,19 @@ int savePassword(unsigned char* password) {
   //now that we hashed, save in the main memory and storage memory.
   //Save to SMEM
   //create a folder, if it doesn't exist already
-  char foldername[128] = "";
-  strcpy(foldername, "\\\\fls0\\");
-  strcat(foldername, CALENDARFOLDER);
   unsigned short pFolder[256];
-  Bfile_StrToName_ncpy(pFolder, (unsigned char*)foldername, strlen(foldername)+1);
+  Bfile_StrToName_ncpy(pFolder, (unsigned char*)CALENDARFOLDER, strlen((char*)CALENDARFOLDER)+1);
   Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
   // now the file
-  char smemfile[50] = "";
-  strcpy(smemfile, "\\\\fls0\\");
-  strcat(smemfile, CALENDARFOLDER);
-  strcat(smemfile, "\\Hash.plp");
-  unsigned short pFile[sizeof(smemfile)*2]; // Make buffer
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)smemfile, strlen(smemfile)+1); 
+  unsigned short pFile[256]; // Make buffer
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)SMEMHASHFILE, strlen((char*)SMEMHASHFILE)+1); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   int size = 32;
   if(hFile < 0) // Check if it opened
   {
     //error, file doesn't exist. create it
     int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
-    if(BCEres < 0) // Did it create?
-    {
-      return 2; //error: file doesn't exist and yet can't be created.
-    }
+    if(BCEres < 0) return 2; //error: file doesn't exist and yet can't be created.
     hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
     // Check if it opened now that we created it:
     if(hFile < 0) return 3;
@@ -134,13 +120,9 @@ int savePassword(unsigned char* password) {
 int isPasswordSet(void) {
   //returns 1 if user has already set a code for locking the calc, 0 if not.
   // check SMEM.
-  char smemfile[50] = "";
-  strcpy(smemfile, "\\\\fls0\\");
-  strcat(smemfile, CALENDARFOLDER);
-  strcat(smemfile, "\\Hash.plp");
-  unsigned short pFile[sizeof(smemfile)*2]; // Make buffer
+  unsigned short pFile[256]; // Make buffer
   int hFile;
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)smemfile, strlen(smemfile)+1); 
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)SMEMHASHFILE, strlen((char*)SMEMHASHFILE)+1); 
   hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hFile < 0) // Check if it opened
   {
