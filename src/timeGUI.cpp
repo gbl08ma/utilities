@@ -24,6 +24,28 @@
 
 #include "debugGUI.hpp"
 
+void appendDayEnding(int day, char* buffer) {
+  //st,nd,rd,th code:
+  switch(day) {
+    case 1:
+    case 21:
+    case 31:
+      strcat(buffer, "st");
+      break;
+    case 2:
+    case 22:
+      strcat(buffer, "nd");
+      break;
+    case 3:
+    case 23:
+      strcat(buffer, "rd");
+      break;
+    default:
+      strcat(buffer, "th");
+      break;
+  }
+}
+
 void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminiinvert) {
   if (format==NULL) format = GetSetting(SETTING_LONGDATEFORMAT);
   if (miniminiinvert==NULL) miniminiinvert = 0;
@@ -36,29 +58,22 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
 
   char buffer[50];
   char buffer2[10];
+  itoa(curDay, (unsigned char*)buffer2);
 
-  int textX = 0;
   switch(format)
   {
     case 0:
       strcpy(buffer, getCurrentDOWAsString());
       strcat(buffer, ", ");
       strcat(buffer, getCurrentMonthAsString());
-      itoa(curDay, (unsigned char*)buffer2);
       strcat(buffer, " ");
       strcat(buffer, buffer2);
       break;
     case 1:
       strcpy(buffer, getCurrentDOWAsString());
       strcat(buffer, ", ");
-
-      itoa(curDay, (unsigned char*)buffer2);
       strcat(buffer, buffer2);
-      //st,nd,rd,th code:
-      if (curDay == 1 || curDay == 21 || curDay == 31) strcat(buffer, "st");
-      else if (curDay == 2 || curDay == 22) strcat(buffer, "nd");
-      else if (curDay == 3 || curDay == 23) strcat(buffer, "rd");
-      else strcat(buffer, "th");
+      appendDayEnding(curDay, buffer);
 
       strcat(buffer, " ");
       strcat(buffer, getCurrentMonthAsString());
@@ -67,14 +82,8 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
     case 2:
       strcpy(buffer, getCurrentDOWAsString());
       strcat(buffer, ", ");
-
-      itoa(curDay, (unsigned char*)buffer2);
       strcat(buffer, buffer2);
-      //st,nd,rd,th code:
-      if (curDay == 1 || curDay == 21 || curDay == 31) strcat(buffer, "st");
-      else if (curDay == 2 || curDay == 22) strcat(buffer, "nd");
-      else if (curDay == 3 || curDay == 23) strcat(buffer, "rd");
-      else strcat(buffer, "th");
+      appendDayEnding(curDay, buffer);
 
       strcat(buffer, " ");
       strcat(buffer, getCurrentMonthAsString());
@@ -87,14 +96,8 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
     case 3:
       strcpy(buffer, getCurrentDOWAsString());
       strcat(buffer, ", ");
-
-      itoa(curDay, (unsigned char*)buffer2);
       strcat(buffer, buffer2);
-      //st,nd,rd,th code:
-      if (curDay == 1 || curDay == 21 || curDay == 31) strcat(buffer, "st");
-      else if (curDay == 2 || curDay == 22) strcat(buffer, "nd");
-      else if (curDay == 3 || curDay == 23) strcat(buffer, "rd");
-      else strcat(buffer, "th");
+      appendDayEnding(curDay, buffer);
 
       strcat(buffer, " ");
       strcat(buffer, getCurrentMonthAsString());
@@ -104,14 +107,12 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
     case 6: //it's exactly the same except minimini is not used, but that's not handled here
       strcpy(buffer, getCurrentMonthAsString());
       strcat(buffer, " ");
-      itoa(curDay, (unsigned char*)buffer2);
       strcat(buffer, buffer2);
       break;
 
     case 5:
       strcpy(buffer, getCurrentMonthAsString());
       strcat(buffer, " ");
-      itoa(curDay, (unsigned char*)buffer2);
       strcat(buffer, buffer2);
 
       strcat(buffer, ", ");
@@ -121,26 +122,16 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
 
     case 7:
     case 9: //exactly the same except minimini, not handled here
-      itoa(curDay, (unsigned char*)buffer2);
       strcpy(buffer, buffer2);
-      //st,nd,rd,th code:
-      if (curDay == 1 || curDay == 21 || curDay == 31) strcat(buffer, "st");
-      else if (curDay == 2 || curDay == 22) strcat(buffer, "nd");
-      else if (curDay == 3 || curDay == 23) strcat(buffer, "rd");
-      else strcat(buffer, "th");
+      appendDayEnding(curDay, buffer);
 
       strcat(buffer, " ");
       strcat(buffer, getCurrentMonthAsString());
       break;
 
     case 8:
-      itoa(curDay, (unsigned char*)buffer2);
       strcpy(buffer, buffer2);
-      //st,nd,rd,th code:
-      if (curDay == 1 || curDay == 21 || curDay == 31) strcat(buffer, "st");
-      else if (curDay == 2 || curDay == 22) strcat(buffer, "nd");
-      else if (curDay == 3 || curDay == 23) strcat(buffer, "rd");
-      else strcat(buffer, "th");
+      appendDayEnding(curDay, buffer);
 
       strcat(buffer, " ");
       strcat(buffer, getCurrentMonthAsString());
@@ -151,6 +142,7 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
       break;
   }
 
+  int textX = 0;
   //Use PrintMini to get length in pixels of the string, then draw it on the middle of the screen
   PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, colorfg, colorbg, 0, 0); //get length
   textX = LCD_WIDTH_PX/2 - textX/2; //center
