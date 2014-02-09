@@ -322,7 +322,6 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   itoa(wkn, (unsigned char*)buffer);
   strcpy(menu->title, "Week ");
   strcat(menu->title, buffer);
-  strcpy(buffer, (char*)"");
   itoa(*y, (unsigned char*)buffer);
   strcat(menu->title, (char*)" of ");
   strcat(menu->title, buffer);

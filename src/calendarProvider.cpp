@@ -416,7 +416,6 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   char smallbuf[5] = "";
   itoa(year, (unsigned char*)smallbuf);
   strcat((char*)buffer, smallbuf);
-  strcpy((char*)smallbuf, "");
   itoa(month, (unsigned char*)smallbuf);
   if (month < 10) strcat((char*)buffer, "0");  //if month below 10, add leading 0
   strcat((char*)buffer, smallbuf);
@@ -509,7 +508,6 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   itoa(y, (unsigned char*)smallbuf);
   strcat((char*)buffer, smallbuf);
   if(m!=0) {
-    strcpy((char*)smallbuf, "");
     itoa(m, (unsigned char*)smallbuf);
     if (m < 10) strcat((char*)buffer, "0");  //if month below 10, add leading 0
     strcat((char*)buffer, smallbuf);
