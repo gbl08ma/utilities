@@ -262,16 +262,19 @@ void changeFKeyColor() {
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
   mPrintXY(1, 1, (char*)"Function Key Color", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  int textX=0; int textY=132;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"Please note that only the Utilities add-in and a hidden", 0, TEXT_COLOR_BLACK, 0 );
-  textY=textY+12; textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"debug screen on your calculator are able to change this", 0, TEXT_COLOR_BLACK, 0 );
-  textY=textY+12; textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"setting, which persists across reboots. To reset it back to", 0, TEXT_COLOR_BLACK, 0 );
-  textY=textY+12; textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"the black color you need to use this add-in, the hidden", 0, TEXT_COLOR_BLACK, 0 );
-  textY=textY+12; textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"debug screen or to reset the Main Memory.", 0, TEXT_COLOR_BLACK, 0 );
+  textArea text;
+  text.type = TEXTAREATYPE_INSTANT_RETURN;
+  text.showtitle = 0;
+  text.y = 132;
+  text.lineHeight=12;
+  textElement elem[2];
+  text.elements = elem;
+  text.scrollbar=0;
+  
+  elem[0].text = (char*)"Please note that only the Utilities add-in and a hidden debug screen on your calculator are able to change this setting, which persists across reboots. To reset it back to the black color you need to use this add-in, the hidden debug screen or to reset the Main Memory.";
+  elem[0].minimini = 1;
+  text.numelements = 1;
+  doTextArea(&text);
   Bdisp_PutDisp_DD();
   selcolor = ColorIndexDialog1( *keycolor, 0 );
   if(selcolor != (unsigned char)0xFF) {
