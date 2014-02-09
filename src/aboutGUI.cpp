@@ -16,12 +16,12 @@
 #include "textGUI.hpp"
 #include "versionProvider.hpp"
 #include "graphicsProvider.hpp" 
-#include "hardwareProvider.hpp" 
+#include "hardwareProvider.hpp"
+#include "keyboardProvider.hpp"
 
 void showAbout() {
   int key;
   DefineStatusMessage((char*)"About Utilities", 1, 0, 0);
-  DisplayStatusArea();
   
   textArea ftext;
   ftext.showtitle=0;
@@ -75,7 +75,7 @@ void showAbout() {
   ftext.numelements = 12;
   doTextArea(&ftext);
   drawtnyimLogo(10, 59+24); //24 pixels for the status bar
-  GetKey(&key);
+  mGetKey(&key);
   
   textArea text;
   text.showtitle=0;

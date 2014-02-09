@@ -67,7 +67,6 @@ int doTextInput(textInput* input) {
     }
   
     int keyflag = GetSetupSetting( (unsigned int)0x14);
-    DisplayStatusArea();
     mGetKey(&input->key);
     if (GetSetupSetting( (unsigned int)0x14) == 0x01 || GetSetupSetting( (unsigned int)0x14) == 0x04 || GetSetupSetting( (unsigned int)0x14) == 0x84) {
       keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.

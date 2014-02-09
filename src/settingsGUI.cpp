@@ -300,12 +300,11 @@ inline static void clockSettingsMenu() {
           int cur = GetSetting(SETTING_CLOCK_TYPE);
           while(inscreen) {
             Bdisp_AllClr_VRAM();
-            DisplayStatusArea();
             int key;
             drawHomeClock(cur, 0); // force white theme
             int textX=0, textY=7*24;
             PrintMini(&textX, &textY, (unsigned char*)"\xe6\x92/\xe6\x93: select; EXE: confirm; EXIT: cancel", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-            GetKey(&key);
+            mGetKey(&key);
             switch(key) {
               case KEY_CTRL_UP:
                 cur++;

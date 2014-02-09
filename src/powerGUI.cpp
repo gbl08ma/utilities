@@ -63,7 +63,6 @@ void changeBacklightLevel() {
   sel.clearVRAM = 0;
   
   Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
   int textX=0; int textY=150;
   PrintMiniMini( &textX, &textY, (unsigned char*)"This setting is volatile because it is changed by the OS on", 0, TEXT_COLOR_BLACK, 0 );
   textY=textY+12; textX=0;
@@ -92,8 +91,6 @@ void powerInformation() {
   memmove(voltbuffer+2, voltbuffer+1, 3);
   voltbuffer[1] = '.';
   strcat((char*)voltbuffer, "V");
-
-  DisplayStatusArea();
   
   textArea text;
   strcpy(text.title, (char*)"Power Information");
@@ -294,7 +291,6 @@ void setCPUclock() {
   volatile unsigned int*FRQCR = (unsigned int*) 0xA4150000;
   while (1) {
     Bdisp_AllClr_VRAM();
-    DisplayStatusArea();
 
     mPrintXY(1, 1, (char*)"CPU speed", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     CopySpriteNbit(selector, 10, 85, 364, 43, selector_palette, 1);

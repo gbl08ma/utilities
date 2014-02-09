@@ -1052,7 +1052,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       // where alpha-lock was enabled, not being disabled on F6.
       SetSetupSetting( (unsigned int)0x14, 0);
     }
-    DisplayStatusArea();
     switch(curstep) {
       case 0:
         if(1) { // this allows for declaring things inside the switch case without the compiler complaining
@@ -1373,7 +1372,6 @@ inline static void PrintMiniFix( int x, int y, const char*Msg, const int flags, 
 }
 void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* busydays, int* bufmonth, int* bufyear) {
   Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
   int textX = 0;
   int textY = 0;
 #define TOP 25
@@ -1579,7 +1577,6 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
   } else {
     Bdisp_AllClr_VRAM();
     SetSetupSetting( (unsigned int)0x14, 0); //we only accept numbers, so switch off alpha/shift
-    DisplayStatusArea();
     mPrintXY(1, 1, (char*)message, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     mPrintXY(1, 2, (char*)message2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);  
@@ -1769,7 +1766,6 @@ void searchEventsGUI(int y, int m, int d) {
   
   Bdisp_AllClr_VRAM();
   mPrintXY(1, 1, (char*)"Event Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  DisplayStatusArea();
   mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   int iresult;
   GetFKeyPtr(0x04A3, &iresult); // Next
@@ -2030,7 +2026,6 @@ void calendarTools(int y, int m, int d) {
         DefineStatusMessage((char*)"Select second date", 1, 0, 0);
         viewCalendar(1);
         DefineStatusMessage((char*)"", 1, 0, 0);
-        DisplayStatusArea();
         if(dateselRes) {
           int y2=sy, m2=sm, d2=sd;
           long int daysdiff = DateToDays(y2, m2, d2) - DateToDays(y1, m1, d1);

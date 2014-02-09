@@ -592,7 +592,6 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   strcat((char*)titlebuf, (char*)name);
   strcat((char*)titlebuf, " as text");
   DefineStatusMessage((char*)titlebuf, 1, 0, 0);
-  DisplayStatusArea();
   textArea text;
   text.showtitle = 0;
   

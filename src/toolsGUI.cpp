@@ -65,7 +65,6 @@ void drawCapacityText(int* textY, const char* desc, long long int cur, long long
 
 void memoryCapacityViewer() {
   Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
   mPrintXY(1, 1, (char*)"Memory Usage", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   int smemfree = 0;
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
@@ -287,7 +286,6 @@ void changeFKeyColor() {
 }
 
 void systemInfo() {
-  DisplayStatusArea();
   char OSname[12] = "";
   memcpy(OSname, (void*)0x80020000, 8);
   OSname[8] = '\0';

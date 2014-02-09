@@ -161,7 +161,6 @@ void showHome(chronometer* chrono) {
         case 71: //KEY_PRGM_0, which is not defined in the SDK and I'm too lazy to add it every time I update the includes folder...
           if (GetSetupSetting( (unsigned int)0x14) == 1) {
             SetSetupSetting( (unsigned int)0x14, 0);
-            DisplayStatusArea();
             char code[25] = "";
             textInput input;
             input.y=8;
@@ -176,8 +175,6 @@ void showHome(chronometer* chrono) {
           break;
         case 76: //x-0-theta key
           currentTimeToBasicVar();
-          break;
-        default:
           break;
       }
       if (key!=prevkey && key!=KEY_PRGM_SHIFT) SetSetupSetting( (unsigned int)0x14, 0);
@@ -410,7 +407,7 @@ void eventsPane() {
       darkenStatusbar();
       DrawFrame( 0x000000  );
     }
-    mGetKey(&key);
+    mGetKey(&key, 0);
     switch(key) {
       case KEY_CTRL_F1:
       case KEY_CTRL_F2:

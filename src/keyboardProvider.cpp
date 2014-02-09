@@ -42,16 +42,15 @@ void saveVRAMandCallSettings() {
   if(stackused > 300000) LoadVRAM_1();
   else if(vrambackup!=NULL) MsgBoxMoveWB(vrambackup, 0, 0, LCD_WIDTH_PX-1, LCD_HEIGHT_PX-1, 0);
 }
-void mGetKey(int* key) {
+void mGetKey(int* key, int calldispstatus) {
   //managed GetKey. allows for entering the settings menu from most points in the add-in.
   while (1) {
+    if(calldispstatus) DisplayStatusArea(); // it still won't show if it is disabled
     checkChronoComplete();
     GetKey(key);
     if (*key == KEY_CTRL_SETUP && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {
       Cursor_SetFlashOff(); // in case we were in an input
       saveVRAMandCallSettings();
-      DisplayStatusArea();
-      return;
     } else if (*key == KEY_CTRL_QUIT && mGetKeyMode != MGETKEY_MODE_RESTRICT_RESTART && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {
       Cursor_SetFlashOff(); // in case we were in an input
       stopAndUninstallStubTimer(); // in case we were in some timer screen, where the timer has been set
@@ -67,7 +66,6 @@ void mGetKey(int* key) {
       Set_FKeys1( 0, (unsigned int*)default_fkeys );
       Set_FKeys2( 0 );
       LoadVRAM_1();
-      DisplayStatusArea(); // so that the Shift icon, which was restored, goes away
     } else if (*key == KEY_CTRL_PRGM && GetDebugMode()) {
       showRAMused();
     } else {

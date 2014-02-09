@@ -123,7 +123,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
     }
     if(menu->type == MENUTYPE_NO_KEY_HANDLING) return MENU_RETURN_INSTANT; // we don't want to handle keys
     int key;
-    mGetKey(&key);
+    mGetKey(&key, 0);
     switch(key) {
       case KEY_CTRL_DOWN:
         if(menu->selection == menu->numitems)

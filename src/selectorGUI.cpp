@@ -22,10 +22,7 @@ int doSelector(Selector* selector) {
   int key;
   int initialValue = selector->value; // so we can restore later
 
-  if(selector->clearVRAM) {
-    Bdisp_AllClr_VRAM();
-    DisplayStatusArea();
-  }
+  if(selector->clearVRAM) Bdisp_AllClr_VRAM();
   mPrintXY(1, 1, (char*)selector->title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   mPrintXY(3, 2, (char*)selector->subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(5, (selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4), (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up

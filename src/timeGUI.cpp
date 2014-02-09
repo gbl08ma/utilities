@@ -337,7 +337,6 @@ void setDateGUI(int canExit) {
 void RTCunadjustedWizard(int helpMessage) {
   //first check if RTC is unadjusted. if not, return.
   if(!getRTCisUnadjusted()) return;
-  DisplayStatusArea();
   if(helpMessage) {
     textArea text;
     strcpy(text.title, (char*)"Clock unadjusted");
