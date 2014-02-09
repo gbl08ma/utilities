@@ -645,6 +645,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
             return 1;
           } 
         }
+        break;
       case KEY_CTRL_FORMAT:
         if(menu->numitems > 0 && msel>0) {
           int ne = GetEventsForDate(&events[msel-1].startdate, CALENDARFOLDER, NULL);
