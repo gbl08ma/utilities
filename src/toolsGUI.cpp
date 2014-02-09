@@ -156,13 +156,10 @@ int addinManagerSub(Menu* menu) {
   menu->items = menuitems;
  
   Bdisp_AllClr_VRAM();
-  int curaddin = 0; //current processing addin
-  if (menu->numitems>0) {
-    while(curaddin < menu->numitems) {
-      strcpy(menuitems[curaddin].text, (char*)addins[curaddin].name);
-      menuitems[curaddin].color = (addins[curaddin].active ? TEXT_COLOR_BLACK : TEXT_COLOR_CYAN);
-      curaddin++;
-    }
+  for(int curaddin = 0; curaddin < menu->numitems; curaddin++) {
+    strcpy(menuitems[curaddin].text, (char*)addins[curaddin].name);
+    menuitems[curaddin].color = (addins[curaddin].active ? TEXT_COLOR_BLACK : TEXT_COLOR_CYAN);
+    curaddin++;
   }
   
   int iresult;  
@@ -174,13 +171,11 @@ int addinManagerSub(Menu* menu) {
   }
   GetFKeyPtr(0x03FD, &iresult); // HELP (white)
   FKey_Display(5, (int*)iresult);
-  int res = doMenu(menu);
   
   unsigned short newpath[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1] = "";
   unsigned short oldpath[MAX_FILENAME_SIZE+1];
-  switch(res)
-  {
+  switch(doMenu(menu)) {
     case KEY_CTRL_F1:
       if(menu->numitems > 0) {
         strcpy(buffer, "\\\\fls0\\");
@@ -199,8 +194,7 @@ int addinManagerSub(Menu* menu) {
     case KEY_CTRL_F2:
       if(menu->numitems > 0) {
         mMsgBoxPush(4);
-        int inloop = 1;
-        while (inloop) {
+        while (1) {
           int key;
           mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(3, 3, (char*)"Selected Add-In?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -209,17 +203,15 @@ int addinManagerSub(Menu* menu) {
           mGetKey(&key);
           switch(key) {
             case KEY_CTRL_F1:
-              mMsgBoxPop();
               strcpy(buffer, "\\\\fls0\\");
               strcat(buffer, addins[menu->selection-1].filename);
               Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, MAX_FILENAME_SIZE+1);
               Bfile_DeleteEntry( oldpath );
-              return 1;
+              //deliberate fallthrough
             case KEY_CTRL_F6:
             case KEY_CTRL_EXIT:
               mMsgBoxPop();
-              inloop=0;
-              break;
+              return 1;
           }
         }
       }

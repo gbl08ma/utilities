@@ -563,13 +563,9 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   if(hFile >= 0) // Check if it opened
   { //opened
     filesize = Bfile_GetFileSize_OS(hFile);
-    if(filesize && filesize < MAX_TEXTVIEWER_FILESIZE) {
-      asrc = (unsigned char*)alloca(filesize*sizeof(unsigned char));
-      Bfile_ReadFile_OS(hFile, asrc, filesize, 0);
-    } else {
-      asrc = (unsigned char*)alloca(MAX_TEXTVIEWER_FILESIZE*sizeof(unsigned char));
-      Bfile_ReadFile_OS(hFile, asrc, MAX_TEXTVIEWER_FILESIZE, 0);
-    }
+    if(!(filesize && filesize < MAX_TEXTVIEWER_FILESIZE)) filesize = MAX_TEXTVIEWER_FILESIZE;
+    asrc = (unsigned char*)alloca(filesize*sizeof(unsigned char));
+    Bfile_ReadFile_OS(hFile, asrc, filesize, 0);
     Bfile_CloseFile_OS(hFile);
   } else {
     //Error opening file, abort
