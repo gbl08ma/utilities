@@ -101,7 +101,7 @@ void nameFromFilename(char* filename, char* name) {
   //and puts file.123 in name.
   int i=strlen(filename)-1;
   while (i>=0 && filename[i] != '\\') i--;
-  if (filename[i] == '\\') strcpy(name, filename+i+1);
+  strcpy(name, filename+i+1);
 }
 
 void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard) {
