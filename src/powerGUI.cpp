@@ -63,12 +63,6 @@ void changeBacklightLevel() {
   sel.clearVRAM = 0;
   
   Bdisp_AllClr_VRAM();
-  /*int textX=0; int textY=150;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"This setting is volatile because it is changed by the OS on", 0, TEXT_COLOR_BLACK, 0 );
-  textY=textY+12; textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"poweroff, on backlight timeout and when the user changes", 0, TEXT_COLOR_BLACK, 0 );
-  textY=textY+12; textX=0;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"the setting in the OS's System menu.", 0, TEXT_COLOR_BLACK, 0 );*/
   textArea text;
   text.type = TEXTAREATYPE_INSTANT_RETURN;
   text.showtitle = 0;
