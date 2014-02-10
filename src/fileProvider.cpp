@@ -104,6 +104,84 @@ void nameFromFilename(char* filename, char* name) {
   strcpy(name, filename+i+1);
 }
 
+void copyFile(char* oldfilename, char* newfilename) {
+  if(!strcmp(newfilename, oldfilename) || stringEndsInG3A(newfilename)) {
+    //trying to copy over the original file, or this is a g3a file (which we can't "touch")
+    return;
+  }
+  unsigned short newfilenameshort[0x10A];
+  unsigned short oldfilenameshort[0x10A];
+  unsigned short tempfilenameshort[0x10A];
+  Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)oldfilename, 0x10A);
+  Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+  Bfile_StrToName_ncpy(tempfilenameshort, (unsigned char*)"\\\\fls0\\UTILSTMP.PCT", 0x10A);
+  
+  int copySize;
+  int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0); // Get handle for the old file
+  if(hOldFile < 0) {
+    //returned error: couldn't open file to copy.
+    return; //skip this file
+  } else {
+    copySize = Bfile_GetFileSize_OS(hOldFile);
+    Bfile_CloseFile_OS(hOldFile); // close for now
+  }
+
+  int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
+  if(hNewFile < 0) {
+    // Returned error, dest file does not exist (which is good)
+  } else {
+    // dest file exists (which is bad) and is open.
+    Bfile_CloseFile_OS(hNewFile);
+    return; //skip this file
+  }
+  
+  // at this point we know that:
+  // source file exists
+  // destination file doesn't exist
+  // source file is closed so CreateEntry can proceed.
+  // create a temp file in root because copying into subdirectories directly fails with sys error
+  // so we create a temp file in root, and rename in the end
+  int BCEres;
+  BCEres = Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &copySize);
+  if(BCEres >= 0) // Did it create?
+  {
+    //created. open newly-created destination file
+    hNewFile = Bfile_OpenFile_OS(tempfilenameshort, READWRITE, 0);
+    if(hNewFile < 0) // Still failing after the file was created?
+    {
+      //skip this copy.
+      return;
+    }
+    
+    // open old file again
+    hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0);
+    if(hOldFile < 0) // Opening origin file didn't fail before, but is failing now?!
+    {
+      //skip this copy.
+      Bfile_CloseFile_OS(hNewFile); // close the new file we had opened
+      return;
+    }
+    
+    //File to copy is open, destination file is created and open.
+    while(1) {
+#define FILE_COPYBUFFER 51200
+      unsigned char copybuffer[FILE_COPYBUFFER+5] = "";
+      int rwsize = Bfile_ReadFile_OS( hOldFile, copybuffer, FILE_COPYBUFFER, -1 );
+      if(rwsize > 0) {
+        Bfile_WriteFile_OS(hNewFile, copybuffer, rwsize);
+      } else {
+        break;
+      }
+    }
+    //done copying, close files.
+    Bfile_CloseFile_OS(hOldFile);
+    Bfile_CloseFile_OS(hNewFile);
+    // now rename the temp file to the correct file name
+    Bfile_RenameEntry(tempfilenameshort , newfilenameshort);
+  } //else: create failed, but we're going to skip anyway
+
+}
+
 void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard) {
   //this copies or moves to browserbasepath the files in the clipboard.
   //when the isselected field of a clipboard item is 0, the item will be moved.
@@ -122,80 +200,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
         unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
         strncat(newfilename, name, maxcatlen);
-        if(!strcmp(newfilename, clipboard[curfile].filename) || stringEndsInG3A(newfilename)) {
-          //trying to copy over the original file, or this is a g3a file (which we can't "touch")
-          curfile++; continue; //skip
-        }
-        unsigned short newfilenameshort[0x10A];
-        unsigned short oldfilenameshort[0x10A];
-        unsigned short tempfilenameshort[0x10A];
-        Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)clipboard[curfile].filename, 0x10A);
-        Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
-        Bfile_StrToName_ncpy(tempfilenameshort, (unsigned char*)"\\\\fls0\\UTILSTMP.PCT", 0x10A);
-        
-        int copySize;
-        int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0); // Get handle for the old file
-        if(hOldFile < 0) {
-          //returned error: couldn't open file to copy.
-          curfile++; continue; //skip this file
-        } else {
-          copySize = Bfile_GetFileSize_OS(hOldFile);
-          Bfile_CloseFile_OS(hOldFile); // close for now
-        }
-
-        int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
-        if(hNewFile < 0) {
-          // Returned error, dest file does not exist (which is good)
-        } else {
-          // dest file exists (which is bad) and is open.
-          Bfile_CloseFile_OS(hNewFile);
-          curfile++; continue; //skip this file
-        }
-        
-        // at this point we know that:
-        // source file exists
-        // destination file doesn't exist
-        // source file is closed so CreateEntry can proceed.
-        // create a temp file in root because copying into subdirectories directly fails with sys error
-        // so we create a temp file in root, and rename in the end
-        int BCEres;
-        BCEres = Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &copySize);
-        if(BCEres >= 0) // Did it create?
-        {
-          //created. open newly-created destination file
-          hNewFile = Bfile_OpenFile_OS(tempfilenameshort, READWRITE, 0);
-          if(hNewFile < 0) // Still failing after the file was created?
-          {
-            //skip this copy.
-            curfile++; continue;
-          }
-          
-          // open old file again
-          hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0);
-          if(hOldFile < 0) // Opening origin file didn't fail before, but is failing now?!
-          {
-            //skip this copy.
-            Bfile_CloseFile_OS(hNewFile); // close the new file we had opened
-            curfile++; continue;
-          }
-          
-          //File to copy is open, destination file is created and open.
-          while(1) {
-#define FILE_COPYBUFFER 51200
-            unsigned char copybuffer[FILE_COPYBUFFER+5] = "";
-            int rwsize = Bfile_ReadFile_OS( hOldFile, copybuffer, FILE_COPYBUFFER, -1 );
-            if(rwsize > 0) {
-              Bfile_WriteFile_OS(hNewFile, copybuffer, rwsize);
-            } else {
-              break;
-            }
-          }
-          //done copying, close files.
-          Bfile_CloseFile_OS(hOldFile);
-          Bfile_CloseFile_OS(hNewFile);
-          // now rename the temp file to the correct file name
-          Bfile_RenameEntry(tempfilenameshort , newfilenameshort);
-        } //else: create failed, but we're going to skip anyway
+        copyFile(clipboard[curfile].filename, newfilename);
       } else {
         //move file
         char newfilename[MAX_FILENAME_SIZE];
