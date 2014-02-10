@@ -1054,7 +1054,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
     }
     switch(curstep) {
       case 0:
-        if(1) { // this allows for declaring things inside the switch case without the compiler complaining
+        {
           mPrintXY(1, 2, (char*)"Title:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           int iresult;
           GetFKeyPtr(0x04A3, &iresult); // Next
@@ -1075,7 +1075,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         }
         break;
       case 1:
-        if(1) {
+        {
           mPrintXY(1, 2, (char*)"Location:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           int iresult;
           GetFKeyPtr(0x036F, &iresult); // <
@@ -1098,7 +1098,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         }
         break;
       case 2:
-        if(1) {
+        {
           mPrintXY(1, 2, (char*)"Description:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           int iresult;
           GetFKeyPtr(0x036F, &iresult); // <
@@ -1167,9 +1167,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
               // user wants all-day event
               event->timed = 0;
               curstep=curstep+1; break; // next step
-            } else {
-              invalidFieldMsg(1);
-            }
+            } else invalidFieldMsg(1);
           } 
           else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
         }
@@ -1214,18 +1212,14 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
                   event->enddate.day = d;
                   curstep=curstep+1; break; // continue to next step
                 } else invalidFieldMsg(0);
-              } else {
-                invalidFieldMsg(0);
-              }
+              } else invalidFieldMsg(0);
             } else if (!strlen(edbuffer)) {
               // user wants end date to be the same as the start date
               event->enddate.year = event->startdate.year;
               event->enddate.month = event->startdate.month;
               event->enddate.day = event->startdate.day;
               curstep=curstep+1; break; // next step
-            } else {
-              invalidFieldMsg(0);
-            }
+            } else invalidFieldMsg(0);
           } 
           else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
         }
@@ -1267,18 +1261,12 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
                     event->endtime.second = s;
                     curstep=curstep+1; break; // continue to next step
                   } else invalidFieldMsg(1);
-                } else {
-                  invalidFieldMsg(1);
-                }
-              } else {
-                invalidFieldMsg(1);
-              }
+                } else invalidFieldMsg(1);
+              } else invalidFieldMsg(1);
             } 
             else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
           }
-        } else {
-          curstep=6;
-        }
+        } else curstep=6;
         break;
       }
       case 6: {
@@ -1301,18 +1289,12 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           switch(key)
           {
             case KEY_CTRL_DOWN:
-              if (event->category == 0) {
-                event->category = 7;
-              } else {
-                event->category--;
-              }
+              if (event->category == 0) event->category = 7;
+              else event->category--;
               break;
             case KEY_CTRL_UP:
-              if (event->category == 7) {
-                event->category = 0;
-              } else {
-                event->category++;
-              }
+              if (event->category == 7) event->category = 0;
+              else event->category++;
               break;
             case KEY_CTRL_F1:
               if(istask) curstep = 2; // go to description
@@ -1412,12 +1394,10 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   int startingday = dow(year,month,1),day = 1;
   int prevstart = getMonthDays((month == 1 ? 12 : month - 1)) - (startingday == 0 ? 7 : startingday) + ((month == 3 && isLeap(year)) ? 2 : 1);
   char buffer[10];
-  if (startingday != 0) { //solve "overlapping days on months started on a sunday" bug
-    for (x = 0; x < (startingday == 0 ? 7 : startingday); x++)
-    {
-        itoa(prevstart++,(unsigned char*)buffer);
-        PrintMiniFix(LEFT+2+x*WIDTH+2,TOP+2+2*THICKNESS-TOPOFFSET,buffer,0,(x == 0 ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY),(x == 0 ? COLOR_LIGHTBLUE : COLOR_WHITE));
-    }
+  for (x = 0; x < startingday; x++)
+  {
+      itoa(prevstart++,(unsigned char*)buffer);
+      PrintMiniFix(LEFT+2+x*WIDTH+2,TOP+2+2*THICKNESS-TOPOFFSET,buffer,0,(x == 0 ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY),(x == 0 ? COLOR_LIGHTBLUE : COLOR_WHITE));
   }
   x = startingday;
   y = 2;
