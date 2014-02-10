@@ -67,17 +67,16 @@ int passwordInput(int x, int y, unsigned char* buffer) {
     }
     if(key == KEY_CTRL_F5)
     {
-      if (keyflag == 0x04 || keyflag == 0x08 || keyflag == 0x84 || keyflag == 0x88) {
-        // ^only applies if some sort of alpha (not locked) is already on
-        if (keyflag == 0x08 || keyflag == 0x88) { //if lowercase
+      switch(keyflag) {
+        case 0x08:
+        case 0x88:
           SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
           continue; //do not process the key, because otherwise we will leave alpha status
-        } else {
+        case 0x04:
+        case 0x84:
           SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
           continue; //do not process the key, because otherwise we will leave alpha status
-        }
       }
-
     }
     else if(key == KEY_CTRL_F6)
     {

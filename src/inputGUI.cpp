@@ -100,15 +100,16 @@ int doTextInput(textInput* input) {
       if (character) input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, character);
       LoadVRAM_1();
     } else if(input->key == KEY_CTRL_F5 && input->type == INPUTTYPE_NORMAL) {
-      if (keyflag == 0x04 || keyflag == 0x08 || keyflag == 0x84 || keyflag == 0x88) {
-        // ^only applies if some sort of alpha (not locked) is already on
-        if (keyflag == 0x08 || keyflag == 0x88) { //if lowercase
+      // switch between lower and upper-case alpha
+      switch(keyflag) {
+        case 0x08:
+        case 0x88:
           SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
           continue; //do not process the key, because otherwise we will leave alpha status
-        } else {
+        case 0x04:
+        case 0x84:
           SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
           continue; //do not process the key, because otherwise we will leave alpha status
-        }
       }
     } 
     if(input->key && input->key < 30000)

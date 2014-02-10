@@ -721,7 +721,6 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
   while(curitem < menu->numitems) {
     strcpy(menuitems[curitem].text, (char*)events[curitem].title);
     menuitems[curitem].type = MENUITEM_NORMAL;
-    menuitems[curitem].value = events[curitem].repeat;
     menuitems[curitem].color = events[curitem].category-1;
     curitem++;
   }
