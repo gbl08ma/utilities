@@ -1563,17 +1563,13 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
     DefineStatusMessage(message, 1, 0, 0);
     viewCalendar(1);
     DefineStatusMessage((char*)"", 1, 0, 0);
-    
     if(dateselRes) {
       *yr=sy;
       *m=sm;
       *d=sd;
-      sy = 0; //avoid jumping again
-      return 0;
-    } else {
-      sy = 0; //avoid jumping again
-      return 1;
     }
+    sy = 0; //avoid jumping again
+    return !dateselRes;
   } else {
     Bdisp_AllClr_VRAM();
     SetSetupSetting( (unsigned int)0x14, 0); //we only accept numbers, so switch off alpha/shift
@@ -1655,8 +1651,7 @@ void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
           mPrintXY(3, 2, (char*)"Event move ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         }
         mPrintXY(3, 3, (char*)"Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        if(isCopy) mPrintXY(3, 4, (char*)"be copied.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        else mPrintXY(3, 4, (char*)"be moved.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 4, (isCopy ? (char*)"be copied." : (char*)"be moved."), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
         closeMsgBox();
         return;
@@ -1883,8 +1878,7 @@ void searchEventsGUI(int y, int m, int d) {
       GetFKeyPtr(0x01FC, &iresult); // JUMP
       FKey_Display(2, (int*)iresult);
     }
-    int res = doMenu(&menu);
-    switch(res) {
+    switch(doMenu(&menu)) {
       case MENU_RETURN_EXIT:
         return;
         break;
