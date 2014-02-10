@@ -30,14 +30,15 @@ int doTextInput(textInput* input) {
   }
 
   if (input->key) { input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, input->key); }
-  
+  int widthForSyscalls = input->width;
+  if(input->width == 21) widthForSyscalls = 20;
   while(1)
   {
     if(input->forcetext && strlen(input->buffer)==0) {
       input->buffer[0]='\xd8';
       input->buffer[1]='\x0';
     }
-    DisplayMBString2( 0, (unsigned char*)input->buffer, input->start, input->cursor, 0, input->x, input->y*24-24, input->width+input->x, (input->width==21? 0 : 1) );
+    DisplayMBString2( 0, (unsigned char*)input->buffer, input->start, input->cursor, 0, input->x, input->y*24-24, widthForSyscalls+input->x, (input->width==21? 0 : 1) );
     
     drawLine(input->x*18-18, input->y*24-1, (input->width==21?LCD_WIDTH_PX-1:input->width*18+input->x*18-18-1), input->y*24-1, COLOR_GRAY);
     drawLine(input->x*18-18, input->y*24+23, (input->width==21?LCD_WIDTH_PX-1:input->width*18+input->x*18-18-1), input->y*24+23, COLOR_GRAY);
@@ -130,7 +131,7 @@ int doTextInput(textInput* input) {
     }
     else
     {
-      EditMBStringCtrl2( (unsigned char*)input->buffer, input->charlimit+1, &input->start, &input->cursor, &input->key, input->x, input->y*24-24, 1, input->width+input->x-1 );
+      EditMBStringCtrl2( (unsigned char*)input->buffer, input->charlimit+1, &input->start, &input->cursor, &input->key, input->x, input->y*24-24, 1, widthForSyscalls+input->x-1 );
     }
     if(input->key == KEY_CTRL_PASTE) {
       // at this point it will have already pasted
