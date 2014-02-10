@@ -60,6 +60,8 @@ void settingsMenu() {
   menu.items=menuitems;
   menu.numitems=13;
   menu.scrollout=1;
+  strcpy(menu.statusText, "");
+  menu.useStatusText = 1;
   setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
   while(1) {
     menuitems[6].value = GetSetting(SETTING_DISPLAY_STATUSBAR);

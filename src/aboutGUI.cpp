@@ -99,7 +99,6 @@ void showAbout() {
   elem[4].text = (char*)"In no event will the authors be held liable for any damages arising from the use of this software.";
   text.numelements = 5;
   doTextArea(&text);
-  DefineStatusMessage((char*)"", 1, 0, 0);
 }
 
 void buildExpiredMessage() {
