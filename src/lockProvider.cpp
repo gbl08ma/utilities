@@ -124,17 +124,11 @@ int isPasswordSet(void) {
   int hFile;
   Bfile_StrToName_ncpy(pFile, (unsigned char*)SMEMHASHFILE, strlen((char*)SMEMHASHFILE)+1); 
   hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-  if(hFile < 0) // Check if it opened
-  {
-    //error, file doesn't exist.
-    return 0;
-  } else {
-    Bfile_CloseFile_OS(hFile);
-  }
+  if(hFile < 0) return 0;
+  Bfile_CloseFile_OS(hFile);
   
   //check MCS
   int size;
   MCSGetDlen2(DIRNAME, HASHFILE, &size);
-  if (size == 0) { return 0; }
-  return 1; //code exists in both SMEM and MCS
+  return (size != 0); //code exists in both SMEM and MCS
 }

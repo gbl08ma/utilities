@@ -141,7 +141,6 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           if(menu->selection > menu->scroll+(menu->numitems>itemsHeight ? itemsHeight : menu->numitems))
             menu->scroll = menu->selection -(menu->numitems>itemsHeight ? itemsHeight : menu->numitems);
         }
-        if(menu->type == MENUTYPE_INSTANT_RETURN) return MENU_RETURN_INSTANT;
         break;
       case KEY_CTRL_UP:
         if(menu->selection == 1)
@@ -159,7 +158,6 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           if(menu->selection-1 < menu->scroll)
             menu->scroll = menu->selection -1;
         }
-        if(menu->type == MENUTYPE_INSTANT_RETURN) return MENU_RETURN_INSTANT;
         break;
       case KEY_CTRL_F1:
         if(menu->type==MENUTYPE_MULTISELECT && menu->fkeypage == 0 && menu->numitems > 0) {
@@ -173,7 +171,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           return key; //return on F1 too so that parent subroutines have a chance to e.g. redraw fkeys
         } else if (menu->type == MENUTYPE_FKEYS) {
           return key;
-        } else if(menu->type == MENUTYPE_INSTANT_RETURN) return MENU_RETURN_INSTANT;
+        }
         break;
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
