@@ -122,9 +122,11 @@ int setPassword() {
   Bdisp_AllClr_VRAM();
   mPrintXY(1, 1, (char*)"Calculator lock", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
   mPrintXY(1, 2, (char*)"Set new code:", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-  int res = passwordInput(1, 3, password);
-  if (res == 1) savePassword(password);
-  return res; //which means this returns 1 if password was set, and 0 if user aborted
+  if (passwordInput(1, 3, password)) {
+    savePassword(password);
+    return 1;
+  }
+  return 0;
 }
 
 int unlockCalc() {
@@ -134,33 +136,27 @@ int unlockCalc() {
   Bdisp_AllClr_VRAM();
   mPrintXY(1, 1, (char*)"Calculator lock", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
   mPrintXY(1, 2, (char*)"Input code:", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-  int res = passwordInput(1, 3, password);
-  int compareRes=0;
-  if (res == 0) { return 0; }
-  else if (res == 1) compareRes = comparePasswordHash(password);
-  switch(compareRes)
-  {
-    case 0:
-      return 1;
-      break;
-    case 1:
-    case 2:
-    case 3:
-      mMsgBoxPush(3);
-      mPrintXY(3, 3, (char*)"Data tampering", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      mPrintXY(3, 4, (char*)"detected!", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-      closeMsgBox();
-      return 0;
-      break;
-    case 4:
-      mMsgBoxPush(3);
-      mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-      closeMsgBox();
-      return 0;
-      break;
-    default: break;
+  if (!passwordInput(1, 3, password)) return 0;
+  else {
+    switch(comparePasswordHash(password)) {
+      case 0:
+        return 1;
+      case 1:
+      case 2:
+      case 3:
+        mMsgBoxPush(3);
+        mPrintXY(3, 3, (char*)"Data tampering", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        mPrintXY(3, 4, (char*)"detected!", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+        closeMsgBox();
+        return 0;
+      case 4:
+        mMsgBoxPush(3);
+        mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+        closeMsgBox();
+        return 0;
+    }
   }
   return 0;
 }
