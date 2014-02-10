@@ -766,7 +766,6 @@ void shortenDisplayPath(char* longpath, char* shortpath, int jump) {
 
 void buildIconTable(MenuItemIcon* icontable) {
   unsigned int msgno;
-  unsigned short iconbuffer[0x12*0x18];
   unsigned short folder[7]={'\\','\\','f','l','s','0',0};
 
   const char *bogusFiles[] = {"t", // for folder
@@ -781,8 +780,6 @@ void buildIconTable(MenuItemIcon* icontable) {
                               "t.abc" //for "unsupported" files
                              };
 
-  for(int i = 0; i < 10; i++) {
-    SMEM_MapIconToExt( (unsigned char*)bogusFiles[i], (i==0 ? folder : (unsigned short*)"\x000\x000"), &msgno, iconbuffer );
-    memcpy(icontable[i].data, iconbuffer, sizeof(iconbuffer));
-  }
+  for(int i = 0; i < 10; i++)
+    SMEM_MapIconToExt( (unsigned char*)bogusFiles[i], (i==0 ? folder : (unsigned short*)"\x000\x000"), &msgno, icontable[i].data );
 }
