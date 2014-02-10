@@ -40,7 +40,7 @@ void saveVRAMandCallSettings() {
   }
   settingsMenu();
   if(stackused > 300000) LoadVRAM_1();
-  else if(vrambackup!=NULL) MsgBoxMoveWB(vrambackup, 0, 0, LCD_WIDTH_PX-1, LCD_HEIGHT_PX-1, 0);
+  else if(vrambackup!=NULL) MsgBoxMoveWB(vrambackup, 0, 0, LCD_WIDTH_PX-1, LCD_HEIGHT_PX-24-1, 0);
 }
 void mGetKey(int* key, int calldispstatus) {
   //managed GetKey. allows for entering the settings menu from most points in the add-in.
