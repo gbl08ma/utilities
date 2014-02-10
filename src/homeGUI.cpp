@@ -202,20 +202,26 @@ inline void powerMenu() {
   menu.darken=GetSetting(SETTING_THEME);
   while(1) {
     int res = doMenu(&menu);
-    if(res == MENU_RETURN_SELECTION) {
-      DrawFrame(COLOR_WHITE);
-      switch(menu.selection) {
-        case 1: changePoweroffTimeout(); break;
-        case 2: changeBacklightTimeout(); break;
-        case 3: changeBacklightLevel(); break;
-        case 4: powerInformation(); break;
-        case 5: setCPUclock(); break;
-      }
-      return;
-    } else if(res >= KEY_CTRL_F2 && res <= KEY_CTRL_F5) {
-      pane_keycache = res;
-      return;
-    } else if(res == MENU_RETURN_EXIT) return;
+    switch(res) {
+      case MENU_RETURN_SELECTION:
+        DrawFrame(COLOR_WHITE);
+        switch(menu.selection) {
+          case 1: changePoweroffTimeout(); break;
+          case 2: changeBacklightTimeout(); break;
+          case 3: changeBacklightLevel(); break;
+          case 4: powerInformation(); break;
+          case 5: setCPUclock(); break;
+        }
+        return;
+      case KEY_CTRL_F5:
+        if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
+      case KEY_CTRL_F2:
+      case KEY_CTRL_F3:
+      case KEY_CTRL_F4:
+        pane_keycache = res;
+      case MENU_RETURN_EXIT:
+        return;
+    }
   }
 }
 
@@ -241,19 +247,25 @@ inline void lightMenu() {
   menu.darken=GetSetting(SETTING_THEME);
   while(1) {
     int res = doMenu(&menu);
-    if(res == MENU_RETURN_SELECTION) {
-      DrawFrame(COLOR_WHITE);
-      switch(menu.selection) {
-        case 1: lantern(); break;
-        case 2: flashLight(); break;
-        case 3: morseLight(); break;
-        case 4: colorLight(); break;
-      }
-      return;
-    } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F2 && res <= KEY_CTRL_F5) {
-      pane_keycache = res;
-      return;
-    } else if(res == MENU_RETURN_EXIT) return;
+    switch(res) {
+      case MENU_RETURN_SELECTION:
+        DrawFrame(COLOR_WHITE);
+        switch(menu.selection) {
+          case 1: lantern(); break;
+          case 2: flashLight(); break;
+          case 3: morseLight(); break;
+          case 4: colorLight(); break;
+        }
+        return;
+      case KEY_CTRL_F5:
+        if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
+      case KEY_CTRL_F1:
+      case KEY_CTRL_F3:
+      case KEY_CTRL_F4:
+        pane_keycache = res;
+      case MENU_RETURN_EXIT:
+        return;
+    }
   }
 }
 
@@ -279,18 +291,24 @@ inline void timeMenu(chronometer* chrono) {
   
   while(1) {
     int res = doMenu(&menu);
-    if(res == MENU_RETURN_SELECTION) {
-      DrawFrame(COLOR_WHITE);
-      switch(menu.selection) {
-        case 1: viewCalendar(); break;
-        case 2: viewTasks(); break;
-        case 3: chronoScreen(chrono); break;
-      }
-      return;
-    } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F3 && res <= KEY_CTRL_F5) {
-      pane_keycache = res;
-      return;
-    } else if(res == MENU_RETURN_EXIT) return;
+    switch(res) {
+      case MENU_RETURN_SELECTION:
+        DrawFrame(COLOR_WHITE);
+        switch(menu.selection) {
+          case 1: viewCalendar(); break;
+          case 2: viewTasks(); break;
+          case 3: chronoScreen(chrono); break;
+        }
+        return;
+      case KEY_CTRL_F5:
+        if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
+      case KEY_CTRL_F1:
+      case KEY_CTRL_F2:
+      case KEY_CTRL_F4:
+        pane_keycache = res;
+      case MENU_RETURN_EXIT:
+        return;
+    }
   }
 }
 
@@ -317,20 +335,26 @@ inline void toolsMenu() {
 
   while(1) {
     int res = doMenu(&menu);
-    if(res == MENU_RETURN_SELECTION) {
-      DrawFrame(COLOR_WHITE);
-      switch(menu.selection) {
-        case 1: fileManager(); break;
-        case 2: memoryCapacityViewer(); break;
-        case 3: addinManager(); break;
-        case 4: changeFKeyColor(); break;
-        case 5: systemInfo(); break;
-      }
-      return;
-    } else if(res >= KEY_CTRL_F1 && res != KEY_CTRL_F4 && res <= KEY_CTRL_F5) {
-      pane_keycache = res;
-      return;
-    } else if(res == MENU_RETURN_EXIT) return;
+    switch(res) {
+      case MENU_RETURN_SELECTION:
+        DrawFrame(COLOR_WHITE);
+        switch(menu.selection) {
+          case 1: fileManager(); break;
+          case 2: memoryCapacityViewer(); break;
+          case 3: addinManager(); break;
+          case 4: changeFKeyColor(); break;
+          case 5: systemInfo(); break;
+        }
+        return;
+      case KEY_CTRL_F5:
+        if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
+      case KEY_CTRL_F1:
+      case KEY_CTRL_F2:
+      case KEY_CTRL_F3:
+        pane_keycache = res;
+      case MENU_RETURN_EXIT:
+        return;
+    }
   }
 }
 inline void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
