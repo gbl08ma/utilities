@@ -63,8 +63,7 @@ int doSelector(Selector* selector) {
       mPrintXY(5, 5, buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     }
     mGetKey(&key);
-    switch(key)
-    {
+    switch(key) {
       case KEY_CTRL_DOWN:
         if (selector->value > selector->min) selector->value--;
         else if(selector->cycle) selector->value=selector->max;

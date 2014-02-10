@@ -768,35 +768,21 @@ void buildIconTable(MenuItemIcon* icontable) {
   unsigned int msgno;
   unsigned short iconbuffer[0x12*0x18];
   unsigned short folder[7]={'\\','\\','f','l','s','0',0};
-  // get folder icon
-  SMEM_MapIconToExt( (unsigned char*)"t", folder, &msgno, iconbuffer );
-  memcpy(icontable[FILE_ICON_FOLDER].data, iconbuffer, sizeof(iconbuffer));
-  
-  SMEM_MapIconToExt( (unsigned char*)"t.g3m", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
-  memcpy(icontable[FILE_ICON_G3M].data, iconbuffer, sizeof(iconbuffer));
-  
-  SMEM_MapIconToExt( (unsigned char*)"t.g3e", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
-  memcpy(icontable[FILE_ICON_G3E].data, iconbuffer, sizeof(iconbuffer));
-  
-  SMEM_MapIconToExt( (unsigned char*)"t.g3a", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
-  memcpy(icontable[FILE_ICON_G3A].data, iconbuffer, sizeof(iconbuffer));
-  
-  SMEM_MapIconToExt( (unsigned char*)"t.g3p", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
-  memcpy(icontable[FILE_ICON_G3P].data, iconbuffer, sizeof(iconbuffer));
-  
-  SMEM_MapIconToExt( (unsigned char*)"t.g3b", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
-  memcpy(icontable[FILE_ICON_G3B].data, iconbuffer, sizeof(iconbuffer));
-  
-  SMEM_MapIconToExt( (unsigned char*)"t.bmp", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
-  memcpy(icontable[FILE_ICON_BMP].data, iconbuffer, sizeof(iconbuffer));
-  
-  SMEM_MapIconToExt( (unsigned char*)"t.txt", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
-  memcpy(icontable[FILE_ICON_TXT].data, iconbuffer, sizeof(iconbuffer));
-  
-  SMEM_MapIconToExt( (unsigned char*)"t.csv", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
-  memcpy(icontable[FILE_ICON_CSV].data, iconbuffer, sizeof(iconbuffer));
-  
-  // get icon for unsupported files
-  SMEM_MapIconToExt( (unsigned char*)"t.abc", (unsigned short*)"\x000\x000", &msgno, iconbuffer );
-  memcpy(icontable[FILE_ICON_OTHER].data, iconbuffer, sizeof(iconbuffer));
+
+  const char *bogusFiles[] = {"t", // for folder
+                              "t.g3m",
+                              "t.g3e",
+                              "t.g3a",
+                              "t.g3p",
+                              "t.g3b",
+                              "t.bmp",
+                              "t.txt",
+                              "t.csv",
+                              "t.abc" //for "unsupported" files
+                             };
+
+  for(int i = 0; i < 10; i++) {
+    SMEM_MapIconToExt( (unsigned char*)bogusFiles[i], (i==0 ? folder : (unsigned short*)"\x000\x000"), &msgno, iconbuffer );
+    memcpy(icontable[i].data, iconbuffer, sizeof(iconbuffer));
+  }
 }
