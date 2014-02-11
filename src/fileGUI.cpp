@@ -185,7 +185,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
       case KEY_CTRL_F3:
         if (menu.numselitems > 0 && menu.fkeypage==0) {
           if((*itemsinclip < MAX_ITEMS_IN_CLIPBOARD) && menu.numselitems <= MAX_ITEMS_IN_CLIPBOARD-*itemsinclip) {
-            int ifile = 0; int hasShownFolderCopyWarning = 0;
+            int ifile = 0;
             while(ifile < menu.numitems) {  
               if (menu.items[ifile].isselected) {
                 int inclip = 0;
@@ -212,28 +212,16 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
                   }
                 } else {
                   if(!inclip) {
-                    if (!menu.items[ifile].isfolder) {
-                      strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
-                      //0=cut file; 1=copy file:
-                      clipboard[*itemsinclip].action = 1;
-                      clipboard[*itemsinclip].isfolder = 0;
-                      *itemsinclip = *itemsinclip + 1;
-                    } else {
-                      if (!hasShownFolderCopyWarning) {
-                        showCopyFolderWarning();
-                        hasShownFolderCopyWarning = 1;
-                      }
-                    }
+                    strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
+                    //0=cut file; 1=copy file:
+                    clipboard[*itemsinclip].action = 1;
+                    clipboard[*itemsinclip].isfolder = menu.items[ifile].isfolder;
+                    *itemsinclip = *itemsinclip + 1;
                   } else {
                     // file is already in the clipboard
                     // if it is set for cut and *is not a folder*, set it for copy
-                    if(clipboard[clippos].action == 0 && !clipboard[clippos].isfolder) {
+                    if(clipboard[clippos].action == 0) {
                       clipboard[clippos].action = 1;
-                    } else {
-                      if(!hasShownFolderCopyWarning && clipboard[clippos].isfolder) {
-                        showCopyFolderWarning();
-                        hasShownFolderCopyWarning = 1;
-                      }
                     }
                   }
                 }
@@ -241,15 +229,6 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
                 menu.numselitems--;
               }
               ifile++;
-            }
-            if(*shownClipboardHelp == 0) {
-              mMsgBoxPush(5);
-              mPrintXY(3, 2, (char*)"Hint: press OPTN", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              mPrintXY(3, 3, (char*)"to manage the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              mPrintXY(3, 4, (char*)"clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
-              closeMsgBox();
-              *shownClipboardHelp=1;
             }
           } else {
             mMsgBoxPush(4);
@@ -731,22 +710,12 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
           clipboard[menu.selection-1].action = 0;
           menuitems[menu.selection-1].color = TEXT_COLOR_BLACK;
         } else {
-          if(!clipboard[menu.selection-1].isfolder) {
-            clipboard[menu.selection-1].action = 1;
-            menuitems[menu.selection-1].color = TEXT_COLOR_RED;
-          } else showCopyFolderWarning();
+          clipboard[menu.selection-1].action = 1;
+          menuitems[menu.selection-1].color = TEXT_COLOR_RED;
         }
         break;
     }
   }
-}
-
-void showCopyFolderWarning() {
-  mMsgBoxPush(4);
-  mPrintXY(3, 2, (char*)"Copying folders", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(3, 3, (char*)"not yet supported", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-  closeMsgBox();
 }
 
 void shortenDisplayPath(char* longpath, char* shortpath, int jump) {

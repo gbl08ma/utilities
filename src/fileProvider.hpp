@@ -42,6 +42,7 @@ typedef struct
 int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count);
 void deleteFiles(File* files, Menu* menu);
 void nameFromFilename(char* filename, char* name);
+void copyFile(char* oldfilename, char* newfilename);
 void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard);
 
 #define FILE_ICON_FOLDER 0

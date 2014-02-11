@@ -179,7 +179,12 @@ void copyFile(char* oldfilename, char* newfilename) {
     // now rename the temp file to the correct file name
     Bfile_RenameEntry(tempfilenameshort , newfilenameshort);
   } //else: create failed, but we're going to skip anyway
+}
 
+void copyFolder(char* oldfilename, char* newfilename) {
+  unsigned short newfilenameshort[0x10A];
+  Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+  Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FOLDER, 0);
 }
 
 void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard) {
@@ -194,19 +199,16 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
       char name[MAX_NAME_SIZE];
       nameFromFilename(clipboard[curfile].filename, name);
       if(curfile > 0) progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
+      char newfilename[MAX_FILENAME_SIZE];
+      strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
+      unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
+      strncat(newfilename, name, maxcatlen);
       if (clipboard[curfile].action) {
         //copy file
-        char newfilename[MAX_FILENAME_SIZE];
-        strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
-        unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
-        strncat(newfilename, name, maxcatlen);
-        copyFile(clipboard[curfile].filename, newfilename);
+        if(clipboard[curfile].isfolder) copyFolder(clipboard[curfile].filename, newfilename);
+        else copyFile(clipboard[curfile].filename, newfilename);
       } else {
         //move file
-        char newfilename[MAX_FILENAME_SIZE];
-        strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
-        unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
-        strncat(newfilename, name, maxcatlen);
         unsigned short newfilenameshort[0x10A];
         unsigned short oldfilenameshort[0x10A];
         Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)clipboard[curfile].filename, 0x10A);
