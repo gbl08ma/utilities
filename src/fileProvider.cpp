@@ -164,7 +164,7 @@ void copyFile(char* oldfilename, char* newfilename) {
     
     //File to copy is open, destination file is created and open.
     while(1) {
-#define FILE_COPYBUFFER 51200
+#define FILE_COPYBUFFER 24576
       unsigned char copybuffer[FILE_COPYBUFFER+5] = "";
       int rwsize = Bfile_ReadFile_OS( hOldFile, copybuffer, FILE_COPYBUFFER, -1 );
       if(rwsize > 0) {
@@ -180,17 +180,77 @@ void copyFile(char* oldfilename, char* newfilename) {
     Bfile_RenameEntry(tempfilenameshort , newfilenameshort);
   } //else: create failed, but we're going to skip anyway
 }
-
+#define MAX_ITEMS_PER_FOLDER_COPY 50
 void copyFolder(char* oldfilename, char* newfilename) {
+  // create destination folder:
   unsigned short newfilenameshort[0x10A];
   Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
-  Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FOLDER, 0);
+  if(0 < Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FOLDER, 0)) return; //return if error
+
+  // now that we created the new folder, copy each item in the old folder into the new one.
+  int numberOfItemsToCopyInTheEnd = 0;
+  char itemsToCopyInTheEnd[MAX_ITEMS_PER_FOLDER_COPY][MAX_NAME_SIZE];
+  int itemsToCopyIsFolder[MAX_ITEMS_PER_FOLDER_COPY];
+
+  unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
+  unsigned char buffer[MAX_FILENAME_SIZE+1];
+
+  // make the buffer
+  strcpy((char*)buffer, oldfilename);
+  strcat((char*)buffer, "\\*");
+  
+  file_type_t fileinfo;
+  int findhandle;
+  Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
+  int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
+  while(!ret) {
+    Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
+    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 )) {
+      char olditem[MAX_FILENAME_SIZE];
+      strcpy(olditem, oldfilename);
+      strcat(olditem, "\\");
+      strcat(olditem, (char*)buffer);
+      char newitem[MAX_FILENAME_SIZE];
+      strcpy(newitem, newfilename);
+      strcat(newitem, "\\");
+      strcat(newitem, (char*)buffer);
+      // this item is a folder. We could call copyFolder again or copyFile here, and our code would be absolutely correct
+      // but the Bfile functions are buggy, and they freak out when there are many file handles/multiple file handles inside folders.
+      // (same reason why we use a temporary file name while copying)
+      // so we add this to a list of items to copy later...
+      // only 20 folders can be copied per folder
+      if(numberOfItemsToCopyInTheEnd<MAX_ITEMS_PER_FOLDER_COPY) {
+        strncpy(itemsToCopyInTheEnd[numberOfItemsToCopyInTheEnd], (char*)buffer, MAX_NAME_SIZE);
+        itemsToCopyIsFolder[numberOfItemsToCopyInTheEnd] = !fileinfo.fsize;
+        numberOfItemsToCopyInTheEnd++;
+      }
+    }
+    ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
+  }
+  Bfile_FindClose(findhandle);
+  // now that all handles are be closed, copy the items we found
+  for(int i=0; i<numberOfItemsToCopyInTheEnd; i++) {
+    // copy only if there's enough free stack
+    if((0x881E0000 - (int)GetStackPtr()) < 350000) { // if stack usage is below 350000 bytes...
+      char olditem[MAX_FILENAME_SIZE];
+      strcpy(olditem, oldfilename);
+      strcat(olditem, "\\");
+      strcat(olditem, itemsToCopyInTheEnd[i]);
+      char newitem[MAX_FILENAME_SIZE];
+      strcpy(newitem, newfilename);
+      strcat(newitem, "\\");
+      strcat(newitem, itemsToCopyInTheEnd[i]);
+
+      if(itemsToCopyIsFolder[i]) copyFolder(olditem, newitem);
+      else copyFile(olditem, newitem);
+    }
+  }
 }
 
 void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard) {
-  //this copies or moves to browserbasepath the files in the clipboard.
-  //when the isselected field of a clipboard item is 0, the item will be moved.
-  //when the isselected field is 1, the item will be copied.
+  //this copies or moves to browserbasepath the items in the clipboard.
+  //when the action field of a clipboard item is 0, the item will be moved.
+  //when the action field is 1, the item will be copied.
   //don't forget to reload the file list after using this
   if (itemsInClipboard>0) {
     int curfile = 0;

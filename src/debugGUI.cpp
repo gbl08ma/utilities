@@ -16,6 +16,7 @@
 #include "menuGUI.hpp"
 #include "settingsProvider.hpp"
 #include "linkProvider.hpp"
+#include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 
 static int debugMode = 0; // when 1, debug mode is on
@@ -36,7 +37,7 @@ void debugMessage(char* text1, char* text2, int value) {
   strcpy(buffer2, text2);
   strcat(buffer2, buffer1);
   PrintXY(3,3,(char*)buffer2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  GetKey(&key);
+  mGetKey(&key);
   MsgBoxPop();
 }
 void showRAMused() {
