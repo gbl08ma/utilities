@@ -271,12 +271,12 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
 
 int deleteFilesGUI(File* files, Menu* menu) {
   mMsgBoxPush(4);
+  mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 3, (char*)"Selected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
+  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
   int key;
   while (1) {
-    mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    mPrintXY(3, 3, (char*)"Selected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
-    PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
     mGetKey(&key);
     switch(key) {
       case KEY_CTRL_F1:
@@ -665,11 +665,9 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
       case MENU_RETURN_SELECTION:
         if(!clipboard[menu.selection-1].isfolder) fileInformation(clipboard[menu.selection-1].filename, 0);
         break;
-      case MENU_RETURN_EXIT:
-        return;
-        break;
       case KEY_CTRL_F1:
         *itemsinclip = 0;
+      case MENU_RETURN_EXIT:
         return;
         break;
       case KEY_CTRL_F2:
@@ -688,13 +686,9 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
         }
         break;
       case KEY_CTRL_F3:
-        if(clipboard[menu.selection-1].action == 1) {
-          clipboard[menu.selection-1].action = 0;
-          menuitems[menu.selection-1].color = TEXT_COLOR_BLACK;
-        } else {
-          clipboard[menu.selection-1].action = 1;
-          menuitems[menu.selection-1].color = TEXT_COLOR_RED;
-        }
+        clipboard[menu.selection-1].action = !clipboard[menu.selection-1].action;
+        if(clipboard[menu.selection-1].action) menuitems[menu.selection-1].color = TEXT_COLOR_BLACK;
+        else menuitems[menu.selection-1].color = TEXT_COLOR_RED;
         break;
     }
   }
