@@ -196,34 +196,16 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
                     clippos = i;
                   }
                 }
-                if(res == KEY_CTRL_F2) {
-                  if(!inclip) {
-                    strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
-                    //0=cut file; 1=copy file:
-                    clipboard[*itemsinclip].action = 0;
-                    clipboard[*itemsinclip].isfolder = menu.items[ifile].isfolder;
-                    *itemsinclip = *itemsinclip + 1;
-                  } else {
-                    // file is already in the clipboard
-                    // if it is set for copy, set it for cut
-                    if(clipboard[clippos].action == 1) {
-                      clipboard[clippos].action = 0;
-                    }
-                  }
+                if(!inclip) {
+                  strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
+                  //0=cut file; 1=copy file:
+                  clipboard[*itemsinclip].action = (res == KEY_CTRL_F2 ? 0 : 1);
+                  clipboard[*itemsinclip].isfolder = menu.items[ifile].isfolder;
+                  *itemsinclip = *itemsinclip + 1;
                 } else {
-                  if(!inclip) {
-                    strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
-                    //0=cut file; 1=copy file:
-                    clipboard[*itemsinclip].action = 1;
-                    clipboard[*itemsinclip].isfolder = menu.items[ifile].isfolder;
-                    *itemsinclip = *itemsinclip + 1;
-                  } else {
-                    // file is already in the clipboard
-                    // if it is set for cut and *is not a folder*, set it for copy
-                    if(clipboard[clippos].action == 0) {
-                      clipboard[clippos].action = 1;
-                    }
-                  }
+                  // file is already in the clipboard
+                  // set it to the opposite action
+                  clipboard[clippos].action = !clipboard[clippos].action;
                 }
                 menu.items[ifile].isselected = 0; // clear selection
                 menu.numselitems--;
