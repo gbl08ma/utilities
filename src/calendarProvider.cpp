@@ -403,7 +403,6 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
 
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   unsigned char buffer[MAX_FILENAME_SIZE+1];
-  unsigned char* filter = (unsigned char*)"*.pce";
 
   // make the buffer
   strcpy((char*)buffer, CALENDARFOLDER);
@@ -414,16 +413,15 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   itoa(month, (unsigned char*)smallbuf);
   if (month < 10) strcat((char*)buffer, "0");  //if month below 10, add leading 0
   strcat((char*)buffer, smallbuf);
-  strcat((char*)buffer, "*");
+  strcat((char*)buffer, "*.pce");
   
   file_type_t fileinfo;
   int findhandle;
   Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
-  Bfile_StrToName_ncpy(path, filter, MAX_FILENAME_SIZE+1);
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 ) && Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) {      
+    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 )) {      
       // get the start day from the filename
       int nlen = strlen((char*)buffer);
       if(isdigit(buffer[nlen-4-2]) && isdigit(buffer[nlen-4-1])) {
@@ -493,7 +491,6 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   unsigned char buffer[MAX_FILENAME_SIZE+1];
-  unsigned char* filter = (unsigned char*)"*.pce";
 
   // make the buffer
   strcpy((char*)buffer, folder);
@@ -506,17 +503,16 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
     if (m < 10) strcat((char*)buffer, "0");  //if month below 10, add leading 0
     strcat((char*)buffer, smallbuf);
   }
-  strcat((char*)buffer, "*");
+  strcat((char*)buffer, "*.pce");
   
   file_type_t fileinfo;
   int findhandle;
   Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
-  Bfile_StrToName_ncpy(path, filter, MAX_FILENAME_SIZE+1);
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
     // the 00000.pce strcmp is there so we don't search on the tasks file
-    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0) && Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) {
+    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0)) {
       // get the start date from the filename
       char mainname[20] = "";
       int nlen = strlen((char*)buffer);

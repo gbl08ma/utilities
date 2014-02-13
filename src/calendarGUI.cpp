@@ -2106,24 +2106,20 @@ void repairCalendarDatabase() {
   
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   unsigned char buffer[MAX_FILENAME_SIZE+1];
-  unsigned char* filter = (unsigned char*)"*.pce";
 
   // make the buffer
   strcpy((char*)buffer, CALENDARFOLDER);
   strcat((char*)buffer, "\\");
-  strcat((char*)buffer, "*");
+  strcat((char*)buffer, "*.pce");
   
   file_type_t fileinfo;
   int findhandle;
   Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
-  Bfile_StrToName_ncpy(path, filter, MAX_FILENAME_SIZE+1);
   int loopc = 9;
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0) &&
-       (fileinfo.fsize == 0 || Bfile_Name_MatchMask((const short int*)path, (const short int*)found)))
-    {     
+    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0) && fileinfo.fsize != 0) {     
       if (loopc>=9) {
         char buffer1[20] = "";
         itoa((int)checkedfiles, (unsigned char*)buffer1);
@@ -2225,24 +2221,20 @@ void trimCalendarDatabase() {
     }
     unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
     unsigned char buffer[MAX_FILENAME_SIZE+1];
-    unsigned char* filter = (unsigned char*)"*.pce";
 
     // make the buffer
     strcpy((char*)buffer, CALENDARFOLDER);
     strcat((char*)buffer, "\\");
-    strcat((char*)buffer, "*");
+    strcat((char*)buffer, "*.pce");
     
     file_type_t fileinfo;
     int findhandle;
     Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
     int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
-    Bfile_StrToName_ncpy(path, filter, MAX_FILENAME_SIZE+1);
     while(!ret) {
       Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
       // the 00000.pce strcmp is there so we don't delete the tasks file
-      if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "00000.pce") == 0) &&
-        (fileinfo.fsize == 0 || Bfile_Name_MatchMask((const short int*)path, (const short int*)found)))
-      {      
+      if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "00000.pce") == 0) && fileinfo.fsize != 0) {
         // select what to do depending on menu selection
         int deleteThisFile = 0;
         if(menu.selection == 4) {
