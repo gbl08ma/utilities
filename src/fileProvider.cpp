@@ -21,6 +21,26 @@
 #include "fileProvider.hpp"
 #include "debugGUI.hpp"
 
+void bubbleSortFileMenuArray(File* data, MenuItem* mdata, int size ) {
+  int j;
+  File temp;
+  MenuItem mtemp;
+  for(int i = 1; i < size; i++)
+  {
+    j = i - 1;
+    while( j >= 0 && strcmp( data[j+1].filename, data[j].filename ) < 0 )
+    {
+      temp =  data[j + 1];
+      data[j+1] = data[j];
+      data[j] = temp;
+      mtemp =  mdata[j + 1];
+      mdata[j+1] = mdata[j];
+      mdata[j] = mtemp;
+      j--;
+    }
+  }
+}
+
 int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
   // searches storage memory for folders and files, puts their count in int* count
   // if File* files is NULL, function will only count files. If it is not null, MenuItem* menuitems will also be updated
@@ -66,10 +86,16 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
     }
     if (*count-1==MAX_ITEMS_IN_DIR) {
       Bfile_FindClose(findhandle);
+      if(*count && files != NULL && menuitems != NULL) {
+        bubbleSortFileMenuArray(files, menuitems, *count);
+      }
       return GETFILES_MAX_FILES_REACHED; // Don't find more files, the array is full. 
     } else ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
   Bfile_FindClose(findhandle);
+  if(*count && files != NULL && menuitems != NULL) {
+    bubbleSortFileMenuArray(files, menuitems, *count);
+  }
   return GETFILES_SUCCESS;
 }
 
