@@ -1474,33 +1474,25 @@ int deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos
   EventDate date; date.day = d; date.month = m; date.year = y;
   mMsgBoxPush(4);
   mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  if(istask) {
-    mPrintXY(3, 3, (char*)"Selected Task?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  } else {
-    mPrintXY(3, 3, (char*)"Selected Event?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  }
+  mPrintXY(3, 3, (istask ? (char*)"Selected Task?" : (char*)"Selected Event?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
-  int key,inscreen=1;
-  int ret = 0;
-  while(inscreen) {
+  int key;
+  while(1) {
     mGetKey(&key);
     switch(key)
     {
       case KEY_CTRL_F1:
+        mMsgBoxPop();
         RemoveEvent(&date, events, CALENDARFOLDER, count, pos);
-        ret = EVENTDELETE_RETURN_CONFIRM;
-        inscreen=0;
-        break;
+        return EVENTDELETE_RETURN_CONFIRM;
       case KEY_CTRL_F6:
       case KEY_CTRL_EXIT:
-        ret = EVENTDELETE_RETURN_EXIT;
-        inscreen=0;
-        break;
+        mMsgBoxPop();
+        return EVENTDELETE_RETURN_EXIT;
     }
   }
-  mMsgBoxPop();
-  return ret;
+  return 0;
 }
 
 int deleteAllEventUI(int y, int m, int d, int istask) {
@@ -1514,26 +1506,22 @@ int deleteAllEventUI(int y, int m, int d, int istask) {
   }
   PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
-  int key,inscreen=1;
-  int ret = 0;
-  while(inscreen) {
+  int key;
+  while(1) {
     mGetKey(&key);
     switch(key)
     {
       case KEY_CTRL_F1:
+        mMsgBoxPop();
         RemoveDay(&date, CALENDARFOLDER);
-        ret = EVENTDELETE_RETURN_CONFIRM;
-        inscreen=0;
-        break;
+        return EVENTDELETE_RETURN_CONFIRM;
       case KEY_CTRL_F6:
       case KEY_CTRL_EXIT:
-        ret = EVENTDELETE_RETURN_EXIT;
-        inscreen=0;
-        break;
+        mMsgBoxPop();
+        return EVENTDELETE_RETURN_EXIT;
     }
   }
-  mMsgBoxPop();
-  return ret;
+  return 0;
 }
 
 int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, int graphical)
