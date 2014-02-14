@@ -233,9 +233,9 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         } else if (menu.numselitems == 0 && menu.fkeypage==0 && res==KEY_CTRL_F2) {
           mMsgBoxPush(6);
           MenuItem smallmenuitems[5];
-          strcpy(smallmenuitems[0].text, "None");
-          strcpy(smallmenuitems[1].text, "A to Z");
-          strcpy(smallmenuitems[2].text, "Z to A");
+          strcpy(smallmenuitems[0].text, "Do not sort");
+          strcpy(smallmenuitems[1].text, "Name (A to Z)");
+          strcpy(smallmenuitems[2].text, "Name (Z to A)");
           strcpy(smallmenuitems[3].text, "Size (small 1st)");
           strcpy(smallmenuitems[4].text, "Size (big 1st)");
           
@@ -249,7 +249,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           smallmenu.scrollbar=0;
           smallmenu.showtitle=1;
           smallmenu.selection = GetSetting(SETTING_FILE_MANAGER_SORT)+1;
-          strcpy(smallmenu.title, "Item sort:");
+          strcpy(smallmenu.title, "Sort items by:");
           int sres = doMenu(&smallmenu);
           mMsgBoxPop();
           
