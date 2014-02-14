@@ -43,8 +43,9 @@
 #define SETTING_WEEK_START_DAY 20
 #define SETTING_SHOW_CALENDAR_BUSY_MAP 21
 #define SETTING_CHRONO_NOTIFICATION_TYPE 22
+#define SETTING_FILE_MANAGER_SORT 23
 
-#define NUMBER_OF_SETTINGS 22 //NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
+#define NUMBER_OF_SETTINGS 23 //NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
 /*End of settings*/ 
 
 int GetSetting(int setting);

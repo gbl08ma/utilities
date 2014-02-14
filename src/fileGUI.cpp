@@ -43,6 +43,17 @@ void fileManager() {
   }
 }
 
+void fillMenuStatusWithClip(Menu* menu, int itemsinclip, int ismanager) {
+  char titleBuffer[30];
+  strcpy((char*)menu->statusText, "Clipboard: ");
+  itoa(itemsinclip, (unsigned char*)titleBuffer);
+  strcat((char*)menu->statusText, titleBuffer);
+  strcat((char*)menu->statusText, (itemsinclip == 1 ? " item" : " items"));
+  if(!ismanager) {
+    strcat((char*)menu->statusText, ", Shift\xe6\x91""9=Paste");
+  }
+}
+
 int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard, char* filetoedit) {
   Menu menu;
   MenuItemIcon icontable[12];
@@ -110,17 +121,13 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   menu.useStatusText=1;
   while(1) {
     Bdisp_AllClr_VRAM();
-    char titleBuffer[88] = "";
     if(*itemsinclip==0) {
+      char titleBuffer[88] = "";
       itoa(smemfree, (unsigned char*)menu.statusText);
       LocalizeMessage1( 340, titleBuffer ); //"bytes free"
       strncat((char*)menu.statusText, (char*)titleBuffer, 65);
     } else {
-      strcpy((char*)menu.statusText, "Clipboard: ");
-      itoa(*itemsinclip, (unsigned char*)titleBuffer);
-      strcat((char*)menu.statusText, titleBuffer);
-      strcat((char*)menu.statusText, (*itemsinclip == 1 ? " item, Shift\xe6\x91" : " items, Shift\xe6\x91"));
-      strcat((char*)menu.statusText, "9=Paste");
+      fillMenuStatusWithClip(&menu, *itemsinclip, 0);
     }
     if(menu.fkeypage == 0) {
       int iresult;
@@ -135,6 +142,9 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         FKey_Display(2, (int*)iresult);
         GetFKeyPtr(0x0038, &iresult); // DELETE
         FKey_Display(5, (int*)iresult);
+      } else {
+        GetFKeyPtr(0x0200, &iresult); // DISPLAY
+        FKey_Display(1, (int*)iresult);
       }
       GetFKeyPtr(0x0186, &iresult); // NEW
       FKey_Display(3, (int*)iresult);
@@ -219,6 +229,33 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             mPrintXY(3, 4, (char*)"more items to it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
             closeMsgBox();
+          }
+        } else if (menu.numselitems == 0 && menu.fkeypage==0 && res==KEY_CTRL_F2) {
+          mMsgBoxPush(6);
+          MenuItem smallmenuitems[5];
+          strcpy(smallmenuitems[0].text, "None");
+          strcpy(smallmenuitems[1].text, "A to Z");
+          strcpy(smallmenuitems[2].text, "Z to A");
+          strcpy(smallmenuitems[3].text, "Size (small 1st)");
+          strcpy(smallmenuitems[4].text, "Size (big 1st)");
+          
+          Menu smallmenu;
+          smallmenu.items=smallmenuitems;
+          smallmenu.numitems=5;
+          smallmenu.width=17;
+          smallmenu.height=6;
+          smallmenu.startX=3;
+          smallmenu.startY=2;
+          smallmenu.scrollbar=0;
+          smallmenu.showtitle=1;
+          smallmenu.selection = GetSetting(SETTING_FILE_MANAGER_SORT)+1;
+          strcpy(smallmenu.title, "Item sort:");
+          int sres = doMenu(&smallmenu);
+          mMsgBoxPop();
+          
+          if(sres == MENU_RETURN_SELECTION) {
+            SetSetting(SETTING_FILE_MANAGER_SORT, smallmenu.selection-1, 1); 
+            return 1; // reload with new sort
           }
         }
         break;
@@ -642,6 +679,8 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     menu.showtitle=1;
     menu.subtitle = (char*)"Black=cut, Red=copy";
     menu.showsubtitle=1;
+    fillMenuStatusWithClip(&menu, *itemsinclip, 1);
+    menu.useStatusText = 1;
     menu.items = menuitems;
     int curitem = 0;
     while(curitem < *itemsinclip) {

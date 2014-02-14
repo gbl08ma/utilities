@@ -21,15 +21,20 @@
 #include "fileProvider.hpp"
 #include "debugGUI.hpp"
 
-void bubbleSortFileMenuArray(File* data, MenuItem* mdata, int size ) {
+void bubbleSortFileMenuArray(File* data, MenuItem* mdata, int size) {
+  int sort = GetSetting(SETTING_FILE_MANAGER_SORT);
+  if(!sort) return;
   int j;
   File temp;
   MenuItem mtemp;
-  for(int i = 1; i < size; i++)
-  {
+  for(int i = 1; i < size; i++) {
     j = i - 1;
-    while( j >= 0 && strcmp( data[j+1].filename, data[j].filename ) < 0 )
-    {
+    while( j >= 0 &&
+      (sort == 1 ? strcmp( data[j+1].filename, data[j].filename ) < 0 :
+        (sort == 2 ? strcmp( data[j+1].filename, data[j].filename ) > 0 :
+          (sort == 3 ? data[j+1].size < data[j].size :
+            data[j+1].size > data[j].size)))
+      ) {
       temp =  data[j + 1];
       data[j+1] = data[j];
       data[j] = temp;
@@ -68,6 +73,7 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
         strncpy(menuitems[*count].text, (char*)buffer, 40);
         strcpy(files[*count].filename, basepath); 
         strcat(files[*count].filename, (char*)buffer);
+        files[*count].size = fileinfo.fsize;
         if(fileinfo.fsize == 0) {
           files[*count].isfolder = 1;
           menuitems[*count].isfolder = 1;
