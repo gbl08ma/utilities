@@ -14,6 +14,10 @@
 #define CALENDARFOLDER (char*)"\\\\fls0\\@UTILS"
 #endif
 
+#ifndef CALENDARFOLDER_NAME
+#define CALENDARFOLDER_NAME (char*)"@UTILS"
+#endif
+
 #ifndef HASHFILE
 #define HASHFILE (unsigned char*)"Hash"
 #endif
