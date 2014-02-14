@@ -92,14 +92,14 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
     }
     if (*count-1==MAX_ITEMS_IN_DIR) {
       Bfile_FindClose(findhandle);
-      if(*count && files != NULL && menuitems != NULL) {
+      if(files != NULL && menuitems != NULL) {
         bubbleSortFileMenuArray(files, menuitems, *count);
       }
       return GETFILES_MAX_FILES_REACHED; // Don't find more files, the array is full. 
     } else ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
   Bfile_FindClose(findhandle);
-  if(*count && files != NULL && menuitems != NULL) {
+  if(*count > 1 && files != NULL && menuitems != NULL) {
     bubbleSortFileMenuArray(files, menuitems, *count);
   }
   return GETFILES_SUCCESS;
