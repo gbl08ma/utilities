@@ -254,8 +254,11 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           mMsgBoxPop();
           
           if(sres == MENU_RETURN_SELECTION) {
-            SetSetting(SETTING_FILE_MANAGER_SORT, smallmenu.selection-1, 1); 
-            return 1; // reload with new sort
+            SetSetting(SETTING_FILE_MANAGER_SORT, smallmenu.selection-1, 1);
+            if(menu.numitems > 1){
+              HourGlass(); //sorting can introduce a noticeable delay when there are many items
+              bubbleSortFileMenuArray(files, menuitems, menu.numitems);
+            }
           }
         }
         break;

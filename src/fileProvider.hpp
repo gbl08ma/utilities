@@ -40,6 +40,7 @@ typedef struct
 #define GETFILES_SUCCESS 0
 #define GETFILES_MAX_FILES_REACHED 1
 
+void bubbleSortFileMenuArray(File* data, MenuItem* mdata, int size);
 int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count);
 void deleteFiles(File* files, Menu* menu);
 void nameFromFilename(char* filename, char* name);
