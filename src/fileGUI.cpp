@@ -143,8 +143,10 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         GetFKeyPtr(0x0038, &iresult); // DELETE
         FKey_Display(5, (int*)iresult);
       } else {
-        GetFKeyPtr(0x0200, &iresult); // DISPLAY
+        GetFKeyPtr(0x03B6, &iresult); // SEQ
         FKey_Display(1, (int*)iresult);
+        GetFKeyPtr(0x0187, &iresult); // SEARCH
+        FKey_Display(2, (int*)iresult);
       }
       GetFKeyPtr(0x0186, &iresult); // NEW
       FKey_Display(3, (int*)iresult);
@@ -184,7 +186,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           }
           return 1; //reload at new folder
         } else {
-          if(1 == fileInformation(files[menu.selection-1].filename)) {
+          if(1 == fileInformation(&files[menu.selection-1])) {
             // user wants to edit the file
             strcpy(filetoedit, files[menu.selection-1].filename);
             return 1;
@@ -193,7 +195,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         break;
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
-        if (menu.numselitems > 0 && menu.fkeypage==0) {
+        if (menu.numselitems > 0) {
           if((*itemsinclip < MAX_ITEMS_IN_CLIPBOARD) && menu.numselitems <= MAX_ITEMS_IN_CLIPBOARD-*itemsinclip) {
             int ifile = 0;
             while(ifile < menu.numitems) {  
@@ -210,7 +212,8 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
                   strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
                   //0=cut file; 1=copy file:
                   clipboard[*itemsinclip].action = (res == KEY_CTRL_F2 ? 0 : 1);
-                  clipboard[*itemsinclip].isfolder = menu.items[ifile].isfolder;
+                  clipboard[*itemsinclip].isfolder = files[ifile].isfolder;
+                  clipboard[*itemsinclip].size = files[ifile].size;
                   *itemsinclip = *itemsinclip + 1;
                 } else {
                   // file is already in the clipboard
@@ -230,35 +233,39 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
             closeMsgBox();
           }
-        } else if (menu.numselitems == 0 && menu.fkeypage==0 && res==KEY_CTRL_F2) {
-          mMsgBoxPush(6);
-          MenuItem smallmenuitems[5];
-          strcpy(smallmenuitems[0].text, "Do not sort");
-          strcpy(smallmenuitems[1].text, "Name (A to Z)");
-          strcpy(smallmenuitems[2].text, "Name (Z to A)");
-          strcpy(smallmenuitems[3].text, "Size (small 1st)");
-          strcpy(smallmenuitems[4].text, "Size (big 1st)");
-          
-          Menu smallmenu;
-          smallmenu.items=smallmenuitems;
-          smallmenu.numitems=5;
-          smallmenu.width=17;
-          smallmenu.height=6;
-          smallmenu.startX=3;
-          smallmenu.startY=2;
-          smallmenu.scrollbar=0;
-          smallmenu.showtitle=1;
-          smallmenu.selection = GetSetting(SETTING_FILE_MANAGER_SORT)+1;
-          strcpy(smallmenu.title, "Sort items by:");
-          int sres = doMenu(&smallmenu);
-          mMsgBoxPop();
-          
-          if(sres == MENU_RETURN_SELECTION) {
-            SetSetting(SETTING_FILE_MANAGER_SORT, smallmenu.selection-1, 1);
-            if(menu.numitems > 1){
-              HourGlass(); //sorting can introduce a noticeable delay when there are many items
-              bubbleSortFileMenuArray(files, menuitems, menu.numitems);
+        } else if (menu.numselitems == 0) {
+          if(res==KEY_CTRL_F2) {
+            mMsgBoxPush(6);
+            MenuItem smallmenuitems[5];
+            strcpy(smallmenuitems[0].text, "Do not sort");
+            strcpy(smallmenuitems[1].text, "Name (A to Z)");
+            strcpy(smallmenuitems[2].text, "Name (Z to A)");
+            strcpy(smallmenuitems[3].text, "Size (small 1st)");
+            strcpy(smallmenuitems[4].text, "Size (big 1st)");
+            
+            Menu smallmenu;
+            smallmenu.items=smallmenuitems;
+            smallmenu.numitems=5;
+            smallmenu.width=17;
+            smallmenu.height=6;
+            smallmenu.startX=3;
+            smallmenu.startY=2;
+            smallmenu.scrollbar=0;
+            smallmenu.showtitle=1;
+            smallmenu.selection = GetSetting(SETTING_FILE_MANAGER_SORT)+1;
+            strcpy(smallmenu.title, "Sort items by:");
+            int sres = doMenu(&smallmenu);
+            mMsgBoxPop();
+            
+            if(sres == MENU_RETURN_SELECTION) {
+              SetSetting(SETTING_FILE_MANAGER_SORT, smallmenu.selection-1, 1);
+              if(menu.numitems > 1) {
+                HourGlass(); //sorting can introduce a noticeable delay when there are many items
+                bubbleSortFileMenuArray(files, menuitems, menu.numitems);
+              }
             }
+          } else {
+            searchFilesGUI(browserbasepath);
           }
         }
         break;
@@ -395,7 +402,86 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   return 0;
 }
 
-int fileInformation(char* filename, int allowEdit) {
+void searchFilesGUI(char* browserbasepath) {
+  int iresult;
+  
+  char needle[55] = "";
+  int searchOnFilename = 1, searchOnContents = 0, searchRecursively = 0;
+  textInput input;
+  input.forcetext=1; //force text so title must be at least one char.
+  input.charlimit=50;
+  input.acceptF6=1;
+  input.buffer = needle;
+  MenuItem menuitems[5];
+  strcpy(menuitems[0].text, "On filename");
+  menuitems[0].type = MENUITEM_CHECKBOX;
+  strcpy(menuitems[1].text, "On contents");
+  menuitems[1].type = MENUITEM_CHECKBOX;
+  strcpy(menuitems[2].text, "Recursively");
+  menuitems[2].type = MENUITEM_CHECKBOX;
+  strcpy(menuitems[3].text, "Start searching");
+
+  Menu menu;
+  menu.items=menuitems;
+  menu.type=MENUTYPE_FKEYS;
+  menu.numitems=4;
+  menu.height=5;
+  menu.startY=4;
+  menu.scrollbar=0;
+  menu.scrollout=1;
+
+  int curstep = 0;
+  while(1) {
+    Bdisp_AllClr_VRAM();
+    mPrintXY(1, 1, (char*)"File Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+    mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    if(curstep == 0) {
+      GetFKeyPtr(0x04A3, &iresult); // Next
+      FKey_Display(5, (int*)iresult);
+      while(1) {
+        input.key=0;
+        int res = doTextInput(&input);
+        if (res==INPUT_RETURN_EXIT) return; // user aborted
+        else if (res==INPUT_RETURN_CONFIRM) break; // continue to next step
+      }
+      curstep++;
+    } else {
+      mPrintXY(1, 3, (char*)needle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      while(1) {
+        menuitems[0].value = searchOnFilename;
+        menuitems[1].value = searchOnContents;
+        menuitems[2].value = searchRecursively;
+        int res = doMenu(&menu);
+        if(res == MENU_RETURN_EXIT) return;
+        else if(res == KEY_CTRL_F1) {
+          curstep--;
+          break;
+        } else if(res == MENU_RETURN_SELECTION) {
+          switch(menu.selection) {
+            case 1:
+              menuitems[0].value = !menuitems[0].value;
+              searchOnFilename = menuitems[0].value;
+              if(!searchOnFilename && !searchOnContents) searchOnContents = 1;
+              break;
+            case 2:
+              menuitems[1].value = !menuitems[1].value;
+              searchOnContents = menuitems[1].value;
+              if(!searchOnFilename && !searchOnContents) searchOnFilename = 1;
+              break;
+            case 3:
+              menuitems[2].value = !menuitems[2].value;
+              searchRecursively = menuitems[2].value;
+              break;
+            case 4:
+              return;
+          }
+        }
+      }
+    }
+  }
+}
+
+int fileInformation(File* file, int allowEdit) {
   // returns 0 if user exits.
   // returns 1 if user wants to edit the file  
   textArea text;
@@ -413,7 +499,7 @@ int fileInformation(char* filename, int allowEdit) {
   
   elem[text.numelements].newLine=1;
   char name[MAX_NAME_SIZE];
-  nameFromFilename(filename, name);
+  nameFromFilename(file->filename, name);
   elem[text.numelements].text = name;
   text.numelements++;
   
@@ -426,7 +512,7 @@ int fileInformation(char* filename, int allowEdit) {
   elem[text.numelements].newLine=1;
   elem[text.numelements].minimini=1;
   elem[text.numelements].color=TEXT_COLOR_BLACK;
-  elem[text.numelements].text = (char*)filename;
+  elem[text.numelements].text = (char*)file->filename;
   text.numelements++;
   
   elem[text.numelements].newLine=1;
@@ -446,34 +532,22 @@ int fileInformation(char* filename, int allowEdit) {
   
   elem[text.numelements].text = (char*)mresult;
   text.numelements++;
+  char sizebuffer[50];
+  itoa(file->size, (unsigned char*)sizebuffer);
   
-  //Get file size
-  unsigned short pFile[MAX_FILENAME_SIZE+1];
-  unsigned char sizebuffer[50] = "";
-  int fsnotzero = 0;
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-  if(hFile >= 0) // Check if it opened
-  { //opened
-    unsigned int filesize = Bfile_GetFileSize_OS(hFile);
-    Bfile_CloseFile_OS(hFile);
-    if(filesize) fsnotzero = 1;
-    itoa(filesize, (unsigned char*)sizebuffer);
-    
-    elem[text.numelements].newLine=1;
-    elem[text.numelements].lineSpacing=3;
-    elem[text.numelements].color=COLOR_LIGHTGRAY;
-    elem[text.numelements].text = (char*)"File size:";
-    elem[text.numelements].spaceAtEnd=1;
-    text.numelements++;
-    
-    elem[text.numelements].text = (char*)sizebuffer;
-    elem[text.numelements].spaceAtEnd=1;
-    text.numelements++;
-    
-    elem[text.numelements].text = (char*)"bytes";
-    text.numelements++;
-  }
+  elem[text.numelements].newLine=1;
+  elem[text.numelements].lineSpacing=3;
+  elem[text.numelements].color=COLOR_LIGHTGRAY;
+  elem[text.numelements].text = (char*)"File size:";
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
+  
+  elem[text.numelements].text = (char*)sizebuffer;
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
+  
+  elem[text.numelements].text = (char*)"bytes";
+  text.numelements++;
   
   doTextArea(&text);
   int iresult;
@@ -483,7 +557,7 @@ int fileInformation(char* filename, int allowEdit) {
     GetFKeyPtr(0x0185, &iresult); // EDIT
     FKey_Display(1, (int*)iresult);
   }
-  if(fsnotzero) {
+  if(file->size>0) {
     GetFKeyPtr(0x0371, &iresult); // CALC (white)
     FKey_Display(5, (int*)iresult);
   }
@@ -496,7 +570,7 @@ int fileInformation(char* filename, int allowEdit) {
         return 0;
         break;
       case KEY_CTRL_F1:
-        fileViewAsText(filename);
+        fileViewAsText(file->filename);
         return 0;
         break;
       case KEY_CTRL_F2:
@@ -514,7 +588,9 @@ int fileInformation(char* filename, int allowEdit) {
         }
         break;
       case KEY_CTRL_F6:
-        if(fsnotzero) {
+        if(file->size > 0) {
+          unsigned short pFile[MAX_FILENAME_SIZE+1];
+          Bfile_StrToName_ncpy(pFile, (unsigned char*)file->filename, strlen(file->filename)+1); 
           int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
           if(hFile >= 0) // Check if it opened
           { //opened
@@ -705,7 +781,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     int res = doMenu(&menu);
     switch(res) {
       case MENU_RETURN_SELECTION:
-        if(!clipboard[menu.selection-1].isfolder) fileInformation(clipboard[menu.selection-1].filename, 0);
+        if(!clipboard[menu.selection-1].isfolder) fileInformation(&clipboard[menu.selection-1], 0);
         break;
       case KEY_CTRL_F1:
         *itemsinclip = 0;
