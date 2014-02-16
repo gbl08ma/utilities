@@ -25,10 +25,12 @@ int doSelector(Selector* selector) {
   if(selector->clearVRAM) Bdisp_AllClr_VRAM();
   mPrintXY(1, 1, (char*)selector->title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   mPrintXY(3, 2, (char*)selector->subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(5, (selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4), (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
-  mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
   while(1)
   {
+    clearLine(5,(selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4));
+    if(selector->cycle == 1 || selector->value != selector->max) mPrintXY(5, (selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4), (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
+    clearLine(5,6);
+    if(selector->cycle == 1 || selector->value != selector->min) mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
     clearLine(5,5);
     if(selector->type == SELECTORTYPE_LONGDATEFORMAT) {
       clearLine(1,4);
