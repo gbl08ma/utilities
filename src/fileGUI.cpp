@@ -162,10 +162,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           while (i>=0 && browserbasepath[i] != '\\')
                   i--;
           if (browserbasepath[i] == '\\') {
-            char tmp[MAX_FILENAME_SIZE] = "";
-            memcpy(tmp,browserbasepath,i+1);
-            tmp[i+1] = '\0';
-            strcpy(browserbasepath, tmp);
+            browserbasepath[i+1] = '\0';
           }
           return 1; //reload at new folder
         }
@@ -265,7 +262,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
               }
             }
           } else {
-            searchFilesGUI(browserbasepath);
+            if(searchFilesGUI(browserbasepath)) return 1;
           }
         }
         break;
@@ -402,7 +399,9 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   return 0;
 }
 
-void searchFilesGUI(char* browserbasepath) {
+int searchFilesGUI(char* browserbasepath) {
+  // returns 1 when it wants the caller to jump to browserbasepath
+  // returns 0 otherwise.
   int iresult;
   
   char needle[55] = "";
@@ -442,7 +441,7 @@ void searchFilesGUI(char* browserbasepath) {
       while(1) {
         input.key=0;
         int res = doTextInput(&input);
-        if (res==INPUT_RETURN_EXIT) return; // user aborted
+        if (res==INPUT_RETURN_EXIT) return 0; // user aborted
         else if (res==INPUT_RETURN_CONFIRM) break; // continue to next step
       }
       curstep++;
@@ -459,7 +458,7 @@ void searchFilesGUI(char* browserbasepath) {
         menuitems[2].value = searchRecursively;
         menuitems[3].value = matchCase;
         int res = doMenu(&menu);
-        if(res == MENU_RETURN_EXIT) return;
+        if(res == MENU_RETURN_EXIT) return 0;
         else if(res == KEY_CTRL_F1) {
           curstep--;
           break;
@@ -501,6 +500,7 @@ void searchFilesGUI(char* browserbasepath) {
     resitems[curitem].color = COLOR_BLACK;
     curitem++;
   }
+  
   menu.height=7;
   menu.selection = 1;
   menu.startY=1;
@@ -509,7 +509,48 @@ void searchFilesGUI(char* browserbasepath) {
   menu.showtitle = 1;
   menu.scrollbar=1;
   menu.items = resitems;
-  doMenu(&menu);
+  
+  while(1) {
+    Bdisp_AllClr_VRAM();
+    if(menu.numitems>0) {
+      GetFKeyPtr(0x049F, &iresult); // VIEW
+      FKey_Display(0, (int*)iresult);
+      GetFKeyPtr(0x01FC, &iresult); // JUMP
+      FKey_Display(1, (int*)iresult);
+    }
+    switch(doMenu(&menu)) {
+      case MENU_RETURN_EXIT:
+        return 0;
+        break;
+      case KEY_CTRL_F1:
+      case MENU_RETURN_SELECTION:
+        if(menu.numitems>0) {
+          if(files[menu.selection-1].isfolder) {
+            strcpy(browserbasepath, files[menu.selection-1].filename);
+            strcat(browserbasepath, "\\");
+            return 1;
+          } else {
+            fileInformation(&files[menu.selection-1], 0);
+          }
+        }
+        break;
+      case KEY_CTRL_F2:
+        if(menu.numitems>0) {
+          if(!files[menu.selection-1].isfolder) {
+            // get folder path from full filename
+            // we can work on the string in the files array, as it is going to be discarded right after:
+            int i=strlen(files[menu.selection-1].filename)-1;
+            while (i>=0 && files[menu.selection-1].filename[i] != '\\')
+                    i--;
+            if (files[menu.selection-1].filename[i] == '\\') files[menu.selection-1].filename[i] = '\0';
+          }
+          strcpy(browserbasepath, files[menu.selection-1].filename);
+          strcat(browserbasepath, "\\");
+          return 1;
+        }
+        break;
+    }
+  }
 }
 
 int fileInformation(File* file, int allowEdit) {
