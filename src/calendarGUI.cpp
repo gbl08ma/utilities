@@ -787,9 +787,10 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
       case KEY_CTRL_F1:
         if(menu->fkeypage == 0) { if(menu->numitems > 0) viewEvent(&events[menu->selection-1]); }
         else if (menu->fkeypage == 1) {
-          moveEvent(events, menu->numitems, menu->selection-1, 1);
-          bufmonth = 0; searchValid = 0;
-          return 1;
+          if(moveEvent(events, menu->numitems, menu->selection-1, 1) == EVENTEDITOR_RETURN_CONFIRM) {
+            bufmonth = 0; searchValid = 0;
+            return 1;
+          }
         }
         break;
       case MENU_RETURN_SELECTION:
@@ -805,9 +806,10 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
             }
           }
         } else if (menu->fkeypage == 1) {
-          moveEvent(events, menu->numitems, menu->selection-1);
-          bufmonth=0; searchValid = 0;
-          return 1;
+          if(moveEvent(events, menu->numitems, menu->selection-1) == EVENTEDITOR_RETURN_CONFIRM) {
+            bufmonth=0; searchValid = 0;
+            return 1;
+          }
         }
         break;
       case KEY_CTRL_F3:
@@ -1569,12 +1571,11 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
   }
 }
 
-void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
+int moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
   int ey=0, em=0, ed=0;
-  int chooseres = chooseCalendarDate(&ey, &em, &ed, (isCopy ? (char*)"Copy Event" : (char*)"Move Event"), (char*)"To following day:");
-  if(chooseres == 0) {
+  if(!chooseCalendarDate(&ey, &em, &ed, (isCopy ? (char*)"Copy Event" : (char*)"Move Event"), (char*)"To following day:")) {
     if(ey == (signed)events[pos].startdate.year && em == (signed)events[pos].startdate.month && ed == (signed)events[pos].startdate.day) {
-      return; //destination date is same as current event date
+      return EVENTEDITOR_RETURN_EXIT; //destination date is same as current event date
     }
     EventDate oldstartdate;
     oldstartdate.day = events[pos].startdate.day;
@@ -1597,7 +1598,7 @@ void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
     // add event on new day
     if(GetEventsForDate(&events[pos].startdate, CALENDARFOLDER, NULL)+1 > MAX_DAY_EVENTS) {
       AUX_DisplayErrorMessage( 0x2E );
-      return; // do not keep running, as we'd delete the original event, even though the move was not sucessful.
+      return EVENTEDITOR_RETURN_EXIT; // do not keep running, as we'd delete the original event, even though the move was not sucessful.
     } else {
       //already checked if passes num limit
       int res = AddEvent(&events[pos], CALENDARFOLDER);
@@ -1612,12 +1613,14 @@ void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
         mPrintXY(3, 4, (isCopy ? (char*)"be copied." : (char*)"be moved."), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
         closeMsgBox();
-        return;
+        return EVENTEDITOR_RETURN_EXIT;
       }
     }
     // delete event on current (old) day
     if(!isCopy) RemoveEvent(&oldstartdate, events, CALENDARFOLDER, count, pos);
-  } 
+    return EVENTEDITOR_RETURN_CONFIRM;
+  }
+  return EVENTEDITOR_RETURN_EXIT;
 }
 
 void invalidFieldMsg(int istime) {

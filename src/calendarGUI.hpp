@@ -36,7 +36,7 @@ void fillInputDate(int yr, int m, int d, char* buffer);
 void fillInputTime(int h, int m, int s, char* buffer);
 int eventEditor(int y, int m, int d, int type=EVENTEDITORTYPE_ADD, CalendarEvent* event=NULL, int istask=0);
 void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* busydays, int* bufmonth, int* bufyear);
-void moveEvent(CalendarEvent* events, int count, int pos, int isCopy=0);
+int moveEvent(CalendarEvent* events, int count, int pos, int isCopy=0);
 int deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask=0);
 int deleteAllEventUI(int y, int m, int d, int istask=0);
 int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, int graphical = 0);
