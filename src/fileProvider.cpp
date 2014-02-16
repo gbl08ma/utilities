@@ -151,11 +151,14 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
             int readsize = 0;
             while(1) {
               readsize = Bfile_ReadFile_OS(hFile, buf, 1024, -1);
-              if(!readsize) break;
               if(NULL != SearchStringMatch((char*)buf, needle, matchCase)) {
                 match = 1;
                 break;
               }
+              if(readsize < 100) break;
+              Bfile_SeekFile_OS(hFile, Bfile_TellFile_OS(hFile)-90); // rewind 90 bytes, to make sure we didn't miss the needle
+              // which may be separated between the end of a read and the start of another. Since the needle has a maximum of
+              // 50 bytes, rewinding 90 ensures we don't miss it between reads.
             }
             Bfile_CloseFile_OS(hFile);
           }
