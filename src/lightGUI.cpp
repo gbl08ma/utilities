@@ -34,36 +34,46 @@ void lantern() {
   return;
 }
 
+void pushBogusKey() {
+  Keyboard_PutKeycode( -1, -1, KEY_CHAR_5);
+}
+
 void flashLight(int noDraw) { // if noDraw is true, this function will just change the backlight levels without changing VRAM contents
   unsigned int initlevel = GetBacklightSubLevel_RAW();
   unsigned int prevlevel = 0;
-  int previousTicks = 0;
+  int timer = Timer_Install(0, pushBogusKey, 500);
+  SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return. This way, we always have a chance to set the brightness correctly
+  if (timer > 0) { Timer_Start(timer); }
   while (1) {
-    //the following keyboard reading method does not process MENU so we always have a chance to set the brightness correctly
-    if(PRGM_GetKey() == KEY_PRGM_EXIT) {
+    // attempt to fix a bug which will hang calc if flashLight is called right after turning on.
+    int key;
+    
+    if (prevlevel == 249) {
+      SetBacklightSubLevel_RAW(0);
+      prevlevel = 0;
+      if(!noDraw) {
+        Bdisp_Fill_VRAM( COLOR_BLACK, 3 );
+        DrawFrame( COLOR_BLACK );
+      }
+    } else {
+      SetBacklightSubLevel_RAW(249);
+      prevlevel = 249; 
+      if(!noDraw) {
+        Bdisp_Fill_VRAM( COLOR_WHITE, 3 ); 
+        DrawFrame( COLOR_WHITE );
+      }
+    }
+    GetKey(&key);
+    if(key == KEY_CTRL_EXIT) {
       SetBacklightSubLevel_RAW(initlevel);
       if(!noDraw) DrawFrame( COLOR_WHITE );
+      if(timer>0) {
+        Timer_Stop(timer);
+        Timer_Deinstall(timer);
+      }
+      SetGetkeyToMainFunctionReturnFlag(1); //Enable menu return
       return;
     }
-    if(!previousTicks || getMSdiff(previousTicks, RTC_GetTicks()) >= 500) {
-      if (prevlevel == 249) {
-        SetBacklightSubLevel_RAW(0);
-        prevlevel = 0;
-        if(!noDraw) {
-          Bdisp_Fill_VRAM( COLOR_BLACK, 3 );
-          DrawFrame( COLOR_BLACK );
-        }
-      } else {
-        SetBacklightSubLevel_RAW(249);
-        prevlevel = 249; 
-        if(!noDraw) {
-          Bdisp_Fill_VRAM( COLOR_WHITE, 3 ); 
-          DrawFrame( COLOR_WHITE );
-        }
-      }
-      previousTicks = RTC_GetTicks();
-    }
-    if(!noDraw) Bdisp_PutDisp_DD();
   }
 }
 
