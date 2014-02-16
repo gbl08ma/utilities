@@ -42,8 +42,9 @@ typedef struct
 
 void bubbleSortFileMenuArray(File* data, MenuItem* mdata, int size);
 int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count);
+int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count);
 void deleteFiles(File* files, Menu* menu);
-void nameFromFilename(char* filename, char* name);
+void nameFromFilename(char* filename, char* name, int max=MAX_NAME_SIZE);
 void copyFile(char* oldfilename, char* newfilename);
 void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard);
 

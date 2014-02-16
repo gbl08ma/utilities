@@ -65,8 +65,8 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || \
-      /*strcmp((char*)buffer, "@MainMem") == 0 ||*/ strcmp((char*)buffer, SELFFILE) == 0
+    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0
+      || strcmp((char*)buffer, SELFFILE) == 0
       || strcmp((char*)buffer, CALENDARFOLDER_NAME) == 0))
     {
       if(files != NULL) {
@@ -79,6 +79,7 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
           menuitems[*count].isfolder = 1;
           menuitems[*count].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
         } else {
+          files[*count].isfolder = 0;
           menuitems[*count].isfolder = 0;
           menuitems[*count].icon = fileIconFromName((char*)buffer);
         }
@@ -100,6 +101,91 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
   if(*count > 1 && files != NULL && menuitems != NULL) bubbleSortFileMenuArray(files, menuitems, *count);
   return GETFILES_SUCCESS;
 }
+
+char* SearchStringMatch(char* s1, char* s2, int matchCase) {
+  if(matchCase) return strstr(s1, s2);
+  else return strcasestr(s1, s2);
+}
+int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count) {
+  // searches storage memory for folders and files containing needle in the filename or contents, puts their count in int* count
+  // if File* files is NULL, function will only count search results.
+  // this function always returns status codes defined on fileProvider.hpp
+  // basepath should start with \\fls0\ and should always have a slash (\) at the end
+  unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
+  unsigned char buffer[MAX_FILENAME_SIZE+1];
+
+  // make the buffer
+  strcpy((char*)buffer, basepath);
+  strcat((char*)buffer, "*");
+  
+  *count = 0;
+  file_type_t fileinfo;
+  int findhandle;
+  Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
+  int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
+  while(!ret) {
+    Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
+    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0
+      || strcmp((char*)buffer, SELFFILE) == 0
+      || strcmp((char*)buffer, CALENDARFOLDER_NAME) == 0))
+    {
+      int match = 0;
+      if(searchOnFilename && NULL != SearchStringMatch((char*)buffer, needle, matchCase)) {
+        match = 1;
+      }
+      if(searchOnContents && !match) {
+        if(fileinfo.fsize == 0) {
+          //it's a folder
+        } else {
+          char filename[MAX_FILENAME_SIZE];
+          strcpy(filename, basepath);
+          strcat(filename, (char*)buffer);
+          unsigned short pFile[MAX_FILENAME_SIZE+1];
+          Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+          int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+          if(hFile >= 0) // Check if it opened
+          { //opened
+            unsigned char buf[1030] = ""; // initialize to zeros, and make sure it is a bit bigger than the amount
+            // of bytes we're going to read, so that the string is always null-terminated and can be safely
+            // passed to the string compare function.
+            int readsize = 0;
+            while(1) {
+              readsize = Bfile_ReadFile_OS(hFile, buf, 1024, -1);
+              if(!readsize) break;
+              if(NULL != SearchStringMatch((char*)buf, needle, matchCase)) {
+                match = 1;
+                break;
+              }
+            }
+            Bfile_CloseFile_OS(hFile);
+          }
+        }
+      }
+      if(match) {
+        if(files != NULL) {
+          strcpy(files[*count].filename, basepath); 
+          strcat(files[*count].filename, (char*)buffer);
+          files[*count].size = fileinfo.fsize;
+          if(fileinfo.fsize == 0) {
+            files[*count].isfolder = 1;
+            
+          } else {
+            files[*count].isfolder = 0;
+            
+          }
+        }
+        *count=*count+1;
+      }
+    }
+    if (*count-1==MAX_ITEMS_IN_DIR) {
+      Bfile_FindClose(findhandle);
+      return GETFILES_MAX_FILES_REACHED; // Don't find more files, the array is full. 
+    } else ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
+  }
+  Bfile_FindClose(findhandle);
+  return GETFILES_SUCCESS;
+}
+
 
 void deleteFiles(File* files, Menu* menu) {
   //files: the array (list) of files to perform operations in. NOT files to delete (this will only delete selected files)
@@ -124,12 +210,12 @@ void deleteFiles(File* files, Menu* menu) {
   }
 }
 
-void nameFromFilename(char* filename, char* name) {
+void nameFromFilename(char* filename, char* name, int max) {
   //this function takes a full filename like \\fls0\Folder\file.123
   //and puts file.123 in name.
   int i=strlen(filename)-1;
   while (i>=0 && filename[i] != '\\') i--;
-  strcpy(name, filename+i+1);
+  strncpy(name, filename+i+1, max);
 }
 
 void copyFile(char* oldfilename, char* newfilename) {

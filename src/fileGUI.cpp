@@ -406,7 +406,7 @@ void searchFilesGUI(char* browserbasepath) {
   int iresult;
   
   char needle[55] = "";
-  int searchOnFilename = 1, searchOnContents = 0, searchRecursively = 0;
+  int searchOnFilename = 1, searchOnContents = 0, searchRecursively = 0, matchCase = 0;
   textInput input;
   input.forcetext=1; //force text so title must be at least one char.
   input.charlimit=50;
@@ -419,13 +419,14 @@ void searchFilesGUI(char* browserbasepath) {
   menuitems[1].type = MENUITEM_CHECKBOX;
   strcpy(menuitems[2].text, "Recursively");
   menuitems[2].type = MENUITEM_CHECKBOX;
-  strcpy(menuitems[3].text, "Start searching");
+  strcpy(menuitems[3].text, "Match case");
+  menuitems[3].type = MENUITEM_CHECKBOX;
 
   Menu menu;
   menu.items=menuitems;
   menu.type=MENUTYPE_FKEYS;
   menu.numitems=4;
-  menu.height=5;
+  menu.height=4;
   menu.startY=4;
   menu.scrollbar=0;
   menu.scrollout=1;
@@ -447,16 +448,23 @@ void searchFilesGUI(char* browserbasepath) {
       curstep++;
     } else {
       mPrintXY(1, 3, (char*)needle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      while(1) {
+      GetFKeyPtr(0x036F, &iresult); // <
+      FKey_Display(0, (int*)iresult);
+      GetFKeyPtr(0x00A5, &iresult); // SEARCH (white)
+      FKey_Display(5, (int*)iresult);
+      int inloop=1;
+      while(inloop) {
         menuitems[0].value = searchOnFilename;
         menuitems[1].value = searchOnContents;
         menuitems[2].value = searchRecursively;
+        menuitems[3].value = matchCase;
         int res = doMenu(&menu);
         if(res == MENU_RETURN_EXIT) return;
         else if(res == KEY_CTRL_F1) {
           curstep--;
           break;
-        } else if(res == MENU_RETURN_SELECTION) {
+        } else if(res == KEY_CTRL_F6) inloop=0;
+        else if(res == MENU_RETURN_SELECTION) {
           switch(menu.selection) {
             case 1:
               menuitems[0].value = !menuitems[0].value;
@@ -473,12 +481,35 @@ void searchFilesGUI(char* browserbasepath) {
               searchRecursively = menuitems[2].value;
               break;
             case 4:
-              return;
+              menuitems[3].value = !menuitems[3].value;
+              matchCase = menuitems[3].value;
+              break;
           }
         }
       }
+      if(!inloop) break;
     }
   }
+  SearchForFiles(NULL, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
+  MenuItem* resitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
+  File* files = (File*)alloca(menu.numitems*sizeof(File));
+  if(menu.numitems) SearchForFiles(files, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
+  int curitem = 0;
+  while(curitem < menu.numitems) {
+    nameFromFilename(files[curitem].filename, resitems[curitem].text, 42);
+    resitems[curitem].type = MENUITEM_NORMAL;
+    resitems[curitem].color = COLOR_BLACK;
+    curitem++;
+  }
+  menu.height=7;
+  menu.selection = 1;
+  menu.startY=1;
+  strcpy(menu.nodatamsg, "No files found");
+  strcpy(menu.title, "Search results");
+  menu.showtitle = 1;
+  menu.scrollbar=1;
+  menu.items = resitems;
+  doMenu(&menu);
 }
 
 int fileInformation(File* file, int allowEdit) {
@@ -549,19 +580,19 @@ int fileInformation(File* file, int allowEdit) {
   elem[text.numelements].text = (char*)"bytes";
   text.numelements++;
   
-  doTextArea(&text);
-  int iresult;
-  GetFKeyPtr(0x03B1, &iresult); // OPEN
-  FKey_Display(0, (int*)iresult);
-  if(allowEdit) {
-    GetFKeyPtr(0x0185, &iresult); // EDIT
-    FKey_Display(1, (int*)iresult);
-  }
-  if(file->size>0) {
-    GetFKeyPtr(0x0371, &iresult); // CALC (white)
-    FKey_Display(5, (int*)iresult);
-  }
   while (1) {
+    doTextArea(&text);
+    int iresult;
+    GetFKeyPtr(0x03B1, &iresult); // OPEN
+    FKey_Display(0, (int*)iresult);
+    if(allowEdit) {
+      GetFKeyPtr(0x0185, &iresult); // EDIT
+      FKey_Display(1, (int*)iresult);
+    }
+    if(file->size>0) {
+      GetFKeyPtr(0x0371, &iresult); // CALC (white)
+      FKey_Display(5, (int*)iresult);
+    }
     int key;
     mGetKey(&key);
     switch(key) {
@@ -571,7 +602,6 @@ int fileInformation(File* file, int allowEdit) {
         break;
       case KEY_CTRL_F1:
         fileViewAsText(file->filename);
-        return 0;
         break;
       case KEY_CTRL_F2:
         if(allowEdit) {
