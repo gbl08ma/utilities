@@ -742,14 +742,13 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
     if(hasBusyMap) MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 0);
     
     int iresult;
+    if(!menu->numitems) menu->fkeypage = 0; //because if there are no events, 2nd menu is empty.
     if (menu->fkeypage == 0) {
-      if(menu->numitems>0) {
-        GetFKeyPtr(0x049F, &iresult); // VIEW
-        FKey_Display(0, (int*)iresult);
-      }
       GetFKeyPtr(0x03B4, &iresult); // INSERT
       FKey_Display(1, (int*)iresult);
       if(menu->numitems>0) {
+        GetFKeyPtr(0x049F, &iresult); // VIEW
+        FKey_Display(0, (int*)iresult);
         GetFKeyPtr(0x0185, &iresult); // EDIT
         FKey_Display(2, (int*)iresult);
         GetFKeyPtr(0x0038, &iresult); // DELETE
@@ -772,7 +771,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         }
         GetFKeyPtr(0x0470, &iresult); // MEMO
         FKey_Display(2, (int*)iresult);
-      } else { menu = 0; } //because if there are no events, 2nd menu is empty.
+      }
     }
     if(menu->numitems>0) {
       GetFKeyPtr(0x0006, &iresult); // Rotate FKey menu arrow
@@ -788,7 +787,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
       case KEY_CTRL_F1:
         if(menu->fkeypage == 0) { if(menu->numitems > 0) viewEvent(&events[menu->selection-1]); }
         else if (menu->fkeypage == 1) {
-          copyEvent(&events[menu->selection-1]);
+          moveEvent(events, menu->numitems, menu->selection-1, 1);
           bufmonth = 0; searchValid = 0;
           return 1;
         }
@@ -808,7 +807,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         } else if (menu->fkeypage == 1) {
           moveEvent(events, menu->numitems, menu->selection-1);
           bufmonth=0; searchValid = 0;
-          return 0;
+          return 1;
         }
         break;
       case KEY_CTRL_F3:
@@ -843,9 +842,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         }
         break;
       case KEY_CTRL_F6:
-        if (menu->fkeypage == 0) {
-          if(menu->numitems > 0) menu->fkeypage = 1;
-        } else menu->fkeypage = 0;
+        if(menu->numitems > 0) menu->fkeypage = !menu->fkeypage;
         break;
       case KEY_CTRL_FORMAT:
         if(menu->numitems > 0) {
@@ -1570,12 +1567,6 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
       } 
     }
   }
-}
-
-void copyEvent(CalendarEvent* event) {
-  CalendarEvent earray[1];
-  earray[0] = *event;
-  moveEvent(earray, 1, 0, 1);
 }
 
 void moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
