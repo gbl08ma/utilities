@@ -106,9 +106,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         // doesn't fit in the screen, so give up.
         break;
       }
-    } else {
-      break;
-    }
+    } else break;
   }
   menu.subtitle = friendlypath;
   menu.showsubtitle = 1;
@@ -161,9 +159,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           int i=strlen(browserbasepath)-2;
           while (i>=0 && browserbasepath[i] != '\\')
                   i--;
-          if (browserbasepath[i] == '\\') {
-            browserbasepath[i+1] = '\0';
-          }
+          if (browserbasepath[i] == '\\') browserbasepath[i+1] = '\0';
           return 1; //reload at new folder
         }
         break;
@@ -261,9 +257,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
                 bubbleSortFileMenuArray(files, menuitems, menu.numitems);
               }
             }
-          } else {
-            if(searchFilesGUI(browserbasepath)) return 1;
-          }
+          } else if(searchFilesGUI(browserbasepath)) return 1;
         }
         break;
       case KEY_CTRL_F4: {
@@ -529,9 +523,7 @@ int searchFilesGUI(char* browserbasepath) {
             strcpy(browserbasepath, files[menu.selection-1].filename);
             strcat(browserbasepath, "\\");
             return 1;
-          } else {
-            fileInformation(&files[menu.selection-1], 0);
-          }
+          } else fileInformation(&files[menu.selection-1], 0);
         }
         break;
       case KEY_CTRL_F2:
