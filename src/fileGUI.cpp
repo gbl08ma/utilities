@@ -42,15 +42,21 @@ void fileManager() {
     }
   }
 }
-
-void fillMenuStatusWithClip(Menu* menu, int itemsinclip, int ismanager) {
-  char titleBuffer[30];
-  strcpy((char*)menu->statusText, "Clipboard: ");
-  itoa(itemsinclip, (unsigned char*)titleBuffer);
-  strcat((char*)menu->statusText, titleBuffer);
-  strcat((char*)menu->statusText, (itemsinclip == 1 ? " item" : " items"));
-  if(!ismanager) {
-    strcat((char*)menu->statusText, ", Shift\xe6\x91""9=Paste");
+int smemfree = 0;
+void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager) {
+  char titleBuffer[88] = "";
+  if(!itemsinclip) {
+    itoa(smemfree, (unsigned char*)title);
+    LocalizeMessage1( 340, titleBuffer ); //"bytes free"
+    strncat((char*)title, (char*)titleBuffer, 65);
+  } else {
+    strcpy((char*)title, "Clipboard: ");
+    itoa(itemsinclip, (unsigned char*)titleBuffer);
+    strcat((char*)title, titleBuffer);
+    strcat((char*)title, (itemsinclip == 1 ? " item" : " items"));
+    if(!ismanager) {
+      strcat((char*)title, ", Shift\xe6\x91""9=Paste");
+    }
   }
 }
 
@@ -81,7 +87,6 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
     menu.items = menuitems;
   }
   
-  int smemfree = 0;
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
   
@@ -119,14 +124,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   menu.useStatusText=1;
   while(1) {
     Bdisp_AllClr_VRAM();
-    if(*itemsinclip==0) {
-      char titleBuffer[88] = "";
-      itoa(smemfree, (unsigned char*)menu.statusText);
-      LocalizeMessage1( 340, titleBuffer ); //"bytes free"
-      strncat((char*)menu.statusText, (char*)titleBuffer, 65);
-    } else {
-      fillMenuStatusWithClip(&menu, *itemsinclip, 0);
-    }
+    fillMenuStatusWithClip((char*)menu.statusText, *itemsinclip, 0);
     if(menu.fkeypage == 0) {
       int iresult;
       if(menu.numitems>0) {
@@ -179,7 +177,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           }
           return 1; //reload at new folder
         } else {
-          if(1 == fileInformation(&files[menu.selection-1])) {
+          if(1 == fileInformation(&files[menu.selection-1], 1, *itemsinclip)) {
             // user wants to edit the file
             strcpy(filetoedit, files[menu.selection-1].filename);
             return 1;
@@ -257,7 +255,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
                 bubbleSortFileMenuArray(files, menuitems, menu.numitems);
               }
             }
-          } else if(searchFilesGUI(browserbasepath)) return 1;
+          } else if(searchFilesGUI(browserbasepath, *itemsinclip)) return 1;
         }
         break;
       case KEY_CTRL_F4: {
@@ -393,7 +391,7 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   return 0;
 }
 
-int searchFilesGUI(char* browserbasepath) {
+int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   // returns 1 when it wants the caller to jump to browserbasepath
   // returns 0 otherwise.
   int iresult;
@@ -523,7 +521,7 @@ int searchFilesGUI(char* browserbasepath) {
             strcpy(browserbasepath, files[menu.selection-1].filename);
             strcat(browserbasepath, "\\");
             return 1;
-          } else fileInformation(&files[menu.selection-1], 0);
+          } else fileInformation(&files[menu.selection-1], 0, itemsinclip);
         }
         break;
       case KEY_CTRL_F2:
@@ -545,7 +543,7 @@ int searchFilesGUI(char* browserbasepath) {
   }
 }
 
-int fileInformation(File* file, int allowEdit) {
+int fileInformation(File* file, int allowEdit, int itemsinclip) {
   // returns 0 if user exits.
   // returns 1 if user wants to edit the file  
   textArea text;
@@ -614,6 +612,9 @@ int fileInformation(File* file, int allowEdit) {
   text.numelements++;
   
   while (1) {
+    char statusText[100];
+    fillMenuStatusWithClip((char*)statusText, itemsinclip, 0);
+    DefineStatusMessage((char*)statusText, 1, 0, 0);
     doTextArea(&text);
     int iresult;
     GetFKeyPtr(0x03B1, &iresult); // OPEN
@@ -821,7 +822,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     menu.showtitle=1;
     menu.subtitle = (char*)"Black=cut, Red=copy";
     menu.showsubtitle=1;
-    fillMenuStatusWithClip(&menu, *itemsinclip, 1);
+    fillMenuStatusWithClip((char*)menu.statusText, *itemsinclip, 1);
     menu.useStatusText = 1;
     menu.items = menuitems;
     int curitem = 0;
@@ -844,7 +845,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     int res = doMenu(&menu);
     switch(res) {
       case MENU_RETURN_SELECTION:
-        if(!clipboard[menu.selection-1].isfolder) fileInformation(&clipboard[menu.selection-1], 0);
+        if(!clipboard[menu.selection-1].isfolder) fileInformation(&clipboard[menu.selection-1], 0, *itemsinclip);
         break;
       case KEY_CTRL_F1:
         *itemsinclip = 0;

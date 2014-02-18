@@ -23,8 +23,8 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
 int deleteFilesGUI(File* files, Menu* menu);
 int makeFolderGUI(char* browserbasepath);
 int renameFileGUI(File* files, Menu* menu, char* browserbasepath);
-int searchFilesGUI(char* browserbasepath);
-int fileInformation(File* file, int allowEdit=1);
+int searchFilesGUI(char* browserbasepath, int itemsinclip);
+int fileInformation(File* file, int allowEdit, int itemsinclip);
 void fileViewAsText(char* filename);
 void viewFilesInClipboard(File* clipboard, int *itemsinclip);
 void showCopyFolderWarning();
