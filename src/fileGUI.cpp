@@ -706,9 +706,17 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   { //opened
     filesize = Bfile_GetFileSize_OS(hFile);
     if(!(filesize && filesize < MAX_TEXTVIEWER_FILESIZE)) filesize = MAX_TEXTVIEWER_FILESIZE;
-    asrc = (unsigned char*)alloca(filesize*sizeof(unsigned char));
-    Bfile_ReadFile_OS(hFile, asrc, filesize, 0);
-    Bfile_CloseFile_OS(hFile);
+    // check if there's enough stack to proceed:
+    if(0x881E0000 - (int)GetStackPtr() < 500000 - filesize*sizeof(unsigned char) - 30000) {
+      asrc = (unsigned char*)alloca(filesize*sizeof(unsigned char));
+      Bfile_ReadFile_OS(hFile, asrc, filesize, 0);
+      Bfile_CloseFile_OS(hFile);
+    } else {
+      // there's not enough stack to put the file in RAM, so just return.
+      // this can happen when opening a file from the search results
+      Bfile_CloseFile_OS(hFile);
+      return;
+    }
   } else {
     //Error opening file, abort
     mMsgBoxPush(4);
