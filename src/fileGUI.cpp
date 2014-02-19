@@ -613,7 +613,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
   
   while (1) {
     char statusText[100];
-    fillMenuStatusWithClip((char*)statusText, itemsinclip, 0);
+    fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
     DefineStatusMessage((char*)statusText, 1, 0, 0);
     doTextArea(&text);
     int iresult;
@@ -865,9 +865,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
           if (menu.selection-1 >= *itemsinclip) {} // safety check
           else
           {
-            int k;
-            for (k = menu.selection-1; k < *itemsinclip - 1; k++)
-            {
+            for (int k = menu.selection-1; k < *itemsinclip - 1; k++) {
               menuitems[k] = menuitems[k+1];
               clipboard[k] = clipboard[k+1];
             }
