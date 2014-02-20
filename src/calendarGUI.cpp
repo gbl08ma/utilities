@@ -177,7 +177,11 @@ int viewMonthCalendar(int dateselection) {
         }
         break;       
       case KEY_CTRL_F6:
-        if (menu == 2) { if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"Jump to specific date", (char*)"")) { y=ny;m=nm;d=nd; } } //only update calendar if selection was clean
+        if (menu == 2) {
+          DefineStatusMessage((char*)"", 1, 0, 0);
+          //only update calendar if selection is clean
+          if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"Jump to specific date", (char*)"")) { y=ny;m=nm;d=nd; }
+        }
         else if (menu == 1 && !dateselection) {
           sy = y;
           sm = m;
@@ -639,6 +643,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
           return 2;
         } else if (menu->fkeypage == 1) {
           int ny=0,nm=0,nd=0;
+          DefineStatusMessage((char*)"", 1, 0, 0);
           if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"Jump to specific date", (char*)"")) {
             *y=ny;*m=nm;*d=nd;
             *jumpToSel=1; //if user inserted a specific day, it makes sense to display that day without scrolling.
@@ -1713,6 +1718,9 @@ void searchEventsGUI(int y, int m, int d) {
   smallmenu.startY=2;
   smallmenu.scrollbar=0;
   smallmenu.showtitle=1;
+  // clear "press OPTN..." message
+  strcpy(smallmenu.statusText, "");
+  smallmenu.useStatusText=1;
   strcpy(smallmenu.title, "Search on:");
   int sres = doMenu(&smallmenu);
   mMsgBoxPop();
