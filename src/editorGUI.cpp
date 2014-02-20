@@ -24,14 +24,9 @@
 #include "fileProvider.hpp"
 
 void fileTextEditor(char* filename, char* basefolder) {
-  Bdisp_AllClr_VRAM();
-  mPrintXY(1, 1, (char*)"Text Editor", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  mPrintXY(1, 2, (char*)"File contents:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  int newfile = (filename == NULL);
   char sText[TEXT_BUFFER_SIZE] = "";
-  int newfile;
-  if(filename == NULL) {
-    newfile = 1;
-  } else {
+  if(!newfile) {
     newfile = 0;
     int openerror = 0;
     unsigned short pFile[MAX_FILENAME_SIZE];
@@ -65,13 +60,17 @@ void fileTextEditor(char* filename, char* basefolder) {
   input.buffer = (char*)sText;
   while(1) {
     input.key=0;
-    clearLine(1,2);
+    SetBackGround(newfile ? 10 : 6);
+    clearLine(1,8);
+    mPrintXY(1, 1, (char*)"Text Editor", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     mPrintXY(1, 2, (char*)"File contents:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    clearLine(1,3);
     int res = doTextInput(&input);
     if (res==INPUT_RETURN_EXIT) return; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
       if(newfile) {
-        clearLine(1,2);
+        SetBackGround(10);
+        mPrintXY(1, 1, (char*)"Text Editor", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
         mPrintXY(1, 2, (char*)"Save file as:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         textInput ninput;
         ninput.forcetext=1;

@@ -331,7 +331,9 @@ int makeFolderGUI(char* browserbasepath) {
   //browserbasepath: folder we're working at
   //reload the files array after using this function!
   //returns 1 if user aborts, 0 if makes folder.
-  Bdisp_AllClr_VRAM();
+  SetBackGround(10);
+  clearLine(1,8);
+  clearLine(1,3); // clear background at end of input
   mPrintXY(1, 1, (char*)"Create folder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   mPrintXY(1, 2, (char*)"Name:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   char newname[MAX_NAME_SIZE] = "";
@@ -360,7 +362,9 @@ int makeFolderGUI(char* browserbasepath) {
 int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   //reload the files array after using this function!
   //returns 0 if user aborts, 1 if renames.
-  Bdisp_AllClr_VRAM();
+  SetBackGround(6);
+  clearLine(1,8);
+  clearLine(1,3); // clear background at end of input
   mPrintXY(1, 1, (char*)"Rename item", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   char title[MAX_NAME_SIZE+6];
   strcpy(title, (char*)menu->items[menu->selection-1].text);
