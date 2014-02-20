@@ -18,7 +18,7 @@
 #include "menuGUI.hpp"
 
 void fileManager();
-void fillMenuStatusWithClip(Menu* menu, int itemsinclip, int ismanager);
+void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager);
 int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard, char* filetoedit);
 int deleteFilesGUI(File* files, Menu* menu);
 int makeFolderGUI(char* browserbasepath);

@@ -394,6 +394,10 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
 int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   // returns 1 when it wants the caller to jump to browserbasepath
   // returns 0 otherwise.
+  char statusText[100];
+  fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
+  DefineStatusMessage((char*)statusText, 1, 0, 0);
+
   int iresult;
   
   char needle[55] = "";
@@ -421,13 +425,15 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   menu.startY=4;
   menu.scrollbar=0;
   menu.scrollout=1;
-
+  menu.pBaRtR=1;
   int curstep = 0;
   while(1) {
-    Bdisp_AllClr_VRAM();
-    mPrintXY(1, 1, (char*)"File Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-    mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     if(curstep == 0) {
+      SetBackGround(9);
+      clearLine(1,8);
+      mPrintXY(1, 1, (char*)"File Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+      mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
       GetFKeyPtr(0x04A3, &iresult); // Next
       FKey_Display(5, (int*)iresult);
       while(1) {
@@ -438,13 +444,18 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
       }
       curstep++;
     } else {
-      mPrintXY(1, 3, (char*)needle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      GetFKeyPtr(0x036F, &iresult); // <
-      FKey_Display(0, (int*)iresult);
-      GetFKeyPtr(0x00A5, &iresult); // SEARCH (white)
-      FKey_Display(5, (int*)iresult);
       int inloop=1;
       while(inloop) {
+        // this must be here, inside this loop:
+        SetBackGround(9);
+        clearLine(1,8);
+        mPrintXY(1, 1, (char*)"File Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+        mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(1, 3, (char*)needle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        GetFKeyPtr(0x036F, &iresult); // <
+        FKey_Display(0, (int*)iresult);
+        GetFKeyPtr(0x00A5, &iresult); // SEARCH (white)
+        FKey_Display(5, (int*)iresult);
         menuitems[0].value = searchOnFilename;
         menuitems[1].value = searchOnContents;
         menuitems[2].value = searchRecursively;
@@ -496,6 +507,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   menu.height=7;
   menu.selection = 1;
   menu.startY=1;
+  menu.pBaRtR=0;
   strcpy(menu.nodatamsg, "No files found");
   strcpy(menu.title, "Search results");
   menu.showtitle = 1;
@@ -861,16 +873,13 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
         return;
         break;
       case KEY_CTRL_F2:
-        {
-          if (menu.selection-1 >= *itemsinclip) {} // safety check
-          else
-          {
-            for (int k = menu.selection-1; k < *itemsinclip - 1; k++) {
-              menuitems[k] = menuitems[k+1];
-              clipboard[k] = clipboard[k+1];
-            }
-            *itemsinclip = *itemsinclip - 1;
+        if (menu.selection-1 >= *itemsinclip) {} // safety check
+        else {
+          for (int k = menu.selection-1; k < *itemsinclip - 1; k++) {
+            menuitems[k] = menuitems[k+1];
+            clipboard[k] = clipboard[k+1];
           }
+          *itemsinclip = *itemsinclip - 1;
         }
         break;
       case KEY_CTRL_F3:

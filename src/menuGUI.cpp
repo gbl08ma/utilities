@@ -34,7 +34,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
   while(1) {
     if(menu->useStatusText) DefineStatusMessage((char*)menu->statusText, 1, 0, 0);
     // Clear the area of the screen we are going to draw on
-    drawRectangle(18*(menu->startX-1), 24*(menu->miniMiniTitle ? itemsStartY:menu->startY), 18*menu->width, 24*menu->height-(menu->miniMiniTitle ? 24:0), COLOR_WHITE);
+    if(0 == menu->pBaRtR) drawRectangle(18*(menu->startX-1), 24*(menu->miniMiniTitle ? itemsStartY:menu->startY), 18*menu->width, 24*menu->height-(menu->miniMiniTitle ? 24:0), COLOR_WHITE);
     if (menu->numitems>0) {
       for(int curitem=0; curitem < menu->numitems; curitem++) {
         // print the menu item only when appropriate
@@ -47,7 +47,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
             // MB_ElementCount is used instead of strlen because multibyte chars count as two with strlen, while graphically they are just one char, making fillerRequired become wrong
             int fillerRequired = menu->width - MB_ElementCount(menu->items[curitem].text) - (menu->type == MENUTYPE_MULTISELECT ? 2 : 0);
             for(int i = 0; i < fillerRequired; i++) strcat(menuitem, " ");
-            mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)menuitem, (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
+            mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)menuitem, (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), menu->items[curitem].color);
           } else {
             int textX = (menu->startX-1) * 18;
             int textY = curitem*24+itemsStartY*24-menu->scroll*24-24+6;
@@ -59,7 +59,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           if(menu->items[curitem].type == MENUITEM_CHECKBOX) {
             mPrintXY(menu->startX+menu->width-1,curitem+itemsStartY-menu->scroll,
               (menu->items[curitem].value == MENUITEM_VALUE_CHECKED ? (char*)"\xe6\xa9" : (char*)"\xe6\xa5"),
-              (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_NORMAL), menu->items[curitem].color);
+              (menu->selection == curitem+1 ? TEXT_MODE_INVERT : (menu->pBaRtR == 1? TEXT_MODE_TRANSPARENT_BACKGROUND : TEXT_MODE_NORMAL)), menu->items[curitem].color);
           }
           // deal with multiselect menus
           if(menu->type == MENUTYPE_MULTISELECT) {
@@ -141,6 +141,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           if(menu->selection > menu->scroll+(menu->numitems>itemsHeight ? itemsHeight : menu->numitems))
             menu->scroll = menu->selection -(menu->numitems>itemsHeight ? itemsHeight : menu->numitems);
         }
+        if(menu->pBaRtR==1) return MENU_RETURN_INSTANT;
         break;
       case KEY_CTRL_UP:
         if(menu->selection == 1)
@@ -158,6 +159,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           if(menu->selection-1 < menu->scroll)
             menu->scroll = menu->selection -1;
         }
+        if(menu->pBaRtR==1) return MENU_RETURN_INSTANT;
         break;
       case KEY_CTRL_F1:
         if(menu->type==MENUTYPE_MULTISELECT && menu->fkeypage == 0 && menu->numitems > 0) {
