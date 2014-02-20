@@ -55,6 +55,9 @@ unsigned int bcd_to_2digit(unsigned char* bcd) {
 int getMonthDays(int month) {
   return monthDays[month-1]; 
 }
+int getMonthDaysWithLeap(int month, int year) {
+  return monthDays[month-1] + ((month == 2 && isLeap(year)) ? 1 : 0);
+}
 const char* getCurrentDOWAsString()
 {
     return dayofweek[(*RWKCNT & 0b111)];
@@ -93,10 +96,7 @@ int dow(int y, int m, int d)
 int getDayOfYear(int y, int m, int d) {
   // year must be provided because of leap years
   int days = 0;
-  for(int i = 1; i<m; i++) {
-    if(i!=2) days+=getMonthDays(i);
-    else days+=(isLeap(y)? 29 : 28);
-  }
+  for(int i = 1; i<m; i++) getMonthDaysWithLeap(i, y);
   return days+d;
 }
 int getWeekNumber(int y, int m, int d) {
@@ -344,7 +344,7 @@ int isTimeValid(int h, int m, int s) {
 
 int isDateValid(int y, int m, int d) {
   if(y<=0 || y>9999) return 0; // otherwise we will have problems with calendar events and the like
-  if (m > 12 || m <= 0 || d > ( m==2? (isLeap(y)? 29 : 28) : getMonthDays(m))) return 0;
+  if (m > 12 || m <= 0 || d > getMonthDaysWithLeap(m, y)) return 0;
   else return 1;
 }
 

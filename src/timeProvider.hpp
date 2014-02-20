@@ -29,6 +29,7 @@
 #define RCR2 (unsigned char*)0xA413FEDE
 
 int getMonthDays(int month);
+int getMonthDaysWithLeap(int month, int year);
 const char* getCurrentDOWAsString();
 const char* getCurrentDOWAsShortString();
 const char* getCurrentMonthAsString();

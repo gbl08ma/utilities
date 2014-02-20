@@ -325,7 +325,7 @@ void setDateGUI(int canExit) {
     strcpy(day.subtitle, "Day");
     day.value = getCurrentDay();
     day.min = 1;
-    day.max = ( month.value==2? (isLeap(year.value)? 29 : 28) : getMonthDays(month.value));
+    day.max = getMonthDaysWithLeap(month.value, year.value);
     int res = doSelector(&day);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
     if (res == SELECTOR_RETURN_SELECTION) break;

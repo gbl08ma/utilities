@@ -202,14 +202,14 @@ int viewMonthCalendar(int dateselection) {
                 m = 12;
                 y--;
             }
-            d = getMonthDays(m) + d + ((m == 2 && isLeap(y)) ? 1 : 0);
+            d += getMonthDaysWithLeap(m, y);
         }
         break;
       case KEY_CTRL_DOWN:
         d+=7;
-        if (d > getMonthDays(m) + ((m == 2 && isLeap(y)) ? 1 : 0))
+        if (d > getMonthDaysWithLeap(m, y))
         {
-            d = d - getMonthDays(m) - ((m == 2 && isLeap(y)) ? 1 : 0);
+            d -= getMonthDaysWithLeap(m, y);
             m++;
             if (m == 13)
             {
@@ -228,12 +228,12 @@ int viewMonthCalendar(int dateselection) {
                 m = 12;
                 y--;
             }
-            d = getMonthDays(m)+((m == 2 && isLeap(y)) ? 1 : 0);
+            d = getMonthDaysWithLeap(m, y);
         }
         break;
       case KEY_CTRL_RIGHT:
         d++;
-        if (d > getMonthDays(m) + ((m == 2 && isLeap(y)) ? 1 : 0))
+        if (d > getMonthDaysWithLeap(m, y))
         {
             d = 1;
             m++;
@@ -259,10 +259,7 @@ int viewMonthCalendar(int dateselection) {
         break;
     }
     if (menu == 2) {
-      if (d > getMonthDays(m) + ((m == 2 && isLeap(y)) ? 1 : 0))
-      {
-          d = getMonthDays(m) +((m == 2 && isLeap(y)) ? 1 : 0);
-      }
+      if (d > getMonthDaysWithLeap(m, y)) d = getMonthDaysWithLeap(m, y);
     } 
   }
   return 0;
@@ -1404,7 +1401,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   }
   x = startingday;
   y = 2;
-  while (day <= getMonthDays(month) + (month == 2 && isLeap(year)) ? 1 : 0)
+  while (day <= getMonthDaysWithLeap(month, year))
   {
       itoa(day,(unsigned char*)buffer);
       if (day == d) {
