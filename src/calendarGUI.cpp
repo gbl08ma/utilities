@@ -1720,11 +1720,13 @@ void searchEventsGUI(int y, int m, int d) {
   if(sres != MENU_RETURN_SELECTION) return;
   char needle[55] = "";
   
-  Bdisp_AllClr_VRAM();
+  SetBackGround(9);
+  clearLine(1,8);
+  clearLine(1,3);
   mPrintXY(1, 1, (char*)"Event Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   int iresult;
-  GetFKeyPtr(0x04A3, &iresult); // Next
+  GetFKeyPtr(0x00A5, &iresult); // SEARCH (white)
   FKey_Display(5, (int*)iresult);
   
   textInput input;
