@@ -176,8 +176,7 @@ void showHome(chronometer* chrono) {
 }
 
 inline void powerMenu() {
-  drawFkeyPopup(0, GetSetting(SETTING_THEME), 1);
-  mPrintXY(2, 2, (char*)"Power options", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  drawFkeyPopup(0, GetSetting(SETTING_THEME), (char*)"Power options");
   
   MenuItem menuitems[5];
   strcpy(menuitems[0].text, "Auto power off");
@@ -226,8 +225,7 @@ inline void powerMenu() {
 }
 
 inline void lightMenu() {
-  drawFkeyPopup(1, GetSetting(SETTING_THEME), 1);
-  mPrintXY(2, 2, (char*)"Light tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  drawFkeyPopup(1, GetSetting(SETTING_THEME), (char*)"Light tools");
   
   MenuItem menuitems[5];
   strcpy(menuitems[0].text, "Lantern");  
@@ -270,8 +268,7 @@ inline void lightMenu() {
 }
 
 inline void timeMenu(chronometer* chrono) {
-  drawFkeyPopup(2, GetSetting(SETTING_THEME), 1);
-  mPrintXY(2, 2, (char*)"Time tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  drawFkeyPopup(2, GetSetting(SETTING_THEME), (char*)"Time tools");
   
   MenuItem menuitems[5];
   strcpy(menuitems[0].text, "Calendar");
@@ -313,8 +310,7 @@ inline void timeMenu(chronometer* chrono) {
 }
 
 inline void toolsMenu() {
-  drawFkeyPopup(3, GetSetting(SETTING_THEME), 1);
-  mPrintXY(2, 2, (char*)"Tools", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  drawFkeyPopup(3, GetSetting(SETTING_THEME), (char*)"Tools");
   
   MenuItem menuitems[6];
   strcpy(menuitems[0].text, "File manager");

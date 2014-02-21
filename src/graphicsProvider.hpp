@@ -24,7 +24,7 @@ void VRAMInvertArea(short x, short y, short width, short height);
 void darkenStatusbar();
 void darkenFkeys(int numkeys);
 void drawArrowDown(int bottomX, int bottomY, int color);
-void drawFkeyPopup(int Fkey, int darktheme, int showclosemessage);
+void drawFkeyPopup(int Fkey, int darktheme, char* title);
 //void CopySprite(const void* datar, int x, int y, int width, int height);
 void CopySpriteMasked(unsigned short* data, int x, int y, int width, int height, unsigned short maskcolor);
 void CopySpriteNbit(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, unsigned int bitwidth);
