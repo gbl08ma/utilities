@@ -35,12 +35,11 @@
 #include "editorGUI.hpp"
 #include "debugGUI.hpp"
 
-int pane_keycache = 0; // TODO: see if it's possible not to have this being a global var
-
 void showHome(chronometer* chrono) {
   unsigned short key = 0;
   unsigned short prevkey = 0;
   int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
+  int pane_keycache = 0;
   while (1) {
     //black theme, or not?
     if (GetSetting(SETTING_THEME) == 1) {
@@ -132,16 +131,16 @@ void showHome(chronometer* chrono) {
           }
           break;
         case KEY_PRGM_F1:
-          powerMenu();
+          powerMenu(&pane_keycache);
           break;
         case KEY_PRGM_F2:
-          lightMenu();
+          lightMenu(&pane_keycache);
           break;
         case KEY_PRGM_F3:
-          timeMenu(chrono);
+          timeMenu(chrono, &pane_keycache);
           break;
         case KEY_PRGM_F4:
-          toolsMenu();
+          toolsMenu(&pane_keycache);
           break;
         case KEY_PRGM_RETURN:
           if(!GetSetting(SETTING_LOCK_ON_EXE)) break;
@@ -164,7 +163,7 @@ void showHome(chronometer* chrono) {
           }
           break;
         case KEY_PRGM_RIGHT:
-          if(GetSetting(SETTING_HOME_PANES)) eventsPane();
+          if(GetSetting(SETTING_HOME_PANES)) eventsPane(&pane_keycache);
           break;
         case 76: //x-0-theta key
           currentTimeToBasicVar();
@@ -175,7 +174,7 @@ void showHome(chronometer* chrono) {
   }
 }
 
-inline void powerMenu() {
+inline void powerMenu(int* pane_keycache) {
   drawFkeyPopup(0, GetSetting(SETTING_THEME), (char*)"Power options");
   
   MenuItem menuitems[5];
@@ -217,14 +216,14 @@ inline void powerMenu() {
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
       case KEY_CTRL_F4:
-        pane_keycache = res;
+        *pane_keycache = res;
       case MENU_RETURN_EXIT:
         return;
     }
   }
 }
 
-inline void lightMenu() {
+inline void lightMenu(int* pane_keycache) {
   drawFkeyPopup(1, GetSetting(SETTING_THEME), (char*)"Light tools");
   
   MenuItem menuitems[5];
@@ -260,14 +259,14 @@ inline void lightMenu() {
       case KEY_CTRL_F1:
       case KEY_CTRL_F3:
       case KEY_CTRL_F4:
-        pane_keycache = res;
+        *pane_keycache = res;
       case MENU_RETURN_EXIT:
         return;
     }
   }
 }
 
-inline void timeMenu(chronometer* chrono) {
+inline void timeMenu(chronometer* chrono, int* pane_keycache) {
   drawFkeyPopup(2, GetSetting(SETTING_THEME), (char*)"Time tools");
   
   MenuItem menuitems[5];
@@ -302,14 +301,14 @@ inline void timeMenu(chronometer* chrono) {
       case KEY_CTRL_F1:
       case KEY_CTRL_F2:
       case KEY_CTRL_F4:
-        pane_keycache = res;
+        *pane_keycache = res;
       case MENU_RETURN_EXIT:
         return;
     }
   }
 }
 
-inline void toolsMenu() {
+inline void toolsMenu(int* pane_keycache) {
   drawFkeyPopup(3, GetSetting(SETTING_THEME), (char*)"Tools");
   
   MenuItem menuitems[6];
@@ -347,7 +346,7 @@ inline void toolsMenu() {
       case KEY_CTRL_F1:
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
-        pane_keycache = res;
+        *pane_keycache = res;
       case MENU_RETURN_EXIT:
         return;
     }
@@ -390,7 +389,7 @@ inline void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int start
     PrintMini(&textX, &textY, (unsigned char*)"  No events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
   } 
 }
-void eventsPane() {
+void eventsPane(int* pane_keycache) {
   int key;
   EventDate thisday;
   const int eventsToDisplayInFull=6;
@@ -427,7 +426,7 @@ void eventsPane() {
       case KEY_CTRL_F3:
       case KEY_CTRL_F4:
       case KEY_CTRL_F5:
-        pane_keycache = key;
+        *pane_keycache = key;
         return; //exit to main pane
       case KEY_CTRL_LEFT:
       case KEY_CTRL_EXIT:

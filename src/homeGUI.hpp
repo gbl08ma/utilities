@@ -17,10 +17,10 @@
 #include "chronoProvider.hpp"
 
 void showHome(chronometer* chrono);
-inline void powerMenu();
-inline void lightMenu();
-inline void timeMenu(chronometer* chrono);
-inline void toolsMenu();
-void eventsPane();
+inline void powerMenu(int* pane_keycache);
+inline void lightMenu(int* pane_keycache);
+inline void timeMenu(chronometer* chrono, int* pane_keycache);
+inline void toolsMenu(int* pane_keycache);
+void eventsPane(int* pane_keycache);
 
 #endif
