@@ -2097,9 +2097,7 @@ void repairCalendarDatabase() {
   unsigned char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy((char*)buffer, CALENDARFOLDER);
-  strcat((char*)buffer, "\\");
-  strcat((char*)buffer, "*.pce");
+  strcpy((char*)buffer, CALENDARFOLDER"\\*.pce");
   
   file_type_t fileinfo;
   int findhandle;
@@ -2212,9 +2210,7 @@ void trimCalendarDatabase() {
     unsigned char buffer[MAX_FILENAME_SIZE+1];
 
     // make the buffer
-    strcpy((char*)buffer, CALENDARFOLDER);
-    strcat((char*)buffer, "\\");
-    strcat((char*)buffer, "*.pce");
+    strcpy((char*)buffer, CALENDARFOLDER"\\*.pce");
     
     file_type_t fileinfo;
     int findhandle;
@@ -2280,8 +2276,7 @@ void trimCalendarDatabase() {
         }
         if(deleteThisFile) {
           unsigned char delfname[MAX_FILENAME_SIZE+1];
-          strcpy((char*)delfname, CALENDARFOLDER);
-          strcat((char*)delfname, "\\");
+          strcpy((char*)delfname, CALENDARFOLDER"\\");
           strcat((char*)delfname, (char*)buffer);
           unsigned short path2[MAX_FILENAME_SIZE+1];
           Bfile_StrToName_ncpy(path2, delfname, MAX_FILENAME_SIZE+1);
@@ -2304,9 +2299,8 @@ void trimCalendarDatabase() {
 int importHelper(EventDate* date, int count, textArea* text, textElement* elem, int initSuc) {
   CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
   GetEventsForDate(date, CALENDARFOLDER, events);
-  int curitem = 0;
   int successful = initSuc;
-  while(curitem < count) {
+  for(int curitem = 0; curitem < count; curitem++) {
     char buffer1[20] = "";
     itoa((int)successful, (unsigned char*)buffer1);
     elem[2].text = buffer1;
@@ -2314,7 +2308,6 @@ int importHelper(EventDate* date, int count, textArea* text, textElement* elem, 
     Bdisp_PutDisp_DD();
     // add the event. this will automatically put it in the correct file in the database.
     if(!AddEvent(&events[curitem], CALENDARFOLDER)) successful++;
-    curitem++;
   }
   return successful;
 }

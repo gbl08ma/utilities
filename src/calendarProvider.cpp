@@ -405,8 +405,7 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   unsigned char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy((char*)buffer, CALENDARFOLDER);
-  strcat((char*)buffer, "\\");
+  strcpy((char*)buffer, CALENDARFOLDER"\\");
   char smallbuf[5] = "";
   itoa(year, (unsigned char*)smallbuf);
   strcat((char*)buffer, smallbuf);
