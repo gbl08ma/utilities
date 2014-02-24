@@ -444,19 +444,9 @@ void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resC
   daynumevents = GetEventsForDate(date, folder, dayEvents);
   int curitem = 0;
   while(curitem < daynumevents) {
-    int match = 0;
-    if(NULL != strcasestr((char*)dayEvents[curitem].title, needle)) {
-      match = 1;
-    } else {
-      if(NULL != strcasestr((char*)dayEvents[curitem].location, needle)) {
-        match = 1;
-      } else {
-        if(NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
-          match = 1;
-        }
-      }
-    }
-    if(match) {
+    if(NULL != strcasestr((char*)dayEvents[curitem].title, needle) || \
+      NULL != strcasestr((char*)dayEvents[curitem].location, needle) || \
+      NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
       if(calEvents != NULL) {
         strcpy((char*)calEvents[*curfpos].title, (char*)dayEvents[curitem].title);
         calEvents[*curfpos].startdate = *date;
@@ -618,7 +608,7 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
     // there should be 19 field separators per event.
     // each event has a field separator in the end, even if it is the last event on file
     // so dividing the total amount of field separators by the total amount of event separators should return 19.
-    if(fieldsep/eventsep != 19 || !fieldsep || !eventsep) {
+    if(!fieldsep || !eventsep || fieldsep/eventsep != 19) {
       // file corrupt / invalid format, delete it.
       Bfile_DeleteEntry(pFile);
       *problemsfound = *problemsfound + 1;
