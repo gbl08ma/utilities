@@ -828,36 +828,27 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         }
         break;
       case KEY_CTRL_F4:
-        if(menu->fkeypage == 0) {
-          if(menu->numitems > 0) {
-            if(EVENTDELETE_RETURN_CONFIRM == deleteEventUI(y, m, d, events, menu->numitems, menu->selection-1)) {
-              bufmonth=0; searchValid = 0; return 1;
-            }
-          }
-        }
-        break;
       case KEY_CTRL_F5:
-        if(menu->fkeypage == 0) {
-          if(menu->numitems > 0) {
-            if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventUI(y, m, d, 0)) {
-              bufmonth=0; searchValid = 0; return 1;
-            }
+        if(menu->fkeypage == 0 && menu->numitems > 0) {
+          if(EVENTDELETE_RETURN_CONFIRM == \
+            (res == KEY_CTRL_F4 ? deleteEventUI(y, m, d, events, menu->numitems, menu->selection-1) : deleteAllEventUI(y, m, d, 0))) {
+            bufmonth = 0; searchValid = 0; return 1;
           }
         }
         break;
-      case KEY_CTRL_F6:
-        if(menu->numitems > 0) menu->fkeypage = !menu->fkeypage;
-        break;
-      case KEY_CTRL_FORMAT:
-        if(menu->numitems > 0) {
+      if(menu->numitems > 0) {
+        case KEY_CTRL_F6:
+          menu->fkeypage = !menu->fkeypage;
+          break;
+        case KEY_CTRL_FORMAT:
           //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
           //so on this add-in it is used to change the category (color) of a task/calendar event.
           if(EVENTEDITOR_RETURN_CONFIRM == changeEventCategory(&events[menu->selection-1])) {
             ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
             searchValid = 0; return 1;
           }
-        }
-        break;
+          break;
+      }
     }
   }
   return 1;

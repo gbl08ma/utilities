@@ -186,8 +186,7 @@ void chronoScreen(chronometer* chrono) {
       {
         case KEY_PRGM_SHIFT:
           //turn on/off shift manually because getkeywait doesn't do it
-          if (GetSetupSetting( (unsigned int)0x14) == 0) { SetSetupSetting( (unsigned int)0x14, 1); }
-          else { SetSetupSetting( (unsigned int)0x14, 0); }
+          SetSetupSetting( (unsigned int)0x14, (GetSetupSetting( (unsigned int)0x14) == 0));
           break;
         case KEY_PRGM_MENU:
           if (GetSetupSetting( (unsigned int)0x14) == 1) {
