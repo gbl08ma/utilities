@@ -110,24 +110,26 @@ void showHome(chronometer* chrono) {
           //turn on/off shift manually because getkeywait doesn't do it
           SetSetupSetting( (unsigned int)0x14, (GetSetupSetting( (unsigned int)0x14) == 0));
           break;
-        if (GetSetupSetting( (unsigned int)0x14) == 1) {
-            case KEY_PRGM_MENU:
-              SetSetupSetting( (unsigned int)0x14, 0);
-              saveVRAMandCallSettings();
-              break;
-            case KEY_PRGM_ACON:
-              SetSetupSetting( (unsigned int)0x14, 0);
-              DisplayStatusArea();
-              // make sure GetKey (and thus, the whole "multitasking"/power/setup system) "gets" the fact that we have disabled Shift,
-              // otherwise Shift may still be enabled when resuming from standby:
-              int gkey;
-              Keyboard_PutKeycode( -1, -1, KEY_CTRL_EXIT);
-              GetKey(&gkey);
-              PowerOff(1);
-              SetSetupSetting( (unsigned int)0x14, 0);
-              DisplayStatusArea();
-              break;
-        }
+        case KEY_PRGM_MENU:
+          if (GetSetupSetting( (unsigned int)0x14) == 1) {
+            SetSetupSetting( (unsigned int)0x14, 0);
+            saveVRAMandCallSettings();
+          }
+          break;
+        case KEY_PRGM_ACON:
+          if (GetSetupSetting( (unsigned int)0x14) == 1) {
+            SetSetupSetting( (unsigned int)0x14, 0);
+            DisplayStatusArea();
+            // make sure GetKey (and thus, the whole "multitasking"/power/setup system) "gets" the fact that we have disabled Shift,
+            // otherwise Shift may still be enabled when resuming from standby:
+            int gkey;
+            Keyboard_PutKeycode( -1, -1, KEY_CTRL_EXIT);
+            GetKey(&gkey);
+            PowerOff(1);
+            SetSetupSetting( (unsigned int)0x14, 0);
+            DisplayStatusArea();
+          }
+          break;
         case KEY_PRGM_F1:
           powerMenu(&pane_keycache);
           break;

@@ -836,19 +836,17 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
           }
         }
         break;
-      if(menu->numitems > 0) {
-        case KEY_CTRL_F6:
-          menu->fkeypage = !menu->fkeypage;
-          break;
-        case KEY_CTRL_FORMAT:
-          //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
-          //so on this add-in it is used to change the category (color) of a task/calendar event.
-          if(EVENTEDITOR_RETURN_CONFIRM == changeEventCategory(&events[menu->selection-1])) {
-            ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
-            searchValid = 0; return 1;
-          }
-          break;
-      }
+      case KEY_CTRL_F6:
+        if(menu->numitems > 0) menu->fkeypage = !menu->fkeypage;
+        break;
+      case KEY_CTRL_FORMAT:
+        //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
+        //so on this add-in it is used to change the category (color) of a task/calendar event.
+        if(menu->numitems > 0 && EVENTEDITOR_RETURN_CONFIRM == changeEventCategory(&events[menu->selection-1])) {
+          ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
+          searchValid = 0; return 1;
+        }
+        break;
     }
   }
   return 1;
@@ -1752,14 +1750,10 @@ void searchEventsGUI(int y, int m, int d) {
 
   switch(smallmenu.selection) {
     case 1:
-      menu.numitems = SearchEventsOnYearOrMonth(y, 0, CALENDARFOLDER, NULL, needle, 200); //get event count
-      events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
-      menu.numitems = SearchEventsOnYearOrMonth(y, 0, CALENDARFOLDER, events, needle, 200);
-      break;
     case 2:
-      menu.numitems = SearchEventsOnYearOrMonth(y, m, CALENDARFOLDER, NULL, needle, 200); //get event count
+      menu.numitems = SearchEventsOnYearOrMonth(y, (smallmenu.selection==1? 0:m), CALENDARFOLDER, NULL, needle, 200); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
-      menu.numitems = SearchEventsOnYearOrMonth(y, m, CALENDARFOLDER, events, needle, 200);
+      menu.numitems = SearchEventsOnYearOrMonth(y, (smallmenu.selection==1? 0:m), CALENDARFOLDER, events, needle, 200);
       break;
     case 3:
     { EventDate sday;
