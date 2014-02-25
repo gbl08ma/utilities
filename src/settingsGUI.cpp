@@ -114,11 +114,8 @@ void settingsMenu() {
         }
         case 5: // set date format
         { MenuItem menuitems[5];
-          strcpy(menuitems[0].text, "");
           currentDateToString(menuitems[0].text, 0);
-          strcpy(menuitems[1].text, "");
           currentDateToString(menuitems[1].text, 1);
-          strcpy(menuitems[2].text, "");
           currentDateToString(menuitems[2].text, 2);
           
           Menu menu;
