@@ -46,7 +46,7 @@ void bubbleSortFileMenuArray(File* data, MenuItem* mdata, int size) {
   }
 }
 
-int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
+short GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, short* count) {
   // searches storage memory for folders and files, puts their count in int* count
   // if File* files is NULL, function will only count files. If it is not null, MenuItem* menuitems will also be updated
   // this function always returns status codes defined on fileProvider.hpp
@@ -106,7 +106,7 @@ char* SearchStringMatch(char* s1, char* s2, int matchCase) {
   if(matchCase) return strstr(s1, s2);
   else return strcasestr(s1, s2);
 }
-int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count) {
+short SearchForFiles(File* files, char* basepath, char* needle, short searchOnFilename, short searchOnContents, short searchRecursively, short matchCase, short* count) {
   // searches storage memory for folders and files containing needle in the filename or contents, puts their count in int* count
   // if File* files is NULL, function will only count search results.
   // this function always returns status codes defined on fileProvider.hpp
@@ -129,7 +129,7 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
       || strcmp((char*)buffer, SELFFILE) == 0
       || strcmp((char*)buffer, CALENDARFOLDER_NAME) == 0))
     {
-      int match = 0;
+      short match = 0;
       if(searchOnFilename && NULL != SearchStringMatch((char*)buffer, needle, matchCase)) {
         match = 1;
       }
@@ -195,8 +195,8 @@ void deleteFiles(File* files, Menu* menu) {
   //menu: the menu of the current file manager window. used to check which files are selected, total number of files, etc.
   //REFRESH the files array after calling this!
   if (menu->numitems > 0) {
-    int curfile = 0; //current processing file (not number of deleted files!)
-    int delfiles = 0; // number of deleted files
+    short curfile = 0; //current processing file (not number of deleted files!)
+    short delfiles = 0; // number of deleted files
     unsigned short path[MAX_FILENAME_SIZE+1];
     progressMessage((char*)" Deleting...", 0, menu->numselitems);
     while(curfile < menu->numitems  && delfiles < menu->numselitems) {  
@@ -305,9 +305,9 @@ void copyFolder(char* oldfilename, char* newfilename) {
   if(0 < Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FOLDER, 0)) return; //return if error
 
   // now that we created the new folder, copy each item in the old folder into the new one.
-  int numberOfItemsToCopyInTheEnd = 0;
+  short numberOfItemsToCopyInTheEnd = 0;
   char itemsToCopyInTheEnd[MAX_ITEMS_PER_FOLDER_COPY][MAX_NAME_SIZE];
-  int itemsToCopyIsFolder[MAX_ITEMS_PER_FOLDER_COPY];
+  short itemsToCopyIsFolder[MAX_ITEMS_PER_FOLDER_COPY];
 
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   unsigned char buffer[MAX_FILENAME_SIZE+1];
@@ -364,13 +364,13 @@ void copyFolder(char* oldfilename, char* newfilename) {
   }
 }
 
-void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard) {
+void filePasteClipboardItems(File* clipboard, char* browserbasepath, short itemsInClipboard) {
   //this copies or moves to browserbasepath the items in the clipboard.
   //when the action field of a clipboard item is 0, the item will be moved.
   //when the action field is 1, the item will be copied.
   //don't forget to reload the file list after using this
   if (itemsInClipboard>0) {
-    int curfile = 0;
+    short curfile = 0;
     progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
     while(curfile < itemsInClipboard) {
       char name[MAX_NAME_SIZE];

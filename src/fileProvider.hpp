@@ -24,8 +24,8 @@
 typedef struct
 {
   char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
-  int action; // mostly for clipboard, can be used to tag something to do with the file
-  int isfolder; // because menuitem shouldn't be the only struct holding this info
+  short action; // mostly for clipboard, can be used to tag something to do with the file
+  short isfolder; // because menuitem shouldn't be the only struct holding this info
   int size; // file size
 } File; // right now File only holds the filename as other fields are now set directly on a MenuItem array
 
@@ -41,12 +41,12 @@ typedef struct
 #define GETFILES_MAX_FILES_REACHED 1
 
 void bubbleSortFileMenuArray(File* data, MenuItem* mdata, int size);
-int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count);
-int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count);
+short GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, short* count);
+short SearchForFiles(File* files, char* basepath, char* needle, short searchOnFilename, short searchOnContents, short searchRecursively, short matchCase, short* count);
 void deleteFiles(File* files, Menu* menu);
 void nameFromFilename(char* filename, char* name, int max=MAX_NAME_SIZE);
 void copyFile(char* oldfilename, char* newfilename);
-void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard);
+void filePasteClipboardItems(File* clipboard, char* browserbasepath, short itemsInClipboard);
 
 #define FILE_ICON_FOLDER 0
 #define FILE_ICON_G3M 1

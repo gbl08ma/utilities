@@ -17,9 +17,9 @@
 #include "graphicsProvider.hpp"
 #include "settingsProvider.hpp"
 
-int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what user did. selection is on menu->selection. menu->selection starts at 1!
-  int itemsStartY=menu->startY; // char Y where to start drawing the menu items. Having a title increases this by one
-  int itemsHeight=menu->height;
+short doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what user did. selection is on menu->selection. menu->selection starts at 1!
+  short itemsStartY=menu->startY; // char Y where to start drawing the menu items. Having a title increases this by one
+  short itemsHeight=menu->height;
   if (menu->showtitle) {
     itemsStartY++;
     itemsHeight--;
@@ -256,7 +256,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
   return MENU_RETURN_SELECTION;
 }
 
-int getMenuSelectionIgnoringSeparators(Menu* menu) {
+short getMenuSelectionIgnoringSeparators(Menu* menu) {
   if(menu->items[menu->selection-1].type == MENUITEM_SEPARATOR) return 0; //current selection is not a "traditional" menu item, return invalid position
   int selNS = 0;
   for(int i = 0; i<=menu->selection-1; i++) {
@@ -265,7 +265,7 @@ int getMenuSelectionIgnoringSeparators(Menu* menu) {
   return selNS;
 }
 
-int getMenuSelectionOnlySeparators(Menu* menu) {
+short getMenuSelectionOnlySeparators(Menu* menu) {
   // exact opposite of function above
   if(menu->items[menu->selection-1].type != MENUITEM_SEPARATOR) return 0; //current selection is not a separator, return invalid position
   int selS = 0;

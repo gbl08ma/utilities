@@ -29,11 +29,11 @@
 #include "settingsGUI.hpp"
 #include "debugGUI.hpp"
 
-int bufmonth = 0; //this is global so that it's easier to make the events count refresh
-int searchValid = 0; // whether the last search results are valid or not. Set to zero when modifying events in any way.
+short bufmonth = 0; //this is global so that it's easier to make the events count refresh
+short searchValid = 0; // whether the last search results are valid or not. Set to zero when modifying events in any way.
 int sy, sm, sd = 0; //date to which to switch the calendar, or result of date selection
 int dateselRes = 0; //whether user aborted date selection (0) or not (1)
-void viewCalendar(int dateselection) {
+void viewCalendar(short dateselection) {
   int res = 0;
   int type = GetSetting(SETTING_DEFAULT_CALENDAR_VIEW);
   if(dateselection) type = 1; // week view can't act as date selector for now
@@ -45,12 +45,12 @@ void viewCalendar(int dateselection) {
   }
 }
 
-int viewMonthCalendar(int dateselection) {
+short viewMonthCalendar(short dateselection) {
   //returns 1 to switch to weekly view
   //returns 0 to exit calendar
-  int y = getCurrentYear();
-  int m = getCurrentMonth();
-  int d = getCurrentDay();
+  short y = getCurrentYear();
+  short m = getCurrentMonth();
+  short d = getCurrentDay();
   if(!sy || !sm || !sd) {} else {
     y = sy;
     m = sm;
@@ -58,11 +58,11 @@ int viewMonthCalendar(int dateselection) {
     sy=0; sm=0; sd=0;
   }
   
-  int menu = 1;
+  short menu = 1;
   int iresult;
-  int eventcount[32];
-  int busydays[32];
-  int bufyear = 0;
+  short eventcount[32];
+  short busydays[32];
+  short bufyear = 0;
   while (1)
   {
     if(getDBneedsRepairFlag()) repairCalendarDatabase();
@@ -105,7 +105,7 @@ int viewMonthCalendar(int dateselection) {
     }
     int key;
     mGetKey(&key);
-    int ny=0, nm=0, nd=0;
+    short ny=0, nm=0, nd=0;
     switch(key) {
       case KEY_CTRL_F1:
         if (menu == 1) { menu = 2; }
@@ -265,11 +265,11 @@ int viewMonthCalendar(int dateselection) {
   return 0;
 }
 
-int viewWeekCalendar() {
+short viewWeekCalendar() {
   //returns 1 to switch to montly view
   //returns 0 to exit calendar
-  int res=1;
-  int y=0, m=0, d=0;
+  short res=1;
+  short y=0, m=0, d=0;
   Menu menu;
   
   menu.scrollout=1;
@@ -277,8 +277,8 @@ int viewWeekCalendar() {
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnInfiniteScrolling=1;
-  int jumpToSel=1;
-  int keepMenuSel=0;
+  short jumpToSel=1;
+  short keepMenuSel=0;
   while(res) {
     if(getDBneedsRepairFlag()) repairCalendarDatabase();
     if(!sy || !sm || !sd) {
@@ -301,7 +301,7 @@ int viewWeekCalendar() {
   return 0;
 }
 
-int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int* keepMenuSel) {
+short viewWeekCalendarSub(Menu* menu, short* y, short* m, short* d, short* jumpToSel, short* keepMenuSel) {
   //returns 1 when it wants to be restarted (refresh tasks)
   //returns 0 if the idea really is to exit the screen
   //returns 2 to switch to month view
@@ -639,7 +639,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
           }
           return 2;
         } else if (menu->fkeypage == 1) {
-          int ny=0,nm=0,nd=0;
+          short ny=0,nm=0,nd=0;
           DefineStatusMessage((char*)"", 1, 0, 0);
           if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"Jump to specific date", (char*)"")) {
             *y=ny;*m=nm;*d=nd;
@@ -1024,7 +1024,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
     strcpy((char*)event->description, "");
   }
   if(istask) event->timed=0;
-  int curstep = 0;
+  short curstep = 0;
   while(1) {
     if (type == EVENTEDITORTYPE_ADD) {
       SetBackGround(0x0A);
@@ -1143,7 +1143,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
           else if (res==INPUT_RETURN_CONFIRM) {
             if((int)strlen(stbuffer) == input.charlimit) {
-                int h, m, s;
+                short h, m, s;
                 stringToTime(stbuffer, &h, &m, &s);
                 if(isTimeValid(h, m, s)) {
                   event->timed = 1;
@@ -1191,7 +1191,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
           else if (res==INPUT_RETURN_CONFIRM) {
             if((int)strlen(edbuffer) == input.charlimit) {
-              int yr,m,d;
+              short yr,m,d;
               stringToDate(edbuffer, &yr, &m, &d);
               if(isDateValid(yr, m, d)) {
                 long int datediff = DateToDays(yr, m, d) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
@@ -1239,7 +1239,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
             else if (res==INPUT_RETURN_CONFIRM) {
               if((int)strlen(etbuffer) == input.charlimit) {
-                int h, m, s;
+                short h, m, s;
                 stringToTime(etbuffer, &h, &m, &s);
                 if(isTimeValid(h, m, s)) {
                   long int timediff = (h*60*60+m*60+s) - (event->starttime.hour*60*60+event->starttime.minute*60+event->starttime.second);
@@ -1341,7 +1341,7 @@ inline static void PrintMiniFix( int x, int y, const char*Msg, const int flags, 
     i++;
   }
 }
-void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* busydays, int* bufmonth, int* bufyear) {
+void drawCalendar(int year, int month, int d, int show_event_count, short* eventcount, short* busydays, short* bufmonth, short* bufyear) {
   Bdisp_AllClr_VRAM();
   int textX = 0;
   int textY = 0;
@@ -1514,7 +1514,7 @@ int deleteAllEventUI(int y, int m, int d, int istask) {
   return 0;
 }
 
-int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, int graphical)
+short chooseCalendarDate(short *yr, short *m, short *d, char* message, char* message2, short graphical)
 { //returns 0 on success, 1 on user abort
   if(graphical) {
     DefineStatusMessage(message, 1, 0, 0);
@@ -1566,7 +1566,7 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
 }
 
 int moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
-  int ey=0, em=0, ed=0;
+  short ey=0, em=0, ed=0;
   if(!chooseCalendarDate(&ey, &em, &ed, (isCopy ? (char*)"Copy Event" : (char*)"Move Event"), (char*)"To following day:")) {
     if(ey == (signed)events[pos].startdate.year && em == (signed)events[pos].startdate.month && ed == (signed)events[pos].startdate.day) {
       return EVENTEDITOR_RETURN_EXIT; //destination date is same as current event date
@@ -1617,7 +1617,7 @@ int moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
   return EVENTEDITOR_RETURN_EXIT;
 }
 
-void invalidFieldMsg(int istime) {
+void invalidFieldMsg(short istime) {
   mMsgBoxPush(3);
   if(istime) mPrintXY(3, 3, (char*)"Invalid time.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   else mPrintXY(3, 3, (char*)"Invalid date.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -1961,11 +1961,11 @@ void calendarTools(int y, int m, int d) {
   if(sres == MENU_RETURN_SELECTION) {
     switch(smallmenu.selection) {
       case 1: {
-        int y1 = y;
-        int m1 = m;
-        int d1 = d;
+        short y1 = y;
+        short m1 = m;
+        short d1 = d;
         if(chooseCalendarDate(&y1, &m1, &d1, (char*)"Select first date", NULL, 1)) return;
-        int y2=y1, m2=m1, d2=d1;
+        short y2=y1, m2=m1, d2=d1;
         if(chooseCalendarDate(&y2, &m2, &d2, (char*)"Select second date", NULL, 1)) return;
 
         long int daysdiff = DateToDays(y2, m2, d2) - DateToDays(y1, m1, d1);
@@ -2206,7 +2206,7 @@ void trimCalendarDatabase() {
       // the 00000.pce strcmp is there so we don't delete the tasks file
       if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "00000.pce") == 0) && fileinfo.fsize != 0) {
         // select what to do depending on menu selection
-        int deleteThisFile = 0;
+        short deleteThisFile = 0;
         if(menu.selection == 4) {
           // user wants to delete all events
           deleteThisFile = 1;
@@ -2234,7 +2234,7 @@ void trimCalendarDatabase() {
             }
             strcat(tmpbuf, mainname);
             strcpy(mainname, tmpbuf);
-            int y, m, d;
+            short y, m, d;
             stringToDate(mainname, &y, &m, &d, 2);
             thisday.year=y; thisday.month=m; thisday.day=d;
             
@@ -2281,7 +2281,7 @@ void trimCalendarDatabase() {
   bufmonth = 0;
   searchValid = 0;
 }
-int importHelper(EventDate* date, int count, textArea* text, textElement* elem, int initSuc) {
+int importHelper(EventDate* date, short count, textArea* text, textElement* elem, int initSuc) {
   CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
   GetEventsForDate(date, CALENDARFOLDER, events);
   int successful = initSuc;
@@ -2337,7 +2337,7 @@ void importCalendarEvents() {
   thisday.day = 1; thisday.month = 0; thisday.year = 0;
   int successful = 0;
   while(thisday.day<100) {
-    int count = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+    short count = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
     if(count && count<=MAX_DAY_EVENTS) {
       successful = importHelper(&thisday, count, &text, elem, successful);
       // delete so we don't import this day again, if user calls the import function again.

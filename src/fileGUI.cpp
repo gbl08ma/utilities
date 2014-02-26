@@ -27,10 +27,10 @@
 #include "debugGUI.hpp"
 
 void fileManager() {
-  int res = 1;
-  int itemsinclip = 0;
-  int shownClipboardHelp = 0;
-  int shownMainMemHelp = 0;
+  short res = 1;
+  short itemsinclip = 0;
+  short shownClipboardHelp = 0;
+  short shownMainMemHelp = 0;
   char browserbasepath[MAX_FILENAME_SIZE+1] = "\\\\fls0\\";
   char filetoedit[MAX_FILENAME_SIZE+1] = "";
   File* clipboard = (File*)alloca((MAX_ITEMS_IN_CLIPBOARD+1)*sizeof(File));
@@ -43,7 +43,7 @@ void fileManager() {
   }
 }
 int smemfree = 0;
-void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager) {
+void fillMenuStatusWithClip(char* title, short itemsinclip, short ismanager) {
   char titleBuffer[88] = "";
   if(!itemsinclip) {
     itoa(smemfree, (unsigned char*)title);
@@ -60,7 +60,7 @@ void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager) {
   }
 }
 
-int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard, char* filetoedit) {
+int fileManagerSub(char* browserbasepath, short* itemsinclip, short* shownClipboardHelp, short* shownMainMemHelp, File* clipboard, char* filetoedit) {
   Menu menu;
   MenuItemIcon icontable[12];
   buildIconTable(icontable);
@@ -94,7 +94,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   strcpy(friendlypath, browserbasepath+6);
   friendlypath[strlen(friendlypath)-1] = '\0'; //remove ending slash like OS does
   // test to see if friendlypath is too big
-  int jump4=0;
+  short jump4=0;
   while(1) {
     int temptextX=5*18+10; // px length of menu title + 10, like menuGUI goes.
     int temptextY=0;
@@ -305,7 +305,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   return 1;
 }
 
-int deleteFilesGUI(File* files, Menu* menu) {
+short deleteFilesGUI(File* files, Menu* menu) {
   mMsgBoxPush(4);
   mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 3, (char*)"Selected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -327,7 +327,7 @@ int deleteFilesGUI(File* files, Menu* menu) {
   } 
 }
 
-int makeFolderGUI(char* browserbasepath) {
+short makeFolderGUI(char* browserbasepath) {
   //browserbasepath: folder we're working at
   //reload the files array after using this function!
   //returns 1 if user aborts, 0 if makes folder.
@@ -359,7 +359,7 @@ int makeFolderGUI(char* browserbasepath) {
   return 0;
 }
 
-int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
+short renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   //reload the files array after using this function!
   //returns 0 if user aborts, 1 if renames.
   SetBackGround(6);
@@ -395,7 +395,7 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   return 0;
 }
 
-int searchFilesGUI(char* browserbasepath, int itemsinclip) {
+short searchFilesGUI(char* browserbasepath, short itemsinclip) {
   // returns 1 when it wants the caller to jump to browserbasepath
   // returns 0 otherwise.
   char statusText[100];
@@ -559,7 +559,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   }
 }
 
-int fileInformation(File* file, int allowEdit, int itemsinclip) {
+short fileInformation(File* file, short allowEdit, short itemsinclip) {
   // returns 0 if user exits.
   // returns 1 if user wants to edit the file  
   textArea text;
@@ -833,7 +833,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   doTextArea(&text);
 }
 
-void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
+void viewFilesInClipboard(File* clipboard, short* itemsinclip) {
   Menu menu;
   menu.height = 7;
   menu.scrollout = 1;
@@ -849,7 +849,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     fillMenuStatusWithClip((char*)menu.statusText, *itemsinclip, 1);
     menu.useStatusText = 1;
     menu.items = menuitems;
-    int curitem = 0;
+    short curitem = 0;
     while(curitem < *itemsinclip) {
       char buffer[MAX_FILENAME_SIZE];
       nameFromFilename(clipboard[curitem].filename, buffer);
@@ -895,7 +895,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
   }
 }
 
-void shortenDisplayPath(char* longpath, char* shortpath, int jump) {
+void shortenDisplayPath(char* longpath, char* shortpath, short jump) {
   //this function takes a long path for display, like \myfolder\long\display\path
   //and shortens it one level, like this: ...\long\display\path
   //putting the result in shortpath
@@ -926,6 +926,6 @@ void buildIconTable(MenuItemIcon* icontable) {
                               "t.abc" //for "unsupported" files
                              };
 
-  for(int i = 0; i < 10; i++)
+  for(short i = 0; i < 10; i++)
     SMEM_MapIconToExt( (unsigned char*)bogusFiles[i], (i==0 ? folder : (unsigned short*)"\x000\x000"), &msgno, icontable[i].data );
 }

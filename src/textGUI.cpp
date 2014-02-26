@@ -19,7 +19,7 @@
 #include "graphicsProvider.hpp"
 #include "selectorGUI.hpp"
 
-int doTextArea(textArea* text) {
+short doTextArea(textArea* text) {
   int scroll = 0;
   int isFirstDraw = 1;
   int totalTextY = 0;

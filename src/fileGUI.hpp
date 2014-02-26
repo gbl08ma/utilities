@@ -18,17 +18,17 @@
 #include "menuGUI.hpp"
 
 void fileManager();
-void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager);
-int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard, char* filetoedit);
-int deleteFilesGUI(File* files, Menu* menu);
-int makeFolderGUI(char* browserbasepath);
-int renameFileGUI(File* files, Menu* menu, char* browserbasepath);
-int searchFilesGUI(char* browserbasepath, int itemsinclip);
-int fileInformation(File* file, int allowEdit, int itemsinclip);
+void fillMenuStatusWithClip(char* title, short itemsinclip, short ismanager);
+int fileManagerSub(char* browserbasepath, short* itemsinclip, short* shownClipboardHelp, short* shownMainMemHelp, File* clipboard, char* filetoedit);
+short deleteFilesGUI(File* files, Menu* menu);
+short makeFolderGUI(char* browserbasepath);
+short renameFileGUI(File* files, Menu* menu, char* browserbasepath);
+short searchFilesGUI(char* browserbasepath, short itemsinclip);
+short fileInformation(File* file, short allowEdit, short itemsinclip);
 void fileViewAsText(char* filename);
-void viewFilesInClipboard(File* clipboard, int *itemsinclip);
+void viewFilesInClipboard(File* clipboard, short *itemsinclip);
 void showCopyFolderWarning();
-void shortenDisplayPath(char* longpath, char* shortpath, int jump=1);
+void shortenDisplayPath(char* longpath, char* shortpath, short jump=1);
 void buildIconTable(MenuItemIcon* icontable);
 
 #endif

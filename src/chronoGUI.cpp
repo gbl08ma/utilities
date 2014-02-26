@@ -387,7 +387,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         type=CHRONO_TYPE_DOWN;
         break;
       } else if(bmenu.selection == 3) {
-        int y=getCurrentYear(), m=getCurrentMonth(), d=getCurrentDay();
+        short y=getCurrentYear(), m=getCurrentMonth(), d=getCurrentDay();
         if(chooseCalendarDate(&y, &m, &d, (char*)"Select chronometer end date", (char*)"", 1)) return;
         if(DateToDays(y, m, d) - DateToDays(getCurrentYear(), getCurrentMonth(), getCurrentDay()) < 0) {
           mMsgBoxPush(4);
@@ -410,7 +410,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         input.type=INPUTTYPE_TIME;
         char etbuffer[15] = "";
         input.buffer = (char*)etbuffer;
-        int h=0,mi=0,s=0;
+        short h=0,mi=0,s=0;
         while(1) {
           input.key=0;
           int res = doTextInput(&input);

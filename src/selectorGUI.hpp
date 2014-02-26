@@ -30,14 +30,14 @@ typedef struct
   int value=0; // value of the selector
   int max; // maximum value. -1 for unlimited
   int min=0; // minimum value
-  int cycle=1; //1: when value is max, pressing up key sets value as min (and vice-versa)
-  int type=SELECTORTYPE_NORMAL; // set using SELECTORTYPE_*
-  int clearVRAM=1; // 1: clears all screen before drawing; 0: only writes on screen areas that are changed (and VRAM clearing must be done by something else)
+  short cycle=1; //1: when value is max, pressing up key sets value as min (and vice-versa)
+  short type=SELECTORTYPE_NORMAL; // set using SELECTORTYPE_*
+  short clearVRAM=1; // 1: clears all screen before drawing; 0: only writes on screen areas that are changed (and VRAM clearing must be done by something else)
 } Selector;
 
 #define SELECTOR_RETURN_EXIT 0
 #define SELECTOR_RETURN_SELECTION 1
 #define SELECTOR_RETURN_INSTANT 2
-int doSelector(Selector* selector);
+short doSelector(Selector* selector);
 
 #endif

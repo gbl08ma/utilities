@@ -18,7 +18,7 @@
 #include "timeProvider.hpp"
 #include "graphicsProvider.hpp"
 
-int doSelector(Selector* selector) {
+short doSelector(Selector* selector) {
   int key;
   int initialValue = selector->value; // so we can restore later
 

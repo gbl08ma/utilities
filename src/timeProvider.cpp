@@ -52,10 +52,10 @@ const char monthDays[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 unsigned int bcd_to_2digit(unsigned char* bcd) {
   return ((((*(bcd))&0xf0)>>4)*10) + ((*(bcd))&0x0f);
 }
-int getMonthDays(int month) {
+short getMonthDays(short month) {
   return monthDays[month-1]; 
 }
-int getMonthDaysWithLeap(int month, int year) {
+short getMonthDaysWithLeap(short month, short year) {
   return monthDays[month-1] + ((month == 2 && isLeap(year)) ? 1 : 0);
 }
 const char* getCurrentDOWAsString()
@@ -72,34 +72,34 @@ const char* getCurrentMonthAsString()
 {
     return monthNames[((*RMONCNT & 0b10000)>>4)*10 + (*RMONCNT & 0b1111) - 1];
 }
-const char* getMonthAsString(int month) {
+const char* getMonthAsString(short month) {
   return monthNames[month-1]; 
 }
-const char* getDOWAsString(int dow) {
+const char* getDOWAsString(short dow) {
   return dayofweek[dow-1]; 
 }
-const char* getDOWAsShortString(int dow) {
+const char* getDOWAsShortString(short dow) {
   return dayofweekshort[dow-1]; 
 }
-bool isLeap(int y)
+bool isLeap(short y)
 {
     return ( ((y % 4) == 0) && ((y % 100) != 0) ) || ((y % 400) == 0);
 }
 // From wikipedia for the Keith and Craver method
-int dow(int y, int m, int d)
+short dow(short y, short m, short d)
 {
     static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
     y -= m < 3;
     return (y + (y / 4) - (y / 100) + (y / 400) + t[m-1] + d) % 7;
 }
 
-int getDayOfYear(int y, int m, int d) {
+int getDayOfYear(short y, short m, short d) {
   // year must be provided because of leap years
   int days = 0;
-  for(int i = 1; i<m; i++) getMonthDaysWithLeap(i, y);
+  for(int i = 1; i<m; i++) days+=getMonthDaysWithLeap(i, y);
   return days+d;
 }
-int getWeekNumber(int y, int m, int d) {
+short getWeekNumber(short y, short m, short d) {
   int julian = getDayOfYear(y,m,d);
   // since this is only for display purposes, we can mix settings here:
   if(GetSetting(SETTING_WEEK_START_DAY)==1) {
@@ -114,28 +114,28 @@ int getWeekNumber(int y, int m, int d) {
   return weekNum;
 }
 
-int getCurrentYear() {
+short getCurrentYear() {
   return ((*RYRCNT >> 12) & 0b1111)*1000 + ((*RYRCNT >> 8) & 0b1111)*100 + ((*RYRCNT >> 4) & 0b1111)*10 + (*RYRCNT & 0b1111);
 }
-int getCurrentMonth() {
+short getCurrentMonth() {
   return ((*RMONCNT & 0b10000)>>4)*10 + (*RMONCNT & 0b1111);
 }
-int getCurrentDay() {
+short getCurrentDay() {
   return ((*RDAYCNT >> 4) & 0b11)*10 + (*RDAYCNT & 0b1111);
 }
-int getCurrentHour() {
+short getCurrentHour() {
   return bcd_to_2digit(RHRCNT); 
 }
-int getCurrentMinute() {
+short getCurrentMinute() {
   return bcd_to_2digit(RMINCNT);
 }
-int getCurrentSecond() {
+short getCurrentSecond() {
   return bcd_to_2digit(RSECCNT);
 }
-int getCurrentMillisecond() {
+short getCurrentMillisecond() {
   unsigned int ihour, iminute, isecond, imillisecond;
   RTC_GetTime( &ihour, &iminute, &isecond, &imillisecond );
-  return (int)imillisecond;
+  return (short)imillisecond;
 }
 
 // Info and license for the following routine:
@@ -180,7 +180,7 @@ long long int DateTime2Unix(long long int year, long long int month, long long i
   return time;
 }
 
-int getRTCisUnadjusted() {
+short getRTCisUnadjusted() {
   //returns 1 if the RTC is unadjusted.
   //this function finds out if the clock is unadjusted if its date/time is set to a previous date/time than 1st Jan 2013 00:00:00.000
   //   (because that date has passed on all timezones and of course no adjusted clock will have it).
@@ -190,10 +190,10 @@ int getRTCisUnadjusted() {
     return 1;
   } return 0;
 }
-void currentDateToString(char *buffer, int format) {
+void currentDateToString(char *buffer, short format) {
   dateToString(buffer, getCurrentYear(), getCurrentMonth(), getCurrentDay(), format);
 }
-void dateToString(char *buffer, int y, int m, int d, int format)
+void dateToString(char *buffer, short y, short m, short d, short format)
 {
   char day[2];
   char month[2];
@@ -237,11 +237,11 @@ void dateToString(char *buffer, int y, int m, int d, int format)
   }
 }
 
-void currentTimeToString(char *buffer, int format)
+void currentTimeToString(char *buffer, short format)
 {
   timeToString(buffer, getCurrentHour(), getCurrentMinute(), getCurrentSecond(), format, GetSetting(SETTING_CLOCK_SECONDS));
 }
-void timeToString(char *buffer, int h, int min, int sec, int format, int showSeconds)
+void timeToString(char *buffer, short h, short min, short sec, short format, short showSeconds)
 {
   char hour[2];
   char minute[2];
@@ -282,7 +282,7 @@ long long int currentUnixTime() { // please note, this is milliseconds from epoc
   return DateTime2Unix(getCurrentYear(), getCurrentMonth(), getCurrentDay(), getCurrentHour(), getCurrentMinute(), getCurrentSecond(), millisecond);
 } 
 
-void setTime(int hour, int minute, int second) {
+void setTime(short hour, short minute, short second) {
   char temp = *RCR2; //for rtc stopping/starting
   
   //stop RTC
@@ -302,7 +302,7 @@ void setTime(int hour, int minute, int second) {
   *RCR2 |= 1;
 }
 
-void setDate(int year, int month, int day) {
+void setDate(short year, short month, short day) {
   char temp = *RCR2; //for rtc stopping/starting
 
   //stop RTC
@@ -337,12 +337,12 @@ int getMSdiff(int prevticks, int newticks) { // get difference in milliseconds b
   return (tickdiff*1000)/128;
 }
 
-int isTimeValid(int h, int m, int s) {
+short isTimeValid(short h, short m, short s) {
   if (h > 23 || h < 0 || m > 59 || m < 0 || s > 59 || s < 0) return 0;
   else return 1;
 }
 
-int isDateValid(int y, int m, int d) {
+short isDateValid(short y, short m, short d) {
   if(y<=0 || y>9999) return 0; // otherwise we will have problems with calendar events and the like
   if (m > 12 || m <= 0 || d > getMonthDaysWithLeap(m, y)) return 0;
   else return 1;
@@ -369,7 +369,7 @@ void DaysToDate(long day_number, long* year, long* month, long* day) {
 
 // converts a date to an amount of days.
 // returns result. parameters stay untouched
-long int DateToDays(int y, int m, int d)
+long int DateToDays(short y, short m, short d)
 {
   long int ly,lm;
   lm = ((long int)m + 9LL) % 12LL;
@@ -377,7 +377,7 @@ long int DateToDays(int y, int m, int d)
   return ly*365LL + ly/4LL - ly/100LL + ly/400LL + (lm*306LL + 5LL)/10LL + ( (long int)d - 1LL );
 }
 
-void stringToDate(char* string, int* yr, int* m, int *d, int format) {
+void stringToDate(char* string, short* yr, short* m, short* d, short format) {
   // string: a date in the format DDMMYYYY, MMDDYYYY or YYYYMMDD
   // if year < 1000 it has to be zero-padded.
   // result goes into arguments 2-4. format is the format to expect (values are the same as on the dateformat setting)
@@ -409,7 +409,7 @@ void stringToDate(char* string, int* yr, int* m, int *d, int format) {
   *d = sys_atoi(day);
 }
 
-void stringToTime(char* string, int* h, int* m, int *s) {
+void stringToTime(char* string, short* h, short* m, short *s) {
   char hour[3] = "";
   char minute[3] = "";
   char second[3] = "";
@@ -425,7 +425,7 @@ const char *dateSettingInput[] = {"DDMMYYYY",
                                   "MMDDYYYY",
                                  "YYYYMMDD"
                                  };
-const char* dateSettingToInputDisplay(int setting) {
+const char* dateSettingToInputDisplay(short setting) {
   if(setting==-1) setting = GetSetting(SETTING_DATEFORMAT);
   if(setting < 0 || setting > 2) return NULL;
   return dateSettingInput[setting];
