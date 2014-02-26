@@ -297,7 +297,7 @@ void copyFile(char* oldfilename, char* newfilename) {
     Bfile_RenameEntry(tempfilenameshort , newfilenameshort);
   } //else: create failed, but we're going to skip anyway
 }
-#define MAX_ITEMS_PER_FOLDER_COPY 50
+#define MAX_ITEMS_PER_FOLDER_COPY 100
 void copyFolder(char* oldfilename, char* newfilename) {
   // create destination folder:
   unsigned short newfilenameshort[0x10A];
@@ -331,11 +331,11 @@ void copyFolder(char* oldfilename, char* newfilename) {
       strcpy(newitem, newfilename);
       strcat(newitem, "\\");
       strcat(newitem, (char*)buffer);
-      // this item is a folder. We could call copyFolder again or copyFile here, and our code would be absolutely correct
+      // We could call copyFolder again or copyFile here, and our code would be absolutely correct
       // but the Bfile functions are buggy, and they freak out when there are many file handles/multiple file handles inside folders.
       // (same reason why we use a temporary file name while copying)
       // so we add this to a list of items to copy later...
-      // only 20 folders can be copied per folder
+      // only 100 items can be copied per folder
       if(numberOfItemsToCopyInTheEnd<MAX_ITEMS_PER_FOLDER_COPY) {
         strncpy(itemsToCopyInTheEnd[numberOfItemsToCopyInTheEnd], (char*)buffer, MAX_NAME_SIZE);
         itemsToCopyIsFolder[numberOfItemsToCopyInTheEnd] = !fileinfo.fsize;
