@@ -395,13 +395,11 @@ void eventsPane(int* pane_keycache) {
   const int eventsToDisplayInFull=6;
   thisday.day = getCurrentDay(); thisday.month = getCurrentMonth(); thisday.year = getCurrentYear();
   int numevents = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
-  CalendarEvent* calevents;
+  CalendarEvent* calevents = NULL;
   if (numevents > 0) {
     int getnum = (numevents>eventsToDisplayInFull?eventsToDisplayInFull:numevents); // number of events to parse.
     calevents = (CalendarEvent*)alloca(getnum*sizeof(CalendarEvent)); // we don't want to allocate more than what we need for the few events we want to display in full.
     GetEventsForDate(&thisday, CALENDARFOLDER, calevents, eventsToDisplayInFull);
-  } else {
-    calevents = NULL;
   }
   int inscreen = 1;
   if (GetSetting(SETTING_THEME)) {

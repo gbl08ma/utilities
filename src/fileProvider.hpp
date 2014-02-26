@@ -16,8 +16,8 @@
 
 #include "menuGUI.hpp"
 
-#define MAX_FILENAME_SIZE 768 //full path with //fls0/, extension and everything
-#define MAX_NAME_SIZE 256 //friendly name (in "//fls0/folder/file.txt", this would be "file.txt")
+#define MAX_FILENAME_SIZE 270 //full path with //fls0/, extension and everything
+#define MAX_NAME_SIZE 128 //friendly name (in "//fls0/folder/file.txt", this would be "file.txt")
 #define MAX_ITEMS_IN_DIR 200
 #define MAX_ITEMS_IN_CLIPBOARD 51
 #define MAX_TEXTVIEWER_FILESIZE 64*1024
