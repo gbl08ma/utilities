@@ -24,8 +24,8 @@
 typedef struct
 {
   char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
-  int action; // mostly for clipboard, can be used to tag something to do with the file
-  int isfolder; // because menuitem shouldn't be the only struct holding this info
+  short action; // mostly for clipboard, can be used to tag something to do with the file
+  short isfolder; // because menuitem shouldn't be the only struct holding this info
   int size; // file size
 } File; // right now File only holds the filename as other fields are now set directly on a MenuItem array
 
