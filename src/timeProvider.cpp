@@ -96,7 +96,7 @@ int dow(int y, int m, int d)
 int getDayOfYear(int y, int m, int d) {
   // year must be provided because of leap years
   int days = 0;
-  for(int i = 1; i<m; i++) getMonthDaysWithLeap(i, y);
+  for(int i = 1; i<m; i++) days += getMonthDaysWithLeap(i, y);
   return days+d;
 }
 int getWeekNumber(int y, int m, int d) {
