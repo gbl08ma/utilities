@@ -563,10 +563,9 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   // Check if file opened
-  int size = 0;
   if(hFile >= 0)
   { //opened
-    size = Bfile_GetFileSize_OS(hFile);
+    int size = Bfile_GetFileSize_OS(hFile);
     // File exists and we have its size, let's see if it is above the minimum
     if(size < 51) {
       Bfile_CloseFile_OS(hFile);

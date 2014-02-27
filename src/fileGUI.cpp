@@ -727,6 +727,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
       asrc = (unsigned char*)alloca(filesize*sizeof(unsigned char));
       Bfile_ReadFile_OS(hFile, asrc, filesize, 0);
       Bfile_CloseFile_OS(hFile);
+      asrc[filesize] = '\0';
     } else {
       // there's not enough stack to put the file in RAM, so just return.
       // this can happen when opening a file from the search results
@@ -742,15 +743,6 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
     closeMsgBox();
     return;
   }
-  //linebreak detection is done outside of any loops for better speed:
-  int newlinemode = 0;
-  if(strstr((char*)asrc, "\r\n")) {
-    newlinemode = 1; //Windows
-  } else if (strstr((char*)asrc, "\r")) {
-    newlinemode = 2; //Mac
-  } else if (strstr((char*)asrc, "\n")) {
-    newlinemode = 3; //Unix
-  }
   char titlebuf[MAX_NAME_SIZE+20];
   strcpy((char*)titlebuf, "Viewing ");
   strcat((char*)titlebuf, (char*)name);
@@ -760,76 +752,48 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   text.showtitle = 0;
   
   // get number of lines so we know how much textElement to allocate
-  unsigned int numelements = 1; // at least one line it will have
+  text.numelements = 1; // at least one line it will have
   unsigned int bcur = 0;
   while(bcur < strlen((char*)asrc)) {
-    if(*(asrc+bcur) == '\r' || *(asrc+bcur) == '\n') {
-      if(*(asrc+bcur+1) != '\n') numelements++;
+    int jump = 1;
+    if(*(asrc+bcur) == '\r' && *(asrc+bcur+1) == '\n') {
+      jump=2;
+      text.numelements++;
+    } else if(*(asrc+bcur) == '\r') {
+      text.numelements++;
+    } else if(*(asrc+bcur) == '\n') {
+      text.numelements++;
     }
-    bcur++;
+    bcur += jump;
   }
   
-  textElement* elem = (textElement*)alloca(numelements*sizeof(textElement));
+  textElement* elem = (textElement*)alloca(text.numelements*sizeof(textElement));
   text.elements = elem;
-  text.numelements = numelements;
   elem[0].text = (char*)asrc;
   elem[0].newLine=0;
   elem[0].color=COLOR_BLACK;
   elem[0].lineSpacing = 0;
   elem[0].spaceAtEnd = 0;
   elem[0].minimini = 0;
-  unsigned int ecur = 1;
+  int ecur = 1;
   bcur = 0;
-  while(bcur < filesize && ecur <= numelements) {
-    switch(newlinemode) {
-      case 1: // Windows, \r\n
-      default:
-        if(*(asrc+bcur) == '\r') {
-          //char after the next one (\n) will be the start of a new line
-          //mark this char as null (so previous element ends here) and point this element to the start of the new line
-          *(asrc+bcur)='\0';
-          elem[ecur].text = (char*)(asrc+bcur+2);
-          elem[ecur].newLine=1;
-          elem[ecur].color=COLOR_BLACK;
-          elem[ecur].lineSpacing = 0;
-          elem[ecur].spaceAtEnd = 0;
-          elem[ecur].minimini = 0;
-          ecur++;
-        }
-        break;
-      case 2: // Mac, \r
-        if(*(asrc+bcur) == '\r') {
-          *(asrc+bcur)='\0';
-          elem[ecur].text = (char*)(asrc+bcur+1);
-          elem[ecur].newLine=1;
-          elem[ecur].color=COLOR_BLACK;
-          elem[ecur].lineSpacing = 0;
-          elem[ecur].spaceAtEnd = 0;
-          elem[ecur].minimini = 0;
-          ecur++;
-        }
-        break;
-      case 3: // Unix, \n
-        if(*(asrc+bcur) == '\n') {
-          //src=asrc+bcur;
-          *(asrc+bcur)='\0';
-          if(asrc+bcur+1 >= asrc+filesize) {
-            elem[ecur].text = (char*)"";
-          } else {
-            elem[ecur].text = (char*)(asrc+bcur+1);
-          }
-          elem[ecur].newLine=1;
-          elem[ecur].color=COLOR_BLACK;
-          elem[ecur].lineSpacing = 0;
-          elem[ecur].spaceAtEnd = 0;
-          elem[ecur].minimini = 0;
-          ecur++;
-        }
-        break;
+  while(bcur < filesize && ecur <= text.numelements) {
+    int jump = 1;
+    if(*(asrc+bcur) == '\r' || *(asrc+bcur) == '\n') {
+      //char after the next one (\n) will be the start of a new line
+      //mark this char as null (so previous element ends here) and point this element to the start of the new line
+      jump = ((*(asrc+bcur) == '\r' && *(asrc+bcur+1) == '\n') ? 2 : 1);
+      *(asrc+bcur)='\0';
+      elem[ecur].text = (char*)(asrc+bcur+jump);
+      elem[ecur].newLine=1;
+      elem[ecur].color=COLOR_BLACK;
+      elem[ecur].lineSpacing = 0;
+      elem[ecur].spaceAtEnd = 0;
+      elem[ecur].minimini = 0;
+      ecur++;
     }
-    bcur++;
+    bcur += jump;
   }
-  asrc[filesize] = '\0';
   doTextArea(&text);
 }
 
