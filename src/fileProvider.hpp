@@ -21,6 +21,7 @@
 #define MAX_ITEMS_IN_DIR 200
 #define MAX_ITEMS_IN_CLIPBOARD 51
 #define MAX_TEXTVIEWER_FILESIZE 64*1024
+#define MAX_ITEMS_PER_FOLDER_COPY 100 // also applies to folders in recursive search
 typedef struct
 {
   char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
@@ -42,7 +43,7 @@ typedef struct
 
 void bubbleSortFileMenuArray(File* data, MenuItem* mdata, int size);
 int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count);
-int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count);
+int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall=0);
 void deleteFiles(File* files, Menu* menu);
 void nameFromFilename(char* filename, char* name, int max=MAX_NAME_SIZE);
 void copyFile(char* oldfilename, char* newfilename);

@@ -106,7 +106,7 @@ char* SearchStringMatch(char* s1, char* s2, int matchCase) {
   if(matchCase) return strstr(s1, s2);
   else return strcasestr(s1, s2);
 }
-int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count) {
+int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall) {
   // searches storage memory for folders and files containing needle in the filename or contents, puts their count in int* count
   // if File* files is NULL, function will only count search results.
   // this function always returns status codes defined on fileProvider.hpp
@@ -114,11 +114,14 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   unsigned char buffer[MAX_FILENAME_SIZE+1];
 
+  int numberOfFoldersToSearchInTheEnd = 0;
+  char foldersToSearchInTheEnd[MAX_ITEMS_PER_FOLDER_COPY][MAX_NAME_SIZE];
+
   // make the buffer
   strcpy((char*)buffer, basepath);
   strcat((char*)buffer, "*");
   
-  *count = 0;
+  if(!isRecursiveCall) *count = 0;
   file_type_t fileinfo;
   int findhandle;
   Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
@@ -129,14 +132,19 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
       || strcmp((char*)buffer, SELFFILE) == 0
       || strcmp((char*)buffer, CALENDARFOLDER_NAME) == 0))
     {
+      if(fileinfo.fsize == 0) {
+        //it's a folder. add it to the recursion list, if we are searching recursively.
+        if(searchRecursively && numberOfFoldersToSearchInTheEnd<MAX_ITEMS_PER_FOLDER_COPY) {
+          strncpy(foldersToSearchInTheEnd[numberOfFoldersToSearchInTheEnd], (char*)buffer, MAX_NAME_SIZE);
+          numberOfFoldersToSearchInTheEnd++;
+        }
+      }
       int match = 0;
       if(searchOnFilename && NULL != SearchStringMatch((char*)buffer, needle, matchCase)) {
         match = 1;
       }
       if(searchOnContents && !match) {
-        if(fileinfo.fsize == 0) {
-          //it's a folder
-        } else {
+        if(fileinfo.fsize != 0) {
           char filename[MAX_FILENAME_SIZE];
           strcpy(filename, basepath);
           strcat(filename, (char*)buffer);
@@ -169,13 +177,7 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
           strcpy(files[*count].filename, basepath); 
           strcat(files[*count].filename, (char*)buffer);
           files[*count].size = fileinfo.fsize;
-          if(fileinfo.fsize == 0) {
-            files[*count].isfolder = 1;
-            
-          } else {
-            files[*count].isfolder = 0;
-            
-          }
+          files[*count].isfolder = !fileinfo.fsize;
         }
         *count=*count+1;
       }
@@ -186,6 +188,18 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
     } else ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
   Bfile_FindClose(findhandle);
+  // now that all handles are closed, look inside the folders we found, if recursive search is enabled
+  if((0x881E0000 - (int)GetStackPtr()) < 350000) { // if stack usage is below 350000 bytes...
+    if(searchRecursively) for(int i=0; i<numberOfFoldersToSearchInTheEnd; i++) {
+      // search only if there's enough free stack
+      char newfolder[MAX_FILENAME_SIZE];
+      strcpy(newfolder, basepath);
+      strcat(newfolder, foldersToSearchInTheEnd[i]);
+      strcat(newfolder, "\\");
+      if(GETFILES_MAX_FILES_REACHED == SearchForFiles(files, newfolder, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, count, 1))
+        return GETFILES_MAX_FILES_REACHED; // if the files array is full, there's no point in searching again
+    }
+  }
   return GETFILES_SUCCESS;
 }
 
@@ -297,7 +311,7 @@ void copyFile(char* oldfilename, char* newfilename) {
     Bfile_RenameEntry(tempfilenameshort , newfilenameshort);
   } //else: create failed, but we're going to skip anyway
 }
-#define MAX_ITEMS_PER_FOLDER_COPY 100
+
 void copyFolder(char* oldfilename, char* newfilename) {
   // create destination folder:
   unsigned short newfilenameshort[0x10A];
@@ -345,10 +359,10 @@ void copyFolder(char* oldfilename, char* newfilename) {
     ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
   Bfile_FindClose(findhandle);
-  // now that all handles are be closed, copy the items we found
-  for(int i=0; i<numberOfItemsToCopyInTheEnd; i++) {
-    // copy only if there's enough free stack
-    if((0x881E0000 - (int)GetStackPtr()) < 350000) { // if stack usage is below 350000 bytes...
+  // now that all handles are closed, copy the items we found
+  // copy only if there's enough free stack
+  if((0x881E0000 - (int)GetStackPtr()) < 350000) { // if stack usage is below 350000 bytes...
+    for(int i=0; i<numberOfItemsToCopyInTheEnd; i++) {
       char olditem[MAX_FILENAME_SIZE];
       strcpy(olditem, oldfilename);
       strcat(olditem, "\\");
