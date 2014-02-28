@@ -473,22 +473,18 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
         else if(res == MENU_RETURN_SELECTION) {
           switch(menu.selection) {
             case 1:
-              menuitems[0].value = !menuitems[0].value;
-              searchOnFilename = menuitems[0].value;
+              searchOnFilename = !menuitems[0].value;
               if(!searchOnFilename && !searchOnContents) searchOnContents = 1;
               break;
             case 2:
-              menuitems[1].value = !menuitems[1].value;
-              searchOnContents = menuitems[1].value;
+              searchOnContents = !menuitems[1].value;
               if(!searchOnFilename && !searchOnContents) searchOnFilename = 1;
               break;
             case 3:
-              menuitems[2].value = !menuitems[2].value;
-              searchRecursively = menuitems[2].value;
+              searchRecursively = !menuitems[2].value;
               break;
             case 4:
-              menuitems[3].value = !menuitems[3].value;
-              matchCase = menuitems[3].value;
+              matchCase = !menuitems[3].value;
               break;
           }
         }
