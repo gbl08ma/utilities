@@ -21,6 +21,22 @@
 #include "fileProvider.hpp"
 #include "debugGUI.hpp"
 
+int compareFileStructs(File* f1, File* f2, int type) {
+  switch(type) {
+    case 1:
+    case 2:
+      if(f1->isfolder < f2->isfolder) return 1;
+      else if(f1->isfolder > f2->isfolder) return -1;
+      if(type == 1) return strcmp( f1->filename, f2->filename );
+      else return -strcmp( f1->filename, f2->filename );
+    case 3:
+      return f1->size-f2->size;
+    case 4:
+    default:
+      return f1->size-f2->size;
+  }
+}
+
 void insertSortFileMenuArray(File* data, MenuItem* mdata, int size) {
   int sort = GetSetting(SETTING_FILE_MANAGER_SORT);
   if(!sort) return;
@@ -31,11 +47,7 @@ void insertSortFileMenuArray(File* data, MenuItem* mdata, int size) {
   for(i = 1; i < size; i++) {
     temp = data[i];
     mtemp = mdata[i];
-    for (j = i - 1; j >= 0 &&
-      (sort == 1 ? strcmp( data[j].filename, temp.filename ) > 0 :
-        (sort == 2 ? strcmp( data[j].filename, temp.filename ) < 0 :
-          (sort == 3 ? data[j].size > temp.size :
-            data[j].size < temp.size))); j--) {
+    for (j = i - 1; j >= 0 && compareFileStructs(&data[j], &temp, sort) > 0; j--) {
       data[j + 1] = data[j];
       mdata[j + 1] = mdata[j];
     }
