@@ -70,7 +70,7 @@ void fileTextEditor(char* filename, char* basefolder) {
     else if (res==INPUT_RETURN_CONFIRM) {
       if(newfile) {
         SetBackGround(13);
-        clearLine(1,8);
+        clearLine(1,3);
         mPrintXY(1, 1, (char*)"Text Editor", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
         mPrintXY(1, 2, (char*)"Save file as:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         textInput ninput;
