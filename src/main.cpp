@@ -51,6 +51,8 @@ int main()
     Keyboard_PutKeycode( -1, -1, KEY_CTRL_EXIT);
     GetKey(&key);
   }
+  // disable Catalog function throughout the add-in, as we don't know how to make use of it:
+  Bkey_SetAllFlags(0x80);
   //Load settings
   LoadSettings();
   
