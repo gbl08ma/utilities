@@ -40,10 +40,6 @@ void showHome(chronometer* chrono) {
   unsigned short prevkey = 0;
   int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
   int pane_keycache = 0;
-  // make sure GetKey (and thus, the OS) "gets" the fact that we have entered an add-in,
-  // otherwise, we may get a white frame the first time GetKey is called when dark theme is enabled
-  Keyboard_PutKeycode( -1, -1, KEY_CTRL_EXIT);
-  GetKey(&keyCol);
   while (1) {
     //black theme, or not?
     if (GetSetting(SETTING_THEME) == 1) {
@@ -91,90 +87,89 @@ void showHome(chronometer* chrono) {
       Bdisp_PutDisp_DD();
       checkDownwardsChronoCompleteGUI(chrono, NUMBER_OF_CHRONO);
     }
-    if (pane_keycache || 0 != GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key)) {
-      if(!pane_keycache) {
-        key = PRGM_GetKey();
-      } else {
-        switch(pane_keycache) {
-          case KEY_CTRL_F1:
-            key = KEY_PRGM_F1; break;
-          case KEY_CTRL_F2:
-            key = KEY_PRGM_F2; break;
-          case KEY_CTRL_F3:
-            key = KEY_PRGM_F3; break;
-          case KEY_CTRL_F4:
-            key = KEY_PRGM_F4; break;
-          case KEY_CTRL_F5:
-            key = KEY_PRGM_F5; break;
-        }
-        pane_keycache = 0;
+    GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); //this is here just to handle the Menu key
+    if(!pane_keycache) {
+      key = PRGM_GetKey();
+    } else {
+      switch(pane_keycache) {
+        case KEY_CTRL_F1:
+          key = KEY_PRGM_F1; break;
+        case KEY_CTRL_F2:
+          key = KEY_PRGM_F2; break;
+        case KEY_CTRL_F3:
+          key = KEY_PRGM_F3; break;
+        case KEY_CTRL_F4:
+          key = KEY_PRGM_F4; break;
+        case KEY_CTRL_F5:
+          key = KEY_PRGM_F5; break;
       }
-      switch (key) {
-        case KEY_PRGM_SHIFT:
-          //turn on/off shift manually because getkeywait doesn't do it
-          SetSetupSetting( (unsigned int)0x14, (GetSetupSetting( (unsigned int)0x14) == 0));
-          break;
-        case KEY_PRGM_MENU:
-          if (GetSetupSetting( (unsigned int)0x14) == 1) {
-            SetSetupSetting( (unsigned int)0x14, 0);
-            saveVRAMandCallSettings();
-          }
-          break;
-        case KEY_PRGM_ACON:
-          if (GetSetupSetting( (unsigned int)0x14) == 1) {
-            SetSetupSetting( (unsigned int)0x14, 0);
-            DisplayStatusArea();
-            // make sure GetKey (and thus, the whole "multitasking"/power/setup system) "gets" the fact that we have disabled Shift,
-            // otherwise Shift may still be enabled when resuming from standby:
-            int gkey;
-            Keyboard_PutKeycode( -1, -1, KEY_CTRL_EXIT);
-            GetKey(&gkey);
-            PowerOff(1);
-            SetSetupSetting( (unsigned int)0x14, 0);
-            DisplayStatusArea();
-          }
-          break;
-        case KEY_PRGM_F1:
-          powerMenu(&pane_keycache);
-          break;
-        case KEY_PRGM_F2:
-          lightMenu(&pane_keycache);
-          break;
-        case KEY_PRGM_F3:
-          timeMenu(chrono, &pane_keycache);
-          break;
-        case KEY_PRGM_F4:
-          toolsMenu(&pane_keycache);
-          break;
-        case KEY_PRGM_RETURN:
-          if(!GetSetting(SETTING_LOCK_ON_EXE)) break;
-          // else fallthrough
-        case KEY_PRGM_F5:
-          lockApp();
-          break;
-        case KEY_PRGM_F6:
-          break;
-        case 71: //KEY_PRGM_0, which is not defined in the SDK and I'm too lazy to add it every time I update the includes folder...
-          if (GetSetupSetting( (unsigned int)0x14) == 1) {
-            SetSetupSetting( (unsigned int)0x14, 0);
-            char code[25] = "";
-            textInput input;
-            input.y=8;
-            input.charlimit=21;
-            input.buffer = (char*)code;
-            int res = doTextInput(&input);
-            if (res==INPUT_RETURN_CONFIRM && !strcmp(code, "qazedcol")) masterControl();
-          }
-          break;
-        case KEY_PRGM_RIGHT:
-          if(GetSetting(SETTING_HOME_PANES)) eventsPane(&pane_keycache);
-          break;
-        case 76: //x-0-theta key
-          currentTimeToBasicVar();
-          break;
-      }
-      if (key!=prevkey && key!=KEY_PRGM_SHIFT) SetSetupSetting( (unsigned int)0x14, 0);
+      pane_keycache = 0;
     }
+    switch (key) {
+      case KEY_PRGM_SHIFT:
+        //turn on/off shift manually because getkeywait doesn't do it
+        SetSetupSetting( (unsigned int)0x14, (GetSetupSetting( (unsigned int)0x14) == 0));
+        break;
+      case KEY_PRGM_MENU:
+        if (GetSetupSetting( (unsigned int)0x14) == 1) {
+          SetSetupSetting( (unsigned int)0x14, 0);
+          saveVRAMandCallSettings();
+        }
+        break;
+      case KEY_PRGM_ACON:
+        if (GetSetupSetting( (unsigned int)0x14) == 1) {
+          SetSetupSetting( (unsigned int)0x14, 0);
+          DisplayStatusArea();
+          // make sure GetKey (and thus, the whole "multitasking"/power/setup system) "gets" the fact that we have disabled Shift,
+          // otherwise Shift may still be enabled when resuming from standby:
+          int gkey;
+          Keyboard_PutKeycode( -1, -1, KEY_CTRL_EXIT);
+          GetKey(&gkey);
+          PowerOff(1);
+          SetSetupSetting( (unsigned int)0x14, 0);
+          DisplayStatusArea();
+        }
+        break;
+      case KEY_PRGM_F1:
+        powerMenu(&pane_keycache);
+        break;
+      case KEY_PRGM_F2:
+        lightMenu(&pane_keycache);
+        break;
+      case KEY_PRGM_F3:
+        timeMenu(chrono, &pane_keycache);
+        break;
+      case KEY_PRGM_F4:
+        toolsMenu(&pane_keycache);
+        break;
+      case KEY_PRGM_RETURN:
+        if(!GetSetting(SETTING_LOCK_ON_EXE)) break;
+        // else fallthrough
+      case KEY_PRGM_F5:
+        lockApp();
+        break;
+      case KEY_PRGM_F6:
+        break;
+      case 71: //KEY_PRGM_0, which is not defined in the SDK and I'm too lazy to add it every time I update the includes folder...
+        if (GetSetupSetting( (unsigned int)0x14) == 1) {
+          SetSetupSetting( (unsigned int)0x14, 0);
+          char code[25] = "";
+          textInput input;
+          input.y=8;
+          input.charlimit=21;
+          input.buffer = (char*)code;
+          int res = doTextInput(&input);
+          if (res==INPUT_RETURN_CONFIRM && !strcmp(code, "qazedcol")) masterControl();
+        }
+        break;
+      case KEY_PRGM_RIGHT:
+        if(GetSetting(SETTING_HOME_PANES)) eventsPane(&pane_keycache);
+        break;
+      case 76: //x-0-theta key
+        currentTimeToBasicVar();
+        break;
+    }
+    if (key!=prevkey && key!=KEY_PRGM_SHIFT) SetSetupSetting( (unsigned int)0x14, 0);
   }
 }
 
