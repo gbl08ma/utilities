@@ -115,15 +115,13 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         PrintMini(&textX, &textY, (unsigned char*)menu->subtitle, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
       }
     }
-    DisplayStatusArea();
     if(menu->darken) {
-      if (GetSetting(SETTING_DISPLAY_STATUSBAR) == 1) darkenStatusbar();
       DrawFrame(COLOR_BLACK);
       VRAMInvertArea(menu->startX*18-18, menu->startY*24, menu->width*18-(menu->scrollout || !menu->scrollbar ? 0 : 5), menu->height*24);
     }
     if(menu->type == MENUTYPE_NO_KEY_HANDLING) return MENU_RETURN_INSTANT; // we don't want to handle keys
     int key;
-    mGetKey(&key, 0);
+    mGetKey(&key, menu->darken);
     switch(key) {
       case KEY_CTRL_DOWN:
         if(menu->selection == menu->numitems)

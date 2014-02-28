@@ -18,6 +18,7 @@
 #include "chronoProvider.hpp"
 #include "chronoGUI.hpp"
 #include "graphicsProvider.hpp"
+#include "settingsProvider.hpp"
 #include "setjmp.h"
 
 extern jmp_buf utilities_return;
@@ -42,10 +43,11 @@ void saveVRAMandCallSettings() {
   if(stackused > 300000) LoadVRAM_1();
   else if(vrambackup!=NULL) MsgBoxMoveWB(vrambackup, 0, 0, LCD_WIDTH_PX-1, LCD_HEIGHT_PX-24-1, 0);
 }
-void mGetKey(int* key, int calldispstatus) {
+void mGetKey(int* key, int darkenStatus) {
   //managed GetKey. allows for entering the settings menu from most points in the add-in.
   while (1) {
-    if(calldispstatus) DisplayStatusArea(); // it still won't show if it is disabled
+    DisplayStatusArea(); // it still won't show if it is disabled
+    if(GetSetting(SETTING_DISPLAY_STATUSBAR) && darkenStatus) darkenStatusbar();
     checkChronoComplete();
     GetKey(key);
     if (*key == KEY_CTRL_SETUP && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {

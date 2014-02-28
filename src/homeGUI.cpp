@@ -40,6 +40,10 @@ void showHome(chronometer* chrono) {
   unsigned short prevkey = 0;
   int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
   int pane_keycache = 0;
+  // make sure GetKey (and thus, the OS) "gets" the fact that we have entered an add-in,
+  // otherwise, we may get a white frame the first time GetKey is called when dark theme is enabled
+  Keyboard_PutKeycode( -1, -1, KEY_CTRL_EXIT);
+  GetKey(&keyCol);
   while (1) {
     //black theme, or not?
     if (GetSetting(SETTING_THEME) == 1) {
@@ -412,12 +416,8 @@ void eventsPane(int* pane_keycache) {
   pane_drawTodayEvents(calevents, 0, 0, numevents, eventsToDisplayInFull);
   if(GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) drawDayBusyMap(&thisday, 0, LCD_HEIGHT_PX-44, LCD_WIDTH_PX, 15, 1,0,0);
   while (inscreen) {
-    if (GetSetting(SETTING_THEME)) {
-      DisplayStatusArea();
-      darkenStatusbar();
-      DrawFrame( 0x000000  );
-    }
-    mGetKey(&key, 0);
+    if (GetSetting(SETTING_THEME)) DrawFrame( 0x000000  );
+    mGetKey(&key, GetSetting(SETTING_THEME));
     switch(key) {
       case KEY_CTRL_F1:
       case KEY_CTRL_F2:
