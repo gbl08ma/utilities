@@ -167,9 +167,11 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
             // of bytes we're going to read, so that the string is always null-terminated and can be safely
             // passed to the string compare function.
             int readsize = 0;
+            int nlen = strlen(needle);
             while(1) {
               readsize = Bfile_ReadFile_OS(hFile, buf, 1024, -1);
-              if(NULL != SearchStringMatch((char*)buf, needle, matchCase)) {
+              if(NULL != (matchCase ? SearchStringMatch((char*)buf, needle, matchCase) :
+              (memmem((char*)buf, 1024, needle, nlen)))) {
                 match = 1;
                 break;
               }
