@@ -21,28 +21,26 @@
 #include "fileProvider.hpp"
 #include "debugGUI.hpp"
 
-void bubbleSortFileMenuArray(File* data, MenuItem* mdata, int size) {
+void insertSortFileMenuArray(File* data, MenuItem* mdata, int size) {
   int sort = GetSetting(SETTING_FILE_MANAGER_SORT);
   if(!sort) return;
-  int j;
+  int i, j;
   File temp;
   MenuItem mtemp;
-  for(int i = 1; i < size; i++) {
-    j = i - 1;
-    while( j >= 0 &&
-      (sort == 1 ? strcmp( data[j+1].filename, data[j].filename ) < 0 :
-        (sort == 2 ? strcmp( data[j+1].filename, data[j].filename ) > 0 :
-          (sort == 3 ? data[j+1].size < data[j].size :
-            data[j+1].size > data[j].size)))
-      ) {
-      temp =  data[j + 1];
-      data[j+1] = data[j];
-      data[j] = temp;
-      mtemp =  mdata[j + 1];
-      mdata[j+1] = mdata[j];
-      mdata[j] = mtemp;
-      j--;
+
+  for(i = 1; i < size; i++) {
+    temp = data[i];
+    mtemp = mdata[i];
+    for (j = i - 1; j >= 0 &&
+      (sort == 1 ? strcmp( data[j].filename, temp.filename ) > 0 :
+        (sort == 2 ? strcmp( data[j].filename, temp.filename ) < 0 :
+          (sort == 3 ? data[j].size > temp.size :
+            data[j].size < temp.size))); j--) {
+      data[j + 1] = data[j];
+      mdata[j + 1] = mdata[j];
     }
+    data[j + 1] = temp;
+    mdata[j + 1] = mtemp;
   }
 }
 
@@ -93,12 +91,12 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
     }
     if (*count-1==MAX_ITEMS_IN_DIR) {
       Bfile_FindClose(findhandle);
-      if(files != NULL && menuitems != NULL) bubbleSortFileMenuArray(files, menuitems, *count);
+      if(files != NULL && menuitems != NULL) insertSortFileMenuArray(files, menuitems, *count);
       return GETFILES_MAX_FILES_REACHED; // Don't find more files, the array is full. 
     } else ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
   Bfile_FindClose(findhandle);
-  if(*count > 1 && files != NULL && menuitems != NULL) bubbleSortFileMenuArray(files, menuitems, *count);
+  if(*count > 1 && files != NULL && menuitems != NULL) insertSortFileMenuArray(files, menuitems, *count);
   return GETFILES_SUCCESS;
 }
 

@@ -41,7 +41,7 @@ typedef struct
 #define GETFILES_SUCCESS 0
 #define GETFILES_MAX_FILES_REACHED 1
 
-void bubbleSortFileMenuArray(File* data, MenuItem* mdata, int size);
+void insertSortFileMenuArray(File* data, MenuItem* mdata, int size);
 int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count);
 int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall=0);
 void deleteFiles(File* files, Menu* menu);
