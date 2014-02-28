@@ -1031,7 +1031,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       if(istask) mPrintXY(1, 1, (char*)"Add New Task", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
       else mPrintXY(1, 1, (char*)"Add New Event", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     } else {
-      SetBackGround(13);
+      SetBackGround(3);
       if(istask) mPrintXY(1, 1, (char*)"Edit Task", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
       else mPrintXY(1, 1, (char*)"Edit Event", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
     }
