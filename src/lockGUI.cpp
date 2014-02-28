@@ -119,8 +119,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
 int setPassword() {
   unsigned char password[256] = "";
   Bdisp_AllClr_VRAM();
-  mPrintXY(1, 1, (char*)"Calculator lock", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
-  mPrintXY(1, 2, (char*)"Set new code:", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+  drawScreenTitle((char*)"Calculator lock", (char*)"Set new code:");
   if (passwordInput(1, 3, password)) {
     savePassword(password);
     return 1;
@@ -133,8 +132,7 @@ int unlockCalc() {
   unsigned char password[256] = "";
   
   Bdisp_AllClr_VRAM();
-  mPrintXY(1, 1, (char*)"Calculator lock", TEXT_MODE_NORMAL, TEXT_COLOR_BLUE);
-  mPrintXY(1, 2, (char*)"Input code:", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+  drawScreenTitle((char*)"Calculator lock", (char*)"Input code:");
   if (!passwordInput(1, 3, password)) return 0;
   else {
     switch(comparePasswordHash(password)) {

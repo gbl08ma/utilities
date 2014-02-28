@@ -330,3 +330,8 @@ void popAllMsgBoxes() {
 int getNumberOfMsgBoxPushed() {
   return numberOfMsgBoxPushed;
 }
+
+void drawScreenTitle(char* title, char* subtitle) {
+  if(title != NULL) mPrintXY(1, 1, title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  if(subtitle != NULL) mPrintXY(1, 2, subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+}

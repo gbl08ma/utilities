@@ -72,7 +72,7 @@ int doTextArea(textArea* text) {
     isFirstDraw=0;
     if(text->showtitle) {
       clearLine(1,1);
-      mPrintXY(1, 1, (char*)text->title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+      drawScreenTitle((char*)text->title);
     }
     int scrollableHeight = LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1)-text->y;
     //draw a scrollbar:

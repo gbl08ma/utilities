@@ -300,7 +300,7 @@ void setCPUclock() {
   while (1) {
     Bdisp_AllClr_VRAM();
 
-    mPrintXY(1, 1, (char*)"CPU speed", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+    drawScreenTitle((char*)"CPU speed");
     CopySpriteNbit(selector, 10, 85, 364, 43, selector_palette, 1);
     
     textX=0; textY=118;

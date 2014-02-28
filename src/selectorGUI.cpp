@@ -23,7 +23,7 @@ int doSelector(Selector* selector) {
   int initialValue = selector->value; // so we can restore later
 
   if(selector->clearVRAM) Bdisp_AllClr_VRAM();
-  mPrintXY(1, 1, (char*)selector->title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  drawScreenTitle((char*)selector->title);
   mPrintXY(3, 2, (char*)selector->subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   while(1)
   {

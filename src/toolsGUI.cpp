@@ -65,7 +65,7 @@ void drawCapacityText(int* textY, const char* desc, long long int cur, long long
 
 void memoryCapacityViewer() {
   Bdisp_AllClr_VRAM();
-  mPrintXY(1, 1, (char*)"Memory Usage", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  drawScreenTitle((char*)"Memory Usage");
   int smemfree = 0;
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
@@ -248,7 +248,7 @@ void changeFKeyColor() {
   unsigned char selcolor = (unsigned char) 0xFF; //just so it isn't uninitialized
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  mPrintXY(1, 1, (char*)"Function Key Color", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+  drawScreenTitle((char*)"Function Key Color");
   textArea text;
   text.type = TEXTAREATYPE_INSTANT_RETURN;
   text.showtitle = 0;

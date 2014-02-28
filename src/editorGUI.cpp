@@ -62,8 +62,7 @@ void fileTextEditor(char* filename, char* basefolder) {
     input.key=0;
     SetBackGround(newfile ? 10 : 6);
     clearLine(1,8);
-    mPrintXY(1, 1, (char*)"Text Editor", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-    mPrintXY(1, 2, (char*)"File contents:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    drawScreenTitle((char*)"Text Editor", (char*)"File contents:");
     clearLine(1,3);
     int res = doTextInput(&input);
     if (res==INPUT_RETURN_EXIT) return; // user aborted
@@ -71,8 +70,7 @@ void fileTextEditor(char* filename, char* basefolder) {
       if(newfile) {
         SetBackGround(13);
         clearLine(1,3);
-        mPrintXY(1, 1, (char*)"Text Editor", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-        mPrintXY(1, 2, (char*)"Save file as:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        drawScreenTitle((char*)"Text Editor", (char*)"Save file as:");
         textInput ninput;
         ninput.forcetext=1;
         ninput.charlimit=MAX_NAME_SIZE;

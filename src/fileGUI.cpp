@@ -334,8 +334,7 @@ int makeFolderGUI(char* browserbasepath) {
   SetBackGround(10);
   clearLine(1,8);
   clearLine(1,3); // clear background at end of input
-  mPrintXY(1, 1, (char*)"Create folder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  mPrintXY(1, 2, (char*)"Name:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  drawScreenTitle((char*)"Create folder", (char*)"Name:");
   char newname[MAX_NAME_SIZE] = "";
   textInput input;
   input.forcetext=1;
@@ -365,11 +364,10 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   SetBackGround(6);
   clearLine(1,8);
   clearLine(1,3); // clear background at end of input
-  mPrintXY(1, 1, (char*)"Rename item", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   char title[MAX_NAME_SIZE+6];
   strcpy(title, (char*)menu->items[menu->selection-1].text);
   strcat(title, " to:");
-  mPrintXY(1, 2, (char*)title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  drawScreenTitle((char*)"Rename item", title);
   char newname[MAX_NAME_SIZE];
   strcpy(newname, (char*)menu->items[menu->selection-1].text);
   textInput input;
@@ -435,8 +433,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
     if(curstep == 0) {
       SetBackGround(9);
       clearLine(1,8);
-      mPrintXY(1, 1, (char*)"File Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-      mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      drawScreenTitle((char*)"File Search", (char*)"Search for:");
       clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
       GetFKeyPtr(0x04A3, &iresult); // Next
       FKey_Display(5, (int*)iresult);
@@ -453,8 +450,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
         // this must be here, inside this loop:
         SetBackGround(9);
         clearLine(1,8);
-        mPrintXY(1, 1, (char*)"File Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-        mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        drawScreenTitle((char*)"File Search", (char*)"Search for:");
         mPrintXY(1, 3, (char*)needle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         GetFKeyPtr(0x036F, &iresult); // <
         FKey_Display(0, (int*)iresult);

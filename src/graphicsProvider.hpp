@@ -39,5 +39,6 @@ void mMsgBoxPush(int lines);
 void mMsgBoxPop();
 void popAllMsgBoxes();
 int getNumberOfMsgBoxPushed();
+void drawScreenTitle(char* title, char* subtitle = NULL);
 
 #endif

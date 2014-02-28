@@ -1028,12 +1028,10 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
   while(1) {
     if (type == EVENTEDITORTYPE_ADD) {
       SetBackGround(0x0A);
-      if(istask) mPrintXY(1, 1, (char*)"Add New Task", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-      else mPrintXY(1, 1, (char*)"Add New Event", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+      drawScreenTitle(istask ? (char*)"Add New Task" : (char*)"Add New Event");
     } else {
       SetBackGround(12);
-      if(istask) mPrintXY(1, 1, (char*)"Edit Task", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-      else mPrintXY(1, 1, (char*)"Edit Event", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
+      drawScreenTitle(istask ? (char*)"Edit Task" : (char*)"Edit Event");
     }
     clearLine(1,8); // SetBackGround already took care of filling the lines 1 through 7, and DisplayStatusArea will fill line 0
     if(curstep >= 3) {
@@ -1044,7 +1042,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
     switch(curstep) {
       case 0:
         {
-          mPrintXY(1, 2, (char*)"Title:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          drawScreenTitle(NULL, (char*)"Title:");
           int iresult;
           GetFKeyPtr(0x04A3, &iresult); // Next
           FKey_Display(5, (int*)iresult);
@@ -1065,7 +1063,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       case 1:
         {
-          mPrintXY(1, 2, (char*)"Location:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          drawScreenTitle(NULL, (char*)"Location:");
           int iresult;
           GetFKeyPtr(0x036F, &iresult); // <
           FKey_Display(0, (int*)iresult);
@@ -1088,7 +1086,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       case 2:
         {
-          mPrintXY(1, 2, (char*)"Description:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          drawScreenTitle(NULL, (char*)"Description:");
           int iresult;
           GetFKeyPtr(0x036F, &iresult); // <
           FKey_Display(0, (int*)iresult);
@@ -1115,7 +1113,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         }
         break;
       case 3: {   
-        mPrintXY(1, 2, (char*)"Start time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        drawScreenTitle(NULL, (char*)"Start time:");
         mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int textX = 0;
         int textY = 5*24;
@@ -1163,7 +1161,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       }
       case 4: {
-        mPrintXY(1, 2, (char*)"End date:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        drawScreenTitle(NULL, (char*)"End date:");
         mPrintXY(7, 4, (char*)dateSettingToInputDisplay(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int textX = 0;
         int textY = 5*24;
@@ -1216,7 +1214,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       }
       case 5: {
         if(event->timed) {
-          mPrintXY(1, 2, (char*)"End time:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          drawScreenTitle(NULL, (char*)"End time:");
           mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           int iresult;
           GetFKeyPtr(0x036F, &iresult); // <
@@ -1259,7 +1257,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       }
       case 6: {
-        mPrintXY(1, 2, (char*)"Select category", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        drawScreenTitle(NULL, (char*)"Select category");
         mPrintXY(5, 4, (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
         mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
         int iresult, inscreen=1; int key = 0;
@@ -1533,8 +1531,7 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
   } else {
     Bdisp_AllClr_VRAM();
     SetSetupSetting( (unsigned int)0x14, 0); //we only accept numbers, so switch off alpha/shift
-    mPrintXY(1, 1, (char*)message, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-    mPrintXY(1, 2, (char*)message2, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    drawScreenTitle(message, message2);
     mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);  
     mPrintXY(6, 4, (char*)dateSettingToInputDisplay(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     
@@ -1720,8 +1717,7 @@ void searchEventsGUI(int y, int m, int d) {
   SetBackGround(9);
   clearLine(1,8);
   clearLine(1,3);
-  mPrintXY(1, 1, (char*)"Event Search", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
-  mPrintXY(1, 2, (char*)"Search for:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  drawScreenTitle((char*)"Event Search", (char*)"Search for:");
   int iresult;
   GetFKeyPtr(0x00A5, &iresult); // SEARCH (white)
   FKey_Display(5, (int*)iresult);
