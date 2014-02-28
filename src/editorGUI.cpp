@@ -69,7 +69,8 @@ void fileTextEditor(char* filename, char* basefolder) {
     if (res==INPUT_RETURN_EXIT) return; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
       if(newfile) {
-        SetBackGround(10);
+        SetBackGround(13);
+        clearLine(1,8);
         mPrintXY(1, 1, (char*)"Text Editor", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
         mPrintXY(1, 2, (char*)"Save file as:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         textInput ninput;

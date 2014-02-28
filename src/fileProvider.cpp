@@ -253,20 +253,16 @@ void copyFile(char* oldfilename, char* newfilename) {
   Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
   Bfile_StrToName_ncpy(tempfilenameshort, (unsigned char*)"\\\\fls0\\UTILSTMP.PCT", 0x10A);
   
-  int copySize;
   int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0); // Get handle for the old file
   if(hOldFile < 0) {
     //returned error: couldn't open file to copy.
     return; //skip this file
-  } else {
-    copySize = Bfile_GetFileSize_OS(hOldFile);
-    Bfile_CloseFile_OS(hOldFile); // close for now
   }
+  int copySize = Bfile_GetFileSize_OS(hOldFile);
+  Bfile_CloseFile_OS(hOldFile); // close for now
 
   int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
-  if(hNewFile < 0) {
-    // Returned error, dest file does not exist (which is good)
-  } else {
+  if(hNewFile >= 0) {
     // dest file exists (which is bad) and is open.
     Bfile_CloseFile_OS(hNewFile);
     return; //skip this file
