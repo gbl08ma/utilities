@@ -111,6 +111,7 @@ int EndsIWith(const char *str, const char *suffix)
 }
 
 // not really for strings, but anyway:
+// based on http://dsss.be/w/c:memmem
 void* memmem(char* haystack, int hlen, char* needle, int nlen) {
   if (nlen > hlen) return 0;
   int i,j=0;

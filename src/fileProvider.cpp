@@ -84,15 +84,9 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
         strcpy(files[*count].filename, basepath); 
         strcat(files[*count].filename, (char*)buffer);
         files[*count].size = fileinfo.fsize;
-        if(fileinfo.fsize == 0) {
-          files[*count].isfolder = 1;
-          menuitems[*count].isfolder = 1;
-          menuitems[*count].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
-        } else {
-          files[*count].isfolder = 0;
-          menuitems[*count].isfolder = 0;
-          menuitems[*count].icon = fileIconFromName((char*)buffer);
-        }
+        files[*count].isfolder = menuitems[*count].isfolder = !fileinfo.fsize;
+        if(fileinfo.fsize == 0) menuitems[*count].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
+        else menuitems[*count].icon = fileIconFromName((char*)buffer);
         menuitems[*count].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
         // because usually alloca is used to declare space for MenuItem*, the space is not cleared. which means we need to explicitly set each field:
         menuitems[*count].color=TEXT_COLOR_BLACK;
