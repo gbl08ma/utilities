@@ -61,7 +61,7 @@ void firstRunWizard() {
   elem[3].newLine = 1;
   elem[3].text = (char*)"- Fine timeout&backlight adjustment";
   elem[4].newLine = 1;
-  elem[4].text = (char*)"- File manager";
+  elem[4].text = (char*)"- File manager with file search";
   elem[5].newLine = 1;
   elem[5].text = (char*)"- CPU clock adjustment";
   elem[6].newLine = 1;
