@@ -1940,8 +1940,8 @@ void repairCalendarDatabase() {
     elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This situation is often experienced when a version of Utilities older than v1.1 has been used, or when events with invalid data are imported.";
     elem[1].text = (char*)"Repairing the database now is very important to avoid further problems. You should not see this message again once you repair the database.";
   } else {
-    elem[0].text = (char*)"Repairing the calendar events' database will delete or fix any corrupt or inconsistent data, such as events with an end time preceding their start time.";
-    elem[1].text = (char*)"Doing this is highly recommended if you used a version of Utilities older than v1.1, or if you experience problems viewing and manipulating calendar events.";
+    elem[0].text = (char*)"Repairing the calendar events' database will fix any inconsistent data, such as events with an end time preceding their start time.";
+    elem[1].text = (char*)"Doing this is highly recommended if you used a version of Utilities prior to v1.1, or if you are experiencing problems viewing and manipulating calendar events.";
   } 
   elem[1].newLine = 1;
   elem[1].lineSpacing = 5;
@@ -1950,7 +1950,7 @@ void repairCalendarDatabase() {
   elem[2].text = (char*)"Repairing the database should not result in data loss, except for any corrupt entries that despite their state, are still partially readable (these will be deleted). You may want to create backups of such entries using pen and paper - never use Utilities to perform operations on corrupt events or others in their start date!";
   elem[3].newLine = 1;
   elem[3].lineSpacing = 5;
-  elem[3].text = (char*)"This operation may take a long time if there are many events stored. Press F1 to start or EXIT to cancel.";
+  elem[3].text = (char*)"If there are many events registered, this operation may take a long time. Press F1 to start or EXIT to cancel.";
   
   text.allowF1 = 1;
   text.numelements = 4;
@@ -2033,7 +2033,7 @@ void repairCalendarDatabase() {
   elem[6].text = buffer3;
   
   text.type = TEXTAREATYPE_NORMAL;
-  elem[0].text = (char*)"Done reparing the calendar database.";
+  elem[0].text = (char*)"Done repairing the calendar database. Press EXIT.";
   doTextArea(&text);
   bufmonth = 0; // because apart from editing dates, database repair also deletes invalid files that may influence event counts.
   searchValid = 0; // invalidate week view results
