@@ -155,100 +155,99 @@ void chronoScreen(chronometer* chrono) {
       // SELECT (white), ALL (white), None (white), REVERSE (white), empty, empty
       drawFkeyLabels(0x0037, 0x0398, 0x016A, 0x045B, 0, 0);
     }
-    
+    DisplayStatusArea();
     doMenu(&menu);
     
     int keyCol = 0, keyRow = 0;
     Bdisp_PutDisp_DD();
-    if (0 != GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key) ) {
-      key = PRGM_GetKey();
-      switch(key)
-      {
-        case KEY_PRGM_SHIFT:
-          //turn on/off shift manually because getkeywait doesn't do it
-          SetSetupSetting( (unsigned int)0x14, (GetSetupSetting( (unsigned int)0x14) == 0));
-          break;
-        case KEY_PRGM_MENU:
-          if (GetSetupSetting( (unsigned int)0x14) == 1) {
-            SetSetupSetting( (unsigned int)0x14, 0);
-            saveVRAMandCallSettings();
-          }
-          break;
-        case KEY_PRGM_DOWN:
-          if(menu.selection == menu.numitems)
-          {
-            menu.selection = 1;
-            menu.scroll = 0;
-          }
-          else
-          {
-            menu.selection++;
-            if(menu.selection > menu.scroll+(menu.numitems>6 ? 6 : menu.numitems))
-              menu.scroll = menu.selection -(menu.numitems>6 ? 6 : menu.numitems);
-          }
-          break;
-        case KEY_PRGM_UP:
-          if(menu.selection == 1)
-          {
-            menu.selection = menu.numitems;
-            menu.scroll = menu.selection-6;
-          }
-          else
-          {
-            menu.selection--;
-            if(menu.selection-1 < menu.scroll)
-              menu.scroll = menu.selection -1;
-          }
-          break;
-        case KEY_PRGM_RETURN:
-          saveChronoArray(chrono, NUMBER_OF_CHRONO);
-          break;
-        case KEY_PRGM_F1:
-          if (GetSetupSetting( (unsigned int)0x14) == 1) {
-            SetSetupSetting( (unsigned int)0x14, 0);
-            menu.fkeypage=1;
-          } else {
-            if(menuitems[menu.selection-1].value == MENUITEM_VALUE_CHECKED) menuitems[menu.selection-1].value=MENUITEM_VALUE_NONE;
-            else menuitems[menu.selection-1].value=MENUITEM_VALUE_CHECKED;
-          }
-          break;
-        case KEY_PRGM_F2:
-          if(menu.fkeypage==0) { setChronoGUI(&menu, chrono); saveChronoArray(chrono, NUMBER_OF_CHRONO); }
-          else if (menu.fkeypage==1) {
-            // select all
-            for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = MENUITEM_VALUE_CHECKED;
-          }
-          break;
-        case KEY_PRGM_F3:
-          if(menu.fkeypage==0) clearSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
-          else if (menu.fkeypage==1) {
-            // select none
-            for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = MENUITEM_VALUE_NONE;
-          }
-          break;
-        case KEY_PRGM_F4:
-          if(menu.fkeypage==0) startSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
-          else if (menu.fkeypage==1) {
-            // reverse selection
-            for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = !menu.items[cur].value;
-          }
-          break;
-        case KEY_PRGM_F5:
-          if(menu.fkeypage==0) stopSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
-          break;
-        case KEY_PRGM_F6:
-          if(menu.fkeypage==0) setBuiltinChrono(&menu, chrono);
-          break;
-        case KEY_PRGM_EXIT:
-          if(menu.fkeypage==0) {
-            stopAndUninstallStubTimer();
-            return;
-          }
-          else menu.fkeypage=0;
-          break;
-      }
-      if (key!=prevkey && key!=KEY_PRGM_SHIFT) SetSetupSetting( (unsigned int)0x14, 0);
+    GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); // just to handle the Menu key
+    key = PRGM_GetKey();
+    switch(key)
+    {
+      case KEY_PRGM_SHIFT:
+        //turn on/off shift manually because getkeywait doesn't do it
+        SetSetupSetting( (unsigned int)0x14, (GetSetupSetting( (unsigned int)0x14) == 0));
+        break;
+      case KEY_PRGM_MENU:
+        if (GetSetupSetting( (unsigned int)0x14) == 1) {
+          SetSetupSetting( (unsigned int)0x14, 0);
+          saveVRAMandCallSettings();
+        }
+        break;
+      case KEY_PRGM_DOWN:
+        if(menu.selection == menu.numitems)
+        {
+          menu.selection = 1;
+          menu.scroll = 0;
+        }
+        else
+        {
+          menu.selection++;
+          if(menu.selection > menu.scroll+(menu.numitems>6 ? 6 : menu.numitems))
+            menu.scroll = menu.selection -(menu.numitems>6 ? 6 : menu.numitems);
+        }
+        break;
+      case KEY_PRGM_UP:
+        if(menu.selection == 1)
+        {
+          menu.selection = menu.numitems;
+          menu.scroll = menu.selection-6;
+        }
+        else
+        {
+          menu.selection--;
+          if(menu.selection-1 < menu.scroll)
+            menu.scroll = menu.selection -1;
+        }
+        break;
+      case KEY_PRGM_RETURN:
+        saveChronoArray(chrono, NUMBER_OF_CHRONO);
+        break;
+      case KEY_PRGM_F1:
+        if (GetSetupSetting( (unsigned int)0x14) == 1) {
+          SetSetupSetting( (unsigned int)0x14, 0);
+          menu.fkeypage=1;
+        } else {
+          if(menuitems[menu.selection-1].value == MENUITEM_VALUE_CHECKED) menuitems[menu.selection-1].value=MENUITEM_VALUE_NONE;
+          else menuitems[menu.selection-1].value=MENUITEM_VALUE_CHECKED;
+        }
+        break;
+      case KEY_PRGM_F2:
+        if(menu.fkeypage==0) { setChronoGUI(&menu, chrono); saveChronoArray(chrono, NUMBER_OF_CHRONO); }
+        else if (menu.fkeypage==1) {
+          // select all
+          for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = MENUITEM_VALUE_CHECKED;
+        }
+        break;
+      case KEY_PRGM_F3:
+        if(menu.fkeypage==0) clearSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
+        else if (menu.fkeypage==1) {
+          // select none
+          for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = MENUITEM_VALUE_NONE;
+        }
+        break;
+      case KEY_PRGM_F4:
+        if(menu.fkeypage==0) startSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
+        else if (menu.fkeypage==1) {
+          // reverse selection
+          for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = !menu.items[cur].value;
+        }
+        break;
+      case KEY_PRGM_F5:
+        if(menu.fkeypage==0) stopSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
+        break;
+      case KEY_PRGM_F6:
+        if(menu.fkeypage==0) setBuiltinChrono(&menu, chrono);
+        break;
+      case KEY_PRGM_EXIT:
+        if(menu.fkeypage==0) {
+          stopAndUninstallStubTimer();
+          return;
+        }
+        else menu.fkeypage=0;
+        break;
     }
+    if (key!=prevkey && key!=KEY_PRGM_SHIFT) SetSetupSetting( (unsigned int)0x14, 0);
   }
 }
 
