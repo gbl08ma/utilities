@@ -386,10 +386,14 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
   DefineStatusMessage((char*)statusText, 1, 0, 0);
   
+  int searchOnFilename = !!(GetSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 0));
+  int searchOnContents = !!(GetSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 1));
+  int searchRecursively = !!(GetSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 2));
+  int matchCase = !!(GetSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 3));
+  
   char needle[55] = "";
-  int searchOnFilename = 1, searchOnContents = 0, searchRecursively = 0, matchCase = 0;
   textInput input;
-  input.forcetext=1; //force text so title must be at least one char.
+  input.forcetext=1; //force text so needle must be at least one char.
   input.charlimit=50;
   input.acceptF6=1;
   input.buffer = needle;
@@ -466,6 +470,12 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
       if(!inloop) break;
     }
   }
+  unsigned int newsetting = 0;
+  if(searchOnFilename) newsetting |= (1U << 0);
+  if(searchOnContents) newsetting |= (1U << 1);
+  if(searchRecursively) newsetting |= (1U << 2);
+  if(matchCase) newsetting |= (1U << 3);
+  SetSetting(SETTING_FILE_MANAGER_SEARCH, newsetting, 1); // remember search preferences
   SearchForFiles(NULL, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
   MenuItem* resitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
   File* files = (File*)alloca(menu.numitems*sizeof(File));

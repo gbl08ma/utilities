@@ -15,7 +15,7 @@
 #include "settingsProvider.hpp"
 #include "constantsProvider.hpp"
 
-#define SETTINGSFILE_VERSION 9 // NOTE: update this when changing the amount or meaning of settings!
+#define SETTINGSFILE_VERSION 10 // NOTE: update this when changing the amount or meaning of settings!
 static int setting_self_fileversion = SETTINGSFILE_VERSION; // this is a special setting
 static int setting_timeformat = 0; // 0 = 24-hour HH:MM:SS ; 1 = 12-hour HH:MM:SS AM/PM
 static int setting_longdateformat = 0;
@@ -69,6 +69,7 @@ static int setting_week_start_day = 0; // 0 = sunday, 1 = monday
 static int setting_show_calendar_busy_map = 1;
 static int setting_chrono_notification_type = 1; // notification for when a downwards chrono finishes. 0: no notification; 1: pop-up with screen flashing; 2: pop-up without screen flashing; 3: message on home screen without pop-up
 static int setting_file_manager_sort = 1; // file list sort in file manager. 0: no sort (list as they appear), 1: A-Z, 2: Z-A, 3: size (ascending), 4: size (descending)
+static int setting_file_manager_search = 1; // settings for search in the file manager; the value of this int is never used as a whole, but its bits are set individually for each search option.
 
 // Routines for accessing and setting settings
 // NOTE: directly accessing setting_* variables is now strictly forbidden!
@@ -123,6 +124,8 @@ int GetSetting(int setting) {
       return setting_chrono_notification_type;
     case SETTING_FILE_MANAGER_SORT:
       return setting_file_manager_sort;
+    case SETTING_FILE_MANAGER_SEARCH:
+      return setting_file_manager_search;
     default:
       return 0;
   }
@@ -209,6 +212,9 @@ void SetSetting(int setting, int value, int autosave) {
       break;
     case SETTING_FILE_MANAGER_SORT:
       setting_file_manager_sort = value;
+      break;
+    case SETTING_FILE_MANAGER_SEARCH:
+      setting_file_manager_search = value;
       break;
     default:
       break;
