@@ -657,6 +657,8 @@ void viewEvents(int y, int m, int d) {
   strcpy(menu.nodatamsg, "No events - press F2");
   char buffer[15];
   dateToString(buffer, y, m, d);
+  strcpy(menu.statusText, "");
+  menu.useStatusText=1; // to clear "Press OPTN..." message
   strcpy(menu.title, "Events for ");
   strcat(menu.title, buffer);
   strcat(menu.title, " (");
