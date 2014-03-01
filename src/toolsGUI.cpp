@@ -161,15 +161,8 @@ int addinManagerSub(Menu* menu) {
     menuitems[curaddin].color = (addins[curaddin].active ? TEXT_COLOR_BLACK : TEXT_COLOR_CYAN);
   }
   
-  int iresult;  
-  if(menu->numitems>0) {
-    GetFKeyPtr(0x0103, &iresult); // CHANGE (white)
-    FKey_Display(0, (int*)iresult);
-    GetFKeyPtr(0x0038, &iresult); // DELETE
-    FKey_Display(1, (int*)iresult);
-  }
-  GetFKeyPtr(0x03FD, &iresult); // HELP (white)
-  FKey_Display(5, (int*)iresult);
+  if(menu->numitems>0) drawFkeyLabels(0x0103, 0x0038); // CHANGE (white), DELETE
+  drawFkeyLabels(-1,-1,-1,-1,-1,0x03FD); // HELP (white)
   
   unsigned short newpath[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1] = "";

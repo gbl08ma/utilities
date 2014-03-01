@@ -40,5 +40,6 @@ void mMsgBoxPop();
 void popAllMsgBoxes();
 int getNumberOfMsgBoxPushed();
 void drawScreenTitle(char* title, char* subtitle = NULL);
+void drawFkeyLabels(int f1=-1, int f2=-1, int f3=-1, int f4=-1, int f5=-1, int f6=-1);
 
 #endif

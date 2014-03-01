@@ -66,19 +66,7 @@ void showHome(chronometer* chrono) {
 
     //Show FKeys
     if (GetSetting(SETTING_DISPLAY_FKEYS)) {
-      int iresult;
-      GetFKeyPtr(0x043A, &iresult); // POWER
-      FKey_Display(0, (int*)iresult);
-      GetFKeyPtr(0x043E, &iresult); // LIGHT
-      FKey_Display(1, (int*)iresult);
-      GetFKeyPtr(0x012A, &iresult); // TIME
-      FKey_Display(2, (int*)iresult);
-      GetFKeyPtr(0x011C, &iresult); // TOOL
-      FKey_Display(3, (int*)iresult);
-      if (GetSetting(SETTING_ENABLE_LOCK)) {
-        GetFKeyPtr(0x04D3, &iresult); // key icon (lock)
-        FKey_Display(4, (int*)iresult);
-      }
+      drawFkeyLabels(0x043A, 0x043E, 0x012A, 0x011C, (GetSetting(SETTING_ENABLE_LOCK) ? 0x04D3 : -1)); //POWER, LIGHT, TIME, TOOL, key icon (lock)
       if (GetSetting(SETTING_THEME)) {
         darkenFkeys((GetSetting(SETTING_ENABLE_LOCK) == 1 ? 5 : 4));
       }

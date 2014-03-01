@@ -16,19 +16,14 @@
 #include "menuGUI.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
-#include "settingsProvider.hpp" 
+#include "settingsProvider.hpp"
+#include "debugGUI.hpp"
 
 int doTextInput(textInput* input) {
   if(input->type==INPUTTYPE_NORMAL) {
-    int iresult;
-    if(input->symbols) {
-      GetFKeyPtr(0x02A1, &iresult); // CHAR
-      FKey_Display(3, (int*)iresult);
-    }
-    GetFKeyPtr(0x0307, &iresult); // A<>a
-    FKey_Display(4, (int*)iresult);
+    drawFkeyLabels(-1, -1, -1, (input->symbols? 0x02A1 : -1), 0x0307); // CHAR, A<>a
   }
-
+  int wasInClip=0;
   if (input->key) { input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, input->key); }
   int widthForSyscalls = input->width;
   if(input->width == 21) widthForSyscalls = 20;
@@ -66,8 +61,18 @@ int doTextInput(textInput* input) {
       drawLine((input->x*18-18)+18*2, input->y*24-1, (input->x*18-18)+18*2, input->y*24+23, COLOR_GRAY);
       drawLine((input->x*18-18)+18*4, input->y*24-1, (input->x*18-18)+18*4, input->y*24+23, COLOR_GRAY);
     }
-  
     int keyflag = GetSetupSetting( (unsigned int)0x14);
+    if(input->type==INPUTTYPE_NORMAL) {
+      if(keyflag == 0x02) {
+        // in clip mode
+        wasInClip=1;
+        drawFkeyLabels(0x0034, 0x0069); // COPY (white), CUT (white)
+      } else if(wasInClip) {
+        // clear, because we were in clip mode before
+        wasInClip=0;
+        drawFkeyLabels(0,0); // empty first two
+      }
+    }
     mGetKey(&input->key);
     if (GetSetupSetting( (unsigned int)0x14) == 0x01 || GetSetupSetting( (unsigned int)0x14) == 0x04 || GetSetupSetting( (unsigned int)0x14) == 0x84) {
       keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.

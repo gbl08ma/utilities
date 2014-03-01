@@ -97,11 +97,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         sb.barwidth = 6;
         Scrollbar(&sb);
       }
-      if(menu->type==MENUTYPE_MULTISELECT && menu->fkeypage == 0) {
-        int iresult;
-        GetFKeyPtr(0x0037, &iresult); // SELECT (white)
-        FKey_Display(0, (int*)iresult);
-      }
+      if(menu->type==MENUTYPE_MULTISELECT && menu->fkeypage == 0) drawFkeyLabels(0x0037); // SELECT (white)
     } else {
       printCentered((unsigned char*)menu->nodatamsg, (itemsStartY*24)+(itemsHeight*24)/2-12, COLOR_BLACK, COLOR_WHITE);
     }

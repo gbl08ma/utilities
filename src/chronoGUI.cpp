@@ -137,7 +137,6 @@ void chronoScreen(chronometer* chrono) {
   strcpy(menu.title, "Chronometers");
   
   Bdisp_AllClr_VRAM();
-  int iresult;
   short unsigned int key;
   unsigned short prevkey = 0;
   while(1) {
@@ -148,32 +147,13 @@ void chronoScreen(chronometer* chrono) {
       strcpy(menuitems[curitem].text, (char*)text);
     }
     if(menu.fkeypage==0) {
-      GetFKeyPtr(0x0037, &iresult); // SELECT (white)
-      FKey_Display(0, (int*)iresult);
-      GetFKeyPtr(0x0010, &iresult); // SET
-      FKey_Display(1, (int*)iresult);
-      GetFKeyPtr(0x0149, &iresult); // CLEAR
-      FKey_Display(2, (int*)iresult);
-      GetFKeyPtr(0x040A, &iresult); // play icon
-      FKey_Display(3, (int*)iresult);
-      GetFKeyPtr(0x0031, &iresult); // stop icon
-      FKey_Display(4, (int*)iresult);
+      // SELECT (white), SET, CLEAR, play icon, stop icon, BUILT-IN
+      drawFkeyLabels(0x0037, 0x0010, 0x0149, 0x040A, 0x0031, 0x0156);
       // "hack" the stop icon, turning it into a pause icon
       drawRectangle(286, 197, 4, 14, COLOR_WHITE);
-      GetFKeyPtr(0x0156, &iresult); // BUILT-IN
-      FKey_Display(5, (int*)iresult);
     } else if (menu.fkeypage==1) {
-      clearLine(1,8);
-      GetFKeyPtr(0x0037, &iresult); // SELECT (white)
-      FKey_Display(0, (int*)iresult);
-      GetFKeyPtr(0x0398, &iresult); // ALL (white)
-      FKey_Display(1, (int*)iresult);
-      GetFKeyPtr(0x016A, &iresult); // None (white)
-      FKey_Display(2, (int*)iresult);
-      GetFKeyPtr(0x045B, &iresult); // REVERSE (white)
-      FKey_Display(3, (int*)iresult);
-      GetFKeyPtr(0x0000, &iresult); // (empty)
-      FKey_Display(4, (int*)iresult);
+      // SELECT (white), ALL (white), None (white), REVERSE (white), empty, empty
+      drawFkeyLabels(0x0037, 0x0398, 0x016A, 0x045B, 0, 0);
     }
     
     doMenu(&menu);

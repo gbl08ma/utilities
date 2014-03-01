@@ -69,23 +69,9 @@ int viewTasksSub(Menu* menu) {
   menu->subtitle = subtitle;
   while(1) {
     Bdisp_AllClr_VRAM();
-    int iresult;
-    if (menu->fkeypage == 0) {
-      if(menu->numitems>0) {
-        GetFKeyPtr(0x049F, &iresult); // VIEW
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x0185, &iresult); // EDIT
-        FKey_Display(2, (int*)iresult);
-        GetFKeyPtr(0x0038, &iresult); // DELETE
-        FKey_Display(3, (int*)iresult);
-        GetFKeyPtr(0x0104, &iresult); // DEL-ALL
-        FKey_Display(4, (int*)iresult);
-        GetFKeyPtr(0x049D, &iresult); // Switch [white]
-        FKey_Display(5, (int*)iresult);
-      }
-      GetFKeyPtr(0x03B4, &iresult); // INSERT
-      FKey_Display(1, (int*)iresult);
-    }
+    // VIEW, INSERT, EDIT, DELETE, DEL-ALL, Switch [white]
+    drawFkeyLabels(-1, 0x03B4);
+    if(menu->numitems>0) drawFkeyLabels(0x049F, -1, 0x0185, 0x0038, 0x0104, 0x049D);
     if(menu->selection > menu->numitems) menu->selection = menu->numitems;
     if(menu->selection < 1) menu->selection = 1;
     int res = doMenu(menu);

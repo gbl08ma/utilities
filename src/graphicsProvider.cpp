@@ -335,3 +335,32 @@ void drawScreenTitle(char* title, char* subtitle) {
   if(title != NULL) mPrintXY(1, 1, title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   if(subtitle != NULL) mPrintXY(1, 2, subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
 }
+
+void drawFkeyLabels(int f1, int f2, int f3, int f4, int f5, int f6) {
+  // set arguments to negative numbers if that fkey is not to be affected.
+  int iresult;
+  if(f1>=0) {
+    GetFKeyPtr(f1, &iresult);
+    FKey_Display(0, (int*)iresult);
+  }
+  if(f2>=0) {
+    GetFKeyPtr(f2, &iresult);
+    FKey_Display(1, (int*)iresult);
+  }
+  if(f3>=0) {
+    GetFKeyPtr(f3, &iresult);
+    FKey_Display(2, (int*)iresult);
+  }
+  if(f4>=0) {
+    GetFKeyPtr(f4, &iresult);
+    FKey_Display(3, (int*)iresult);
+  }
+  if(f5>=0) {
+    GetFKeyPtr(f5, &iresult);
+    FKey_Display(4, (int*)iresult);
+  }
+  if(f6>=0) {
+    GetFKeyPtr(f6, &iresult);
+    FKey_Display(5, (int*)iresult);
+  }
+}

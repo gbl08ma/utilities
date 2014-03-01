@@ -59,49 +59,28 @@ int viewMonthCalendar(int dateselection) {
   }
   
   int menu = 1;
-  int iresult;
   int eventcount[32];
   int busydays[32];
   int bufyear = 0;
-  while (1)
-  {
+  while (1) {
     if(getDBneedsRepairFlag()) repairCalendarDatabase();
     if(y>9999||y<0) { y=getCurrentYear(); m=getCurrentMonth(); d=getCurrentDay(); } //protection: reset to today's date if somehow we're trying to access the calendar for an year after 9999, or before 0.
     drawCalendar(y,m,d, GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT), eventcount, busydays, &bufmonth, &bufyear);
-    switch (menu)
-    {
+    switch (menu) {
     case 1:
-        GetFKeyPtr(0x01FC, &iresult); // JUMP
-        FKey_Display(0, (int*)iresult);
-        if(!dateselection) {
-          if(!GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0) {
-            GetFKeyPtr(0x049F, &iresult); // VIEW
-            FKey_Display(1, (int*)iresult);
-            GetFKeyPtr(0x0104, &iresult); // DEL-ALL
-            FKey_Display(3, (int*)iresult);
-          }
-          GetFKeyPtr(0x03B4, &iresult); // INSERT
-          FKey_Display(2, (int*)iresult);
-          GetFKeyPtr(0x0187, &iresult); // SEARCH
-          FKey_Display(4, (int*)iresult);
-          GetFKeyPtr(0x0102, &iresult); // SWAP [white]
-          FKey_Display(5, (int*)iresult);
+      // JUMP, VIEW, INSERT, DEL-ALL, SEARCH, SWAP [white]
+      drawFkeyLabels(0x01FC);
+      if(!dateselection) {
+        drawFkeyLabels(-1, -1, 0x03B4, -1, 0x0187, 0x0102);
+        if(!GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0) {
+          drawFkeyLabels(-1, 0x049F, -1, 0x0104);
         }
-        break;
+      }
+      break;
     case 2:
-        GetFKeyPtr(0x0408, &iresult); // |<<
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x0409, &iresult); // <<
-        FKey_Display(1, (int*)iresult);
-        GetFKeyPtr(0x040B, &iresult); // >>
-        FKey_Display(2, (int*)iresult);
-        GetFKeyPtr(0x040C, &iresult); // >>|
-        FKey_Display(3, (int*)iresult);
-        GetFKeyPtr(0x0238, &iresult); // ORIGINAL
-        FKey_Display(4, (int*)iresult);
-        GetFKeyPtr(0x015F, &iresult); // DATE
-        FKey_Display(5, (int*)iresult);
-        break;
+      // |<< , << , >> , >>| , ORIGINAL, DATE
+      drawFkeyLabels(0x0408, 0x0409, 0x040B, 0x040C, 0x0238, 0x015F);
+      break;
     }
     int key;
     mGetKey(&key);
@@ -420,33 +399,12 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   while(1) {
     Bdisp_AllClr_VRAM();
     if(hasBusyMap) MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 0);
-    int iresult;
     if(menu->fkeypage==0) {
-      GetFKeyPtr(0x01FC, &iresult); // JUMP
-      FKey_Display(0, (int*)iresult);
-      GetFKeyPtr(0x049F, &iresult); // VIEW
-      FKey_Display(1, (int*)iresult);
-      GetFKeyPtr(0x015F, &iresult); // DATE
-      FKey_Display(2, (int*)iresult);
-      GetFKeyPtr(0x03B4, &iresult); // INSERT
-      FKey_Display(3, (int*)iresult);
-      GetFKeyPtr(0x0187, &iresult); // SEARCH
-      FKey_Display(4, (int*)iresult);
-      GetFKeyPtr(0x0102, &iresult); // SWAP [white]
-      FKey_Display(5, (int*)iresult);
+      // JUMP, VIEW, DATE, INSERT, SEARCH, SWAP [white]
+      drawFkeyLabels(0x01FC, 0x049F, 0x015F, 0x03B4, 0x0187, 0x0102);
     } else if(menu->fkeypage==1) {
-      GetFKeyPtr(0x0408, &iresult); // |<<
-      FKey_Display(0, (int*)iresult);
-      GetFKeyPtr(0x0409, &iresult); // <<
-      FKey_Display(1, (int*)iresult);
-      GetFKeyPtr(0x040B, &iresult); // >>
-      FKey_Display(2, (int*)iresult);
-      GetFKeyPtr(0x040C, &iresult); // >>|
-      FKey_Display(3, (int*)iresult);
-      GetFKeyPtr(0x0238, &iresult); // ORIGINAL
-      FKey_Display(4, (int*)iresult);
-      GetFKeyPtr(0x015F, &iresult); // DATE
-      FKey_Display(5, (int*)iresult);
+      // |<< , << , >> , >>| , ORIGINAL, DATE
+      drawFkeyLabels(0x0408, 0x0409, 0x040B, 0x040C, 0x0238, 0x015F);
     }
     int res = doMenu(menu);
     int msel = getMenuSelectionIgnoringSeparators(menu);
@@ -743,27 +701,18 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
     Bdisp_AllClr_VRAM();
     if(hasBusyMap) MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 0);
     
-    int iresult;
     if(!menu->numitems) menu->fkeypage = 0; //because if there are no events, 2nd menu is empty.
     if (menu->fkeypage == 0) {
-      GetFKeyPtr(0x03B4, &iresult); // INSERT
-      FKey_Display(1, (int*)iresult);
+      // VIEW, INSERT, EDIT, DELETE, DEL-ALL, Rotate FKey menu arrow
+      drawFkeyLabels(-1, 0x03B4);
       if(menu->numitems>0) {
-        GetFKeyPtr(0x049F, &iresult); // VIEW
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x0185, &iresult); // EDIT
-        FKey_Display(2, (int*)iresult);
-        GetFKeyPtr(0x0038, &iresult); // DELETE
-        FKey_Display(3, (int*)iresult);
-        GetFKeyPtr(0x0104, &iresult); // DEL-ALL
-        FKey_Display(4, (int*)iresult);
+        drawFkeyLabels(0x049F, -1, 0x0185, 0x0038, 0x0104, 0x0006);
       }
     } else if (menu->fkeypage == 1) {
       if(menu->numitems>0) {
-        GetFKeyPtr(0x038D, &iresult); // COPY
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x04D2, &iresult); // MOVE
-        FKey_Display(1, (int*)iresult);
+        // COPY, MOVE, MEMO
+        drawFkeyLabels(0x038D, 0x04D2, 0x0470, -1, -1, 0x0006);
+        // "hack" the MOVE label
         unsigned short fgc = Bdisp_GetPoint_VRAM(66, 195); // get color in which function keys are drawn
         VRAMReplaceColorInRect(67, 195, 58, 18, COLOR_WHITE, COLOR_GREEN);
         VRAMReplaceColorInRect(67, 195, 58, 18, fgc, COLOR_WHITE);
@@ -771,13 +720,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         for(int x = 0; x < 5; x++) {
           drawLine(125-x, 214, 126, 213-x, COLOR_WHITE);
         }
-        GetFKeyPtr(0x0470, &iresult); // MEMO
-        FKey_Display(2, (int*)iresult);
       }
-    }
-    if(menu->numitems>0) {
-      GetFKeyPtr(0x0006, &iresult); // Rotate FKey menu arrow
-      FKey_Display(5, (int*)iresult);
     }
     if(menu->selection > menu->numitems) menu->selection = menu->numitems;
     if(menu->selection < 1) menu->selection = 1;
@@ -1039,13 +982,12 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       // where alpha-lock was enabled, not being disabled on F6.
       SetSetupSetting( (unsigned int)0x14, 0);
     }
+    // < (first label) and Next or Finish (last label)
+    drawFkeyLabels((curstep>0 ? 0x036F : -1), -1, -1, -1, -1, (curstep==6 ? 0x04A4 : 0x04A3));
     switch(curstep) {
       case 0:
         {
           drawScreenTitle(NULL, (char*)"Title:");
-          int iresult;
-          GetFKeyPtr(0x04A3, &iresult); // Next
-          FKey_Display(5, (int*)iresult);
           clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
@@ -1064,11 +1006,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       case 1:
         {
           drawScreenTitle(NULL, (char*)"Location:");
-          int iresult;
-          GetFKeyPtr(0x036F, &iresult); // <
-          FKey_Display(0, (int*)iresult);
-          GetFKeyPtr(0x04A3, &iresult); // Next
-          FKey_Display(5, (int*)iresult);
           clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
@@ -1087,11 +1024,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       case 2:
         {
           drawScreenTitle(NULL, (char*)"Description:");
-          int iresult;
-          GetFKeyPtr(0x036F, &iresult); // <
-          FKey_Display(0, (int*)iresult);
-          GetFKeyPtr(0x04A3, &iresult); // Next
-          FKey_Display(5, (int*)iresult);
           clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
@@ -1120,11 +1052,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will be a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
         textX=0; textY += 17;
         PrintMini(&textX, &textY, (unsigned char*)"full-day event.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-        int iresult;
-        GetFKeyPtr(0x036F, &iresult); // <
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x04A3, &iresult); // Next
-        FKey_Display(5, (int*)iresult);
         
         textInput input;
         input.x=8;
@@ -1168,11 +1095,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will end on", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
         textX=0; textY += 17;
         PrintMini(&textX, &textY, (unsigned char*)"the same day that it starts.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-        int iresult;
-        GetFKeyPtr(0x036F, &iresult); // <
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x04A3, &iresult); // Next
-        FKey_Display(5, (int*)iresult);
         
         textInput input;
         input.x=7;
@@ -1216,11 +1138,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         if(event->timed) {
           drawScreenTitle(NULL, (char*)"End time:");
           mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          int iresult;
-          GetFKeyPtr(0x036F, &iresult); // <
-          FKey_Display(0, (int*)iresult);
-          GetFKeyPtr(0x04A3, &iresult); // Next
-          FKey_Display(5, (int*)iresult);
           
           textInput input;
           input.x=8;
@@ -1260,11 +1177,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         drawScreenTitle(NULL, (char*)"Select category");
         mPrintXY(5, 4, (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
         mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
-        int iresult, inscreen=1; int key = 0;
-        GetFKeyPtr(0x036F, &iresult); // <
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x04A4, &iresult); // Finish
-        FKey_Display(5, (int*)iresult);
+        int inscreen=1; int key = 0;
         char buffer[20] = "";
         if(type == EVENTEDITORTYPE_ADD) event->category = 1;
         while(inscreen)
@@ -1718,9 +1631,7 @@ void searchEventsGUI(int y, int m, int d) {
   clearLine(1,8);
   clearLine(1,3);
   drawScreenTitle((char*)"Event Search", (char*)"Search for:");
-  int iresult;
-  GetFKeyPtr(0x00A5, &iresult); // SEARCH (white)
-  FKey_Display(5, (int*)iresult);
+  drawFkeyLabels(-1,-1,-1,-1,-1,0x00A5); // SEARCH (white)
   
   textInput input;
   input.forcetext=1; //force text so title must be at least one char.
@@ -1821,14 +1732,9 @@ void searchEventsGUI(int y, int m, int d) {
   menu.items=menuitems;
   while(1) {
     Bdisp_AllClr_VRAM();
-    int iresult;
     if(menu.numitems>0) {
-      GetFKeyPtr(0x049F, &iresult); // VIEW
-      FKey_Display(0, (int*)iresult);
-      GetFKeyPtr(0x015F, &iresult); // DATE
-      FKey_Display(1, (int*)iresult);
-      GetFKeyPtr(0x01FC, &iresult); // JUMP
-      FKey_Display(2, (int*)iresult);
+      // VIEW, DATE, JUMP
+      drawFkeyLabels(0x049F, 0x015F, 0x01FC);
     }
     switch(doMenu(&menu)) {
       case MENU_RETURN_EXIT:

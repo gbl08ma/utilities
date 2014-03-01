@@ -126,26 +126,12 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
     Bdisp_AllClr_VRAM();
     fillMenuStatusWithClip((char*)menu.statusText, *itemsinclip, 0);
     if(menu.fkeypage == 0) {
-      int iresult;
-      if(menu.numitems>0) {
-        GetFKeyPtr(0x0188, &iresult); // RENAME
-        FKey_Display(4, (int*)iresult);
-      }
-      if(menu.numselitems>0) {
-        GetFKeyPtr(0x0069, &iresult); // CUT (white)
-        FKey_Display(1, (int*)iresult);
-        GetFKeyPtr(0x0034, &iresult); // COPY (white)
-        FKey_Display(2, (int*)iresult);
-        GetFKeyPtr(0x0038, &iresult); // DELETE
-        FKey_Display(5, (int*)iresult);
-      } else {
-        GetFKeyPtr(0x03B6, &iresult); // SEQ
-        FKey_Display(1, (int*)iresult);
-        GetFKeyPtr(0x0187, &iresult); // SEARCH
-        FKey_Display(2, (int*)iresult);
-      }
-      GetFKeyPtr(0x0186, &iresult); // NEW
-      FKey_Display(3, (int*)iresult);
+      drawFkeyLabels(-1, // set by menu as SELECT [empty]
+        (menu.numselitems>0 ? 0x0069 : 0x03B6), // CUT (white) or SEQ
+        (menu.numselitems>0 ? 0x0034 : 0x0187), // COPY (white) or SEARCH
+        0x0186, // NEW
+        (menu.numitems>0 ? 0x0188 : -1), // RENAME or nothing
+        (menu.numselitems>0 ? 0x0038 : -1)); // DELETE or nothing
     }
     res = doMenu(&menu, icontable);
     switch(res) {
@@ -399,8 +385,6 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   char statusText[100];
   fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
   DefineStatusMessage((char*)statusText, 1, 0, 0);
-
-  int iresult;
   
   char needle[55] = "";
   int searchOnFilename = 1, searchOnContents = 0, searchRecursively = 0, matchCase = 0;
@@ -432,11 +416,9 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   while(1) {
     if(curstep == 0) {
       SetBackGround(9);
-      clearLine(1,8);
       drawScreenTitle((char*)"File Search", (char*)"Search for:");
       clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
-      GetFKeyPtr(0x04A3, &iresult); // Next
-      FKey_Display(5, (int*)iresult);
+      drawFkeyLabels(0, 0, 0, 0, 0, 0x04A3); // Next
       while(1) {
         input.key=0;
         int res = doTextInput(&input);
@@ -449,13 +431,9 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
       while(inloop) {
         // this must be here, inside this loop:
         SetBackGround(9);
-        clearLine(1,8);
         drawScreenTitle((char*)"File Search", (char*)"Search for:");
         mPrintXY(1, 3, (char*)needle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        GetFKeyPtr(0x036F, &iresult); // <
-        FKey_Display(0, (int*)iresult);
-        GetFKeyPtr(0x00A5, &iresult); // SEARCH (white)
-        FKey_Display(5, (int*)iresult);
+        drawFkeyLabels(0x036F, 0, 0, 0, 0, 0x00A5); // <, SEARCH (white)
         menuitems[0].value = searchOnFilename;
         menuitems[1].value = searchOnContents;
         menuitems[2].value = searchRecursively;
@@ -512,12 +490,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   
   while(1) {
     Bdisp_AllClr_VRAM();
-    if(menu.numitems>0) {
-      GetFKeyPtr(0x049F, &iresult); // VIEW
-      FKey_Display(0, (int*)iresult);
-      GetFKeyPtr(0x01FC, &iresult); // JUMP
-      FKey_Display(1, (int*)iresult);
-    }
+    if(menu.numitems>0) drawFkeyLabels(0x049F, 0x01FC); // VIEW, JUMP
     switch(doMenu(&menu)) {
       case MENU_RETURN_EXIT:
         return 0;
@@ -624,17 +597,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
     fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
     DefineStatusMessage((char*)statusText, 1, 0, 0);
     doTextArea(&text);
-    int iresult;
-    GetFKeyPtr(0x03B1, &iresult); // OPEN
-    FKey_Display(0, (int*)iresult);
-    if(allowEdit) {
-      GetFKeyPtr(0x0185, &iresult); // EDIT
-      FKey_Display(1, (int*)iresult);
-    }
-    if(file->size>0) {
-      GetFKeyPtr(0x0371, &iresult); // CALC (white)
-      FKey_Display(5, (int*)iresult);
-    }
+    drawFkeyLabels(0x03B1, (allowEdit? 0x0185: -1), -1, -1, -1, (file->size>0 ? 0x0371 : -1)); //OPEN, EDIT, CALC (white)
     int key;
     mGetKey(&key);
     switch(key) {
@@ -814,14 +777,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
       curitem++;
     }
     menu.numitems = *itemsinclip;
-    clearLine(1, 8);
-    int iresult;
-    GetFKeyPtr(0x0149, &iresult); // CLEAR [white]
-    FKey_Display(0, (int*)iresult);
-    GetFKeyPtr(0x04DB, &iresult); // X symbol [white]
-    FKey_Display(1, (int*)iresult);
-    GetFKeyPtr(0x049D, &iresult); // Switch [white]
-    FKey_Display(2, (int*)iresult);
+    drawFkeyLabels(0x0149, 0x04DB, 0x049D, 0, 0, 0); // CLEAR [white], X symbol [white], Switch [white], clear rest of line
     int res = doMenu(&menu);
     switch(res) {
       case MENU_RETURN_SELECTION:

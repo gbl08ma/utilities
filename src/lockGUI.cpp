@@ -51,11 +51,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
       }
     }
 
-    int iresult;
-    GetFKeyPtr(0x0307, &iresult); // A<>a
-    FKey_Display(4, (int*)iresult);
-    GetFKeyPtr(0x02A1, &iresult); // CHAR
-    FKey_Display(5, (int*)iresult);
+    drawFkeyLabels(-1, -1, -1, -1, 0x0307, 0x02A1); // A<>a, CHAR
     Cursor_SetFlashOn(5);
     DisplayMBString((unsigned char*)dispbuffer, start, cursor, x,y);
 
