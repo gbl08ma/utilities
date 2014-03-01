@@ -1937,7 +1937,7 @@ void repairCalendarDatabase() {
   textElement elem[8];
   text.elements = elem;
   if(getDBneedsRepairFlag()) {
-    elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This situation is often experienced when a version of Utilities older than v1.1 has been used, or when events with invalid data are imported.";
+    elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This situation is often experienced when a version of Utilities prior to v1.1 has been used, or when events with invalid data are imported.";
     elem[1].text = (char*)"Repairing the database now is very important to avoid further problems. You should not see this message again once you repair the database.";
   } else {
     elem[0].text = (char*)"Repairing the calendar events' database will fix any inconsistent data, such as events with an end time preceding their start time.";
@@ -2210,10 +2210,10 @@ void importCalendarEvents() {
   
   elem[0].text = (char*)"This tool is responsible for the last step in importing events into the calendar database.";
   elem[1].newLine = 1;
-  elem[1].text = (char*)"It assumes you have already used desktop software (for example, the web app at http://pce.tny.im) to convert events into an appropriate format, and that you followed that software's instructions as to where the resulting files should go in this calculator.";
+  elem[1].text = (char*)"It assumes you have already used desktop software (for example, the web app at http://pce.tny.im) to convert events into an appropriate format, and that you followed that software's instructions as to where the resulting files should be in this calculator.";
   elem[2].newLine = 1;
   elem[2].lineSpacing = 5;
-  elem[2].text = (char*)"This operation may take a long time if there are many events to import. Press F1 to start or EXIT to cancel.";
+  elem[2].text = (char*)"This operation may take a long time, if there are many events to import. Press F1 to start or EXIT to cancel.";
   
   text.allowF1 = 1;
   text.numelements = 3;
