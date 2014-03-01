@@ -27,7 +27,7 @@
 
 int passwordInput(int x, int y, unsigned char* buffer) {
   //returns: 0 on user abort (EXIT), 1 on EXE
-  int start = 0, cursor = 0, key;
+  int start = 0, cursor = 0, key=0;
   int charlimit = 256;
   unsigned char dispbuffer[256]; //will hold asterisks instead of real characters...
   //clean buffer and display buffer
@@ -41,8 +41,9 @@ int passwordInput(int x, int y, unsigned char* buffer) {
       for (int k = 0; k < numchars-1; k++) {
         strcat((char*)dispbuffer, "*");
       }
-      if(GetSetting(SETTING_PASSWORD_PRIVACY)) {
+      if(GetSetting(SETTING_PASSWORD_PRIVACY) && key<30000 && cursor==(int)strlen((char*)buffer)) {
         //show last character for easier typing
+        //only show last char if last key was a CHAR key and cursor is at the end
         strcat((char*)dispbuffer, " ");
         dispbuffer[(strlen((char*)dispbuffer)-1)] = buffer[(strlen((char*)buffer)-1)];
       } else {
