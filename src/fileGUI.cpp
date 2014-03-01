@@ -128,7 +128,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
     if(menu.fkeypage == 0) {
       drawFkeyLabels(-1, // set by menu as SELECT [empty]
         (menu.numselitems>0 ? 0x0069 : 0x03B6), // CUT (white) or SEQ
-        (menu.numselitems>0 ? 0x0034 : 0x0187), // COPY (white) or SEARCH
+        (menu.numselitems>0 ? 0x0034 : (menu.numitems>0 ? 0x0187 : -1)), // COPY (white) or SEARCH (only if there are items)
         0x0186, // NEW
         (menu.numitems>0 ? 0x0188 : -1), // RENAME or nothing
         (menu.numselitems>0 ? 0x0038 : -1)); // DELETE or nothing
@@ -241,7 +241,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
                 insertSortFileMenuArray(files, menuitems, menu.numitems);
               }
             }
-          } else if(searchFilesGUI(browserbasepath, *itemsinclip)) return 1;
+          } else if(menu.numitems && searchFilesGUI(browserbasepath, *itemsinclip)) return 1;
         }
         break;
       case KEY_CTRL_F4: {
