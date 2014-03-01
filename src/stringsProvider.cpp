@@ -20,6 +20,12 @@ char tolower(char c)
           c += 32;
   return c;
 }
+char toupper(char c)
+{
+  if (c >= 'a' && c <= 'z')
+          c -= 32;
+  return c;
+}
 int strncasecmp(const char *s1, const char *s2, size_t n)
 {
         if (n != 0) {
@@ -112,18 +118,24 @@ int EndsIWith(const char *str, const char *suffix)
 
 // not really for strings, but anyway:
 // based on http://dsss.be/w/c:memmem
-void* memmem(char* haystack, int hlen, char* needle, int nlen) {
+// added case-insensitive functionality
+void* memmem(char* haystack, int hlen, char* needle, int nlen, int matchCase) {
   if (nlen > hlen) return 0;
   int i,j=0;
   switch(nlen) { // we have a few specialized compares for certain needle sizes
   case 0: // no needle? just give the haystack
     return haystack;
   case 1: // just use memchr for 1-byte needle
-    return memchr(haystack, needle[0], hlen);
+    if(matchCase) return memchr(haystack, needle[0], hlen);
+    else {
+      void* lc = memchr(haystack, tolower(needle[0]), hlen);
+      if(lc!=NULL) return lc;
+      else return memchr(haystack, toupper(needle[0]), hlen);
+    }
   default: // generic compare for any other needle size
     // walk i through the haystack, matching j as long as needle[j] matches haystack[i]
     for (i=0; i<hlen-nlen+1; i++) {
-      if (haystack[i]==needle[j]) {
+      if (matchCase ? haystack[i]==needle[j] : tolower(haystack[i])==tolower(needle[j])) {
         if (j==nlen-1) { // end of needle and it all matched?  win.
           return haystack+i-j;
         } else { // keep advancing j (and i, implicitly)

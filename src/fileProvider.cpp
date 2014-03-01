@@ -164,7 +164,7 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
             int nlen = strlen(needle);
             while(1) {
               readsize = Bfile_ReadFile_OS(hFile, buf, 1024, -1);
-              if(NULL != (matchCase ? memmem((char*)buf, 1024, needle, nlen) : SearchStringMatch((char*)buf, needle, matchCase))) {
+              if(NULL != memmem((char*)buf, 1024, needle, nlen, matchCase)) {
                 match = 1;
                 break;
               }
