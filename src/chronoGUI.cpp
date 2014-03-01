@@ -345,14 +345,12 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         strcpy(sel.subtitle, "Hours");
         sel.max = 23;
         sel.value = 0;
-        sel.cycle = 0;
         if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
         int hours = sel.value;
         
         strcpy(sel.subtitle, "Minutes");
         sel.max = 59;
         sel.value = 0;
-        sel.cycle = 0;
         if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
         int minutes = sel.value;
         
@@ -360,7 +358,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         // yes, we are assigning the truth value to two vars at once:
         sel.value = sel.min = (days == 0 && hours == 0 && minutes == 0);
         sel.max = 59;
-        sel.cycle = 0;
         if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
         seconds = sel.value + 60*minutes + 60*60*hours + 60*60*24*days;
         type=CHRONO_TYPE_DOWN;
