@@ -20,7 +20,10 @@
 #include "menuGUI.hpp"
 #include "fileProvider.hpp"
 #include "debugGUI.hpp"
-
+extern "C" {
+#include "heatshrink_encoder.h"
+#include "heatshrink_decoder.h"
+}
 int compareFileStructs(File* f1, File* f2, int type) {
   switch(type) {
     case 1:
@@ -436,4 +439,186 @@ int fileIconFromName(char* name) {
 int stringEndsInG3A(char* string) {
   if(EndsIWith(string, (char*)".g3a")) return 1;
   else return 0;
+}
+
+// (DE)COMPRESSION CODE - START
+
+static int encoder_sink_read(int writehandle, heatshrink_encoder *hse, uint8_t *data, size_t data_sz) {
+    size_t out_sz = 4096;
+    uint8_t out_buf[out_sz];
+    memset(out_buf, 0, out_sz);
+    size_t sink_sz = 0;
+    size_t poll_sz = 0;
+    HSE_sink_res sres;
+    HSE_poll_res pres;
+    HSE_finish_res fres;
+
+    size_t sunk = 0;
+    do {
+        if (data_sz > 0) {
+            sres = heatshrink_encoder_sink(hse, &data[sunk], data_sz - sunk, &sink_sz);
+            if (sres < 0) { return 1; }
+            sunk += sink_sz;
+        }
+        
+        do {
+            pres = heatshrink_encoder_poll(hse, out_buf, out_sz, &poll_sz);
+            if (pres < 0) { return 1; }
+            Bfile_WriteFile_OS(writehandle, out_buf, poll_sz);
+        } while (pres == HSER_POLL_MORE);
+        
+        if (poll_sz == 0 && data_sz == 0) {
+            fres = heatshrink_encoder_finish(hse);
+            if (fres < 0) { return 1; }
+            if (fres == HSER_FINISH_DONE) { return 1; }
+        }
+    } while (sunk < data_sz);
+    return 0;
+}
+
+static int decoder_sink_read(int writehandle, heatshrink_decoder *hsd, uint8_t *data, size_t data_sz) {
+    size_t sink_sz = 0;
+    size_t poll_sz = 0;
+    size_t out_sz = 4096;
+    uint8_t out_buf[out_sz];
+    memset(out_buf, 0, out_sz);
+
+    HSD_sink_res sres;
+    HSD_poll_res pres;
+    HSD_finish_res fres;
+
+    size_t sunk = 0;
+    do {
+        if (data_sz > 0) {
+            sres = heatshrink_decoder_sink(hsd, &data[sunk], data_sz - sunk, &sink_sz);
+            if (sres < 0) { return 1; }
+            sunk += sink_sz;
+        }
+
+        do {
+            pres = heatshrink_decoder_poll(hsd, out_buf, out_sz, &poll_sz);
+            if (pres < 0) { return 1; }
+            Bfile_WriteFile_OS(writehandle, out_buf, poll_sz);
+        } while (pres == HSDR_POLL_MORE);
+        
+        if (data_sz == 0 && poll_sz == 0) {
+            fres = heatshrink_decoder_finish(hsd);
+            if (fres < 0) { return 1; }
+            if (fres == HSDR_FINISH_DONE) { return 1; }
+        }
+    } while (sunk < data_sz);
+
+    return 0;
+}
+
+void compressFile(char* oldfilename, char* newfilename, int action) {
+  // with action == 0, compresses. with action == 1, decompresses.
+  if(!strcmp(newfilename, oldfilename) || stringEndsInG3A(newfilename)) {
+    //trying to overwrite the original file, or this is a g3a file (which we can't "touch")
+    return;
+  }
+  unsigned short newfilenameshort[0x10A];
+  unsigned short oldfilenameshort[0x10A];
+  unsigned short tempfilenameshort[0x10A];
+  Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)oldfilename, 0x10A);
+  Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+  Bfile_StrToName_ncpy(tempfilenameshort, (unsigned char*)"\\\\fls0\\UTILSTMP.PCT", 0x10A);
+  
+  int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0); // Get handle for the old file
+  if(hOldFile < 0) return;
+  Bfile_CloseFile_OS(hOldFile); // close for now
+
+  int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
+  if(hNewFile >= 0) {
+    // dest file exists (which is bad) and is open.
+    Bfile_CloseFile_OS(hNewFile);
+    return; //cancel
+  }
+  
+  // at this point we know that:
+  // source file exists
+  // destination file doesn't exist
+  // source file is closed so CreateEntry can proceed.
+  // create a temp file in root because copying into subdirectories directly fails with sys error
+  // so we create a temp file in root, and rename in the end
+  int BCEres, filesize = 1;
+  BCEres = Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &filesize);
+  if(BCEres >= 0) // Did it create?
+  {
+    //created. open newly-created destination file
+    hNewFile = Bfile_OpenFile_OS(tempfilenameshort, READWRITE, 0);
+    if(hNewFile < 0) return;
+    
+    // open old file again
+    hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0);
+    if(hOldFile < 0) // Opening origin file didn't fail before, but is failing now?!
+    {
+      //cancel
+      Bfile_CloseFile_OS(hNewFile); // close the new file we had opened
+      return;
+    }
+    
+    //File to copy is open, destination file is created and open.
+#define FILE_COMPORIGBUF 24576
+    if(action) {
+      // DECOMPRESS
+      // check file header, jumping it at the same time
+      unsigned char header[10] = "";
+      int chl = strlen((char*)COMPRESSED_FILE_HEADER);
+      Bfile_ReadFile_OS( hOldFile, header, chl, -1 );
+      if(strncmp((char*)header, (char*)COMPRESSED_FILE_HEADER, chl)) goto cleanexit; // not a compressed file
+      heatshrink_decoder *hsd = heatshrink_decoder_alloc(256, HS_WINDOWSIZE, HS_LOOKAHEAD);
+      if (hsd == NULL) goto cleanexit;
+      HSD_finish_res fres;
+      while(1) {
+        unsigned char in_buf[FILE_COMPORIGBUF+5] = "";
+        unsigned int read_sz = Bfile_ReadFile_OS( hOldFile, in_buf, FILE_COMPORIGBUF, -1 );
+        if (read_sz <= 0) {
+          fres = heatshrink_decoder_finish(hsd);
+          if (fres < 0) { goto cleanexit; }
+          if (fres == HSDR_FINISH_DONE) break;
+        } else {
+            if (decoder_sink_read(hNewFile, hsd, in_buf, read_sz)) break;
+        }
+      }
+      heatshrink_decoder_free(hsd);
+    } else {
+      // COMPRESS
+      // we can't write header directly because source buffers for WriteFile can't be in ROM
+      unsigned char header[10] = "";
+      strcpy((char*)header, (char*)COMPRESSED_FILE_HEADER);
+      Bfile_WriteFile_OS(hNewFile, header, strlen((char*)header));
+      heatshrink_encoder *hse = heatshrink_encoder_alloc(HS_WINDOWSIZE, HS_LOOKAHEAD);
+      if (hse == NULL) goto cleanexit;
+      while(1) {
+        unsigned char in_buf[FILE_COMPORIGBUF+5] = "";
+        unsigned int read_sz = Bfile_ReadFile_OS( hOldFile, in_buf, FILE_COMPORIGBUF, -1 );
+        if(encoder_sink_read(hNewFile, hse, in_buf, read_sz)) break;
+      }
+      heatshrink_encoder_free(hse);
+    }
+    //done copying, close files.
+cleanexit:    
+    Bfile_CloseFile_OS(hOldFile);
+    Bfile_CloseFile_OS(hNewFile);
+    // now rename the temp file to the correct file name
+    Bfile_RenameEntry(tempfilenameshort , newfilenameshort);
+  } //else: create failed, but we're going to skip anyway
+}
+
+int isFileCompressed(char* filename) {
+  if(!EndsIWith(filename, (char*)COMPRESSED_FILE_EXTENSION)) return 0;
+  unsigned short filenameshort[0x10A];
+  Bfile_StrToName_ncpy(filenameshort, (unsigned char*)filename, 0x10A);
+  int hFile = Bfile_OpenFile_OS(filenameshort, READWRITE, 0); // Get handle for the old file
+  if(hFile < 0) return 0;
+  unsigned char header[10] = "";
+  int chl = strlen((char*)COMPRESSED_FILE_HEADER);
+  Bfile_ReadFile_OS(hFile, header, chl, -1 );
+  if(strncmp((char*)header, (char*)COMPRESSED_FILE_HEADER, chl)) {
+    return 0;
+    Bfile_CloseFile_OS(hFile);
+  }
+  Bfile_CloseFile_OS(hFile);
+  return 1;
 }

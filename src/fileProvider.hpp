@@ -62,4 +62,12 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
 int fileIconFromName(char* name);
 int stringEndsInG3A(char* string);
 
+// compression settings:
+#define COMPRESSED_FILE_HEADER "PHSCOMPR" //Prizm heatshrink compressed
+#define COMPRESSED_FILE_EXTENSION ".phc"
+#define HS_WINDOWSIZE 13
+#define HS_LOOKAHEAD 4
+void compressFile(char* oldfilename, char* newfilename, int action);
+int isFileCompressed(char* filename);
+
 #endif

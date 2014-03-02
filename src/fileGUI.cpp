@@ -163,11 +163,12 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           }
           return 1; //reload at new folder
         } else {
-          if(1 == fileInformation(&files[menu.selection-1], 1, *itemsinclip)) {
+          int res = fileInformation(&files[menu.selection-1], 1, *itemsinclip);
+          if(1 == res) {
             // user wants to edit the file
             strcpy(filetoedit, files[menu.selection-1].filename);
             return 1;
-          }
+          } else if(2 == res) return 1;
         }
         break;
       case KEY_CTRL_F2:
@@ -536,7 +537,8 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
 
 int fileInformation(File* file, int allowEdit, int itemsinclip) {
   // returns 0 if user exits.
-  // returns 1 if user wants to edit the file  
+  // returns 1 if user wants to edit the file
+  // returns 2 if user compressed or decompressed the file
   textArea text;
   text.type=TEXTAREATYPE_INSTANT_RETURN;
   text.scrollbar=0;
@@ -601,13 +603,16 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
   
   elem[text.numelements].text = (char*)"bytes";
   text.numelements++;
+
+  int compressed = 0;
+  if(isFileCompressed(file->filename)) compressed = 1;
   
   while (1) {
     char statusText[100];
     fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
     DefineStatusMessage((char*)statusText, 1, 0, 0);
     doTextArea(&text);
-    drawFkeyLabels(0x03B1, (allowEdit? 0x0185: -1), -1, -1, -1, (file->size>0 ? 0x0371 : -1)); //OPEN, EDIT, CALC (white)
+    drawFkeyLabels(0x03B1, (allowEdit? 0x0185: -1), (allowEdit? (compressed ? 0x161 : 0x160) : -1), -1, -1, (file->size>0 ? 0x0371 : -1)); //OPEN, EDIT, Comp (white) or Dec (white), CALC (white)
     int key;
     mGetKey(&key);
     switch(key) {
@@ -630,6 +635,23 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
           } else {
             return 1;
           }
+        }
+        break;
+      case KEY_CTRL_F3:
+        if(allowEdit) {
+          if(compressed) {
+            char newfilename[MAX_FILENAME_SIZE] = "";
+            int len=strlen(file->filename);
+            strncpy(newfilename, file->filename, len-4); //strip file extension
+            newfilename[len-4] = '\0'; // strncpy does not zero-terminate when limit is reached
+            compressFile(file->filename, newfilename, 1);
+          } else {
+            char newfilename[MAX_FILENAME_SIZE] = "";
+            strcpy(newfilename, file->filename);
+            strcat(newfilename, (char*)COMPRESSED_FILE_EXTENSION);
+            compressFile(file->filename, newfilename, 0);
+          }
+          return 2;
         }
         break;
       case KEY_CTRL_F6:
