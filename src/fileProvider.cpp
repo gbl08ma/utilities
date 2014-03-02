@@ -616,8 +616,8 @@ int isFileCompressed(char* filename) {
   int chl = strlen((char*)COMPRESSED_FILE_HEADER);
   Bfile_ReadFile_OS(hFile, header, chl, -1 );
   if(strncmp((char*)header, (char*)COMPRESSED_FILE_HEADER, chl)) {
-    return 0;
     Bfile_CloseFile_OS(hFile);
+    return 0;
   }
   Bfile_CloseFile_OS(hFile);
   return 1;
