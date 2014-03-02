@@ -68,6 +68,6 @@ int stringEndsInG3A(char* string);
 #define HS_WINDOWSIZE 14
 #define HS_LOOKAHEAD 4
 void compressFile(char* oldfilename, char* newfilename, int action);
-int isFileCompressed(char* filename);
+int isFileCompressed(char* filename, int* origfilesize);
 
 #endif

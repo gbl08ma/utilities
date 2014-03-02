@@ -539,12 +539,16 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
   // returns 0 if user exits.
   // returns 1 if user wants to edit the file
   // returns 2 if user compressed or decompressed the file
+
+  int compressed = 0, origfilesize = 0;
+  if(isFileCompressed(file->filename, &origfilesize)) compressed = 1;
+
   textArea text;
   text.type=TEXTAREATYPE_INSTANT_RETURN;
   text.scrollbar=0;
   strcpy(text.title, (char*)"File information");
   
-  textElement elem[10];
+  textElement elem[15];
   text.elements = elem;
   text.numelements = 0; //we will use this as element cursor
   
@@ -585,7 +589,8 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
   char mresult[88] = "";
   LocalizeMessage1( msgno, mresult );
   
-  elem[text.numelements].text = (char*)mresult;
+  if(compressed) elem[text.numelements].text = (char*)"Utilities Compressed File";
+  else elem[text.numelements].text = (char*)mresult;
   text.numelements++;
   char sizebuffer[50];
   itoa(file->size, (unsigned char*)sizebuffer);
@@ -602,10 +607,25 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
   text.numelements++;
   
   elem[text.numelements].text = (char*)"bytes";
+  elem[text.numelements].spaceAtEnd=1;
   text.numelements++;
 
-  int compressed = 0;
-  if(isFileCompressed(file->filename)) compressed = 1;
+  char osizebuffer[50];
+  if(compressed) {
+    elem[text.numelements].text = (char*)"(";
+    elem[text.numelements].minimini=1;
+    text.numelements++;
+
+    itoa(origfilesize, (unsigned char*)osizebuffer);
+    elem[text.numelements].text = (char*)osizebuffer;
+    elem[text.numelements].spaceAtEnd=1;
+    elem[text.numelements].minimini=1;
+    text.numelements++;
+
+    elem[text.numelements].text = (char*)"decompressed)";
+    elem[text.numelements].minimini=1;
+    text.numelements++;
+  }
   
   while (1) {
     char statusText[100];
