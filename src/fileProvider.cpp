@@ -26,18 +26,18 @@ extern "C" {
 #include "heatshrink_decoder.h"
 }
 int compareFileStructs(File* f1, File* f2, int type) {
+  if(f1->isfolder < f2->isfolder) return 1;
+  else if(f1->isfolder > f2->isfolder) return -1;
   switch(type) {
     case 1:
+      return strcmp( f1->filename, f2->filename );
     case 2:
-      if(f1->isfolder < f2->isfolder) return 1;
-      else if(f1->isfolder > f2->isfolder) return -1;
-      if(type == 1) return strcmp( f1->filename, f2->filename );
-      else return -strcmp( f1->filename, f2->filename );
+      return -strcmp( f1->filename, f2->filename );
     case 3:
       return f1->size-f2->size;
     case 4:
     default:
-      return f1->size-f2->size;
+      return f2->size-f1->size;
   }
 }
 
@@ -632,7 +632,7 @@ cleanexit:
           return;
       }
     } 
-  } //else: create failed, but we're going to skip anyway
+  } //else: create failed, return
 }
 
 int isFileCompressed(char* filename, int* origfilesize) {
