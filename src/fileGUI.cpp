@@ -632,7 +632,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
     fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
     DefineStatusMessage((char*)statusText, 1, 0, 0);
     doTextArea(&text);
-    drawFkeyLabels(0x03B1, (allowEdit? 0x0185: -1), (allowEdit? (compressed ? 0x161 : 0x160) : -1), -1, -1, (file->size>0 ? 0x0371 : -1)); //OPEN, EDIT, Comp (white) or Dec (white), CALC (white)
+    drawFkeyLabels((compressed? -1 : 0x03B1), (allowEdit && !compressed? 0x0185: -1), (allowEdit? (compressed ? 0x161 : 0x160) : -1), -1, -1, (file->size>0 ? 0x0371 : -1)); //OPEN, EDIT, Comp (white) or Dec (white), CALC (white)
     int key;
     mGetKey(&key);
     switch(key) {
@@ -641,10 +641,10 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
         return 0;
         break;
       case KEY_CTRL_F1:
-        fileViewAsText(file->filename);
+        if(!compressed) fileViewAsText(file->filename);
         break;
       case KEY_CTRL_F2:
-        if(allowEdit) {
+        if(allowEdit && !compressed) {
           if(stringEndsInG3A(name)) {
             mMsgBoxPush(4);
             mPrintXY(3, 2, (char*)"g3a files can't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
