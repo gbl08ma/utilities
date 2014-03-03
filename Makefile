@@ -37,8 +37,9 @@ GIT_TIMESTAMP += "$(shell git log --pretty=format:'%aD' -1)"
 
 MKG3AFLAGS := -r 01.02.0001 -n basic:Utilities -n internal:UTILS -i uns:../unselected.bmp -i sel:../selected.bmp
 
-CFLAGS	= -Os -flto -fno-exceptions -Wall $(MACHDEP) $(INCLUDE) -D__GIT_VERSION=\"$(GIT_VERSION)\" -D__GIT_TIMESTAMP=\"$(GIT_TIMESTAMP)\"
-CXXFLAGS	=	-std=c++11 $(CFLAGS)
+COMMONFLAGS = -Os -flto -fno-exceptions -Wall $(MACHDEP) $(INCLUDE) -D__GIT_VERSION=\"$(GIT_VERSION)\" -D__GIT_TIMESTAMP=\"$(GIT_TIMESTAMP)\"
+CFLAGS	= -std=c99 $(COMMONFLAGS)
+CXXFLAGS	=	-std=c++11 $(COMMONFLAGS)
 
 LDFLAGS	= $(MACHDEP) -T$(FXCGSDK)/common/prizm.ld -Os -flto -Wl,-static -Wl,-gc-sections
 
