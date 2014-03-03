@@ -19,6 +19,7 @@
 #include "stringsProvider.hpp"
 #include "menuGUI.hpp"
 #include "fileProvider.hpp"
+#include "keyboardProvider.hpp"
 #include "debugGUI.hpp"
 extern "C" {
 #include "heatshrink_encoder.h"
@@ -611,6 +612,26 @@ cleanexit:
     Bfile_CloseFile_OS(hNewFile);
     // now rename the temp file to the correct file name
     Bfile_RenameEntry(tempfilenameshort , newfilenameshort);
+
+    mMsgBoxPush(5);
+    mPrintXY(3, 2, (action? (char*)"Decompression" : (char*)"Compression"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 3, (char*)"successful.Delete", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 4, (action? (char*)"compressed file?" : (char*)"original file?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 3, TEXT_COLOR_BLACK); // yes, F1
+    PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 4, TEXT_COLOR_BLACK); // no, F6
+    int key;
+    while (1) {
+      mGetKey(&key);
+      switch(key) {
+        case KEY_CTRL_F1:
+          Bfile_DeleteEntry(oldfilenameshort);
+          // deliberate fallthrough
+        case KEY_CTRL_F6:
+        case KEY_CTRL_EXIT:
+          mMsgBoxPop();
+          return;
+      }
+    } 
   } //else: create failed, but we're going to skip anyway
 }
 
