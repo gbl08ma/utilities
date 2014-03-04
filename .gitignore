@@ -42,3 +42,8 @@ Thumbs.db
 *~
 .directory
 
+# sublime text
+*.sublime-project
+*.sublime-workspace
+.tags
+.tags_sorted_by_file
