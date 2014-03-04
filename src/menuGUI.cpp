@@ -219,13 +219,9 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         if(menu->numitems>=13) {menu->selection = 13; return MENU_RETURN_SELECTION; }
         break;
       case KEY_CHAR_SIN:
-        if(menu->numitems>=14) {menu->selection = 14; return MENU_RETURN_SELECTION; }
-        break;
       case KEY_CHAR_COS:
-        if(menu->numitems>=15) {menu->selection = 15; return MENU_RETURN_SELECTION; }
-        break;
       case KEY_CHAR_TAN:
-        if(menu->numitems>=16) {menu->selection = 16; return MENU_RETURN_SELECTION; }
+        if(menu->numitems>=(key-115)) {menu->selection = (key-115); return MENU_RETURN_SELECTION; }
         break;
       case KEY_CHAR_FRAC:
         if(menu->numitems>=17) {menu->selection = 17; return MENU_RETURN_SELECTION; }
@@ -234,10 +230,8 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         if(menu->numitems>=18) {menu->selection = 18; return MENU_RETURN_SELECTION; }
         break;
       case KEY_CHAR_LPAR:
-        if(menu->numitems>=19) {menu->selection = 19; return MENU_RETURN_SELECTION; }
-        break;
       case KEY_CHAR_RPAR:
-        if(menu->numitems>=20) {menu->selection = 20; return MENU_RETURN_SELECTION; }
+        if(menu->numitems>=(key-21)) {menu->selection = (key-21); return MENU_RETURN_SELECTION; }
         break;
       case KEY_CHAR_COMMA:
         if(menu->numitems>=21) {menu->selection = 21; return MENU_RETURN_SELECTION; }
