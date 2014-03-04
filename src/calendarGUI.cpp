@@ -1380,22 +1380,11 @@ int deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos
   mPrintXY(3, 3, (istask ? (char*)"Selected Task?" : (char*)"Selected Event?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
-  int key;
-  while(1) {
-    mGetKey(&key);
-    switch(key)
-    {
-      case KEY_CTRL_F1:
-        mMsgBoxPop();
-        RemoveEvent(&date, events, CALENDARFOLDER, count, pos);
-        return EVENTDELETE_RETURN_CONFIRM;
-      case KEY_CTRL_F6:
-      case KEY_CTRL_EXIT:
-        mMsgBoxPop();
-        return EVENTDELETE_RETURN_EXIT;
-    }
+  if(closeMsgBox(1)) {
+    RemoveEvent(&date, events, CALENDARFOLDER, count, pos);
+    return EVENTDELETE_RETURN_CONFIRM;
   }
-  return 0;
+  return EVENTDELETE_RETURN_EXIT;
 }
 
 int deleteAllEventUI(int y, int m, int d, int istask) {
@@ -1409,22 +1398,11 @@ int deleteAllEventUI(int y, int m, int d, int istask) {
   }
   PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
-  int key;
-  while(1) {
-    mGetKey(&key);
-    switch(key)
-    {
-      case KEY_CTRL_F1:
-        mMsgBoxPop();
-        RemoveDay(&date, CALENDARFOLDER);
-        return EVENTDELETE_RETURN_CONFIRM;
-      case KEY_CTRL_F6:
-      case KEY_CTRL_EXIT:
-        mMsgBoxPop();
-        return EVENTDELETE_RETURN_EXIT;
-    }
+  if(closeMsgBox(1)) {
+    RemoveDay(&date, CALENDARFOLDER);
+    return EVENTDELETE_RETURN_CONFIRM;
   }
-  return 0;
+  return EVENTDELETE_RETURN_EXIT;
 }
 
 int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, int graphical)
@@ -2082,18 +2060,7 @@ void trimCalendarDatabase() {
       mPrintXY(3, 4, (char*)"events?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 3, TEXT_COLOR_BLACK); // yes, F1
       PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 4, TEXT_COLOR_BLACK); // no, F6
-      while (1) {
-        int key;
-        mGetKey(&key);
-        if (key==KEY_CTRL_F1) {
-          mMsgBoxPop();
-          break; // user wants to continue... so we continue
-        } else if (key == KEY_CTRL_F6 || key == KEY_CTRL_EXIT ) {
-          // user aborted. better just return.
-          mMsgBoxPop();
-          return;
-        }
-      }
+      if(!closeMsgBox(1)) return;
     }
     unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
     unsigned char buffer[MAX_FILENAME_SIZE+1];

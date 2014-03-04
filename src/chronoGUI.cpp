@@ -35,7 +35,7 @@ inline void formatChronoString(chronometer* tchrono, int num, unsigned char* str
 {
   long long int unixtime = currentUnixTime();
   long long int unixdiff;
-  char buffer[20] = "";
+  char buffer[20];
   itoa(num, (unsigned char*)buffer);
   if(tchrono->state == CHRONO_STATE_CLEARED) {
     strcpy((char*)string, "\xe6\xa6");

@@ -80,6 +80,6 @@ int doMenu(Menu* menu, MenuItemIcon* icontable=NULL);
 int getMenuSelectionIgnoringSeparators(Menu* menu);
 int getMenuSelectionOnlySeparators(Menu* menu);
 
-void closeMsgBox();
+int closeMsgBox(int yesno=0);
 
 #endif

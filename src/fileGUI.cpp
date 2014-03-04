@@ -298,20 +298,11 @@ int deleteFilesGUI(File* files, Menu* menu) {
   mPrintXY(3, 3, (char*)"Selected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
   PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
-  int key;
-  while (1) {
-    mGetKey(&key);
-    switch(key) {
-      case KEY_CTRL_F1:
-        mMsgBoxPop();
-        deleteFiles(files, menu);
-        return 1;
-      case KEY_CTRL_F6:
-      case KEY_CTRL_EXIT:
-        mMsgBoxPop();
-        return 0;
-    }
-  } 
+  if(closeMsgBox(1)) {
+    deleteFiles(files, menu);
+    return 1;
+  }
+  return 0;
 }
 
 int makeFolderGUI(char* browserbasepath) {

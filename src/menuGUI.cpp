@@ -271,17 +271,26 @@ int getMenuSelectionOnlySeparators(Menu* menu) {
 
 // not really related to the menu, but had to go somewhere as a general GUI helper:
 
-void closeMsgBox() {
-  // waits for user to exit a simple info box, and calls MsgBoxPop for you!
+int closeMsgBox(int yesno) {
+  // if yesno is true, returns 1 on yes and 0 on no.
+  // else, waits for user to exit a simple info box, and calls MsgBoxPop for you!
   int key;
   while(1) {
     mGetKey(&key);
-    switch(key)
-    {
+    if(!yesno) switch(key) {
       case KEY_CTRL_EXIT:
       case KEY_CTRL_AC:
         mMsgBoxPop(); 
-        return;
+        return 0;
+    }
+    else switch(key) {
+      case KEY_CTRL_F1:
+        mMsgBoxPop();
+        return 1;
+      case KEY_CTRL_F6:
+      case KEY_CTRL_EXIT:
+        mMsgBoxPop();
+        return 0;
     }
   }
 }
