@@ -244,23 +244,17 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
   return MENU_RETURN_SELECTION;
 }
 
-int getMenuSelectionIgnoringSeparators(Menu* menu) {
-  if(menu->items[menu->selection-1].type == MENUITEM_SEPARATOR) return 0; //current selection is not a "traditional" menu item, return invalid position
-  int selNS = 0;
-  for(int i = 0; i<=menu->selection-1; i++) {
-    if(menu->items[i].type != MENUITEM_SEPARATOR) selNS++;
-  }
-  return selNS;
-}
-
-int getMenuSelectionOnlySeparators(Menu* menu) {
+int getMenuSelectionSeparators(Menu* menu, int ignoreSeparators) {
   // exact opposite of function above
-  if(menu->items[menu->selection-1].type != MENUITEM_SEPARATOR) return 0; //current selection is not a separator, return invalid position
-  int selS = 0;
+  if(ignoreSeparators) { if(menu->items[menu->selection-1].type == MENUITEM_SEPARATOR) return 0; } //current selection is not a "traditional" menu item, return invalid position
+  else { if(menu->items[menu->selection-1].type != MENUITEM_SEPARATOR) return 0; } //current selection is not a separator, return invalid position
+  int selS = 0, selNS = 0;
   for(int i = 0; i<=menu->selection-1; i++) {
     if(menu->items[i].type == MENUITEM_SEPARATOR) selS++;
+    else selNS++;
   }
-  return selS;
+  if(ignoreSeparators) return selNS;
+  else return selS;
 }
 
 // not really related to the menu, but had to go somewhere as a general GUI helper:

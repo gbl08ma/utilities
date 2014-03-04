@@ -77,8 +77,7 @@ typedef struct {
 #define MENU_RETURN_SCROLLING 3 //for returnOnInfiniteScrolling
 #define MENU_RETURN_INTOSETTINGS 4 //basically this is to request a redraw when the user accesses the settings. Restoring the VRAM may not work when the user accesses the main menu while the settings menu is open
 int doMenu(Menu* menu, MenuItemIcon* icontable=NULL);
-int getMenuSelectionIgnoringSeparators(Menu* menu);
-int getMenuSelectionOnlySeparators(Menu* menu);
+int getMenuSelectionSeparators(Menu* menu, int ignoreSeparators);
 
 int closeMsgBox(int yesno=0);
 

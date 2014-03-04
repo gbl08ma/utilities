@@ -407,8 +407,8 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
       drawFkeyLabels(0x0408, 0x0409, 0x040B, 0x040C, 0x0238, 0x015F);
     }
     int res = doMenu(menu);
-    int msel = getMenuSelectionIgnoringSeparators(menu);
-    int ssel = getMenuSelectionOnlySeparators(menu);
+    int msel = getMenuSelectionSeparators(menu, 1);
+    int ssel = getMenuSelectionSeparators(menu, 0);
     switch(res) {
       case MENU_RETURN_EXIT:
         if(menu->fkeypage == 0) return 0;
@@ -585,7 +585,6 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
             sm = events[msel-1].startdate.month;
             sd = events[msel-1].startdate.day;
           } else {
-            int ssel = getMenuSelectionOnlySeparators(menu);
             if(ssel>0) {
               long int dd = DateToDays(*y, *m, *d) + ssel-1;
               long int ny, nm, nd;
@@ -627,7 +626,6 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
           nm = events[msel-1].startdate.month;
           nd = events[msel-1].startdate.day;
         } else {
-          int ssel = getMenuSelectionOnlySeparators(menu);
           if(ssel>0) {
             long int dd = DateToDays(*y, *m, *d) + ssel-1;
             DaysToDate(dd, &ny, &nm, &nd);
