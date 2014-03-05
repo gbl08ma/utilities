@@ -533,8 +533,8 @@ void compressFile(char* oldfilename, char* newfilename, int action) {
   if(!action) {
     origfilesize = Bfile_GetFileSize_OS(hOldFile); // so that we can write to the compressed file header the original size
     // test compression with different settings to find out which is best for this case
-    static const unsigned char wsArray[]={13, 14, 11, 11, 8 };
-    static const unsigned char laArray[]={4,  4,  8,  4,  4 };
+    static const unsigned char wsArray[]={14, 14, 12, 14, 8 };
+    static const unsigned char laArray[]={8,  3,  3,  5, 4 };
     unsigned int smallestsize = 0;
     for(int i = 0; i < 5; i++) {
       Bfile_SeekFile_OS(hOldFile, 0); //move cursor to beginning
