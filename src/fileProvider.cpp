@@ -444,7 +444,7 @@ int stringEndsInG3A(char* string) {
 
 // (DE)COMPRESSION CODE - START
 
-static int encoder_sink_read(int writehandle, heatshrink_encoder *hse, uint8_t *data, size_t data_sz) {
+static int encoder_sink_read(int writehandle, heatshrink_encoder *hse, uint8_t *data, size_t data_sz, size_t* final_sz) {
     size_t out_sz = 4096;
     uint8_t out_buf[out_sz];
     memset(out_buf, 0, out_sz);
@@ -465,7 +465,8 @@ static int encoder_sink_read(int writehandle, heatshrink_encoder *hse, uint8_t *
         do {
             pres = heatshrink_encoder_poll(hse, out_buf, out_sz, &poll_sz);
             if (pres < 0) { return 1; }
-            Bfile_WriteFile_OS(writehandle, out_buf, poll_sz);
+            if(writehandle >= 0) Bfile_WriteFile_OS(writehandle, out_buf, poll_sz);
+            else if (final_sz!=NULL) *final_sz = *final_sz+poll_sz;
         } while (pres == HSER_POLL_MORE);
         
         if (poll_sz == 0 && data_sz == 0) {
@@ -527,8 +528,43 @@ void compressFile(char* oldfilename, char* newfilename, int action) {
   
   int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0); // Get handle for the old file
   if(hOldFile < 0) return;
-  unsigned int origfilesize = 0;
-  if(!action) origfilesize = Bfile_GetFileSize_OS(hOldFile); // so that we can write to the compressed file header the original size
+  unsigned int origfilesize = 0, lookahead = 0, windowsize = 0;
+#define FILE_COMPORIGBUF 24576
+  if(!action) {
+    origfilesize = Bfile_GetFileSize_OS(hOldFile); // so that we can write to the compressed file header the original size
+    // test compression with different settings to find out which is best for this case
+    static const unsigned char wsArray[]={13, 14, 11, 11, 8 };
+    static const unsigned char laArray[]={4,  4,  8,  4,  4 };
+    unsigned int smallestsize = 0;
+    for(int i = 0; i < 5; i++) {
+      Bfile_SeekFile_OS(hOldFile, 0); //move cursor to beginning
+      heatshrink_encoder *hse = heatshrink_encoder_alloc(wsArray[i], laArray[i]);
+      if (hse == NULL) { Bfile_CloseFile_OS(hOldFile); return; }
+      unsigned int newsize = 0;
+      while(1) {
+        unsigned char in_buf[FILE_COMPORIGBUF+5] = "";
+        unsigned int read_sz = Bfile_ReadFile_OS( hOldFile, in_buf, FILE_COMPORIGBUF, -1 );
+        if(encoder_sink_read(-1, hse, in_buf, read_sz, &newsize)) break;
+      }
+      if(newsize < smallestsize || !lookahead) {
+        smallestsize = newsize;
+        windowsize = wsArray[i];
+        lookahead = laArray[i];
+      }
+      heatshrink_encoder_free(hse);
+    }
+    if(smallestsize >= origfilesize) {
+      Bfile_CloseFile_OS(hOldFile);
+      mMsgBoxPush(5);
+      mPrintXY(3, 2, (char*)"Compressing this", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"file doesn't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 4, (char*)"yield a smaller", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 5, (char*)"size; aborted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
+      closeMsgBox();
+      return;
+    }
+  }
   Bfile_CloseFile_OS(hOldFile); // close for now
 
   int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
@@ -562,15 +598,16 @@ void compressFile(char* oldfilename, char* newfilename, int action) {
     }
     
     //File to copy is open, destination file is created and open.
-#define FILE_COMPORIGBUF 24576
     if(action) {
       // DECOMPRESS
       // check file header, jumping it at the same time
-      unsigned char header[14] = "";
-      int chl = strlen((char*)COMPRESSED_FILE_HEADER)+4; // 4 bytes for original filesize
+      unsigned char header[16] = "";
+      int chl = strlen((char*)COMPRESSED_FILE_HEADER)+6; // 4 bytes for original filesize and 2 for window size and lookahead
       Bfile_ReadFile_OS( hOldFile, header, chl, -1 );
       if(strncmp((char*)header, (char*)COMPRESSED_FILE_HEADER, chl)) goto cleanexit; // not a compressed file
-      heatshrink_decoder *hsd = heatshrink_decoder_alloc(256, HS_WINDOWSIZE, HS_LOOKAHEAD);
+      windowsize = header[chl-2];
+      lookahead = header[chl-1];
+      heatshrink_decoder *hsd = heatshrink_decoder_alloc(256, windowsize, lookahead);
       if (hsd == NULL) goto cleanexit;
       HSD_finish_res fres;
       while(1) {
@@ -588,7 +625,7 @@ void compressFile(char* oldfilename, char* newfilename, int action) {
     } else {
       // COMPRESS
       // we can't write header directly because source buffers for WriteFile can't be in ROM
-      unsigned char header[14] = "";
+      unsigned char header[16] = "";
       strcpy((char*)header, (char*)COMPRESSED_FILE_HEADER);
       // write uncompressed filesize to header
       int len=strlen((char*)COMPRESSED_FILE_HEADER);
@@ -596,13 +633,15 @@ void compressFile(char* oldfilename, char* newfilename, int action) {
       header[len+1] = (origfilesize >> 16) & 0xFF;
       header[len+2] = (origfilesize >> 8) & 0xFF;
       header[len+3] = origfilesize & 0xFF;
-      Bfile_WriteFile_OS(hNewFile, header, len+4);
-      heatshrink_encoder *hse = heatshrink_encoder_alloc(HS_WINDOWSIZE, HS_LOOKAHEAD);
+      header[len+4] = windowsize;
+      header[len+5] = lookahead;
+      Bfile_WriteFile_OS(hNewFile, header, len+6);
+      heatshrink_encoder *hse = heatshrink_encoder_alloc(windowsize, lookahead);
       if (hse == NULL) goto cleanexit;
       while(1) {
         unsigned char in_buf[FILE_COMPORIGBUF+5] = "";
         unsigned int read_sz = Bfile_ReadFile_OS( hOldFile, in_buf, FILE_COMPORIGBUF, -1 );
-        if(encoder_sink_read(hNewFile, hse, in_buf, read_sz)) break;
+        if(encoder_sink_read(hNewFile, hse, in_buf, read_sz, NULL)) break;
       }
       heatshrink_encoder_free(hse);
     }

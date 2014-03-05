@@ -83,7 +83,7 @@ void showAbout() {
   textElement elem[5];
   text.elements = elem;
   
-  elem[0].text = (char*)"Contains code by AHelper, merthsoft and KermMartian at Cemetech (http://cemetech.net), code by Simon Lothar (http://casiopeia.net) and public domain code by C.B. Falconer.";
+  elem[0].text = (char*)"Contains code by AHelper, merthsoft and KermMartian at Cemetech (http://cemetech.net), by Simon Lothar (http://casiopeia.net) and public domain code by C.B. Falconer. Uses the Heatshrink library by Scott Vokes.";
   elem[1].newLine = 1;
   elem[1].lineSpacing = 8;
   elem[1].text = (char*)"This Utilities add-in is licensed under the GNU GPL v2, or (at your option) any later version.";
