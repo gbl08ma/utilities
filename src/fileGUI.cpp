@@ -719,10 +719,14 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   if(hFile >= 0) // Check if it opened
   { //opened
     filesize = Bfile_GetFileSize_OS(hFile);
-    if(!(filesize && filesize < MAX_TEXTVIEWER_FILESIZE)) filesize = MAX_TEXTVIEWER_FILESIZE;
+    if(!filesize) {
+      Bfile_CloseFile_OS(hFile);
+      return;
+    }
+    if(filesize > MAX_TEXTVIEWER_FILESIZE) filesize = MAX_TEXTVIEWER_FILESIZE;
     // check if there's enough stack to proceed:
     if(0x881E0000 - (int)GetStackPtr() < 500000 - filesize*sizeof(unsigned char) - 30000) {
-      asrc = (unsigned char*)alloca(filesize*sizeof(unsigned char));
+      asrc = (unsigned char*)alloca(filesize*sizeof(unsigned char)+5);
       Bfile_ReadFile_OS(hFile, asrc, filesize, 0);
       Bfile_CloseFile_OS(hFile);
       asrc[filesize] = '\0';
@@ -752,16 +756,13 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   // get number of lines so we know how much textElement to allocate
   text.numelements = 1; // at least one line it will have
   unsigned int bcur = 0;
-  while(bcur < strlen((char*)asrc)) {
+  unsigned int len = strlen((char*)asrc);
+  while(bcur < len) {
     int jump = 1;
     if(*(asrc+bcur) == '\r' && *(asrc+bcur+1) == '\n') {
       jump=2;
       text.numelements++;
-    } else if(*(asrc+bcur) == '\r') {
-      text.numelements++;
-    } else if(*(asrc+bcur) == '\n') {
-      text.numelements++;
-    }
+    } else if(*(asrc+bcur) == '\r' || *(asrc+bcur) == '\n') text.numelements++;
     bcur += jump;
   }
   
