@@ -293,7 +293,7 @@ void clearSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
 
 
 void setChronoGUI(Menu* menu, chronometer* tchrono) {
-  long long int seconds = 0;
+  long long int ms = 0;
   int type = CHRONO_TYPE_UP;
   MenuItem menuitems[10];
   strcpy(menuitems[0].text, "Upwards");  
@@ -359,7 +359,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         sel.value = sel.min = (days == 0 && hours == 0 && minutes == 0);
         sel.max = 59;
         if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
-        seconds = sel.value + 60*minutes + 60*60*hours + 60*60*24*days;
+        ms = 1000 * (sel.value + 60*minutes + 60*60*hours + 60*60*24*days);
         type=CHRONO_TYPE_DOWN;
         break;
       } else if(bmenu.selection == 3) {
@@ -401,8 +401,8 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
             }
           } 
         }
-        long long int duration = DateTime2Unix(y, m, d, h, mi, s, 0) - currentUnixTime();
-        if(duration < 0) {
+        ms = DateTime2Unix(y, m, d, h, mi, s, 0) - currentUnixTime();
+        if(ms < 0) {
           mMsgBoxPush(4);
           mPrintXY(3, 2, (char*)"Time is in the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(3, 3, (char*)"past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -410,7 +410,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
           closeMsgBox();
           return;
         } else {
-          seconds = duration/1000;
           type=CHRONO_TYPE_DOWN;
           break;
         }
@@ -421,11 +420,11 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
   int hasPerformedAny = 0;
   for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) {
     if(menu->items[cur].value == MENUITEM_VALUE_CHECKED) {
-      setChrono(&tchrono[cur], seconds*1000, type);
+      setChrono(&tchrono[cur], ms, type);
       hasPerformedAny=1;
     }
   }
-  if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], seconds*1000, type); // if there was no selected chrono, do it for the currently selected menu position
+  if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], ms, type); // if there was no selected chrono, do it for the currently selected menu position
 }
 
 void setBuiltinChrono(Menu* menu, chronometer* tchrono) {
@@ -494,7 +493,7 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
       if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) && GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) != 3) {
         // user wants notification with pop-up
         mMsgBoxPush(4);
-        char buffer1[10] = "";
+        char buffer1[10];
         itoa(cur+1, (unsigned char*)buffer1);
         mPrintXY(3,2,(char*)"Chronometer ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(15,2,(char*)buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);

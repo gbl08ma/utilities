@@ -35,7 +35,7 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
      The first field (category) begins with no separator.
      An event doesn't begin with any separators, and the last field ends with a field separator followed by an event separator.
      An event (as bytes) can take at most 1,3 KiB. The lengthy fields are obviously the title, the location and mainly the description.*/
-  unsigned char smallbuf[50] = ""; 
+  unsigned char smallbuf[50]; 
   int zero = 0;
   itoa(calEvent->category, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
   /*itoa(calEvent->daterange, (unsigned char*)smallbuf);*/ itoa(zero, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf,2); append(buf, FIELD_SEPARATOR);
@@ -402,7 +402,7 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
 
   // make the buffer
   strcpy((char*)buffer, CALENDARFOLDER"\\");
-  char smallbuf[5] = "";
+  char smallbuf[5];
   itoa(year, (unsigned char*)smallbuf);
   strcat((char*)buffer, smallbuf);
   itoa(month, (unsigned char*)smallbuf);
@@ -480,7 +480,7 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   // make the buffer
   strcpy((char*)buffer, folder);
   strcat((char*)buffer, "\\");
-  char smallbuf[5] = "";
+  char smallbuf[5];
   itoa(y, (unsigned char*)smallbuf);
   strcat((char*)buffer, smallbuf);
   if(m!=0) {
@@ -499,7 +499,7 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
     // the 00000.pce strcmp is there so we don't search on the tasks file
     if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0)) {
       // get the start date from the filename
-      char mainname[20] = "";
+      char mainname[20];
       int nlen = strlen((char*)buffer);
       strncpy(mainname, (char*)buffer, nlen-4); //strip the file extension out
       // strcpy will not add a \0 at the end if the limit is reached, let's add it ourselves

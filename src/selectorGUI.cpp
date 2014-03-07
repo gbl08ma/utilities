@@ -36,7 +36,7 @@ int doSelector(Selector* selector) {
       clearLine(1,4);
       drawLongDate(82,selector->value, COLOR_BLACK, COLOR_WHITE, NULL);
     } else {
-      char buffer1[50] = "";
+      char buffer1[50];
       switch(selector->type) {
         case SELECTORTYPE_MONTH:
           strcpy(buffer1, getMonthAsString(selector->value));

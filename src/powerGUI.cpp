@@ -153,7 +153,7 @@ void powerInformation() {
   elem[9].newLine = 1;
   elem[9].text = (char*)"Backlight timeout:";
   elem[9].spaceAtEnd = 1;
-  char btimeout[20] = "";
+  char btimeout[20];
   int btimeoutval = GetBacklightDuration();
   if(btimeoutval % 2 == 0) { //even, so timeout is X min 0 sec.
     itoa(btimeoutval/2, (unsigned char*)btimeout);
@@ -167,7 +167,7 @@ void powerInformation() {
   elem[11].newLine = 1;
   elem[11].text = (char*)"Power off timeout:";
   elem[11].spaceAtEnd = 1;
-  char ptimeout[20] = "";
+  char ptimeout[20];
   itoa(GetAutoPowerOffTime(), (unsigned char*)ptimeout);
   strcat(ptimeout, " Minutes");
   elem[12].text = ptimeout;
@@ -285,7 +285,7 @@ void updateCurrentFreq() {
       break;
   }
   int textX = 0; int textY = 145;
-  char buffer[50] = "";
+  char buffer[50];
   strcpy(buffer, (char*)"Running at ");
   strcat(buffer, cur);
   strcat(buffer, (char*)" MHz");

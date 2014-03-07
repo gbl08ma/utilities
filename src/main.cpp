@@ -101,7 +101,7 @@ int main()
     if(hFile < 0) return 3;
   }
   //file exists (even if it didn't exist before) and is open. write new contents
-  char newentry[50] = "";
+  char newentry[50];
   itoa(currentUnixTime()/1000, (unsigned char*)newentry);
   strcat(newentry, (char*)",");
   unsigned char voltbuffer[20] = "";

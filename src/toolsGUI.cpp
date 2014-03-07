@@ -31,7 +31,7 @@ void drawCapacityBar(int textY, long long int cur, long long int full) {
   
   int newTextX = 0;
   int newTextY = textY+5;
-  unsigned char buffer[50] = "";
+  unsigned char buffer[50];
   itoa(100*cur/full, buffer);
   strcat((char*)buffer, "% used");
   PrintMiniMini( &newTextX, &newTextY, (unsigned char*)buffer, 0, TEXT_COLOR_CYAN, 1 ); //fake draw
@@ -44,7 +44,7 @@ void drawCapacityBar(int textY, long long int cur, long long int full) {
 }
 
 void drawCapacityText(int* textY, const char* desc, long long int cur, long long int full) {
-  unsigned char buffer[50] ="";
+  unsigned char buffer[50];
   itoa(full-cur, buffer);
   *textY=*textY+22; int textX = 0;
   PrintMini(&textX, textY, (unsigned char*)desc, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
@@ -165,7 +165,7 @@ int addinManagerSub(Menu* menu) {
   drawFkeyLabels(-1,-1,-1,-1,-1,0x03FD); // HELP (white)
   
   unsigned short newpath[MAX_FILENAME_SIZE+1];
-  char buffer[MAX_FILENAME_SIZE+1] = "";
+  char buffer[MAX_FILENAME_SIZE+1];
   unsigned short oldpath[MAX_FILENAME_SIZE+1];
   switch(doMenu(menu)) {
     case KEY_CTRL_F1:
@@ -255,31 +255,31 @@ void changeFKeyColor() {
 }
 
 void systemInfo() {
-  char OSname[12] = "";
+  char OSname[12];
   memcpy(OSname, (void*)0x80020000, 8);
   OSname[8] = '\0';
   
-  char OSversion[12] = "";
+  char OSversion[12];
   memcpy(OSversion, (void*)0x80020020, 10);
   OSversion[10] = '\0';
   
-  char OSdate[20] = "";
+  char OSdate[20];
   memcpy(OSdate, (void*)0x80B5FFE0, 14);
   OSdate[14] = '\0';
   
-  char pcbModel[6] = "";
+  char pcbModel[6];
   memcpy(pcbModel, (void*)0x80000300, 4);
   pcbModel[4] = '\0';
   
-  char ABSname[12] = "";
+  char ABSname[12];
   memcpy(ABSname, (void*)0x80000338, 8);
   ABSname[8] = '\0';
   
-  char ABSdate[20] = "";
+  char ABSdate[20];
   memcpy(ABSdate, (void*)0x8001FFB0, 14);
   ABSdate[14] = '\0';
   
-  char devID[10] = "";
+  char devID[10];
   getHardwareID(devID);
   devID[8] = '\0';  
   

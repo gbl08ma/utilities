@@ -64,7 +64,7 @@ int doTextArea(textArea* text) {
           if(*src || text->elements[cur].spaceAtEnd) PrintMini(&textX, &textY, (unsigned char*)" ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
         } else {
           textX += temptextX;
-          if(*src || text->elements[cur].spaceAtEnd) textX += 7;
+          if(*src || text->elements[cur].spaceAtEnd) textX += 7; // size of a PrintMini space
         }
       }
       free(singleword);

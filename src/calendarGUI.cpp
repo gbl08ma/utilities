@@ -296,7 +296,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   // y,m,d now has first Sunday/Monday of the week, depending on user setting
   // ddays has the corresponding amount of days
   // calculate week number for menu title accoring to the Sunday/Monday date
-  char buffer[10] = "";
+  char buffer[10];
   int wkn = getWeekNumber(*y,*m,*d);
   itoa(wkn, (unsigned char*)buffer);
   strcpy(menu->title, "Week ");
@@ -343,7 +343,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
     //  (in this case there are no MB chars, so the full 42 bytes can be used)
     if(fevcount[curday]) {
       if(GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT)) {
-        char buffer[10] = "";
+        char buffer[10];
         itoa(fevcount[curday], (unsigned char*)buffer);
         strcpy(menuitems[curmenu].text, buffer);
         strcat(menuitems[curmenu].text, " event");
@@ -882,7 +882,7 @@ void viewEvent(CalendarEvent* event, int istask) {
 
 void fillInputDate(int yr, int m, int d, char* buffer) {
   if(yr != 0 || m != 0 || d != 0) {
-    char buffer2[8] = "";
+    char buffer2[8];
     char day[5] = "";
     char month[5] = "";
     char year[5] = "";
@@ -923,7 +923,7 @@ void fillInputDate(int yr, int m, int d, char* buffer) {
 void fillInputTime(int h, int m, int s, char* buffer) {
   buffer[0] = '\0'; // This sets the first character to \0, also represented by "", an empty string
   if(h != 0 || m != 0 || s != 0) {
-    char buffer2[8] = "";
+    char buffer2[8];
     if (h < 10) { strcat(buffer, "0"); }
     itoa(h, (unsigned char*) buffer2);
     strcat(buffer, buffer2);
@@ -1180,7 +1180,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         mPrintXY(5, 4, (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
         mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
         int inscreen=1; int key = 0;
-        char buffer[20] = "";
+        char buffer[20];
         if(type == EVENTEDITORTYPE_ADD) event->category = 1;
         while(inscreen)
         {
@@ -1321,7 +1321,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
         if(eventcount[day] > 0) {
           int textX = LEFT+2+WIDTH*x+2+12*2+2; //12+2 to have space to write the day and some padding
           int textY = TOP+2+y*THICKNESS-TOPOFFSET+2; //+2 to have some padding
-          unsigned char eventstr[10] = "";
+          unsigned char eventstr[10];
           if (eventcount[day] < 100) {
             itoa(eventcount[day], (unsigned char*)eventstr); 
           } else {
@@ -1879,13 +1879,13 @@ void calendarTools(int y, int m, int d) {
         
         
         elem[1].newLine = 1;
-        char line2[50] = "";
+        char line2[50];
         itoa((int)daysdiff, (unsigned char*)line2);
         strcat(line2, (char*)" days");
         elem[1].text = line2;
         
         elem[2].newLine = 1;
-        char line3[50] = "";
+        char line3[50];
         itoa((int)businessdiff, (unsigned char*)line3);
         strcat(line3, (char*)" business days");
         elem[2].text = line3;
@@ -1971,19 +1971,17 @@ void repairCalendarDatabase() {
   Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
   int loopc = 9;
+  char buffer1[20], buffer2[20], buffer3[20];
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
     if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0) && fileinfo.fsize != 0) {     
       if (loopc>=9) {
-        char buffer1[20] = "";
         itoa((int)checkedfiles, (unsigned char*)buffer1);
         elem[2].text = buffer1;
         
-        char buffer2[20] = "";
         itoa((int)checkedevents, (unsigned char*)buffer2);
         elem[4].text = buffer2;
         
-        char buffer3[20] = "";
         itoa((int)problemsfound, (unsigned char*)buffer3);
         elem[6].text = buffer3;
         text.numelements = 7;
@@ -1998,15 +1996,12 @@ void repairCalendarDatabase() {
   }
   Bfile_FindClose(findhandle);
   // update totals, because they do not include the last file checked
-  char buffer1[20] = "";
   itoa((int)checkedfiles, (unsigned char*)buffer1);
   elem[2].text = buffer1;
   
-  char buffer2[20] = "";
   itoa((int)checkedevents, (unsigned char*)buffer2);
   elem[4].text = buffer2;
   
-  char buffer3[20] = "";
   itoa((int)problemsfound, (unsigned char*)buffer3);
   elem[6].text = buffer3;
   
@@ -2157,7 +2152,7 @@ int importHelper(EventDate* date, int count, textArea* text, textElement* elem, 
   GetEventsForDate(date, CALENDARFOLDER, events);
   int successful = initSuc;
   for(int curitem = 0; curitem < count; curitem++) {
-    char buffer1[20] = "";
+    char buffer1[20];
     itoa((int)successful, (unsigned char*)buffer1);
     elem[2].text = buffer1;
     doTextArea(text);
@@ -2217,7 +2212,7 @@ void importCalendarEvents() {
     thisday.day++;
   }
   text.type = TEXTAREATYPE_NORMAL;
-  char buffer1[20] = "";
+  char buffer1[20];
   itoa((int)successful, (unsigned char*)buffer1);
   elem[0].text = buffer1;
   elem[0].spaceAtEnd = 1;

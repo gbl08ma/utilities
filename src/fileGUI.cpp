@@ -651,13 +651,13 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
       case KEY_CTRL_F3:
         if(allowEdit) {
           if(compressed) {
-            char newfilename[MAX_FILENAME_SIZE] = "";
+            char newfilename[MAX_FILENAME_SIZE];
             int len=strlen(file->filename);
             strncpy(newfilename, file->filename, len-4); //strip file extension
             newfilename[len-4] = '\0'; // strncpy does not zero-terminate when limit is reached
             compressFile(file->filename, newfilename, 1);
           } else {
-            char newfilename[MAX_FILENAME_SIZE] = "";
+            char newfilename[MAX_FILENAME_SIZE];
             strcpy(newfilename, file->filename);
             strcat(newfilename, (char*)COMPRESSED_FILE_EXTENSION);
             compressFile(file->filename, newfilename, 0);

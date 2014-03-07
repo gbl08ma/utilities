@@ -59,10 +59,10 @@ int viewTasksSub(Menu* menu) {
   }
   menu->items=menuitems;
   
-  char subtitle[50] = "";
+  char subtitle[50];
   itoa(menu->numitems, (unsigned char*) subtitle);
   strcat(subtitle, (char*)" tasks, ");
-  char buf[5] = "";
+  char buf[5];
   itoa(menu->numitems-activecount, (unsigned char*) buf);
   strcat(subtitle, (char*)buf);
   strcat(subtitle, (char*)" active");

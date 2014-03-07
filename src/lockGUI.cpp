@@ -114,7 +114,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
 }
 
 int setPassword() {
-  unsigned char password[256] = "";
+  unsigned char password[256];
   Bdisp_AllClr_VRAM();
   drawScreenTitle((char*)"Calculator lock", (char*)"Set new code:");
   if (passwordInput(1, 3, password)) {
@@ -126,7 +126,7 @@ int setPassword() {
 
 int unlockCalc() {
   //returns 1 on unlocked and 0 on still locked
-  unsigned char password[256] = "";
+  unsigned char password[256];
   
   Bdisp_AllClr_VRAM();
   drawScreenTitle((char*)"Calculator lock", (char*)"Input code:");

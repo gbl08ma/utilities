@@ -410,9 +410,9 @@ void stringToDate(char* string, int* yr, int* m, int *d, int format) {
 }
 
 void stringToTime(char* string, int* h, int* m, int *s) {
-  char hour[3] = "";
-  char minute[3] = "";
-  char second[3] = "";
+  char hour[3];
+  char minute[3];
+  char second[3];
   hour[0] = string[0]; hour[1] = string[1]; hour[2] = '\0';
   minute[0] = string[2]; minute[1] = string[3]; minute[2] = '\0';
   second[0] = string[4]; second[1] = string[5]; second[2] = '\0';
