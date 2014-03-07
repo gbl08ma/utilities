@@ -53,14 +53,19 @@ int doTextArea(textArea* text) {
           //time for a new line
           textX=text->x;
           textY=textY+text->lineHeight;
-        } //else still fits, print new word normally
-        if(text->elements[cur].minimini) {
-          PrintMiniMini( &textX, &textY, (unsigned char*)singleword, 0, text->elements[cur].color, 0 );
+        } //else still fits, print new word normally (or just increment textX, if we are not "on stage" yet)
+        if(textY >= -24 && textY < LCD_HEIGHT_PX) {
+          if(text->elements[cur].minimini) {
+            PrintMiniMini( &textX, &textY, (unsigned char*)singleword, 0, text->elements[cur].color, 0 );
+          } else {
+            PrintMini(&textX, &textY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 1, 0);
+          }
+          //add a space, since it was removed from token
+          if(*src || text->elements[cur].spaceAtEnd) PrintMini(&textX, &textY, (unsigned char*)" ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
         } else {
-          PrintMini(&textX, &textY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 1, 0);
+          textX += temptextX;
+          if(*src || text->elements[cur].spaceAtEnd) textX += 7;
         }
-        //add a space, since it was removed from token
-        if(*src || text->elements[cur].spaceAtEnd) PrintMini(&textX, &textY, (unsigned char*)" ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
       }
       free(singleword);
       if(isFirstDraw) {
