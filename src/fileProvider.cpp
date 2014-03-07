@@ -157,7 +157,7 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
           strcpy(filename, basepath);
           strcat(filename, (char*)buffer);
           unsigned short pFile[MAX_FILENAME_SIZE+1];
-          Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+          Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, MAX_FILENAME_SIZE); 
           int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
           if(hFile >= 0) // Check if it opened
           { //opened
@@ -667,8 +667,8 @@ cleanexit:
 
 int isFileCompressed(char* filename, int* origfilesize) {
   if(!EndsIWith(filename, (char*)COMPRESSED_FILE_EXTENSION)) return 0;
-  unsigned short filenameshort[0x10A];
-  Bfile_StrToName_ncpy(filenameshort, (unsigned char*)filename, 0x10A);
+  unsigned short filenameshort[MAX_FILENAME_SIZE];
+  Bfile_StrToName_ncpy(filenameshort, (unsigned char*)filename, MAX_FILENAME_SIZE);
   int hFile = Bfile_OpenFile_OS(filenameshort, READWRITE, 0); // Get handle for the old file
   if(hFile < 0) return 0;
   unsigned char header[14] = "";

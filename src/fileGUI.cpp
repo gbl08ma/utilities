@@ -37,7 +37,7 @@ void fileManager() {
   while(res) {
     strcpy(filetoedit, (char*)"");
     res = fileManagerSub(browserbasepath, &itemsinclip, &shownClipboardHelp, &shownMainMemHelp, clipboard, filetoedit);
-    if(strlen(filetoedit) > 0) {
+    if(strlen(filetoedit)) {
       fileTextEditor(filetoedit);
     }
   }
@@ -668,7 +668,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
       case KEY_CTRL_F6:
         if(file->size > 0) {
           unsigned short pFile[MAX_FILENAME_SIZE+1];
-          Bfile_StrToName_ncpy(pFile, (unsigned char*)file->filename, strlen(file->filename)+1); 
+          Bfile_StrToName_ncpy(pFile, (unsigned char*)file->filename, MAX_FILENAME_SIZE); 
           int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
           if(hFile >= 0) // Check if it opened
           { //opened
@@ -713,7 +713,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   unsigned char* asrc = NULL;
   //Get file contents
   unsigned short pFile[MAX_FILENAME_SIZE];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, MAX_FILENAME_SIZE); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   unsigned int filesize = 0;
   if(hFile >= 0) // Check if it opened

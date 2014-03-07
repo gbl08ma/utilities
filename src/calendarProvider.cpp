@@ -179,14 +179,14 @@ void filenameFromDate(EventDate* date, char* filename) {
   strcat(filename, smallbuf);
 }
 void smemFilenameFromDate(EventDate* date, unsigned short* shortfn, const char* folder) {
-  unsigned char filename[128];
+  unsigned char filename[MAX_FILENAME_SIZE];
   char buffer[10];
   strcpy((char*)filename, folder);
   strcat((char*)filename, "\\");
   filenameFromDate(date, buffer);
   strcat((char*)filename, buffer);
   strcat((char*)filename, ".pce"); //filenameFromDate does not include file extension, so add it
-  Bfile_StrToName_ncpy(shortfn, (unsigned char*)filename, strlen((char*)filename)+1); 
+  Bfile_StrToName_ncpy(shortfn, (unsigned char*)filename, MAX_FILENAME_SIZE); 
 }
 
 int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
@@ -196,7 +196,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
   char newevent[2048] = "";
   calEventToChar(calEvent, (unsigned char*)newevent);
   int size = strlen(FILE_HEADER) + strlen(newevent);
-  unsigned short pFile[256];
+  unsigned short pFile[MAX_FILENAME_SIZE];
   smemFilenameFromDate(&calEvent->startdate, pFile, folder);
   int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hAddFile < 0) // Check if it opened
@@ -215,7 +215,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
       strcpy(finalcontents, FILE_HEADER);
       strcat(finalcontents, newevent);
       //Write header and event
-      Bfile_WriteFile_OS(hAddFile, finalcontents, strlen(finalcontents));
+      Bfile_WriteFile_OS(hAddFile, finalcontents, size);
       Bfile_CloseFile_OS(hAddFile);
       return 0;
     } else {
@@ -224,8 +224,8 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
       if(secondCall) return 2;
       // it's probably because the DB has never been used and is not initialized (i.e. we haven't created the calendar folder).
       // create the folder:
-      unsigned short pFolder[256];
-      Bfile_StrToName_ncpy(pFolder, (unsigned char*)folder, strlen(folder)+1);
+      unsigned short pFolder[MAX_FILENAME_SIZE];
+      Bfile_StrToName_ncpy(pFolder, (unsigned char*)folder, MAX_FILENAME_SIZE);
       Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0);
       // now let's call ourselves again, then according to the return value of our second instance, decide if there was an error or not.
       if(AddEvent(calEvent, folder,1)) return 2; // another error ocurred
@@ -235,14 +235,14 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
     /*File exists and is open. Check its size and if its OK, append new event to it.
     (one does not need to recreate the file with new size when increasing the size) */
     int oldsize = Bfile_GetFileSize_OS(hAddFile);
-    int newsize = oldsize + strlen(newevent);
-    if (oldsize > MAX_EVENT_FILESIZE || newsize > MAX_EVENT_FILESIZE) { //file bigger than we can handle
+    int eventsize = strlen(newevent);
+    if (oldsize > MAX_EVENT_FILESIZE || oldsize+eventsize > MAX_EVENT_FILESIZE) { //file bigger than we can handle
       Bfile_CloseFile_OS(hAddFile);
       if(oldsize > MAX_EVENT_FILESIZE) setDBneedsRepairFlag(1);
       return 4;
     }
     Bfile_SeekFile_OS(hAddFile, oldsize); //move cursor to end
-    Bfile_WriteFile_OS(hAddFile, newevent, strlen(newevent)); // write new event
+    Bfile_WriteFile_OS(hAddFile, newevent, eventsize); // write new event
     Bfile_CloseFile_OS(hAddFile);
   }
   return 0;
@@ -261,7 +261,7 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   }
   int newsize = strlen((char*)newfilecontents);
 
-  unsigned short pFile[256];
+  unsigned short pFile[MAX_FILENAME_SIZE];
   smemFilenameFromDate(startdate, pFile, folder);
   int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hAddFile < 0) return 1;
@@ -301,7 +301,7 @@ void RemoveEvent(EventDate *startdate, CalendarEvent* events, const char* folder
 
 void RemoveDay(EventDate* date, const char* folder) {
   //remove all SMEM events for the day
-  unsigned short pFile[256];
+  unsigned short pFile[MAX_FILENAME_SIZE];
   smemFilenameFromDate(date, pFile, folder);
   Bfile_DeleteEntry(pFile);
 }
@@ -318,7 +318,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
   returns number of events found for the specified day, 0 if error or no events. */
 
   // Generate filename from given date
-  unsigned short pFile[256];
+  unsigned short pFile[MAX_FILENAME_SIZE];
   smemFilenameFromDate(startdate, pFile, folder);
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   // Check for file existence
@@ -555,8 +555,8 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   strcat(filename, "\\");
   strcat(filename, name);
   
-  unsigned short pFile[256];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, strlen(filename)+1); 
+  unsigned short pFile[MAX_FILENAME_SIZE];
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, MAX_FILENAME_SIZE); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   // Check if file opened
   if(hFile >= 0)

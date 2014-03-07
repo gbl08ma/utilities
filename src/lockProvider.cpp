@@ -18,6 +18,7 @@
 #include "lockProvider.hpp"
 #include "calendarProvider.hpp"
 #include "hardwareProvider.hpp"
+#include "fileProvider.hpp"
 #include "sha2.h"
 
 int compare(unsigned char * a, unsigned char * b, int size)
@@ -43,9 +44,9 @@ int comparePasswordHash(unsigned char* inputPassword) {
   //returns 3 if hashes stored don't match
   //returns 4 if hashed password and stored hashes don't match
   //Load hash from SMEM
-  unsigned short pFile[256]; // Make buffer
+  unsigned short pFile[MAX_FILENAME_SIZE]; // Make buffer
   int hFile;
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)SMEMHASHFILE, strlen((char*)SMEMHASHFILE)+1); 
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)SMEMHASHFILE, MAX_FILENAME_SIZE); 
   hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   unsigned char smemHash[32] = "";
   if(hFile < 0) // Check if it opened
@@ -84,12 +85,12 @@ int savePassword(unsigned char* password) {
   //now that we hashed, save in the main memory and storage memory.
   //Save to SMEM
   //create a folder, if it doesn't exist already
-  unsigned short pFolder[256];
-  Bfile_StrToName_ncpy(pFolder, (unsigned char*)CALENDARFOLDER, strlen((char*)CALENDARFOLDER)+1);
+  unsigned short pFolder[MAX_FILENAME_SIZE];
+  Bfile_StrToName_ncpy(pFolder, (unsigned char*)CALENDARFOLDER, MAX_FILENAME_SIZE);
   Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
   // now the file
-  unsigned short pFile[256]; // Make buffer
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)SMEMHASHFILE, strlen((char*)SMEMHASHFILE)+1); 
+  unsigned short pFile[MAX_FILENAME_SIZE]; // Make buffer
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)SMEMHASHFILE, MAX_FILENAME_SIZE); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   int size = 32;
   if(hFile < 0) // Check if it opened
@@ -120,9 +121,9 @@ int savePassword(unsigned char* password) {
 int isPasswordSet(void) {
   //returns 1 if user has already set a code for locking the calc, 0 if not.
   // check SMEM.
-  unsigned short pFile[256]; // Make buffer
+  unsigned short pFile[MAX_FILENAME_SIZE]; // Make buffer
   int hFile;
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)SMEMHASHFILE, strlen((char*)SMEMHASHFILE)+1); 
+  Bfile_StrToName_ncpy(pFile, (unsigned char*)SMEMHASHFILE, MAX_FILENAME_SIZE); 
   hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hFile < 0) return 0;
   Bfile_CloseFile_OS(hFile);

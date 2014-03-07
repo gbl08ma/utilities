@@ -1067,7 +1067,8 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           int res = doTextInput(&input);
           if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
           else if (res==INPUT_RETURN_CONFIRM) {
-            if((int)strlen(stbuffer) == input.charlimit) {
+            int len = strlen(stbuffer);
+            if(len == input.charlimit) {
                 int h, m, s;
                 stringToTime(stbuffer, &h, &m, &s);
                 if(isTimeValid(h, m, s)) {
@@ -1077,7 +1078,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
                   event->starttime.second = s;
                   curstep=curstep+1; break; // continue to next step
                 } else invalidFieldMsg(1);
-            } else if (!strlen(stbuffer)) {
+            } else if (!len) {
               // user wants all-day event
               event->timed = 0;
               curstep=curstep+1; break; // next step
@@ -1110,7 +1111,8 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           int res = doTextInput(&input);
           if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
           else if (res==INPUT_RETURN_CONFIRM) {
-            if((int)strlen(edbuffer) == input.charlimit) {
+            int len = strlen(edbuffer);
+            if(len == input.charlimit) {
               int yr,m,d;
               stringToDate(edbuffer, &yr, &m, &d);
               if(isDateValid(yr, m, d)) {
@@ -1122,7 +1124,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
                   curstep=curstep+1; break; // continue to next step
                 } else invalidFieldMsg(0);
               } else invalidFieldMsg(0);
-            } else if (!strlen(edbuffer)) {
+            } else if (!len) {
               // user wants end date to be the same as the start date
               event->enddate.year = event->startdate.year;
               event->enddate.month = event->startdate.month;

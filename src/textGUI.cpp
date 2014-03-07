@@ -36,12 +36,13 @@ int doTextArea(textArea* text) {
         textX=text->x;
         textY=textY+text->lineHeight+text->elements[cur].lineSpacing; 
       }
-      unsigned char* singleword = (unsigned char*)malloc(strlen(text->elements[cur].text)); // because of this, a single text element can't have more bytes than malloc can provide
+      int tlen = strlen(text->elements[cur].text);
+      unsigned char* singleword = (unsigned char*)malloc(tlen); // because of this, a single text element can't have more bytes than malloc can provide
       unsigned char* src = (unsigned char*)text->elements[cur].text;
       while(*src)
       {
         temptextX = 0;
-        src = toksplit(src, ' ', (unsigned char*)singleword, strlen(text->elements[cur].text)); //break into words; next word
+        src = toksplit(src, ' ', (unsigned char*)singleword, tlen); //break into words; next word
         //check if printing this word would go off the screen, with fake PrintMini drawing:
         if(text->elements[cur].minimini) {
           PrintMiniMini( &temptextX, &temptextY, (unsigned char*)singleword, 0, text->elements[cur].color, 1 );

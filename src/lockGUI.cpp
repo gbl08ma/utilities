@@ -41,7 +41,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
       for (int k = 0; k < numchars-1; k++) {
         strcat((char*)dispbuffer, "*");
       }
-      if(GetSetting(SETTING_PASSWORD_PRIVACY) && key<30000 && cursor==(int)strlen((char*)buffer)) {
+      if(GetSetting(SETTING_PASSWORD_PRIVACY) && key<30000 && cursor==numchars) {
         //show last character for easier typing
         //only show last char if last key was a CHAR key and cursor is at the end
         strcat((char*)dispbuffer, " ");
