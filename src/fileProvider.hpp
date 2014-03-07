@@ -32,10 +32,10 @@ typedef struct
 
 typedef struct
 {
-        unsigned short id, type;
-        unsigned long fsize, dsize;
-        unsigned int property;
-        unsigned long address;
+  unsigned short id, type;
+  unsigned long fsize, dsize;
+  unsigned int property;
+  unsigned long address;
 } file_type_t; 
 
 #define GETFILES_SUCCESS 0

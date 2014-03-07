@@ -64,10 +64,9 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
   /* Parses a string containing a single event and turns it into a CalendarEvent which the program can work with.
   */
   int curfield = 0; //field we are parsing currently. starts at the category, which is 0.
-  unsigned char token[1024] = "";
+  unsigned char token[1024];
   src = toksplit(src, FIELD_SEPARATOR, token, 1024);
-  int notfinished = 1;
-  while (notfinished) {
+  while (curfield < 20) {
     switch (curfield) {
       case 0: //category
         calEvent->category = atoi((const char*)token);
@@ -128,7 +127,6 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
         break;
       case 19: //description
         strncpy((char*)calEvent->description, (char*)token, 1024);
-        notfinished = 0;
         break;
       default: //unknown field. may add special handling later.
         break;
@@ -143,10 +141,9 @@ void charToSimpleCalEvent(unsigned char* src, SimpleCalendarEvent* calEvent) {
      Skips all the fields not necessary to a SimpleCalendarEvent
   */
   int curfield = 0; //field we are parsing currently. starts at the category, which is 0.
-  unsigned char token[1024] = "";
+  unsigned char token[1024];
   src = toksplit(src, FIELD_SEPARATOR, token, 1024);
-  int notfinished = 1;
-  while (notfinished) {
+  while (curfield < 18) {
     switch (curfield) {
       case 0: //category
         calEvent->category = atoi((const char*)token);
@@ -162,7 +159,6 @@ void charToSimpleCalEvent(unsigned char* src, SimpleCalendarEvent* calEvent) {
         break;
       case 17: //title
         strncpy((char*)calEvent->title, (char*)token, 21);
-        notfinished = 0;
         break;
       default: //some field that doesn't matter to us
         break;
@@ -215,7 +211,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
       {
         return 1;
       }
-      char finalcontents[2060] = "";
+      char finalcontents[2060];
       strcpy(finalcontents, FILE_HEADER);
       strcat(finalcontents, newevent);
       //Write header and event
