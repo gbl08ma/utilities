@@ -426,7 +426,6 @@ const char *dateSettingInput[] = {"DDMMYYYY",
                                  "YYYYMMDD"
                                  };
 const char* dateSettingToInputDisplay(int setting) {
-  if(setting==-1) setting = GetSetting(SETTING_DATEFORMAT);
   if(setting < 0 || setting > 2) return NULL;
   return dateSettingInput[setting];
 }

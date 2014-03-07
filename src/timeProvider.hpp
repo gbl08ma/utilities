@@ -76,5 +76,5 @@ long int DateToDays(int y, int m, int d);
 void stringToDate(char* string, int* yr, int* m, int *d, int format = GetSetting(SETTING_DATEFORMAT));
 void stringToTime(char* string, int* h, int* m, int *s);
 
-const char* dateSettingToInputDisplay(int setting=-1);
+const char* dateSettingToInputDisplay(int setting = GetSetting(SETTING_DATEFORMAT));
 #endif
