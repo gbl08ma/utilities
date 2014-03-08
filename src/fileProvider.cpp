@@ -59,9 +59,7 @@ void insertSortFileMenuArray(File* data, MenuItem* mdata, int size) {
     mdata[j + 1] = mtemp;
   }
   // update menu text pointers (these are still pointing to the old text locations):
-  for(i = 0; i < size; i++) {
-    mdata[i].text = data[i].visname;
-  }
+  for(i = 0; i < size; i++) mdata[i].text = data[i].visname;
 }
 
 int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
