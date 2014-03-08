@@ -107,7 +107,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         int textX = 0, textY=(menu->startY-1)*24;
         PrintMiniMini( &textX, &textY, (unsigned char*)menu->title, 16, menu->titleColor, 0 );
       } else mPrintXY(menu->startX, menu->startY, menu->title, TEXT_MODE_TRANSPARENT_BACKGROUND, menu->titleColor);
-      if(menu->showsubtitle) {
+      if(menu->subtitle != NULL) {
         int textX=(MB_ElementCount(menu->title)+menu->startX-1)*18+10, textY=6;
         PrintMini(&textX, &textY, (unsigned char*)menu->subtitle, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
       }

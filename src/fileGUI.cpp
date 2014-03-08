@@ -114,7 +114,6 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
     } else break;
   }
   menu.subtitle = friendlypath;
-  menu.showsubtitle = 1;
   menu.type = MENUTYPE_MULTISELECT;
   menu.height = 7;
   menu.scrollout=1;
@@ -802,7 +801,6 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     MenuItem menuitems[MAX_ITEMS_IN_CLIPBOARD];
     menu.title = (char*)"Clipboard";
     menu.subtitle = (char*)"Black=cut, Red=copy";
-    menu.showsubtitle=1;
     char statusbuffer[72];
     fillMenuStatusWithClip(statusbuffer, *itemsinclip, 1);
     menu.statusText = statusbuffer;

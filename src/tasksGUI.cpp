@@ -29,7 +29,6 @@ void viewTasks() {
   
   menu.scrollout=1;
   menu.height=7;
-  menu.showsubtitle=1;
   menu.type=MENUTYPE_FKEYS;
   menu.nodatamsg = (char*)"No tasks - press F2";
   menu.title = (char*)"Tasks";
