@@ -42,7 +42,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         if(menu->scroll < curitem+1 && menu->scroll > curitem-itemsHeight) {
           char menuitem[70] = "";
           if(menu->type == MENUTYPE_MULTISELECT) strcpy(menuitem, "  "); //allow for the folder and selection icons on MULTISELECT menus (e.g. file browser)
-          strcat(menuitem, menu->items[curitem].text);
+          strncat(menuitem, menu->items[curitem].text, 68);
           if(menu->items[curitem].type != MENUITEM_SEPARATOR) {
             //make sure we have a string big enough to have background when item is selected:          
             // MB_ElementCount is used instead of strlen because multibyte chars count as two with strlen, while graphically they are just one char, making fillerRequired become wrong
