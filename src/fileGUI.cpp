@@ -120,10 +120,11 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   menu.scrollout=1;
   menu.nodatamsg = (char*)"No Data";
   menu.title = (char*)"Files";
-  menu.useStatusText=1;
+  char statusbuffer[75];
   while(1) {
     Bdisp_AllClr_VRAM();
-    fillMenuStatusWithClip((char*)menu.statusText, *itemsinclip, 0);
+    fillMenuStatusWithClip((char*)statusbuffer, *itemsinclip, 0);
+    menu.statusText = statusbuffer;
     if(menu.fkeypage == 0) {
       drawFkeyLabels(-1, // set by menu as SELECT [empty]
         (menu.numselitems>0 ? 0x0069 : 0x03B6), // CUT (white) or SEQ
@@ -802,8 +803,9 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     menu.title = (char*)"Clipboard";
     menu.subtitle = (char*)"Black=cut, Red=copy";
     menu.showsubtitle=1;
-    fillMenuStatusWithClip((char*)menu.statusText, *itemsinclip, 1);
-    menu.useStatusText = 1;
+    char statusbuffer[72];
+    fillMenuStatusWithClip(statusbuffer, *itemsinclip, 1);
+    menu.statusText = statusbuffer;
     menu.items = menuitems;
     int curitem = 0;
     while(curitem < *itemsinclip) {

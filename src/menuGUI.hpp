@@ -44,7 +44,7 @@ typedef struct
 #define MENUTYPE_NO_KEY_HANDLING 2 //this type of menu doesn't handle any keys, only draws.
 #define MENUTYPE_FKEYS 3 // returns GetKey value of a Fkey when one is pressed
 typedef struct {
-  char statusText[75]; // text to be shown on the status bar, may be empty
+  char* statusText = NULL; // text to be shown on the status bar, may be empty
   char* title = NULL; // title to be shown on the first line if not null
   char* subtitle;
   int showsubtitle=0;
@@ -65,7 +65,6 @@ typedef struct {
   int returnOnInfiniteScrolling=0; //whether the menu should return when user reaches the last item and presses the down key (or the first item and presses the up key)
   int darken=0; // for dark theme on homeGUI menus
   int miniMiniTitle=0; // if true, title will be drawn in minimini. for calendar week view
-  int useStatusText=0;
   int pBaRtR=0; //preserve Background And Return To Redraw. Rarely used
   MenuItem* items; // items in menu
 } Menu;

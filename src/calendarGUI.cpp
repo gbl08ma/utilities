@@ -655,8 +655,7 @@ void viewEvents(int y, int m, int d) {
   menu.nodatamsg = (char*)"No events - press F2";
   char buffer[15];
   dateToString(buffer, y, m, d);
-  strcpy(menu.statusText, "");
-  menu.useStatusText=1; // to clear "Press OPTN..." message
+  menu.statusText = (char*)""; // to clear "Press OPTN..." message
   char menutitle[50];
   strcpy(menutitle, "Events for ");
   strcat(menutitle, buffer);
@@ -1598,9 +1597,7 @@ void searchEventsGUI(int y, int m, int d) {
   smallmenu.startX=3;
   smallmenu.startY=2;
   smallmenu.scrollbar=0;
-  // clear "press OPTN..." message
-  strcpy(smallmenu.statusText, "");
-  smallmenu.useStatusText=1;
+  smallmenu.statusText = (char*)""; // to clear "Press OPTN..." message
   smallmenu.title = (char*)"Search on:";
   int sres = doMenu(&smallmenu);
   mMsgBoxPop();
@@ -1832,9 +1829,7 @@ void calendarTools(int y, int m, int d) {
   smallmenu.startX=3;
   smallmenu.startY=2;
   smallmenu.scrollbar=0;
-  // clear "press OPTN..." message
-  strcpy(smallmenu.statusText, "");
-  smallmenu.useStatusText=1;
+  smallmenu.statusText = (char*)""; // to clear "Press OPTN..." message
   smallmenu.title = (char*)"Calendar tools";
   int sres = doMenu(&smallmenu);
   mMsgBoxPop();

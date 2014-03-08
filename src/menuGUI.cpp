@@ -33,7 +33,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
   
   // prepare item background filler string according to menu width
   while(1) {
-    if(menu->useStatusText) DefineStatusMessage((char*)menu->statusText, 1, 0, 0);
+    if(menu->statusText != NULL) DefineStatusMessage(menu->statusText, 1, 0, 0);
     // Clear the area of the screen we are going to draw on
     if(0 == menu->pBaRtR) drawRectangle(18*(menu->startX-1), 24*(menu->miniMiniTitle ? itemsStartY:menu->startY), 18*menu->width, 24*menu->height-(menu->miniMiniTitle ? 24:0), COLOR_WHITE);
     if (menu->numitems>0) {
