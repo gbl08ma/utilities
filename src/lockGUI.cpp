@@ -160,7 +160,7 @@ int lockCalc() {
   //returns 1 on "there was no lock code and one was now set, or user aborted before setting one"
   if(!isPasswordSet()) {
     textArea text;
-    strcpy(text.title, (char*)"Calculator lock");
+    text.title = (char*)"Calculator lock";
     
     textElement elem[5];
     text.elements = elem;

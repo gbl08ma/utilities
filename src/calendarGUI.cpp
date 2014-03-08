@@ -252,7 +252,6 @@ int viewWeekCalendar() {
   Menu menu;
   
   menu.scrollout=1;
-  menu.showtitle=1;
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnInfiniteScrolling=1;
@@ -299,11 +298,13 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   char buffer[10];
   int wkn = getWeekNumber(*y,*m,*d);
   itoa(wkn, (unsigned char*)buffer);
-  strcpy(menu->title, "Week ");
-  strcat(menu->title, buffer);
+  char menutitle[50];
+  strcpy(menutitle, "Week ");
+  strcat(menutitle, buffer);
   itoa(*y, (unsigned char*)buffer);
-  strcat(menu->title, (char*)" of ");
-  strcat(menu->title, buffer);
+  strcat(menutitle, (char*)" of ");
+  strcat(menutitle, buffer);
+  menu->title = menutitle;
    
   unsigned int curday = 0; unsigned int numevents = 0;
   unsigned int fevcount[7];
@@ -649,19 +650,20 @@ void viewEvents(int y, int m, int d) {
   Menu menu;
   
   menu.scrollout=1;
-  menu.showtitle=1;
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
-  strcpy(menu.nodatamsg, "No events - press F2");
+  menu.nodatamsg = (char*)"No events - press F2";
   char buffer[15];
   dateToString(buffer, y, m, d);
   strcpy(menu.statusText, "");
   menu.useStatusText=1; // to clear "Press OPTN..." message
-  strcpy(menu.title, "Events for ");
-  strcat(menu.title, buffer);
-  strcat(menu.title, " (");
-  strcat(menu.title, getDOWAsString(dow(y,m,d)+1)); // this will not show when the menu title is not minimini; this is intended
-  strcat(menu.title, ")");
+  char menutitle[50];
+  strcpy(menutitle, "Events for ");
+  strcat(menutitle, buffer);
+  strcat(menutitle, " (");
+  strcat(menutitle, getDOWAsString(dow(y,m,d)+1)); // this will not show when the menu title is not minimini; this is intended
+  strcat(menutitle, ")");
+  menu.title = menutitle;
   while(res) {
     res = viewEventsSub(&menu, y, m, d);
   }
@@ -799,7 +801,7 @@ void viewEvent(CalendarEvent* event, int istask) {
   DefineStatusMessage((char*)"", 1, 0, 0); // clear "press OPTN for more options" message
   char catbuffer[10]="";
   textArea text;
-  strcpy(text.title, (char*)event->title);
+  text.title = (char*)event->title;
   
   textElement elem[15];
   text.elements = elem;
@@ -1521,8 +1523,8 @@ void setEventChrono(CalendarEvent* event) {
   
   // ask user which chrono to set
   Selector sel;
-  strcpy(sel.title, "Set event reminder");
-  strcpy(sel.subtitle, "Select chrono");
+  sel.title = (char*)"Set event reminder";
+  sel.subtitle = (char*)"Select chrono";
   sel.value = 1;
   sel.min = 1;
   sel.max = NUMBER_OF_CHRONO;
@@ -1596,11 +1598,10 @@ void searchEventsGUI(int y, int m, int d) {
   smallmenu.startX=3;
   smallmenu.startY=2;
   smallmenu.scrollbar=0;
-  smallmenu.showtitle=1;
   // clear "press OPTN..." message
   strcpy(smallmenu.statusText, "");
   smallmenu.useStatusText=1;
-  strcpy(smallmenu.title, "Search on:");
+  smallmenu.title = (char*)"Search on:";
   int sres = doMenu(&smallmenu);
   mMsgBoxPop();
   
@@ -1629,11 +1630,10 @@ void searchEventsGUI(int y, int m, int d) {
   
   Menu menu;
   menu.scrollout=1;
-  menu.showtitle=1;
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
-  strcpy(menu.nodatamsg, "No events found");
-  strcpy(menu.title, "Search results");
+  menu.nodatamsg = (char*)"No events found";
+  menu.title = (char*)"Search results";
 
   switch(smallmenu.selection) {
     case 1:
@@ -1655,15 +1655,15 @@ void searchEventsGUI(int y, int m, int d) {
     { int userStartYear = y-2;
       int userEndYear = y+2;
       Selector sel;
-      strcpy(sel.title, "Search on year range");
-      strcpy(sel.subtitle, "Start year");
+      sel.title = (char*)"Search on year range";
+      sel.subtitle = (char*)"Start year";
       sel.value = userStartYear;
       sel.min = 1;
       sel.max = 9999;
       if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
       userStartYear = sel.value;
       
-      strcpy(sel.subtitle, "End year");
+      sel.subtitle = (char*)"End year";
       sel.value = userEndYear;
       sel.min = userStartYear;
       sel.max = (userStartYear+254 > 9999 ? 9999 : userStartYear+254); //do not allow for more than 255 years, otherwise maximum will be less than an event per year
@@ -1832,11 +1832,10 @@ void calendarTools(int y, int m, int d) {
   smallmenu.startX=3;
   smallmenu.startY=2;
   smallmenu.scrollbar=0;
-  smallmenu.showtitle=1;
   // clear "press OPTN..." message
   strcpy(smallmenu.statusText, "");
   smallmenu.useStatusText=1;
-  strcpy(smallmenu.title, "Calendar tools");
+  smallmenu.title = (char*)"Calendar tools";
   int sres = doMenu(&smallmenu);
   mMsgBoxPop();
   
@@ -1859,8 +1858,7 @@ void calendarTools(int y, int m, int d) {
           if(dw != 0 && dw != 6) (daysdiff < 0 ? businessdiff-- : businessdiff++ );
         }
         textArea text;
-        strcpy(text.title, (char*)"Date difference");
-        text.showtitle=1;
+        text.title = (char*)"Date difference";
 
         textElement elem[5];
         text.elements = elem;
@@ -1909,8 +1907,7 @@ void calendarTools(int y, int m, int d) {
 
 void repairCalendarDatabase() {
   textArea text;
-  strcpy(text.title, (char*)"Database repair");
-  text.showtitle=1;
+  text.title = (char*)"Database repair";
 
   textElement elem[8];
   text.elements = elem;
@@ -2014,8 +2011,7 @@ void repairCalendarDatabase() {
 
 void trimCalendarDatabase() {
   textArea text;
-  strcpy(text.title, (char*)"Trim database");
-  text.showtitle=1;
+  text.title = (char*)"Trim database";
   text.type = TEXTAREATYPE_INSTANT_RETURN;
 
   textElement elem[4];
@@ -2164,8 +2160,7 @@ int importHelper(EventDate* date, int count, textArea* text, textElement* elem, 
 }
 void importCalendarEvents() {
   textArea text;
-  strcpy(text.title, (char*)"Import events");
-  text.showtitle=1;
+  text.title = (char*)"Import events";
 
   textElement elem[4];
   text.elements = elem;

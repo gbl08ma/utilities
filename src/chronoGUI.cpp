@@ -133,8 +133,7 @@ void chronoScreen(chronometer* chrono) {
   menu.type=MENUTYPE_NO_KEY_HANDLING; // NOTE doMenu won't handle keys for us!
   menu.height=7;
   menu.scrollout=1;
-  menu.showtitle=1;
-  strcpy(menu.title, "Chronometers");
+  menu.title = (char*)"Chronometers";
   
   Bdisp_AllClr_VRAM();
   short unsigned int key;
@@ -305,12 +304,10 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
   bmenu.numitems=3;
   bmenu.height = 4;
   bmenu.scrollbar=0;
-  strcpy(bmenu.title, (char*)"Set chronometer type");
-  bmenu.showtitle=1;
+  bmenu.title = (char*)"Set chronometer type";
   
   textArea text;
   text.type = TEXTAREATYPE_INSTANT_RETURN;
-  text.showtitle = 0;
   text.y = 4*24+5;
 
   textElement elem[2];
@@ -334,27 +331,27 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         break;
       } else if(bmenu.selection == 2) {
         Selector sel;
-        strcpy(sel.title, "Set downwards chrono.");
-        strcpy(sel.subtitle, "Days");
+        sel.title =  (char*)"Set downwards chrono.";
+        sel.subtitle = (char*)"Days";
         sel.max = -1; // no limit. long long int is big enough to accomodate a chronometer with a duration of over 2 million days.
         sel.cycle = 0;
         sel.type = SELECTORTYPE_NORMAL;
         if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
         long int days = sel.value;
         
-        strcpy(sel.subtitle, "Hours");
+        sel.subtitle = (char*)"Hours";
         sel.max = 23;
         sel.value = 0;
         if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
         int hours = sel.value;
         
-        strcpy(sel.subtitle, "Minutes");
+        sel.subtitle = (char*)"Minutes";
         sel.max = 59;
         sel.value = 0;
         if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
         int minutes = sel.value;
         
-        strcpy(sel.subtitle, "Seconds");
+        sel.subtitle = (char*)"Seconds";
         // yes, we are assigning the truth value to two vars at once:
         sel.value = sel.min = (days == 0 && hours == 0 && minutes == 0);
         sel.max = 59;

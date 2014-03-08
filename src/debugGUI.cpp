@@ -84,8 +84,7 @@ void masterControl() {
   menu.items=menuitems;
   menu.numitems=9;
   menu.scrollout=1;
-  menu.showtitle=1;
-  strcpy(menu.title, "UTILS CTRL");
+  menu.title = (char*)"UTILS CTRL";
   while(1) {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;

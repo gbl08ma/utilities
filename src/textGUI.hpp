@@ -34,8 +34,7 @@ typedef struct
   int lineHeight=17;
   textElement* elements;
   int numelements;
-  char title[42];
-  int showtitle = 1;
+  char* title = NULL;
   int scrollbar=1;
   int allowEXE=0; //whether to allow EXE to exit the screen
   int allowF1=0; //whether to allow F1 to exit the screen

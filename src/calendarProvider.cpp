@@ -483,7 +483,7 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   char smallbuf[5];
   itoa(y, (unsigned char*)smallbuf);
   strcat((char*)buffer, smallbuf);
-  if(m!=0) {
+  if(m) {
     itoa(m, (unsigned char*)smallbuf);
     if (m < 10) strcat((char*)buffer, "0");  //if month below 10, add leading 0
     strcat((char*)buffer, smallbuf);

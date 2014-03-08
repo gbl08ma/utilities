@@ -112,8 +112,7 @@ void colorLight() {
   Menu menu;
   menu.items=menuitems;
   menu.numitems=8;
-  menu.showtitle=1;
-  strcpy(menu.title, "Color light");
+  menu.title = (char*)"Color light";
   int res = doMenu(&menu);
   if (res == MENU_RETURN_EXIT) return;
   

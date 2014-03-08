@@ -24,11 +24,12 @@ int doTextArea(textArea* text) {
   int isFirstDraw = 1;
   int totalTextY = 0;
   int key;
+  int showtitle = text->title != NULL;
   while(1) {
     drawRectangle(text->x, text->y+24, text->width, LCD_HEIGHT_PX-24, COLOR_WHITE);
     int cur = 0;
     int textX = text->x;
-    int textY = scroll+(text->showtitle ? 24 : 0)+text->y; // 24 pixels for title (or not)
+    int textY = scroll+(showtitle ? 24 : 0)+text->y; // 24 pixels for title (or not)
     int temptextY = 0;
     int temptextX = 0;
     while(cur < text->numelements) {
@@ -69,18 +70,18 @@ int doTextArea(textArea* text) {
       }
       free(singleword);
       if(isFirstDraw) {
-        totalTextY = textY+(text->showtitle ? 0 : 24);
+        totalTextY = textY+(showtitle ? 0 : 24);
       } else if(textY>LCD_HEIGHT_PX) {
         break;
       }
       cur++;
     }
     isFirstDraw=0;
-    if(text->showtitle) {
+    if(showtitle) {
       clearLine(1,1);
       drawScreenTitle((char*)text->title);
     }
-    int scrollableHeight = LCD_HEIGHT_PX-24*(text->showtitle ? 2 : 1)-text->y;
+    int scrollableHeight = LCD_HEIGHT_PX-24*(showtitle ? 2 : 1)-text->y;
     //draw a scrollbar:
     if(text->scrollbar) {
       TScrollbar sb;
@@ -90,7 +91,7 @@ int doTextArea(textArea* text) {
       sb.indicatorheight = scrollableHeight;
       sb.indicatorpos = -scroll;
       sb.barheight = scrollableHeight;
-      sb.bartop = (text->showtitle ? 24 : 0)+text->y;
+      sb.bartop = (showtitle ? 24 : 0)+text->y;
       sb.barleft = text->width - 6;
       sb.barwidth = 6;
 
@@ -108,15 +109,15 @@ int doTextArea(textArea* text) {
         }
         break;
       case KEY_CTRL_DOWN:
-        if (textY > scrollableHeight-(text->showtitle ? 0 : 17)) {
+        if (textY > scrollableHeight-(showtitle ? 0 : 17)) {
           scroll = scroll - 17;
-          if(scroll < -totalTextY+scrollableHeight-(text->showtitle ? 0 : 17)) scroll = -totalTextY+scrollableHeight-(text->showtitle ? 0 : 17);
+          if(scroll < -totalTextY+scrollableHeight-(showtitle ? 0 : 17)) scroll = -totalTextY+scrollableHeight-(showtitle ? 0 : 17);
         }
         break;
       case KEY_CTRL_PAGEDOWN:
-        if (textY > scrollableHeight-(text->showtitle ? 0 : 17)) {
+        if (textY > scrollableHeight-(showtitle ? 0 : 17)) {
           scroll = scroll - scrollableHeight;
-          if(scroll < -totalTextY+scrollableHeight-(text->showtitle ? 0 : 17)) scroll = -totalTextY+scrollableHeight-(text->showtitle ? 0 : 17);
+          if(scroll < -totalTextY+scrollableHeight-(showtitle ? 0 : 17)) scroll = -totalTextY+scrollableHeight-(showtitle ? 0 : 17);
         }
         break;
       case KEY_CTRL_PAGEUP:

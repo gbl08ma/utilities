@@ -90,19 +90,17 @@ void settingsMenu() {
           Menu menu;
           menu.items=menuitems;
           menu.numitems=2;
-          menu.showtitle=1;
           menu.scrollbar=0;
           menu.width=22;
           menu.selection=GetSetting(SETTING_TIMEFORMAT)+1;
-          strcpy(menu.title, "Set time format");
+          menu.title = (char*)"Set time format";
           int res = doMenu(&menu);
           if(res==MENU_RETURN_SELECTION) SetSetting(SETTING_TIMEFORMAT, menu.selection-1, 1);
           break;
         }
         case 4: // set long date format
         { Selector format;
-          strcpy(format.title, "Set long date format");
-          strcpy(format.subtitle, "");
+          format.title = (char*)"Set long date format";
           format.value = GetSetting(SETTING_LONGDATEFORMAT);
           format.min = 0;
           format.max = 9;
@@ -121,11 +119,10 @@ void settingsMenu() {
           Menu menu;
           menu.items=menuitems;
           menu.numitems=3;
-          menu.showtitle=1;
           menu.scrollbar=0;
           menu.width=22;
           menu.selection=GetSetting(SETTING_DATEFORMAT)+1;
-          strcpy(menu.title, "Set date format");
+          menu.title = (char*)"Set date format";
           int res = doMenu(&menu);
           if(res==MENU_RETURN_SELECTION) SetSetting(SETTING_DATEFORMAT, menu.selection-1, 1);
           break;
@@ -143,8 +140,7 @@ void settingsMenu() {
           break;
         case 9: // set startup brightness
         { Selector sel;
-          strcpy(sel.title, "Set start brightness");
-          strcpy(sel.subtitle, "");
+          sel.title = (char*)"Set start brightness";
           sel.value = GetSetting(SETTING_STARTUP_BRIGHTNESS);
           sel.min = 1;
           sel.max = 250;
@@ -176,9 +172,8 @@ void settingsMenu() {
           smallmenu.startX=3;
           smallmenu.startY=2;
           smallmenu.scrollbar=0;
-          smallmenu.showtitle=1;
           smallmenu.selection=GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE)+1;
-          strcpy(smallmenu.title, "Chrono. notif.");
+          smallmenu.title = (char*)"Chrono. notif.";
 
           int sres = doMenu(&smallmenu);
           if(sres == MENU_RETURN_SELECTION) SetSetting(SETTING_CHRONO_NOTIFICATION_TYPE, smallmenu.selection-1, 1);
@@ -250,9 +245,8 @@ inline static void lockSettingsMenu() {
           smallmenu.startX=3;
           smallmenu.startY=2;
           smallmenu.scrollbar=0;
-          smallmenu.showtitle=1;
           smallmenu.selection=GetSetting(SETTING_UNLOCK_RUNMAT)+1;
-          strcpy(smallmenu.title, "Run-Mat on unlock");
+          smallmenu.title = (char*)"Run-Mat on unlock";
           int sres = doMenu(&smallmenu);
           if(sres == MENU_RETURN_SELECTION) {
             SetSetting(SETTING_UNLOCK_RUNMAT, smallmenu.selection-1, 1);
@@ -384,14 +378,13 @@ void calendarSettingsMenu() {
           smallmenu.startX=3;
           smallmenu.startY=2;
           smallmenu.scrollbar=0;
-          smallmenu.showtitle=1;
           if(menu.selection == 2) {
-            strcpy(smallmenu.title, "Default Calendar");
+            smallmenu.title = (char*)"Default Calendar";
             smallmenu.selection=GetSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;
             strcpy(smallmenuitems[0].text, "Week");
             strcpy(smallmenuitems[1].text, "Month");
           } else {
-            strcpy(smallmenu.title, "Week starts on");
+            smallmenu.title = (char*)"Week starts on";
             smallmenu.selection=GetSetting(SETTING_WEEK_START_DAY)+1;
             strcpy(smallmenuitems[0].text, getDOWAsString(1)); // Sunday
             strcpy(smallmenuitems[1].text, getDOWAsString(2)); // Monday

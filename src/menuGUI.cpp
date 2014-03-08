@@ -20,7 +20,8 @@
 int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what user did. selection is on menu->selection. menu->selection starts at 1!
   int itemsStartY=menu->startY; // char Y where to start drawing the menu items. Having a title increases this by one
   int itemsHeight=menu->height;
-  if (menu->showtitle) {
+  int showtitle = menu->title != NULL;
+  if (showtitle) {
     itemsStartY++;
     itemsHeight--;
   }
@@ -101,7 +102,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
     } else {
       printCentered((unsigned char*)menu->nodatamsg, (itemsStartY*24)+(itemsHeight*24)/2-12, COLOR_BLACK, COLOR_WHITE);
     }
-    if(menu->showtitle) {
+    if(showtitle) {
       if(menu->miniMiniTitle) {
         int textX = 0, textY=(menu->startY-1)*24;
         PrintMiniMini( &textX, &textY, (unsigned char*)menu->title, 16, menu->titleColor, 0 );

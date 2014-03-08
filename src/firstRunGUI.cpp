@@ -46,7 +46,7 @@ void firstRunWizard() {
 
   
   textArea text;
-  strcpy(text.title, (char*)"Welcome to Utilities");
+  text.title = (char*)"Welcome to Utilities";
   
   textElement elem[14];
   text.elements = elem;

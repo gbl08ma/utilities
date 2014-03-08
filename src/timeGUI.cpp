@@ -262,8 +262,8 @@ void setTimeGUI(int canExit) {
   Selector minute;
   Selector second;
   while(1) {
-    strcpy(hour.title, "Set time");
-    strcpy(hour.subtitle, "Hour");
+    hour.title = (char*)"Set time";
+    hour.subtitle = (char*)"Hour";
     hour.value = getCurrentHour();
     hour.min = 0;
     hour.max = 23;
@@ -272,8 +272,8 @@ void setTimeGUI(int canExit) {
     if (res == SELECTOR_RETURN_SELECTION) break;
   }
   while(1) {
-    strcpy(minute.title, "Set time");
-    strcpy(minute.subtitle, "Minute");
+    minute.title = (char*)"Set time";
+    minute.subtitle = (char*)"Minute";
     minute.value = getCurrentMinute();
     minute.min = 0;
     minute.max = 59;
@@ -282,8 +282,8 @@ void setTimeGUI(int canExit) {
     if (res == SELECTOR_RETURN_SELECTION) break;
   }  
   while(1) {
-    strcpy(second.title, "Set time");
-    strcpy(second.subtitle, "Second");
+    second.title = (char*)"Set time";
+    second.subtitle = (char*)"Second";
     second.value = getCurrentSecond();
     second.min = 0;
     second.max = 59;
@@ -299,8 +299,8 @@ void setDateGUI(int canExit) {
   Selector month;
   Selector day;
   while(1) {
-    strcpy(year.title, "Set date");
-    strcpy(year.subtitle, "Year");
+    year.title = (char*)"Set date";
+    year.subtitle = (char*)"Year";
     year.value = getCurrentYear();
     year.min = 1970; //don't allow to set below 1970 so it is Unix-time compatible and always has 4 digits
     year.max = 9999;
@@ -310,8 +310,8 @@ void setDateGUI(int canExit) {
     if (res == SELECTOR_RETURN_SELECTION) break;
   }
   while(1) {
-    strcpy(month.title, "Set date");
-    strcpy(month.subtitle, "Month");
+    month.title = (char*)"Set date";
+    month.subtitle = (char*)"Month";
     month.value = getCurrentMonth();
     month.min = 1;
     month.max = 12;
@@ -321,8 +321,8 @@ void setDateGUI(int canExit) {
     if (res == SELECTOR_RETURN_SELECTION) break;
   }
   while(1) {
-    strcpy(day.title, "Set date");
-    strcpy(day.subtitle, "Day");
+    day.title = (char*)"Set date";
+    day.subtitle = (char*)"Day";
     day.value = getCurrentDay();
     day.min = 1;
     day.max = getMonthDaysWithLeap(month.value, year.value);
@@ -339,7 +339,7 @@ void RTCunadjustedWizard(int helpMessage) {
   if(!getRTCisUnadjusted()) return;
   if(helpMessage) {
     textArea text;
-    strcpy(text.title, (char*)"Clock unadjusted");
+    text.title = (char*)"Clock unadjusted";
     
     textElement elem[5];
     text.elements = elem;
@@ -359,7 +359,7 @@ void RTCunadjustedWizard(int helpMessage) {
   }
   
   textArea text;
-  strcpy(text.title, (char*)"Clock unadjusted");
+  text.title = (char*)"Clock unadjusted";
   
   textElement elem[5];
   text.elements = elem;
@@ -386,7 +386,6 @@ void RTCunadjustedWizard(int helpMessage) {
   
   setDateGUI(0);
   
-  strcpy(text.title, (char*)"Clock adjusted");
   elem[0].text = (char*)"We're done!";
   elem[1].newLine = 1;
   elem[1].text = (char*)"If you ever need to adjust the clock again press Shift->Menu and choose the appropriate options.";

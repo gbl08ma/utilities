@@ -27,8 +27,7 @@
 
 void changePoweroffTimeout() {
   Selector sel;
-  strcpy(sel.title, "Poweroff Timeout");
-  strcpy(sel.subtitle, "");
+  sel.title = (char*)"Poweroff Timeout";
   sel.value = GetAutoPowerOffTime();
   sel.min = 1;
   sel.max = 999;
@@ -41,8 +40,7 @@ void changePoweroffTimeout() {
 
 void changeBacklightTimeout() {
   Selector sel;
-  strcpy(sel.title, "Backlight Duration");
-  strcpy(sel.subtitle, "");
+  sel.title = (char*)"Backlight Duration";
   sel.value = GetBacklightDuration();
   sel.min = 1;
   sel.max = 40;
@@ -55,8 +53,7 @@ void changeBacklightTimeout() {
 void changeBacklightLevel() {
   int initValue = GetBacklightSubLevel_RAW();
   Selector sel;
-  strcpy(sel.title, "Backlight Level");
-  strcpy(sel.subtitle, "");
+  sel.title = (char*)"Backlight Level";
   sel.value = initValue;
   sel.max = 249;
   sel.type = SELECTORTYPE_INSTANT_RETURN;
@@ -65,7 +62,6 @@ void changeBacklightLevel() {
   Bdisp_AllClr_VRAM();
   textArea text;
   text.type = TEXTAREATYPE_INSTANT_RETURN;
-  text.showtitle = 0;
   text.y = 150;
   text.lineHeight=12;
   textElement elem[2];
@@ -101,8 +97,7 @@ void powerInformation() {
   strcat((char*)voltbuffer, "V");
   
   textArea text;
-  strcpy(text.title, (char*)"Power Information");
-  text.showtitle=1;
+  text.title = (char*)"Power Information";
 
   textElement elem[16];
   text.elements = elem;

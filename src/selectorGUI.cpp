@@ -23,8 +23,8 @@ int doSelector(Selector* selector) {
   int initialValue = selector->value; // so we can restore later
 
   if(selector->clearVRAM) Bdisp_AllClr_VRAM();
-  drawScreenTitle((char*)selector->title);
-  mPrintXY(3, 2, (char*)selector->subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  if(selector->title != NULL) drawScreenTitle((char*)selector->title);
+  if(selector->subtitle != NULL) mPrintXY(3, 2, (char*)selector->subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   while(1)
   {
     clearLine(5,(selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4));

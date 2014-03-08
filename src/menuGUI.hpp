@@ -45,12 +45,11 @@ typedef struct
 #define MENUTYPE_FKEYS 3 // returns GetKey value of a Fkey when one is pressed
 typedef struct {
   char statusText[75]; // text to be shown on the status bar, may be empty
-  int showtitle=0; // whether to show a title as the first line
-  char title[42]; // title to be shown on the first line if showtitle is !=0
+  char* title = NULL; // title to be shown on the first line if not null
   char* subtitle;
   int showsubtitle=0;
   int titleColor=TEXT_COLOR_BLUE; //color of the title
-  char nodatamsg[42]; // message to show when there are no menu items to display
+  char* nodatamsg; // message to show when there are no menu items to display
   int startX=1; //X where to start drawing the menu. NOTE this is not absolute pixel coordinates but rather character coordinates
   int startY=1; //Y where to start drawing the menu. NOTE this is not absolute pixel coordinates but rather character coordinates
   int width=21; // NOTE this is not absolute pixel coordinates but rather character coordinates

@@ -445,72 +445,72 @@ int stringEndsInG3A(char* string) {
 // (DE)COMPRESSION CODE - START
 
 static int encoder_sink_read(int writehandle, heatshrink_encoder *hse, uint8_t *data, size_t data_sz, size_t* final_sz) {
-    size_t out_sz = 4096;
-    uint8_t out_buf[out_sz];
-    memset(out_buf, 0, out_sz);
-    size_t sink_sz = 0;
-    size_t poll_sz = 0;
-    HSE_sink_res sres;
-    HSE_poll_res pres;
-    HSE_finish_res fres;
+  size_t out_sz = 4096;
+  uint8_t out_buf[out_sz];
+  memset(out_buf, 0, out_sz);
+  size_t sink_sz = 0;
+  size_t poll_sz = 0;
+  HSE_sink_res sres;
+  HSE_poll_res pres;
+  HSE_finish_res fres;
 
-    size_t sunk = 0;
+  size_t sunk = 0;
+  do {
+    if (data_sz > 0) {
+      sres = heatshrink_encoder_sink(hse, &data[sunk], data_sz - sunk, &sink_sz);
+      if (sres < 0) { return 1; }
+      sunk += sink_sz;
+    }
+    
     do {
-        if (data_sz > 0) {
-            sres = heatshrink_encoder_sink(hse, &data[sunk], data_sz - sunk, &sink_sz);
-            if (sres < 0) { return 1; }
-            sunk += sink_sz;
-        }
-        
-        do {
-            pres = heatshrink_encoder_poll(hse, out_buf, out_sz, &poll_sz);
-            if (pres < 0) { return 1; }
-            if(writehandle >= 0) Bfile_WriteFile_OS(writehandle, out_buf, poll_sz);
-            else if (final_sz!=NULL) *final_sz = *final_sz+poll_sz;
-        } while (pres == HSER_POLL_MORE);
-        
-        if (poll_sz == 0 && data_sz == 0) {
-            fres = heatshrink_encoder_finish(hse);
-            if (fres < 0) { return 1; }
-            if (fres == HSER_FINISH_DONE) { return 1; }
-        }
-    } while (sunk < data_sz);
-    return 0;
+      pres = heatshrink_encoder_poll(hse, out_buf, out_sz, &poll_sz);
+      if (pres < 0) { return 1; }
+      if(writehandle >= 0) Bfile_WriteFile_OS(writehandle, out_buf, poll_sz);
+      else if (final_sz!=NULL) *final_sz = *final_sz+poll_sz;
+    } while (pres == HSER_POLL_MORE);
+    
+    if (poll_sz == 0 && data_sz == 0) {
+      fres = heatshrink_encoder_finish(hse);
+      if (fres < 0) { return 1; }
+      if (fres == HSER_FINISH_DONE) { return 1; }
+    }
+  } while (sunk < data_sz);
+  return 0;
 }
 
 static int decoder_sink_read(int writehandle, heatshrink_decoder *hsd, uint8_t *data, size_t data_sz) {
-    size_t sink_sz = 0;
-    size_t poll_sz = 0;
-    size_t out_sz = 4096;
-    uint8_t out_buf[out_sz];
-    memset(out_buf, 0, out_sz);
+  size_t sink_sz = 0;
+  size_t poll_sz = 0;
+  size_t out_sz = 4096;
+  uint8_t out_buf[out_sz];
+  memset(out_buf, 0, out_sz);
 
-    HSD_sink_res sres;
-    HSD_poll_res pres;
-    HSD_finish_res fres;
+  HSD_sink_res sres;
+  HSD_poll_res pres;
+  HSD_finish_res fres;
 
-    size_t sunk = 0;
+  size_t sunk = 0;
+  do {
+    if (data_sz > 0) {
+      sres = heatshrink_decoder_sink(hsd, &data[sunk], data_sz - sunk, &sink_sz);
+      if (sres < 0) { return 1; }
+      sunk += sink_sz;
+    }
+
     do {
-        if (data_sz > 0) {
-            sres = heatshrink_decoder_sink(hsd, &data[sunk], data_sz - sunk, &sink_sz);
-            if (sres < 0) { return 1; }
-            sunk += sink_sz;
-        }
+      pres = heatshrink_decoder_poll(hsd, out_buf, out_sz, &poll_sz);
+      if (pres < 0) { return 1; }
+      Bfile_WriteFile_OS(writehandle, out_buf, poll_sz);
+    } while (pres == HSDR_POLL_MORE);
+    
+    if (data_sz == 0 && poll_sz == 0) {
+      fres = heatshrink_decoder_finish(hsd);
+      if (fres < 0) { return 1; }
+      if (fres == HSDR_FINISH_DONE) { return 1; }
+    }
+  } while (sunk < data_sz);
 
-        do {
-            pres = heatshrink_decoder_poll(hsd, out_buf, out_sz, &poll_sz);
-            if (pres < 0) { return 1; }
-            Bfile_WriteFile_OS(writehandle, out_buf, poll_sz);
-        } while (pres == HSDR_POLL_MORE);
-        
-        if (data_sz == 0 && poll_sz == 0) {
-            fres = heatshrink_decoder_finish(hsd);
-            if (fres < 0) { return 1; }
-            if (fres == HSDR_FINISH_DONE) { return 1; }
-        }
-    } while (sunk < data_sz);
-
-    return 0;
+  return 0;
 }
 
 void compressFile(char* oldfilename, char* newfilename, int action) {

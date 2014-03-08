@@ -24,7 +24,6 @@ void showAbout() {
   DefineStatusMessage((char*)"About Utilities", 1, 0, 0);
   
   textArea ftext;
-  ftext.showtitle=0;
   ftext.scrollbar=0;
   ftext.type=TEXTAREATYPE_INSTANT_RETURN;
 
@@ -78,7 +77,6 @@ void showAbout() {
   mGetKey(&key);
   
   textArea text;
-  text.showtitle=0;
 
   textElement elem[5];
   text.elements = elem;
@@ -103,7 +101,7 @@ void showAbout() {
 
 void buildExpiredMessage() {
   textArea text;
-  strcpy(text.title, (char*)"Check for updates");
+  text.title = (char*)"Check for updates";
   
   textElement elem[5];
   text.elements = elem;

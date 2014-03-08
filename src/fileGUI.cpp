@@ -118,9 +118,8 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   menu.type = MENUTYPE_MULTISELECT;
   menu.height = 7;
   menu.scrollout=1;
-  strcpy(menu.nodatamsg, "No Data");
-  strcpy(menu.title, "Files");
-  menu.showtitle=1;
+  menu.nodatamsg = (char*)"No Data";
+  menu.title = (char*)"Files";
   menu.useStatusText=1;
   while(1) {
     Bdisp_AllClr_VRAM();
@@ -229,9 +228,8 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             smallmenu.startX=3;
             smallmenu.startY=2;
             smallmenu.scrollbar=0;
-            smallmenu.showtitle=1;
             smallmenu.selection = GetSetting(SETTING_FILE_MANAGER_SORT)+1;
-            strcpy(smallmenu.title, "Sort items by:");
+            smallmenu.title = (char*)"Sort items by:";
             int sres = doMenu(&smallmenu);
             mMsgBoxPop();
             
@@ -259,8 +257,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         smallmenu.startX=3;
         smallmenu.startY=2;
         smallmenu.scrollbar=0;
-        smallmenu.showtitle=1;
-        strcpy(smallmenu.title, "Create new:");
+        smallmenu.title = (char*)"Create new:";
         int sres = doMenu(&smallmenu);
         mMsgBoxPop();
         
@@ -484,9 +481,8 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   menu.selection = 1;
   menu.startY=1;
   menu.pBaRtR=0;
-  strcpy(menu.nodatamsg, "No files found");
-  strcpy(menu.title, "Search results");
-  menu.showtitle = 1;
+  menu.nodatamsg = (char*)"No files found";
+  menu.title = (char*)"Search results";
   menu.scrollbar=1;
   menu.items = resitems;
   
@@ -537,7 +533,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
   textArea text;
   text.type=TEXTAREATYPE_INSTANT_RETURN;
   text.scrollbar=0;
-  strcpy(text.title, (char*)"File information");
+  text.title = (char*)"File information";
   
   textElement elem[15];
   text.elements = elem;
@@ -686,13 +682,12 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
             memset( &ctx, 0, sizeof( sha2_context ) );
             
             mMsgBoxPush(4);
-            unsigned char niceout[32] = "";
             int textX=2*18, textY=24;
             PrintMini(&textX, &textY, (unsigned char*)"SHA-256 checksum:", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
             textY=textY+20;
             textX=2*18;
             for(int i=0; i<32;i++) {
-              strcpy((char*)niceout, (char*)"");
+              unsigned char niceout[32] = "";
               ByteToHex( output[i], niceout );
               if((LCD_WIDTH_PX-2*18-textX) < 15) { textX=2*18; textY=textY+12; }
               PrintMiniMini( &textX, &textY, (unsigned char*)niceout, 0, TEXT_COLOR_BLACK, 0 );
@@ -751,7 +746,6 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   strcat((char*)titlebuf, " as text");
   DefineStatusMessage((char*)titlebuf, 1, 0, 0);
   textArea text;
-  text.showtitle = 0;
   
   // get number of lines so we know how much textElement to allocate
   text.numelements = 1; // at least one line it will have
@@ -805,8 +799,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     if(*itemsinclip<=0) return;
     if(menu.selection > *itemsinclip) menu.selection = 1;
     MenuItem menuitems[MAX_ITEMS_IN_CLIPBOARD];
-    strcpy(menu.title, "Clipboard");
-    menu.showtitle=1;
+    menu.title = (char*)"Clipboard";
     menu.subtitle = (char*)"Black=cut, Red=copy";
     menu.showsubtitle=1;
     fillMenuStatusWithClip((char*)menu.statusText, *itemsinclip, 1);

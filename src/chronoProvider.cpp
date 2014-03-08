@@ -57,8 +57,7 @@ void saveChronoArray(chronometer* chronoarray, int count) { // count is the amou
     return;
   }
   // Check if directory exists:
-  int createResult = MCS_CreateDirectory( DIRNAME );
-  if(createResult != 0) // directory already exists, so delete the exiting file that may be there
+  if(MCS_CreateDirectory(DIRNAME)) // directory already exists, so delete the exiting file that may be there
     MCSDelVar2(DIRNAME, CHRONOFILE);
   MCSPutVar2(DIRNAME, CHRONOFILE, count*8*5, finalbuffer);
 }

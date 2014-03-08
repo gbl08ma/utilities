@@ -249,9 +249,7 @@ int LoadSettings() { // returns 0 on success, 1 if settings were reset (first ru
 }
 
 void SaveSettings() {
-  int createResult = MCS_CreateDirectory( DIRNAME );
-
-  if(createResult != 0) // Check if directory exists
+  if(MCS_CreateDirectory(DIRNAME)) // Check if directory exists
   { // directory already exists, so delete the exiting file that may be there
     MCSDelVar2(DIRNAME, SETTINGSFILE);
   }

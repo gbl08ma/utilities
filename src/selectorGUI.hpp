@@ -25,8 +25,8 @@
 
 typedef struct
 {
-  char title[42]; // text shown at the top, in blue
-  char subtitle[42]; // text shown before the title, in black
+  char* title = NULL; // text shown at the top, in blue
+  char* subtitle = NULL; // text shown before the title, in black
   int value=0; // value of the selector
   int max; // maximum value. -1 for unlimited
   int min=0; // minimum value
