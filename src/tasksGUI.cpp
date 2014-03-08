@@ -49,7 +49,7 @@ int viewTasksSub(Menu* menu) {
   menu->numitems = GetEventsForDate(&taskday, CALENDARFOLDER, tasks);
   int activecount = 0;
   for(int curitem = 0; curitem < menu->numitems; curitem++) {
-    strcpy(menuitems[curitem].text, (char*)tasks[curitem].title);
+    menuitems[curitem].text = (char*)tasks[curitem].title;
     menuitems[curitem].type = MENUITEM_CHECKBOX;
     menuitems[curitem].value = tasks[curitem].repeat;
     if(menuitems[curitem].value) activecount++;

@@ -70,15 +70,15 @@ void showRAMused() {
 
 void masterControl() {
   MenuItem menuitems[10];
-  strcpy(menuitems[0].text, "SS()");;
-  strcpy(menuitems[1].text, "LS()");
-  strcpy(menuitems[2].text, "Lk Off");
-  strcpy(menuitems[3].text, "Lk On");
-  strcpy(menuitems[4].text, "Dbg Off");
-  strcpy(menuitems[5].text, "Dbg On");
-  strcpy(menuitems[6].text, "FR Off");
-  strcpy(menuitems[7].text, "FR On");
-  strcpy(menuitems[8].text, "Rst");
+  menuitems[0].text = (char*)"SS()";
+  menuitems[1].text = (char*)"LS()";
+  menuitems[2].text = (char*)"Lk Off";
+  menuitems[3].text = (char*)"Lk On";
+  menuitems[4].text = (char*)"Dbg Off";
+  menuitems[5].text = (char*)"Dbg On";
+  menuitems[6].text = (char*)"FR Off";
+  menuitems[7].text = (char*)"FR On";
+  menuitems[8].text = (char*)"Rst";
   
   Menu menu;
   menu.items=menuitems;

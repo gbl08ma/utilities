@@ -28,33 +28,33 @@ inline static void clockSettingsMenu();
 
 void settingsMenu() {
   MenuItem menuitems[15];
-  strcpy(menuitems[0].text, "Set time");
+  menuitems[0].text = (char*)"Set time";
   
-  strcpy(menuitems[1].text, "Set date");
+  menuitems[1].text = (char*)"Set date";
   
-  strcpy(menuitems[2].text, "Time format");
+  menuitems[2].text = (char*)"Time format";
   
-  strcpy(menuitems[3].text, "Long date format");
+  menuitems[3].text = (char*)"Long date format";
   
-  strcpy(menuitems[4].text, "Date format");
+  menuitems[4].text = (char*)"Date format";
   
-  strcpy(menuitems[5].text, "Home appearance");
+  menuitems[5].text = (char*)"Home appearance";
   
-  strcpy(menuitems[6].text, "Display statusbar");
+  menuitems[6].text = (char*)"Display statusbar";
   menuitems[6].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[7].text, "Show advanced tools");
+  menuitems[7].text = (char*)"Show advanced tools";
   menuitems[7].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[8].text, "Startup brightness");
+  menuitems[8].text = (char*)"Startup brightness";
   
-  strcpy(menuitems[9].text, "Calc. lock settings");
+  menuitems[9].text = (char*)"Calc. lock settings";
   
-  strcpy(menuitems[10].text, "Calendar settings");
+  menuitems[10].text = (char*)"Calendar settings";
   
-  strcpy(menuitems[11].text, "Chrono. notification");
+  menuitems[11].text = (char*)"Chrono. notification";
 
-  strcpy(menuitems[12].text, "About this add-in");
+  menuitems[12].text = (char*)"About this add-in";
   
   Menu menu;
   menu.items=menuitems;
@@ -81,10 +81,14 @@ void settingsMenu() {
           break;
         case 3: // set time format
         { MenuItem menuitems[5];
-          strcpy(menuitems[0].text, "24-hour: ");
-          currentTimeToString(menuitems[0].text, 0);
-          strcpy(menuitems[1].text, "12-hour: ");
-          currentTimeToString(menuitems[1].text, 1);
+          char firstitem[21];
+          strcpy(firstitem, "24-hour: ");
+          currentTimeToString(firstitem, 0);
+          menuitems[0].text = firstitem;
+          char seconditem[21];
+          strcpy(seconditem, "12-hour: ");
+          currentTimeToString(seconditem, 1);
+          menuitems[1].text = seconditem;
           
           Menu menu;
           menu.items=menuitems;
@@ -111,9 +115,11 @@ void settingsMenu() {
         }
         case 5: // set date format
         { MenuItem menuitems[5];
-          currentDateToString(menuitems[0].text, 0);
-          currentDateToString(menuitems[1].text, 1);
-          currentDateToString(menuitems[2].text, 2);
+          char items[3][21];
+          for(int i = 0; i < 3; i++) {
+            currentDateToString(items[i], i);
+            menuitems[i].text = items[i];
+          }
           
           Menu menu;
           menu.items=menuitems;
@@ -158,10 +164,10 @@ void settingsMenu() {
         case 12:
         { mMsgBoxPush(5);
           MenuItem smallmenuitems[4];
-          strcpy(smallmenuitems[0].text, "No notification");        
-          strcpy(smallmenuitems[1].text, "Flashing pop-up");        
-          strcpy(smallmenuitems[2].text, "Simple pop-up");
-          strcpy(smallmenuitems[3].text, "Note on home");
+          smallmenuitems[0].text = (char*)"No notification";        
+          smallmenuitems[1].text = (char*)"Flashing pop-up";        
+          smallmenuitems[2].text = (char*)"Simple pop-up";
+          smallmenuitems[3].text = (char*)"Note on home";
           
           Menu smallmenu;
           smallmenu.items=smallmenuitems;
@@ -189,18 +195,18 @@ void settingsMenu() {
 
 inline static void lockSettingsMenu() {
   MenuItem menuitems[5];
-  strcpy(menuitems[0].text, "Set lock code");  
+  menuitems[0].text = (char*)"Set lock code";
   
-  strcpy(menuitems[1].text, "Show last code char");
+  menuitems[1].text = (char*)"Show last code char";
   menuitems[1].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[2].text, "Off after locking");
+  menuitems[2].text = (char*)"Off after locking";
   menuitems[2].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[3].text, "Lock on [EXE]");
+  menuitems[3].text = (char*)"Lock on [EXE]";
   menuitems[3].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[4].text, "Run-Mat on unlock");
+  menuitems[4].text = (char*)"Run-Mat on unlock";
   
   Menu menu;
   menu.items=menuitems;
@@ -232,9 +238,9 @@ inline static void lockSettingsMenu() {
         case 5: {
           mMsgBoxPush(4);
           MenuItem smallmenuitems[3];
-          strcpy(smallmenuitems[0].text, "Off");        
-          strcpy(smallmenuitems[1].text, "On");        
-          strcpy(smallmenuitems[2].text, "Ask");
+          smallmenuitems[0].text = (char*)"Off";
+          smallmenuitems[1].text = (char*)"On";
+          smallmenuitems[2].text = (char*)"Ask";
           
           Menu smallmenu;
           smallmenu.items=smallmenuitems;
@@ -260,18 +266,18 @@ inline static void lockSettingsMenu() {
 
 inline static void clockSettingsMenu() {
   MenuItem menuitems[5];
-  strcpy(menuitems[0].text, "Set clock type");
+  menuitems[0].text = (char*)"Set clock type";
   
-  strcpy(menuitems[1].text, "Show seconds");
+  menuitems[1].text = (char*)"Show seconds";
   menuitems[1].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[2].text, "Enable events pane");
+  menuitems[2].text = (char*)"Enable events pane";
   menuitems[2].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[3].text, "Show F. keys labels");
+  menuitems[3].text = (char*)"Show F. keys labels";
   menuitems[3].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[4].text, "Dark theme");
+  menuitems[4].text = (char*)"Dark theme";
   menuitems[4].type = MENUITEM_CHECKBOX;
   
   Menu menu;
@@ -339,14 +345,14 @@ inline static void clockSettingsMenu() {
 
 void calendarSettingsMenu() {
   MenuItem menuitems[5];
-  strcpy(menuitems[0].text, "Show events count");
+  menuitems[0].text = (char*)"Show events count";
   menuitems[0].type = MENUITEM_CHECKBOX;
   
-  strcpy(menuitems[1].text, "Default calendar view");
+  menuitems[1].text = (char*)"Default calendar view";
   
-  strcpy(menuitems[2].text, "First day of week");
+  menuitems[2].text = (char*)"First day of week";
   
-  strcpy(menuitems[3].text, "Show busy timetables");
+  menuitems[3].text = (char*)"Show busy timetables";
   menuitems[3].type = MENUITEM_CHECKBOX;
   
   Menu menu;
@@ -380,13 +386,13 @@ void calendarSettingsMenu() {
           if(menu.selection == 2) {
             smallmenu.title = (char*)"Default Calendar";
             smallmenu.selection=GetSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;
-            strcpy(smallmenuitems[0].text, "Week");
-            strcpy(smallmenuitems[1].text, "Month");
+            smallmenuitems[0].text = (char*)"Week";
+            smallmenuitems[1].text = (char*)"Month";
           } else {
             smallmenu.title = (char*)"Week starts on";
             smallmenu.selection=GetSetting(SETTING_WEEK_START_DAY)+1;
-            strcpy(smallmenuitems[0].text, getDOWAsString(1)); // Sunday
-            strcpy(smallmenuitems[1].text, getDOWAsString(2)); // Monday
+            smallmenuitems[0].text = (char*)getDOWAsString(1); // Sunday
+            smallmenuitems[1].text = (char*)getDOWAsString(2); // Monday
           }
           int sres = doMenu(&smallmenu);
           if(sres == MENU_RETURN_SELECTION)

@@ -165,11 +165,11 @@ inline void powerMenu(int* pane_keycache) {
   drawFkeyPopup(0, GetSetting(SETTING_THEME), (char*)"Power options");
   
   MenuItem menuitems[5];
-  strcpy(menuitems[0].text, "Auto power off");
-  strcpy(menuitems[1].text, "Backlight duration");
-  strcpy(menuitems[2].text, "Backlight level");
-  strcpy(menuitems[3].text, "Power information");
-  strcpy(menuitems[4].text, "CPU speed");
+  menuitems[0].text = (char*)"Auto power off";
+  menuitems[1].text = (char*)"Backlight duration";
+  menuitems[2].text = (char*)"Backlight level";
+  menuitems[3].text = (char*)"Power information";
+  menuitems[4].text = (char*)"CPU speed";
   
   Menu menu;
   menu.items=menuitems;
@@ -214,10 +214,10 @@ inline void lightMenu(int* pane_keycache) {
   drawFkeyPopup(1, GetSetting(SETTING_THEME), (char*)"Light tools");
   
   MenuItem menuitems[5];
-  strcpy(menuitems[0].text, "Lantern");  
-  strcpy(menuitems[1].text, "Flashlight");
-  strcpy(menuitems[2].text, "Morse light");
-  strcpy(menuitems[3].text, "Color light");
+  menuitems[0].text = (char*)"Lantern";
+  menuitems[1].text = (char*)"Flashlight";
+  menuitems[2].text = (char*)"Morse light";
+  menuitems[3].text = (char*)"Color light";
   
   Menu menu;
   menu.items=menuitems;
@@ -257,9 +257,9 @@ inline void timeMenu(chronometer* chrono, int* pane_keycache) {
   drawFkeyPopup(2, GetSetting(SETTING_THEME), (char*)"Time tools");
   
   MenuItem menuitems[5];
-  strcpy(menuitems[0].text, "Calendar");
-  strcpy(menuitems[1].text, "Tasks");
-  strcpy(menuitems[2].text, "Chronometer");
+  menuitems[0].text = (char*)"Calendar";
+  menuitems[1].text = (char*)"Tasks";
+  menuitems[2].text = (char*)"Chronometer";
   
   Menu menu;
   menu.items=menuitems;
@@ -299,11 +299,11 @@ inline void toolsMenu(int* pane_keycache) {
   drawFkeyPopup(3, GetSetting(SETTING_THEME), (char*)"Tools");
   
   MenuItem menuitems[6];
-  strcpy(menuitems[0].text, "File manager");
-  strcpy(menuitems[1].text, "Memory usage");
-  strcpy(menuitems[2].text, "Add-In manager");
-  strcpy(menuitems[3].text, "Function key color");
-  strcpy(menuitems[4].text, "System information");
+  menuitems[0].text = (char*)"File manager";
+  menuitems[1].text = (char*)"Memory usage";
+  menuitems[2].text = (char*)"Add-In manager";
+  menuitems[3].text = (char*)"Function key color";
+  menuitems[4].text = (char*)"System information";
   
   Menu menu;
   menu.items=menuitems;

@@ -332,13 +332,14 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   unsigned int curmenu = 0;
   unsigned int cursce = 0; // current SimpleCalendarEvent, in the end it will have the SimpleCalendarEvent count
   ddays=DateToDays(*y, *m, *d);
+  char menuitemtext[7][42];
   for(curday=0; curday < 7; curday++) {
     // one menuitem for day header
     long int ny, nm, nd;
     DaysToDate(ddays, &ny, &nm, &nd);
     char buffer[15];
     dateToString(buffer, ny, nm, nd);
-    // the following string only fits in the menuitem.text because:
+    // the following string only fits in the menuitemtext because:
     //  1 - graphically, it's printed with PrintMini
     //  2 - the text variable has a size of 42 bytes, to account for the possibility that all the items are multibyte characters.
     //  (in this case there are no MB chars, so the full 42 bytes can be used)
@@ -346,19 +347,20 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
       if(GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT)) {
         char buffer[10];
         itoa(fevcount[curday], (unsigned char*)buffer);
-        strcpy(menuitems[curmenu].text, buffer);
-        strcat(menuitems[curmenu].text, " event");
-        if(fevcount[curday]>1) strcat(menuitems[curmenu].text, "s");
-        strcat(menuitems[curmenu].text, " on ");
+        strcpy(menuitemtext[curday], buffer);
+        strcat(menuitemtext[curday], " event");
+        if(fevcount[curday]>1) strcat(menuitemtext[curday], "s");
+        strcat(menuitemtext[curday], " on ");
       } else {
-        strcpy(menuitems[curmenu].text, "Events for ");
+        strcpy(menuitemtext[curday], "Events for ");
       }
     }
-    else strcpy(menuitems[curmenu].text, "No events for ");
-    strcat(menuitems[curmenu].text, buffer);
-    strcat(menuitems[curmenu].text, (char*)" (");
-    strcat(menuitems[curmenu].text, getDOWAsString(dow(ny, nm, nd)+1));
-    strcat(menuitems[curmenu].text, (char*)")");
+    else strcpy(menuitemtext[curday], "No events for ");
+    strcat(menuitemtext[curday], buffer);
+    strcat(menuitemtext[curday], (char*)" (");
+    strcat(menuitemtext[curday], getDOWAsString(dow(ny, nm, nd)+1));
+    strcat(menuitemtext[curday], (char*)")");
+    menuitems[curmenu].text = menuitemtext[curday];
     menuitems[curmenu].type = MENUITEM_SEPARATOR;
     menuitems[curmenu].color = TEXT_COLOR_BLACK;
     if(ny==oy&&nm==om&&nd==od&&*jumpToSel==1) menu->selection=curmenu+1;
@@ -370,7 +372,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
       GetEventsForDate(&date, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW, events, cursce);
       for(unsigned int k = 0; k < fevcount[curday]; k++) {
         // build menuitem
-        strcpy(menuitems[curmenu].text, (char*)events[cursce].title);
+        menuitems[curmenu].text = (char*)events[cursce].title;
         menuitems[curmenu].type = MENUITEM_NORMAL;
         menuitems[curmenu].color = events[cursce].category-1;
         curmenu++;
@@ -680,7 +682,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
   menu->numitems = GetEventsForDate(&thisday, CALENDARFOLDER, events);
   int curitem = 0;
   while(curitem < menu->numitems) {
-    strcpy(menuitems[curitem].text, (char*)events[curitem].title);
+    menuitems[curitem].text = (char*)events[curitem].title;
     menuitems[curitem].type = MENUITEM_NORMAL;
     menuitems[curitem].color = events[curitem].category-1;
     curitem++;
@@ -1584,10 +1586,10 @@ void viewNthEventOnDay(EventDate* date, int pos) {
 void searchEventsGUI(int y, int m, int d) {
   mMsgBoxPush(5);
   MenuItem smallmenuitems[5];
-  strcpy(smallmenuitems[0].text, "Selected year");
-  strcpy(smallmenuitems[1].text, "Selected month");
-  strcpy(smallmenuitems[2].text, "Selected day");
-  strcpy(smallmenuitems[3].text, "Year range");
+  smallmenuitems[0].text = (char*)"Selected year";
+  smallmenuitems[1].text = (char*)"Selected month";
+  smallmenuitems[2].text = (char*)"Selected day";
+  smallmenuitems[3].text = (char*)"Year range";
   
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
@@ -1701,7 +1703,7 @@ void searchEventsGUI(int y, int m, int d) {
   menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
   int curitem = 0;
   while(curitem < menu.numitems) {
-    strcpy(menuitems[curitem].text, (char*)events[curitem].title);
+    menuitems[curitem].text = (char*)events[curitem].title;
     menuitems[curitem].type = MENUITEM_NORMAL;
     menuitems[curitem].color = events[curitem].category-1;
     curitem++;
@@ -1815,11 +1817,11 @@ void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int
 void calendarTools(int y, int m, int d) {
   mMsgBoxPush(6);
   MenuItem smallmenuitems[5];
-  strcpy(smallmenuitems[0].text, "Count days");  
-  strcpy(smallmenuitems[1].text, "Repair database");
-  strcpy(smallmenuitems[2].text, "Trim database");
-  strcpy(smallmenuitems[3].text, "Import events");
-  strcpy(smallmenuitems[4].text, "Calendar settings");
+  smallmenuitems[0].text = (char*)"Count days";
+  smallmenuitems[1].text = (char*)"Repair database";
+  smallmenuitems[2].text = (char*)"Trim database";
+  smallmenuitems[3].text = (char*)"Import events";
+  smallmenuitems[4].text = (char*)"Calendar settings";
   
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
@@ -2024,10 +2026,10 @@ void trimCalendarDatabase() {
   doTextArea(&text);
   
   MenuItem menuitems[4];
-  strcpy(menuitems[0].text, "Older than 6 months");
-  strcpy(menuitems[1].text, "Older than 1 month");
-  strcpy(menuitems[2].text, "Events in the past");
-  strcpy(menuitems[3].text, "All calendar events");
+  menuitems[0].text = (char*)"Older than 6 months";
+  menuitems[1].text = (char*)"Older than 1 month";
+  menuitems[2].text = (char*)"Events in the past";
+  menuitems[3].text = (char*)"All calendar events";
   
   Menu menu;
   menu.items=menuitems;

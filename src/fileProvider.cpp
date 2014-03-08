@@ -58,6 +58,10 @@ void insertSortFileMenuArray(File* data, MenuItem* mdata, int size) {
     data[j + 1] = temp;
     mdata[j + 1] = mtemp;
   }
+  // update menu text pointers (these are still pointing to the old text locations):
+  for(i = 0; i < size; i++) {
+    mdata[i].text = data[i].visname;
+  }
 }
 
 int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
@@ -84,7 +88,7 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
       || strcmp((char*)buffer, CALENDARFOLDER_NAME) == 0))
     {
       if(files != NULL) {
-        strncpy(menuitems[*count].text, (char*)buffer, 40);
+        strncpy(files[*count].visname, (char*)buffer, 40);
         strcpy(files[*count].filename, basepath); 
         strcat(files[*count].filename, (char*)buffer);
         files[*count].size = fileinfo.fsize;
@@ -93,6 +97,7 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
         else menuitems[*count].icon = fileIconFromName((char*)buffer);
         menuitems[*count].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
         // because usually alloca is used to declare space for MenuItem*, the space is not cleared. which means we need to explicitly set each field:
+        menuitems[*count].text = files[*count].visname;
         menuitems[*count].color=TEXT_COLOR_BLACK;
         menuitems[*count].type=MENUITEM_NORMAL;
         menuitems[*count].value=MENUITEM_VALUE_NONE;
@@ -185,6 +190,7 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
         if(files != NULL) {
           strcpy(files[*count].filename, basepath); 
           strcat(files[*count].filename, (char*)buffer);
+          strncpy(files[*count].visname, (char*)buffer, 40);
           files[*count].size = fileinfo.fsize;
           files[*count].isfolder = !fileinfo.fsize;
         }

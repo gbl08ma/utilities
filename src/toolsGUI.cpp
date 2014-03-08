@@ -156,7 +156,7 @@ int addinManagerSub(Menu* menu) {
  
   Bdisp_AllClr_VRAM();
   for(int curaddin = 0; curaddin < menu->numitems; curaddin++) {
-    strcpy(menuitems[curaddin].text, (char*)addins[curaddin].name);
+    menuitems[curaddin].text = (char*)addins[curaddin].name;
     menuitems[curaddin].color = (addins[curaddin].active ? TEXT_COLOR_BLACK : TEXT_COLOR_CYAN);
   }
   

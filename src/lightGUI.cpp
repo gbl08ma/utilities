@@ -100,14 +100,14 @@ void colorLight() {
   unsigned int initlevel = GetBacklightSubLevel_RAW();
   
   MenuItem menuitems[10];
-  strcpy(menuitems[0].text, "Blue");  
-  strcpy(menuitems[1].text, "Green");
-  strcpy(menuitems[2].text, "Red");
-  strcpy(menuitems[3].text, "Orange");
-  strcpy(menuitems[4].text, "Yellow");
-  strcpy(menuitems[5].text, "Cyan");
-  strcpy(menuitems[6].text, "Brown");
-  strcpy(menuitems[7].text, "Magenta");
+  menuitems[0].text = (char*)"Blue";  
+  menuitems[1].text = (char*)"Green";
+  menuitems[2].text = (char*)"Red";
+  menuitems[3].text = (char*)"Orange";
+  menuitems[4].text = (char*)"Yellow";
+  menuitems[5].text = (char*)"Cyan";
+  menuitems[6].text = (char*)"Brown";
+  menuitems[7].text = (char*)"Magenta";
   
   Menu menu;
   menu.items=menuitems;

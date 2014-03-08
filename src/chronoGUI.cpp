@@ -140,10 +140,10 @@ void chronoScreen(chronometer* chrono) {
   unsigned short prevkey = 0;
   while(1) {
     checkChronoComplete();
+    unsigned char text[NUMBER_OF_CHRONO][42];
     for(curitem=0; curitem < NUMBER_OF_CHRONO; curitem++) {
-      unsigned char text[42];
-      formatChronoString(&chrono[curitem], curitem+1, text);
-      strcpy(menuitems[curitem].text, (char*)text);
+      formatChronoString(&chrono[curitem], curitem+1, text[curitem]);
+      menuitems[curitem].text = (char*)text[curitem];
     }
     if(menu.fkeypage==0) {
       // SELECT (white), SET, CLEAR, play icon, stop icon, BUILT-IN
@@ -295,9 +295,9 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
   long long int ms = 0;
   int type = CHRONO_TYPE_UP;
   MenuItem menuitems[10];
-  strcpy(menuitems[0].text, "Upwards");  
-  strcpy(menuitems[1].text, "Downwards (period)");  
-  strcpy(menuitems[2].text, "Downwards (date-time)");  
+  menuitems[0].text = (char*)"Upwards";
+  menuitems[1].text = (char*)"Downwards (period)";
+  menuitems[2].text = (char*)"Downwards (date-time)";
   
   Menu bmenu;
   bmenu.items=menuitems;
@@ -427,16 +427,16 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
 void setBuiltinChrono(Menu* menu, chronometer* tchrono) {
   long long int duration = 0;
   MenuItem menuitems[10];
-  strcpy(menuitems[0].text, "1 minute timer");  
-  strcpy(menuitems[1].text, "5 minutes timer");  
-  strcpy(menuitems[2].text, "15 minutes timer");  
-  strcpy(menuitems[3].text, "30 minutes timer");
-  strcpy(menuitems[4].text, "1 hour timer");
-  strcpy(menuitems[5].text, "1 hour 30 min. timer");
-  strcpy(menuitems[6].text, "2 hours timer");
-  strcpy(menuitems[7].text, "5 hours timer");
-  strcpy(menuitems[8].text, "12 hours timer");
-  strcpy(menuitems[9].text, "1 day timer");
+  menuitems[0].text = (char*)"1 minute timer";  
+  menuitems[1].text = (char*)"5 minutes timer";  
+  menuitems[2].text = (char*)"15 minutes timer";  
+  menuitems[3].text = (char*)"30 minutes timer";
+  menuitems[4].text = (char*)"1 hour timer";
+  menuitems[5].text = (char*)"1 hour 30 min. timer";
+  menuitems[6].text = (char*)"2 hours timer";
+  menuitems[7].text = (char*)"5 hours timer";
+  menuitems[8].text = (char*)"12 hours timer";
+  menuitems[9].text = (char*)"1 day timer";
   
   Menu bmenu;
   bmenu.items=menuitems;

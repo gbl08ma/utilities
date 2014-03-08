@@ -187,6 +187,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
                 }
                 if(!inclip) {
                   strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
+                  strcpy(clipboard[*itemsinclip].visname, files[ifile].visname);
                   //0=cut file; 1=copy file:
                   clipboard[*itemsinclip].action = (res == KEY_CTRL_F2 ? 0 : 1);
                   clipboard[*itemsinclip].isfolder = files[ifile].isfolder;
@@ -214,11 +215,11 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
           if(res==KEY_CTRL_F2) {
             mMsgBoxPush(6);
             MenuItem smallmenuitems[5];
-            strcpy(smallmenuitems[0].text, "Do not sort");
-            strcpy(smallmenuitems[1].text, "Name (A to Z)");
-            strcpy(smallmenuitems[2].text, "Name (Z to A)");
-            strcpy(smallmenuitems[3].text, "Size (small 1st)");
-            strcpy(smallmenuitems[4].text, "Size (big 1st)");
+            smallmenuitems[0].text = (char*)"Do not sort";
+            smallmenuitems[1].text = (char*)"Name (A to Z)";
+            smallmenuitems[2].text = (char*)"Name (Z to A)";
+            smallmenuitems[3].text = (char*)"Size (small 1st)";
+            smallmenuitems[4].text = (char*)"Size (big 1st)";
             
             Menu smallmenu;
             smallmenu.items=smallmenuitems;
@@ -246,8 +247,8 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
       case KEY_CTRL_F4: {
         mMsgBoxPush(4);
         MenuItem smallmenuitems[5];
-        strcpy(smallmenuitems[0].text, "Folder");
-        strcpy(smallmenuitems[1].text, "Text File");
+        smallmenuitems[0].text = (char*)"Folder";
+        smallmenuitems[1].text = (char*)"Text File";
         
         Menu smallmenu;
         smallmenu.items=smallmenuitems;
@@ -340,11 +341,11 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   clearLine(1,8);
   clearLine(1,3); // clear background at end of input
   char title[MAX_NAME_SIZE+6];
-  strcpy(title, (char*)menu->items[menu->selection-1].text);
+  strcpy(title, menu->items[menu->selection-1].text);
   strcat(title, " to:");
   drawScreenTitle((char*)"Rename item", title);
   char newname[MAX_NAME_SIZE];
-  strcpy(newname, (char*)menu->items[menu->selection-1].text);
+  strcpy(newname, menu->items[menu->selection-1].text);
   textInput input;
   input.forcetext=1;
   input.charlimit=MAX_NAME_SIZE;
@@ -387,13 +388,13 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   input.acceptF6=1;
   input.buffer = needle;
   MenuItem menuitems[5];
-  strcpy(menuitems[0].text, "On filename");
+  menuitems[0].text = (char*)"On filename";
   menuitems[0].type = MENUITEM_CHECKBOX;
-  strcpy(menuitems[1].text, "On contents");
+  menuitems[1].text = (char*)"On contents";
   menuitems[1].type = MENUITEM_CHECKBOX;
-  strcpy(menuitems[2].text, "Recursively");
+  menuitems[2].text = (char*)"Recursively";
   menuitems[2].type = MENUITEM_CHECKBOX;
-  strcpy(menuitems[3].text, "Match case");
+  menuitems[3].text = (char*)"Match case";
   menuitems[3].type = MENUITEM_CHECKBOX;
 
   Menu menu;
@@ -471,7 +472,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   if(menu.numitems) SearchForFiles(files, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
   int curitem = 0;
   while(curitem < menu.numitems) {
-    nameFromFilename(files[curitem].filename, resitems[curitem].text, 42);
+    resitems[curitem].text = files[curitem].visname;
     resitems[curitem].type = MENUITEM_NORMAL;
     resitems[curitem].color = COLOR_BLACK;
     curitem++;
@@ -807,9 +808,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     menu.items = menuitems;
     int curitem = 0;
     while(curitem < *itemsinclip) {
-      char buffer[MAX_FILENAME_SIZE];
-      nameFromFilename(clipboard[curitem].filename, buffer);
-      strncpy(menuitems[curitem].text, (char*)buffer, 40);
+      menuitems[curitem].text = clipboard[curitem].visname;
       if(clipboard[curitem].action == 1) menuitems[curitem].color = TEXT_COLOR_RED;
       curitem++;
     }
