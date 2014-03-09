@@ -19,7 +19,16 @@
 #include "calendarProvider.hpp"
 #include "hardwareProvider.hpp"
 #include "fileProvider.hpp"
+#include "debugGUI.hpp"
 #include "sha2.h"
+
+int compare(unsigned char * a, unsigned char * b, int size) {
+  int i;
+  for(i=0;i<size;i++)
+        if(a[i]!=b[i])
+                return 1;
+  return 0;
+}
 
 void hashPassword(unsigned char* password, unsigned char* hash) {
   char salt[16] = "";
@@ -52,16 +61,14 @@ int comparePasswordHash(unsigned char* inputPassword) {
   int MCSsize;
   unsigned char mcsHash[32] = "";
   MCSGetDlen2(DIRNAME, HASHFILE, &MCSsize);
-  if (MCSsize == 0) { return RETURN_PASSWORD_NOMCS; }
+  if (!MCSsize) { return RETURN_PASSWORD_NOMCS; }
   MCSGetData1(0, 32, mcsHash);
-  int cmpres = memcmp(mcsHash, smemHash, 32);
-  if (!cmpres) {
+  if (!compare(mcsHash, smemHash, 32)) {
     //hash stored in main mem matches with storage memory.
     //now compare the hash with the hash of the inserted password
     unsigned char inputHash[32] = "";    
     hashPassword(inputPassword, inputHash);
-    cmpres = memcmp(inputHash, smemHash, 32);
-    if (!cmpres) {
+    if (!compare(inputHash, smemHash, 32)) {
       return RETURN_PASSWORD_MATCH;
     } else {
       return RETURN_PASSWORD_MISMATCH;
