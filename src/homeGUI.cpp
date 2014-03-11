@@ -162,7 +162,7 @@ void showHome(chronometer* chrono) {
 }
 
 inline void powerMenu(int* pane_keycache) {
-  drawFkeyPopup(0, GetSetting(SETTING_THEME), (char*)"Power options");
+  drawFkeyPopup(0, (char*)"Power options");
   
   MenuItem menuitems[5];
   menuitems[0].text = (char*)"Auto power off";
@@ -211,7 +211,7 @@ inline void powerMenu(int* pane_keycache) {
 }
 
 inline void lightMenu(int* pane_keycache) {
-  drawFkeyPopup(1, GetSetting(SETTING_THEME), (char*)"Light tools");
+  drawFkeyPopup(1, (char*)"Light tools");
   
   MenuItem menuitems[5];
   menuitems[0].text = (char*)"Lantern";
@@ -254,7 +254,7 @@ inline void lightMenu(int* pane_keycache) {
 }
 
 inline void timeMenu(chronometer* chrono, int* pane_keycache) {
-  drawFkeyPopup(2, GetSetting(SETTING_THEME), (char*)"Time tools");
+  drawFkeyPopup(2, (char*)"Time tools");
   
   MenuItem menuitems[5];
   menuitems[0].text = (char*)"Calendar";
@@ -296,7 +296,7 @@ inline void timeMenu(chronometer* chrono, int* pane_keycache) {
 }
 
 inline void toolsMenu(int* pane_keycache) {
-  drawFkeyPopup(3, GetSetting(SETTING_THEME), (char*)"Tools");
+  drawFkeyPopup(3, (char*)"Tools");
   
   MenuItem menuitems[6];
   menuitems[0].text = (char*)"File manager";

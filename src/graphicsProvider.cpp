@@ -144,13 +144,13 @@ void drawArrowDown(int bottomX, int bottomY, int color) {
   drawLine(bottomX+1,bottomY,bottomX+8,bottomY-7,color);
   drawLine(bottomX+1,bottomY+1,bottomX+9,bottomY-7,color); //double thickness of line
 }
-void drawFkeyPopup(int Fkey, int darktheme, char* title) {
+void drawFkeyPopup(int Fkey, char* title) {
 //draws a big popup pointing to a Fkey (index zero based, F1 = 0, F6 = 5) with the selected color scheme.
 //showclosemessage - select to show a minimini message on the right left saying "...or press: [EXIT]"
 // PrintXY text inside the popup starts at X=2 and Y=2
   int fgcolor = COLOR_BLACK;
   int bgcolor = COLOR_WHITE;
-  if (darktheme) {
+  if (GetSetting(SETTING_THEME)) {
     fgcolor = COLOR_WHITE;
     bgcolor = COLOR_BLACK;
   }
@@ -172,7 +172,7 @@ void drawFkeyPopup(int Fkey, int darktheme, char* title) {
 
   int textX = FKEY_C3X-111-4;
   int textY = FKEY_C3Y-14-20;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", (darktheme == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
+  PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", (GetSetting(SETTING_THEME) == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
 
   mPrintXY(2, 2, title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
 }
