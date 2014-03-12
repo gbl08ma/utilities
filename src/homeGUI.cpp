@@ -376,17 +376,17 @@ inline void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int start
     PrintMini(&textX, &textY, (unsigned char*)"  No events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
   } 
 }
+#define HOME_EVENTS_DISPLAY_FULL 6
 void eventsPane(int* pane_keycache) {
   int key;
   EventDate thisday;
-  const int eventsToDisplayInFull=6;
   thisday.day = getCurrentDay(); thisday.month = getCurrentMonth(); thisday.year = getCurrentYear();
   int numevents = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
   CalendarEvent* calevents = NULL;
   if (numevents > 0) {
-    int getnum = (numevents>eventsToDisplayInFull?eventsToDisplayInFull:numevents); // number of events to parse.
+    int getnum = (numevents>HOME_EVENTS_DISPLAY_FULL?HOME_EVENTS_DISPLAY_FULL:numevents); // number of events to parse.
     calevents = (CalendarEvent*)alloca(getnum*sizeof(CalendarEvent)); // we don't want to allocate more than what we need for the few events we want to display in full.
-    GetEventsForDate(&thisday, CALENDARFOLDER, calevents, eventsToDisplayInFull);
+    GetEventsForDate(&thisday, CALENDARFOLDER, calevents, HOME_EVENTS_DISPLAY_FULL);
   }
   int inscreen = 1;
   if (GetSetting(SETTING_THEME)) {
@@ -396,7 +396,7 @@ void eventsPane(int* pane_keycache) {
     Bdisp_Fill_VRAM( COLOR_WHITE, 2 ); //fill between the status area and f-key area
     DrawFrame( 0xfffff  );
   }
-  pane_drawTodayEvents(calevents, 0, 0, numevents, eventsToDisplayInFull);
+  pane_drawTodayEvents(calevents, 0, 0, numevents, HOME_EVENTS_DISPLAY_FULL);
   if(GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) drawDayBusyMap(&thisday, 0, LCD_HEIGHT_PX-44, LCD_WIDTH_PX, 15, 1,0,0);
   while (inscreen) {
     if (GetSetting(SETTING_THEME)) DrawFrame( 0x000000  );
