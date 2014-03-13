@@ -408,7 +408,6 @@ void eventsPane(int* pane_keycache) {
       case KEY_CTRL_F4:
       case KEY_CTRL_F5:
         *pane_keycache = key;
-        return; //exit to main pane
       case KEY_CTRL_LEFT:
       case KEY_CTRL_EXIT:
         return; //return to the pane to the left (main)

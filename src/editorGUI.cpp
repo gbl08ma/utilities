@@ -119,13 +119,11 @@ void fileTextEditor(char* filename, char* basefolder) {
         Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size); //create the file
         
         int h = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
-        if(h < 0) // Still failing?
-        {
-          return;
+        if(h >= 0) { // Still failing?
+          //Write file contents
+          Bfile_WriteFile_OS(h, sText, size);
+          Bfile_CloseFile_OS(h);
         }
-        //Write file contents
-        Bfile_WriteFile_OS(h, sText, size);
-        Bfile_CloseFile_OS(h);
         return;
       }
     }

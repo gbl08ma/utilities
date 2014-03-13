@@ -272,10 +272,10 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         break;
       }
       case KEY_CTRL_F5:
-        if(menu.numitems>0) if(renameFileGUI(files, &menu, browserbasepath)) return 1;
+        if(menu.numitems>0 && renameFileGUI(files, &menu, browserbasepath)) return 1;
         break;
       case KEY_CTRL_F6:
-        if(menu.numselitems>0) if(deleteFilesGUI(files, &menu)) return 1; // if user said yes and files were deleted, reload file list
+        if(menu.numselitems>0 && deleteFilesGUI(files, &menu)) return 1; // if user said yes and files were deleted, reload file list
         break;
       case KEY_CTRL_PASTE:
         filePasteClipboardItems(clipboard, browserbasepath, *itemsinclip);
