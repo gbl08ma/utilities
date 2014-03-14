@@ -80,18 +80,15 @@ int doTextInput(textInput* input) {
     }
     if(input->key == KEY_CTRL_EXE || (input->key == KEY_CTRL_F6 && input->acceptF6)) {
       // Next step
-      if(input->forcetext) {
-        if (strlen((char*)input->buffer) > 0 && input->buffer[0]!='\xd8') {
-          Cursor_SetFlashOff(); return INPUT_RETURN_CONFIRM;
-        } else {
-          mMsgBoxPush(4);
-          mPrintXY(3, 2, (char*)"Field can't be", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          mPrintXY(3, 3, (char*)"left blank.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-          closeMsgBox();
-        }
-      } else {
+      if(!input->forcetext || (strlen((char*)input->buffer) > 0 && input->buffer[0]!='\xd8')) {
+        // input can be empty, or it already has some text
         Cursor_SetFlashOff(); return INPUT_RETURN_CONFIRM;
+      } else {
+        mMsgBoxPush(4);
+        mPrintXY(3, 2, (char*)"Field can't be", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 3, (char*)"left blank.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
+        closeMsgBox();
       }
     } else if(input->key == KEY_CTRL_EXIT) {
       // Aborted
@@ -119,25 +116,14 @@ int doTextInput(textInput* input) {
           continue; //do not process the key, because otherwise we will leave alpha status
       }
     } 
-    if(input->key && input->key < 30000)
-    {
-      if(input->type == INPUTTYPE_NORMAL) {
+    if(input->key && input->key < 30000) {
+      if(input->type == INPUTTYPE_NORMAL || (input->key >= KEY_CHAR_0 && input->key <= KEY_CHAR_9)) { // either a normal input, or only allow digits
         if ((GetSetupSetting( (unsigned int)0x14) == 0x08 || GetSetupSetting( (unsigned int)0x14) == 0x88) && input->key >= KEY_CHAR_A && input->key <= KEY_CHAR_Z) //if lowercase and key is char...
-        {
-          input->key = input->key + 32; //so we switch to lowercase characters... Casio is smart
-        }
+          input->key = input->key + 32; // to switch to lower-case characters
+
         input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, input->key);
-      } else if (input->type == INPUTTYPE_DATE || input->type == INPUTTYPE_TIME) {
-        if (input->key >= KEY_CHAR_0 && input->key <= KEY_CHAR_9) {
-          //don't allow for typing non-digits
-          input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, input->key);          
-        }
       }
-    }
-    else
-    {
-      EditMBStringCtrl2( (unsigned char*)input->buffer, input->charlimit+1, &input->start, &input->cursor, &input->key, input->x, input->y*24-24, 1, widthForSyscalls+input->x-1 );
-    }
+    } else EditMBStringCtrl2( (unsigned char*)input->buffer, input->charlimit+1, &input->start, &input->cursor, &input->key, input->x, input->y*24-24, 1, widthForSyscalls+input->x-1 );
     if(input->key == KEY_CTRL_PASTE) {
       // at this point it will have already pasted
       int pos = strlen(input->buffer)-1;
