@@ -106,16 +106,26 @@ void showHome(chronometer* chrono) {
         break;
       case KEY_PRGM_ACON:
         if (GetSetupSetting( (unsigned int)0x14) == 1) {
+          // following the suspicion that calling PowerOff after GetKeyWait was running
+          // may cause problems (or that it isn't even related to GetKeyWait),
+          // users now have to manually press Shift+AC twice to turn off the calculator.
+          // (the second time is for GetKey)
           SetSetupSetting( (unsigned int)0x14, 0);
           DisplayStatusArea();
-          // make sure GetKey (and thus, the whole "multitasking"/power/setup system) "gets" the fact that we have disabled Shift,
-          // otherwise Shift may still be enabled when resuming from standby:
+          mMsgBoxPush(4);
+          mPrintXY(3, 2, (char*)"To turn off,", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 3, (char*)"repeat what you", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 4, (char*)"just did:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 5, (char*)"Press Shift...", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           int gkey;
-          Keyboard_PutKeycode( -1, -1, KEY_CTRL_EXIT);
           GetKey(&gkey);
-          PowerOff(1);
-          SetSetupSetting( (unsigned int)0x14, 0);
-          DisplayStatusArea();
+          mMsgBoxPop();
+          if(gkey!=KEY_CTRL_SHIFT) continue;
+          mMsgBoxPush(4);
+          mPrintXY(3, 2, (char*)"...now press", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 3, (char*)"AC/ON.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          GetKey(&gkey);
+          mMsgBoxPop();
         }
         break;
       case KEY_PRGM_F1:
