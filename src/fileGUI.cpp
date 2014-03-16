@@ -433,6 +433,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
         menuitems[2].value = searchRecursively;
         menuitems[3].value = matchCase;
         int res = doMenu(&menu);
+        
         if(res == MENU_RETURN_EXIT) return 0;
         else if(res == KEY_CTRL_F1) {
           curstep--;

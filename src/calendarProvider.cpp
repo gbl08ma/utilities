@@ -438,8 +438,7 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
 void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resCount, int daynumevents, const char* folder, char* needle, int limit, int* curfpos) {
   CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
   daynumevents = GetEventsForDate(date, folder, dayEvents);
-  int curitem = 0;
-  while(curitem < daynumevents) {
+  for(int curitem = 0; curitem < daynumevents; curitem++) {
     if(NULL != strcasestr((char*)dayEvents[curitem].title, needle) || \
       NULL != strcasestr((char*)dayEvents[curitem].location, needle) || \
       NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
@@ -453,7 +452,6 @@ void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resC
       *curfpos = *curfpos+1;
     }
     if(*resCount >= limit) return;
-    curitem++;
   }
 }
 

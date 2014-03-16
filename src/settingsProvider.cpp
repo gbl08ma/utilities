@@ -226,25 +226,20 @@ void SetSetting(int setting, int value, int autosave) {
 int LoadSettings() { // returns 0 on success, 1 if settings were reset (first run / incompatibility)
   int size;
   MCSGetDlen2(DIRNAME, SETTINGSFILE, &size);
-  if (size == 0) return 1;
+  if (size <= 16) return 1; // no settings file or incompatible, reset settings.
 
   unsigned char buffer[NUMBER_OF_SETTINGS+2];
   MCSGetData1(0, NUMBER_OF_SETTINGS+1, buffer); // +1 because NUMBER_OF_SETTINGS does not include the file version
   // detect if the current settings file version is compatible with the one we're expecting.
   // file version is always the first byte, except for the settings files of versions 1.0 and earlier.
-  // for these, the filesize happened to be equal or smaller than 16. The following is a dirty hack to handle such files.
-  // (later, it was found that the file size doesn't relate directly to the amount of settings, and that's why this code is newly written)
-  if (size <= 16) return 1; // reset settings
-  // looks like the file is a "modern" one, so check the version byte.
+  // for these, the filesize happened to be equal or smaller than 16 (checked above).
+  // if we got here, the file is a "modern" one, so check the version byte.
   if (buffer[0] != SETTINGSFILE_VERSION) return 1; //if incompatible, reset settings
   
-  int curupd = 1; //setting count starts at one (zero is for the file version, which we already took care of)
+  // setting count starts at one (zero is for the file version, which we already took care of)
   // this assumes same setting IDs across files. Also, setting IDs must be consecutive
   // still, if a setting has no correspondence, SetSetting will just ignore the command...
-  while(curupd <= NUMBER_OF_SETTINGS) {
-    SetSetting(curupd, buffer[curupd], 0); // do not save every time, as we're loading right now...
-    curupd++;
-  }
+  for(int curupd = 1; curupd <= NUMBER_OF_SETTINGS; curupd++) SetSetting(curupd, buffer[curupd], 0); // do not save every time, as we're loading right now...
   return 0;
 }
 
