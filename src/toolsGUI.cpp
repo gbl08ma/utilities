@@ -161,7 +161,6 @@ int addinManagerSub(Menu* menu) {
   }
   
   if(menu->numitems>0) drawFkeyLabels(0x0103, 0x0038); // CHANGE (white), DELETE
-  drawFkeyLabels(-1,-1,-1,-1,-1,0x03FD); // HELP (white)
   
   unsigned short newpath[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
@@ -196,29 +195,6 @@ int addinManagerSub(Menu* menu) {
           Bfile_DeleteEntry( oldpath );
         }
         return 1;
-      }
-      break;
-    case KEY_CTRL_F6:
-      {
-        textArea text;
-        text.title = (char*)"Add-In Manager";
-        
-        textElement elem[5];
-        text.elements = elem;
-        
-        elem[0].text = (char*)"This tool lets you hide add-ins from the Main Menu without the need for deleting them from your calculator. To hide an add-in, press [F1] when it is selected. Hidden add-ins are shown in light blue. To make an hidden add-in appear back in the Main Menu, press [F1] again. This tool also lets you delete (uninstall) add-ins.";
-        
-        elem[1].newLine = 1;
-        elem[1].lineSpacing = 8;
-        elem[1].text = (char*)"To hide add-ins, this tool simply changes their file extension between g3a (normal, shown) and h3a (hidden). This means the hiding effect is permanent even if the Utilities add-in is uninstalled. This add-in can't perform operations on itself. Add-ins are shown in the same order as they are in memory - they aren't ordered from A to Z.";
-        
-        elem[2].newLine = 1;
-        elem[2].lineSpacing = 8;
-        elem[2].text = (char*)"Enabling and disabling add-ins may change their position in memory, and consequently in the Main Menu and in this list. Use this to your advantage, but note that the order of the add-ins can't be directly controlled, at least not without removing all add-ins and putting them back one by one, through PC-USB.";
-        
-        text.numelements = 3;
-        doTextArea(&text);
-        
       }
       break;
     case MENU_RETURN_EXIT: return 0; break;

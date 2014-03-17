@@ -311,13 +311,18 @@ inline void toolsMenu(int* pane_keycache) {
   MenuItem menuitems[6];
   menuitems[0].text = (char*)"File manager";
   menuitems[1].text = (char*)"Memory usage";
-  menuitems[2].text = (char*)"Add-In manager";
-  menuitems[3].text = (char*)"Function key color";
-  menuitems[4].text = (char*)"System information";
+  menuitems[2].text = (char*)"Function key color";
+  menuitems[3].text = (char*)"System information";
+  menuitems[4].text = (char*)"Add-In manager";
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=5;
+  if(GetSetting(SETTING_SHOW_ADVANCED)) {
+    menu.numitems=5;
+  } else {
+    menu.numitems=4;
+    menu.scrollbar=0;
+  }
   menu.width=19;
   menu.height=4;
   menu.startX=2;
@@ -333,9 +338,9 @@ inline void toolsMenu(int* pane_keycache) {
         switch(menu.selection) {
           case 1: fileManager(); break;
           case 2: memoryCapacityViewer(); break;
-          case 3: addinManager(); break;
-          case 4: changeFKeyColor(); break;
-          case 5: systemInfo(); break;
+          case 3: changeFKeyColor(); break;
+          case 4: systemInfo(); break;
+          case 5: addinManager(); break;
         }
         return;
       case KEY_CTRL_F5:
