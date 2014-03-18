@@ -564,8 +564,7 @@ void compressFile(char* oldfilename, char* newfilename, int action) {
       mPrintXY(3, 3, (char*)"file doesn't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       mPrintXY(3, 4, (char*)"yield a smaller", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       mPrintXY(3, 5, (char*)"size; aborted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
-      closeMsgBox();
+      closeMsgBox(0, 6);
       return;
     }
   }
@@ -660,8 +659,6 @@ cleanexit:
     mPrintXY(3, 2, (action? (char*)"Decompression" : (char*)"Compression"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     mPrintXY(3, 3, (char*)"successful.Delete", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     mPrintXY(3, 4, (action? (char*)"compressed file?" : (char*)"original file?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 3, TEXT_COLOR_BLACK); // yes, F1
-    PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 4, TEXT_COLOR_BLACK); // no, F6
     if(closeMsgBox(1)) {
       Bfile_DeleteEntry(oldfilenameshort);
       return;

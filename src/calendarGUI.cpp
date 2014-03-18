@@ -1229,7 +1229,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             if(istask) mPrintXY(3, 3, (char*)"Task could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             else mPrintXY(3, 3, (char*)"Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 4, (char*)"be added.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
             closeMsgBox();
             return EVENTEDITOR_RETURN_EXIT; // error is like exit
           }
@@ -1381,9 +1380,7 @@ int deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos
   mMsgBoxPush(4);
   mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 3, (istask ? (char*)"Selected Task?" : (char*)"Selected Event?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
-  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
-  if(closeMsgBox(1)) {
+  if(closeMsgBox(1, 4)) {
     RemoveEvent(&date, events, CALENDARFOLDER, count, pos);
     return EVENTDELETE_RETURN_CONFIRM;
   }
@@ -1399,9 +1396,7 @@ int deleteAllEventUI(int y, int m, int d, int istask) {
     mPrintXY(3, 2, (char*)"Delete All Events", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     mPrintXY(3, 3, (char*)"on Selected Day?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   }
-  PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
-  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
-  if(closeMsgBox(1)) {
+  if(closeMsgBox(1, 4)) {
     RemoveDay(&date, CALENDARFOLDER);
     return EVENTDELETE_RETURN_CONFIRM;
   }
@@ -1498,7 +1493,6 @@ int moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
         }
         mPrintXY(3, 3, (char*)"Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(3, 4, (isCopy ? (char*)"be copied." : (char*)"be moved."), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
         closeMsgBox();
         return EVENTEDITOR_RETURN_EXIT;
       }
@@ -1514,7 +1508,6 @@ void invalidFieldMsg(int istime) {
   mMsgBoxPush(3);
   if(istime) mPrintXY(3, 3, (char*)"Invalid time.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   else mPrintXY(3, 3, (char*)"Invalid date.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
   closeMsgBox(); 
 }
 
@@ -1554,7 +1547,6 @@ void setEventChrono(CalendarEvent* event) {
       mPrintXY(3, 3, (char*)"is not clear.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     }
   }
-  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
   closeMsgBox();
 }
 
@@ -2046,8 +2038,6 @@ void trimCalendarDatabase() {
       mPrintXY(3, 2, (char*)"DELETE / RESET", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       mPrintXY(3, 3, (char*)"ALL the calendar", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       mPrintXY(3, 4, (char*)"events?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 3, TEXT_COLOR_BLACK); // yes, F1
-      PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 4, TEXT_COLOR_BLACK); // no, F6
       if(!closeMsgBox(1)) return;
     }
     unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
@@ -2135,7 +2125,6 @@ void trimCalendarDatabase() {
   mPrintXY(3, 2, (char*)"DB trimming", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 3, (char*)"completed", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 4, (char*)"successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
   closeMsgBox();
   bufmonth = 0;
   searchValid = 0;

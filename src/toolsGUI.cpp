@@ -186,9 +186,7 @@ int addinManagerSub(Menu* menu) {
         mMsgBoxPush(4);
         mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(3, 3, (char*)"Selected Add-In?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
-        if(closeMsgBox(1)) {
+        if(closeMsgBox(1, 4)) {
           strcpy(buffer, "\\\\fls0\\");
           strcat(buffer, addins[menu->selection-1].filename);
           Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, MAX_FILENAME_SIZE+1);

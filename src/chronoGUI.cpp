@@ -366,7 +366,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
           mMsgBoxPush(4);
           mPrintXY(3, 2, (char*)"Date is in the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(3, 3, (char*)"past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
           closeMsgBox();
           return;
         }
@@ -403,7 +402,6 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
           mMsgBoxPush(4);
           mPrintXY(3, 2, (char*)"Time is in the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(3, 3, (char*)"past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
           closeMsgBox();
           return;
         } else {
@@ -495,10 +493,10 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
         mPrintXY(3,2,(char*)"Chronometer ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(15,2,(char*)buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(3,3,(char*)"ended.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
         
         if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 1) {
           // notification with screen flashing
+          PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
           Bdisp_PutDisp_DD();
           flashLight(1); // with parameter set to 1, it doesn't change VRAM, and since it returns on pressing EXIT...*/
           mMsgBoxPop();

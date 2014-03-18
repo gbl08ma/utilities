@@ -409,7 +409,6 @@ void currentTimeToBasicVar() {
   mPrintXY(3, 2, (char*)"Time fraction", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 3, (char*)"saved to alpha", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 4, (char*)"variable T.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
   closeMsgBox();
 }
 

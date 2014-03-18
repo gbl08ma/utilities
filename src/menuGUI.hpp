@@ -74,6 +74,6 @@ typedef struct {
 int doMenu(Menu* menu, MenuItemIcon* icontable=NULL);
 int getMenuSelectionSeparators(Menu* menu, int ignoreSeparators);
 
-int closeMsgBox(int yesno=0);
+int closeMsgBox(int yesno=0, int msgY=5);
 
 #endif

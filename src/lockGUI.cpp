@@ -92,7 +92,6 @@ int passwordInput(int x, int y, unsigned char* buffer) {
         mMsgBoxPush(3);
         mPrintXY(3, 3, (char*)"Code can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         mPrintXY(3, 4, (char*)"empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
         closeMsgBox();
       }
     }
@@ -141,13 +140,11 @@ int unlockCalc() {
         mMsgBoxPush(3);
         mPrintXY(3, 3, (char*)"Data tampering", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         mPrintXY(3, 4, (char*)"detected!", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
         closeMsgBox();
         return 0;
       case 4:
         mMsgBoxPush(3);
         mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
         closeMsgBox();
         return 0;
     }

@@ -87,7 +87,6 @@ int doTextInput(textInput* input) {
         mMsgBoxPush(4);
         mPrintXY(3, 2, (char*)"Field can't be", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(3, 3, (char*)"left blank.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
         closeMsgBox();
       }
     } else if(input->key == KEY_CTRL_EXIT) {

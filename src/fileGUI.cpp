@@ -74,8 +74,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
     PrintXY_2(TEXT_MODE_NORMAL, 1, 3, 1834, TEXT_COLOR_BLACK); // 200 files
     PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 1835, TEXT_COLOR_BLACK); // some will
     PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 1836, TEXT_COLOR_BLACK); // be skipped
-    PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
-    closeMsgBox();
+    closeMsgBox(0, 6);
   }
   MenuItem* menuitems = NULL;
   File* files = NULL;
@@ -156,8 +155,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             mPrintXY(3, 3, (char*)"the Main Memory,", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 4, (char*)"just a special", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 5, (char*)"mirror of it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY_2(TEXT_MODE_NORMAL, 1, 6, 2, TEXT_COLOR_BLACK); // press exit message
-            closeMsgBox();
+            closeMsgBox(0, 6);
             *shownMainMemHelp=1;
           }
           return 1; //reload at new folder
@@ -208,7 +206,6 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             mPrintXY(3, 2, (char*)"The clipboard is", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 3, (char*)"full; can't add", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 4, (char*)"more items to it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
             closeMsgBox();
           }
         } else if (menu.numselitems == 0) {
@@ -294,9 +291,7 @@ int deleteFilesGUI(File* files, Menu* menu) {
   mMsgBoxPush(4);
   mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 3, (char*)"Selected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 3, TEXT_COLOR_BLACK); // yes, F1
-  PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 4, TEXT_COLOR_BLACK); // no, F6
-  if(closeMsgBox(1)) {
+  if(closeMsgBox(1, 4)) {
     deleteFiles(files, menu);
     return 1;
   }
@@ -433,7 +428,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
         menuitems[2].value = searchRecursively;
         menuitems[3].value = matchCase;
         int res = doMenu(&menu);
-        
+
         if(res == MENU_RETURN_EXIT) return 0;
         else if(res == KEY_CTRL_F1) {
           curstep--;
@@ -639,7 +634,6 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
             mPrintXY(3, 2, (char*)"g3a files can't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 3, (char*)"be edited by", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 4, (char*)"an add-in.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
             closeMsgBox();
           } else {
             return 1;
@@ -694,7 +688,6 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
               if((LCD_WIDTH_PX-2*18-textX) < 15) { textX=2*18; textY=textY+12; }
               PrintMiniMini( &textX, &textY, (unsigned char*)niceout, 0, TEXT_COLOR_BLACK, 0 );
             }
-            PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
             closeMsgBox();
           }
         }
@@ -738,7 +731,6 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
     mMsgBoxPush(4);
     mPrintXY(3, 2, (char*)"Error opening", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     mPrintXY(3, 3, (char*)"file to read.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
     closeMsgBox();
     return;
   }

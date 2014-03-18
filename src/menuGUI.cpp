@@ -260,9 +260,15 @@ int getMenuSelectionSeparators(Menu* menu, int ignoreSeparators) {
 
 // not really related to the menu, but had to go somewhere as a general GUI helper:
 
-int closeMsgBox(int yesno) {
+int closeMsgBox(int yesno, int msgY) {
   // if yesno is true, returns 1 on yes and 0 on no.
   // else, waits for user to exit a simple info box, and calls MsgBoxPop for you!
+  // draws appropriate message(s) at provided locations
+  if(!yesno) PrintXY_2(TEXT_MODE_NORMAL, 1, msgY, 2, TEXT_COLOR_BLACK); // press exit message
+  else {
+    PrintXY_2(TEXT_MODE_NORMAL, 1, msgY, 3, TEXT_COLOR_BLACK); // yes, F1
+    PrintXY_2(TEXT_MODE_NORMAL, 1, msgY+1, 4, TEXT_COLOR_BLACK); // no, F6
+  }
   int key;
   while(1) {
     mGetKey(&key);
