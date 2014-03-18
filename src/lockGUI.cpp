@@ -131,22 +131,17 @@ int unlockCalc() {
   drawScreenTitle((char*)"Calculator lock", (char*)"Input code:");
   if (!passwordInput(1, 3, password)) return 0;
   else {
-    switch(comparePasswordHash(password)) {
-      case 0:
-        return 1;
-      case 1:
-      case 2:
-      case 3:
-        mMsgBoxPush(3);
+    int res = comparePasswordHash(password);
+    if(!res) return 1;
+    else {
+      mMsgBoxPush(3);
+      if(res == 4) mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      else {
         mPrintXY(3, 3, (char*)"Data tampering", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         mPrintXY(3, 4, (char*)"detected!", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-        closeMsgBox();
-        return 0;
-      case 4:
-        mMsgBoxPush(3);
-        mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-        closeMsgBox();
-        return 0;
+      }
+      closeMsgBox();
+      return 0;
     }
   }
   return 0;
