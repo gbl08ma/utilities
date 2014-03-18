@@ -1322,23 +1322,23 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
         }
         if(eventcount[day] > 0) {
           int textX = LEFT+2+WIDTH*x+2+12*2+2; //12+2 to have space to write the day and some padding
-          int textY = TOP+2+y*THICKNESS-TOPOFFSET+2; //+2 to have some padding
+          int textY = TOP+2+y*THICKNESS-TOPOFFSET+1; //+1 to have some padding
           unsigned char eventstr[10];
           if (eventcount[day] < 100) {
             itoa(eventcount[day], (unsigned char*)eventstr); 
           } else {
             strcpy((char*)eventstr, (char*)"++");
           }
-          PrintMiniMini( &textX, &textY, (unsigned char*)eventstr, 0, TEXT_COLOR_BLACK, 0 );   
+          PrintMiniMini( &textX, &textY, (unsigned char*)eventstr, 0, TEXT_COLOR_BLACK, 0 );
           if(day == d) {
             // color replacements for when background is red
-            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_WHITE, COLOR_RED);
-            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_BLACK, COLOR_WHITE);
+            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+1+24, 8*2, 12, COLOR_WHITE, COLOR_RED);
+            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+1+24, 8*2, 12, COLOR_BLACK, COLOR_WHITE);
           }
         }
         if(busydays[day] > 0 && day != d) {
           if(x == 0 || x == 6) {
-            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+2+24, 8*2, 12, COLOR_WHITE, categoryBackColors[busydays[day]]);
+            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+1+24, 8*2, 12, COLOR_WHITE, categoryBackColors[busydays[day]]);
             VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_LIGHTBLUE, categoryBackColors[busydays[day]]);
           } else {
             VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_WHITE, categoryBackColors[busydays[day]]);
