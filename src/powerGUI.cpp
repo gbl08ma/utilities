@@ -296,7 +296,24 @@ void setCPUclock() {
     Bdisp_AllClr_VRAM();
 
     drawScreenTitle((char*)"CPU speed");
-    CopySpriteNbit(selector, 10, 85, 364, 43, selector_palette, 1);
+
+    drawRectangle(13, 88, 357, 2, COLOR_BLACK);
+
+    drawRectangle(13, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(27, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(41, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(56, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(84, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(112, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(169, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(203, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(217, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(246, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(274, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(331, 85, 2, 19, COLOR_BLACK);
+    drawRectangle(368, 85, 2, 19, COLOR_BLACK);
+
+    CopySpriteNbit(selector, 10, 105, 364, 22, selector_palette, 1);
     
     textX=0; textY=118;
     PrintMiniMini( &textX, &textY, (unsigned char*)"USE AT YOUR OWN RISK! NO WARRANTY PROVIDED.", 0, TEXT_COLOR_RED, 0 );
