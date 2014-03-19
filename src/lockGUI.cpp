@@ -249,15 +249,12 @@ void lockApp() {
         int key,inscreen=1;
         while(inscreen) {
           mGetKey(&key);
-          switch(key)
-          {
+          switch(key) {
             case KEY_CTRL_F1:
             case KEY_CHAR_1:
-              {
-                mMsgBoxPop();
-                openRunMat();
-                break;
-              }
+              mMsgBoxPop();
+              openRunMat();
+              break;
             default:
               inscreen=0;
               break;
