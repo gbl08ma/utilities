@@ -35,7 +35,7 @@ void lantern() {
 }
 
 void pushBogusKey() {
-  Keyboard_PutKeycode( -1, -1, KEY_CHAR_5);
+  Keyboard_PutKeycode( 5, 3, 0);
 }
 
 void flashLight(int noDraw) { // if noDraw is true, this function will just change the backlight levels without changing VRAM contents
