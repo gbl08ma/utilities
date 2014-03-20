@@ -18,6 +18,7 @@
 #include "hardwareProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "timeProvider.hpp"
+#include "debugGUI.hpp"
  
 void lantern() {
   int key;  
@@ -35,7 +36,7 @@ void lantern() {
 }
 
 void pushBogusKey() {
-  Keyboard_PutKeycode( 5, 3, 0);
+  Keyboard_PutKeycode( -1, -1, KEY_CHAR_STORE);
 }
 
 void flashLight(int noDraw) { // if noDraw is true, this function will just change the backlight levels without changing VRAM contents
@@ -44,23 +45,24 @@ void flashLight(int noDraw) { // if noDraw is true, this function will just chan
   int timer = Timer_Install(0, pushBogusKey, 500);
   SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return. This way, we always have a chance to set the brightness correctly
   if (timer > 0) { Timer_Start(timer); }
+  int key = KEY_CHAR_STORE;
   while (1) {
     // attempt to fix a bug which will hang calc if flashLight is called right after turning on.
-    int key;
-    
-    if (prevlevel == 249) {
-      SetBacklightSubLevel_RAW(0);
-      prevlevel = 0;
-      if(!noDraw) {
-        Bdisp_Fill_VRAM( COLOR_BLACK, 3 );
-        DrawFrame( COLOR_BLACK );
-      }
-    } else {
-      SetBacklightSubLevel_RAW(249);
-      prevlevel = 249; 
-      if(!noDraw) {
-        Bdisp_Fill_VRAM( COLOR_WHITE, 3 ); 
-        DrawFrame( COLOR_WHITE );
+    if(key == KEY_CHAR_STORE) {
+      if (prevlevel == 249) {
+        SetBacklightSubLevel_RAW(0);
+        prevlevel = 0;
+        if(!noDraw) {
+          Bdisp_Fill_VRAM( COLOR_BLACK, 3 );
+          DrawFrame( COLOR_BLACK );
+        }
+      } else {
+        SetBacklightSubLevel_RAW(249);
+        prevlevel = 249; 
+        if(!noDraw) {
+          Bdisp_Fill_VRAM( COLOR_WHITE, 3 ); 
+          DrawFrame( COLOR_WHITE );
+        }
       }
     }
     GetKey(&key);
