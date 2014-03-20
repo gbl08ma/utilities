@@ -70,6 +70,7 @@ void fileTextEditor(char* filename, char* basefolder) {
         SetBackGround(13);
         clearLine(1,3);
         drawScreenTitle((char*)"Text Editor", (char*)"Save file as:");
+        drawFkeyLabels(0x036F); // <
         textInput ninput;
         ninput.forcetext=1;
         ninput.charlimit=MAX_NAME_SIZE;
@@ -78,7 +79,7 @@ void fileTextEditor(char* filename, char* basefolder) {
         while(1) {
           ninput.key = 0;
           int nres = doTextInput(&ninput);
-          if (nres==INPUT_RETURN_EXIT) break; // user aborted
+          if (nres==INPUT_RETURN_EXIT || (nres==INPUT_RETURN_KEYCODE && ninput.key==KEY_CTRL_F1)) break; // user aborted
           else if (nres==INPUT_RETURN_CONFIRM) {
             if(stringEndsInG3A(nfilename)) {
               mMsgBoxPush(4);
