@@ -72,7 +72,7 @@ Everything should be pretty much self-explanatory - Utilities is made to dispens
 
 The calculator lock function will guide you through the process of setting a password, the first time you use it. You can contact gbl08ma if for some reason you wish to disable this function (be prepared to follow instructions in a very exact way).
 
-The CPU clock adjustment tool only becomes available when the "Show advanced tools" setting is enabled.
+The CPU clock adjustment tool and the Add-In Manager only become available when the "Show advanced tools" setting is enabled.
 
 The Add-In manager is unstable because of technical limitations, and may cause system errors. If you see a System Error, you should try pressing Menu and then 1 to try to dismiss it, or you can press EXIT to reboot the calculator. 99% of the times no data is lost or serious damage is done in the event of System Errors.
 
