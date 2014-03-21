@@ -16,7 +16,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
   - **Power management** - fine adjustment of the power off and backlight timeouts, as well as brightness level. Advanced users can also set the CPU clock speed (overclock or underclock).
   
-  - **File manager** - more advanced than the one provided by Casio in the Memory menu, with Utilities you can move and copy files between folders, rename files and folders, calculate the SHA-256 sum of files and view and edit text files. Long file names supported.
+  - **File manager** - more advanced than the one provided by Casio in the Memory menu, with Utilities you can move and copy files and folders, rename files and folders, calculate the SHA-256 sum of files and view and edit text files. Long file names supported. You can also compress and decompress files to and from a Utilities-specific format. There's, too, a file search function that can look inside files.
 
   - **Text editor** - still very simple and does not allow for multi-line editing (you must insert line breaks manually with Shift+EXE). This functionality will be extended in future versions.
   
@@ -26,13 +26,13 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
   - **Function key color adjuster** - change the color of the function key labels throughout the OS.
   
-  - **System information viewer** - view the OS and bootloader version and timestamps, calculator model information, Renesas CPU version registers and the unique device ID.
+  - **System information viewer** - view the OS and bootloader version and timestamps, calculator model information, Renesas CPU version registers and the unique device ID. You can also view the current user information (as set on the System menu and displayed during power-off) and its history, including "passwords".
   
   - **Calculator lock** - "lock" the calculator with a password to avoid having curious people messing around with your calculator. Not suitable as a high-security lock (for now, it's easy to bypass). You can set Utilities to turn off the calculator after locking. And after unlocking, you can set it to open Run-Mat or ask you if you want. To return from Run-Mat back to Utilities, press Shift and Exit at the same time.
   
     - If you fear that the lock function may cause problems at some point (e.g. locking yourself out during an exam), contact gbl08ma for instructions on how to disable it.
   
-  - **Add-in manager** - allows for hiding add-ins from the Main Menu without uninstalling them, when they are not necessary. Currently it is an unstable feature due to OS limitations, sometimes causing system errors.
+  - **Add-in manager** - allows for hiding add-ins from the Main Menu without uninstalling them, when they are not necessary. Currently it is an unstable feature due to OS limitations, sometimes causing system errors. This functionality is only available when the advanced tools option is enabled.
   
   - Save the current time to the alpha/Basic variable T. This is useful for doing calculations around a certain time. Press the XoT key on the home screen to call the functionality.
   
@@ -40,7 +40,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
 ## And as a bonus...
 
-  - **Weights less than 155 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
+  - **Weights less than 150 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
   
   - Really fast to start up - it's usually even faster than the built-in app Run-Mat!
   
@@ -93,6 +93,26 @@ gbl08ma@gmail.com
 For a detailed changelog, including lots of developer anger and jargon, take a look at the commit history on the GitHub page.
 
 Here is a summary of the changes, in no special order:
+
+From v1.2 to v1.3:
+  - Added setting for choosing the type of notification shown when a chronometer finishes;
+  - Menu reorganized: now the text editor for a new file is accessible from the F4 menu inside the File Manager;
+  - Added folder copying capability to file manager;
+  - Added item sorting to file manager (can sort by name A-Z, Z-A, and by size, big-small and small-big);
+  - Added file searching capability to file manager (supports filename, content and recursive search);
+  - UI change: change some of the backgrounds shown;
+  - Added file compression and decompression functionality (accessible from the "File information" screen in the file manager);
+  - Added screen (accessible from the "System Information" screen) for seeing the current user information (with passwords) and its history;
+  - Display usage of the "user" area (where the user information is stored) on the memory usage screen;
+  - Added page up/down functionality to scrollable text views (press Shift then Up or Down);
+  - Make scrollable text views faster (including text reader);
+  - Noticeably faster calendar and tasks operation, including when searching for events;
+  - Fixed file manager crash when system language was Russian;
+  - Fixed many small bugs, most of them hard to notice;
+  - New main menu icon (again);
+  - "Promoted" the Add-In Manager to an advanced tool;
+  - Many under-the-hood changes to increase speed and reduce binary size;
+  - Changed many small details to improve looks and user experience.
 
 From v1.1 to v1.2:
   - Graphical marker ("timetable") of the busy state for a calendar day or week (can be disabled in the calendar settings);
