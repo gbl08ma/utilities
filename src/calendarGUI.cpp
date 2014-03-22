@@ -1840,18 +1840,19 @@ void calendarTools(int y, int m, int d) {
 
         long int daysdiff = DateToDays(y2, m2, d2) - DateToDays(y1, m1, d1);
         long int businessdiff = 0;
+        long int weekdays[7] = {0,0,0,0,0,0,0};
         for(long int i = 0; (daysdiff < 0 ? i > daysdiff : i < daysdiff); (daysdiff < 0 ? i-- : i++)) {
           long int ny, nm, nd;
           DaysToDate(DateToDays(y1, m1, d1)+i, &ny, &nm, &nd);
           int dw = dow(ny, nm, nd);
           if(dw != 0 && dw != 6) (daysdiff < 0 ? businessdiff-- : businessdiff++ );
+          weekdays[dw]++;
         }
         textArea text;
         text.title = (char*)"Date difference";
 
-        textElement elem[5];
+        textElement elem[15];
         text.elements = elem;
-        text.scrollbar=0;
         
         char line1[50];
         strcpy(line1, (char*)"Between ");
@@ -1876,8 +1877,37 @@ void calendarTools(int y, int m, int d) {
         itoa((int)businessdiff, (unsigned char*)line3);
         strcat(line3, (char*)" business days");
         elem[2].text = line3;
+
+        elem[3].newLine = 1;
+        char line4[50];
+        itoa((int)daysdiff/365, (unsigned char*)line4);
+        strcat(line4, (char*)" years");
+        elem[3].text = line4;
+
+        elem[4].newLine = 1;
+        char line5[50];
+        itoa((int)daysdiff/30, (unsigned char*)line5);
+        strcat(line5, (char*)" months");
+        elem[4].text = line5;
+
+        elem[5].newLine = 1;
+        char line6[50];
+        itoa((int)daysdiff/7, (unsigned char*)line6);
+        strcat(line6, (char*)" weeks");
+        elem[5].text = line6;
+        text.numelements = 6;
+
+        char weeklines[7][50];
+        for(int i=0; i<7; i++) {
+          elem[text.numelements].newLine = 1;
+          itoa((int)weekdays[i], (unsigned char*)weeklines[i]);
+          strcat(weeklines[i], (char*)" ");
+          strcat(weeklines[i], (char*)getDOWAsString(i+1));
+          if(weekdays[i] != 1) strcat(weeklines[i], (char*)"s");
+          elem[text.numelements].text = weeklines[i];
+          text.numelements++;
+        }
         
-        text.numelements = 3;
         doTextArea(&text);
         break;
       }
