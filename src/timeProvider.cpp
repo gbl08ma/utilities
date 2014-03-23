@@ -429,3 +429,14 @@ const char* dateSettingToInputDisplay(int setting) {
   if(setting < 0 || setting > 2) return NULL;
   return dateSettingInput[setting];
 }
+
+// returns true when current day is a DST start or end day in some of the major locations in the world
+// currently returns true for start/end dates for the US and EU
+int isTodayDSTstartEndDate() {
+  int y = getCurrentYear();
+  int d = getCurrentDay();
+  return (  d == 14 - (1+y*5/4) % 7 // US start
+         || d == 7 - (1+5*y/4) % 7 // US end
+         || d == 31 - (4+5*y/4) % 7    // EU start
+         || d == 31 - (1+5*y/4) % 7); // EU end
+}

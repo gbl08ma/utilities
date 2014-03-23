@@ -71,6 +71,10 @@ void showHome(chronometer* chrono) {
         darkenFkeys((GetSetting(SETTING_ENABLE_LOCK) == 1 ? 5 : 4));
       }
     }
+    if(isTodayDSTstartEndDate()) {
+      int textX = 0, textY = LCD_HEIGHT_PX-48-11;
+      PrintMiniMini( &textX, &textY, (unsigned char*)"To adjust the clock, press Shift then Menu.", 0, TEXT_COLOR_BLUE, 0 );
+    }
     if(!pane_keycache) {
       Bdisp_PutDisp_DD();
       checkDownwardsChronoCompleteGUI(chrono, NUMBER_OF_CHRONO);
