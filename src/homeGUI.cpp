@@ -57,7 +57,8 @@ void showHome(chronometer* chrono) {
       strcat(message, buffer);
       strcat(message, " ended");
       DefineStatusMessage(message, 1, 4, 0);
-    } else DefineStatusMessage((char*)"", 1, 0, 0);
+    } else if (isTodayDSTstartEndDate()) DefineStatusMessage((char*)"\xE7\x54\xE7\x6F\x20\xE7\x61\xE7\x64\xE7\x6A\xE7\x75\xE7\x73\xE7\x74\x20\xE7\x74\xE7\x68\xE7\x65\x20\xE7\x63\xE7\x6C\xE7\x6F\xE7\x63\xE7\x6B\x3A\x20\xE7\x53\xE7\x48\xE7\x49\xE7\x46\xE7\x54\x20\xE7\x74\xE7\x68\xE7\x65\xE7\x6E\x20\xE7\x4D\xE7\x45\xE7\x4E\xE7\x55", 1, 0, 0);
+    else DefineStatusMessage((char*)"", 1, 0, 0);
     DisplayStatusArea();
     
     // Print time
@@ -70,10 +71,6 @@ void showHome(chronometer* chrono) {
       if (GetSetting(SETTING_THEME)) {
         darkenFkeys((GetSetting(SETTING_ENABLE_LOCK) == 1 ? 5 : 4));
       }
-    }
-    if(isTodayDSTstartEndDate()) {
-      int textX = 0, textY = LCD_HEIGHT_PX-48-11;
-      PrintMiniMini( &textX, &textY, (unsigned char*)"To adjust the clock, press Shift then Menu.", 0, TEXT_COLOR_BLUE, 0 );
     }
     if(!pane_keycache) {
       Bdisp_PutDisp_DD();
