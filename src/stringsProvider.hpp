@@ -23,5 +23,6 @@ char *strcasestr(const char *s, const char *find);
 unsigned char *toksplit(unsigned char *src, char tokchar, unsigned char *token, int lgh);
 int EndsIWith(const char *str, const char *suffix);
 void* memmem(char* haystack, int hlen, char* needle, int nlen, int matchCase=1);
+void stringToMini(char* dest, char* orig);
 
 #endif

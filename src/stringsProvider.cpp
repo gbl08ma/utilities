@@ -149,3 +149,19 @@ void* memmem(char* haystack, int hlen, char* needle, int nlen, int matchCase) {
   }
   return NULL;
 }
+
+// convert a normal text string into a multibyte one where letters become their mini variants (F5 screen of the OS's character select dialog)
+// dest must be at least double the size of orig.
+void stringToMini(char* dest, char* orig) {
+  int len = strlen(orig);
+  int dlen = 0;
+  for (int i = 0; i < len; i++) {
+    if((orig[i] >= 65 && orig[i] <= 90) || (orig[i] >= 97 && orig[i] <= 122)) {
+      dest[dlen] = '\xe7';
+      dlen++;
+    }
+    dest[dlen] = orig[i];
+    dlen++;
+  }
+  dest[dlen] = '\0';
+}

@@ -25,6 +25,7 @@
 #include "inputGUI.hpp"
 #include "calendarProvider.hpp" 
 #include "keyboardProvider.hpp"
+#include "stringsProvider.hpp"
 #include "fileProvider.hpp"
 #include "settingsGUI.hpp"
 #include "debugGUI.hpp"
@@ -38,7 +39,11 @@ void viewCalendar(int dateselection) {
   int type = GetSetting(SETTING_DEFAULT_CALENDAR_VIEW);
   if(dateselection) type = 1; // week view can't act as date selector for now
   while(1) {
-    if(!dateselection) DefineStatusMessage((char*)"\xe7\x50\xe7\x72\xe7\x65\xe7\x73\xe7\x73 \xe7\x4f\xe7\x50\xe7\x54\xe7\x4e \xe7\x66\xe7\x6f\xe7\x72 \xe7\x6d\xe7\x6f\xe7\x72\xe7\x65 \xe7\x6f\xe7\x70\xe7\x74\xe7\x69\xe7\x6f\xe7\x6e\xe7\x73", 1, 0, 0);
+    if(!dateselection) {
+      char message[100];
+      stringToMini(message, (char*)"Press OPTN for more options");
+      DefineStatusMessage((char*)message, 1, 0, 0);
+    }
     if(type) res = viewMonthCalendar(dateselection);
     else res = viewWeekCalendar();
     if(res) type=!type; else return;
