@@ -17,6 +17,7 @@
 #include "settingsProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
+#include "stringsProvider.hpp"
 #include "menuGUI.hpp"
 #include "inputGUI.hpp"
 #include "fileProvider.hpp" 
@@ -44,7 +45,7 @@ void fileManager() {
 }
 int smemfree = 0;
 void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager) {
-  char titleBuffer[88] = "";
+  char titleBuffer[120] = "";
   if(!itemsinclip) {
     itoa(smemfree, (unsigned char*)title);
     LocalizeMessage1( 340, titleBuffer ); //"bytes free"
@@ -53,9 +54,12 @@ void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager) {
     strcpy((char*)title, "Clipboard: ");
     itoa(itemsinclip, (unsigned char*)titleBuffer);
     strcat((char*)title, titleBuffer);
-    strcat((char*)title, (itemsinclip == 1 ? " item" : " items"));
+    strcat((char*)title, " item");
+    if(itemsinclip != 1) strcat((char*)title, "s");
     if(!ismanager) {
-      strcat((char*)title, ", Shift\xe6\x91""9=Paste");
+      char message[50];
+      stringToMini(message, (char*)", SHIFT\xe6\x91""9=Paste");
+      strcat((char*)title, message);
     }
   }
 }

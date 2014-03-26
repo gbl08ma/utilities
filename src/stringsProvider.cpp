@@ -156,11 +156,19 @@ void stringToMini(char* dest, char* orig) {
   int len = strlen(orig);
   int dlen = 0;
   for (int i = 0; i < len; i++) {
-    if((orig[i] >= 65 && orig[i] <= 90) || (orig[i] >= 97 && orig[i] <= 122)) {
+    if((orig[i] >= 65 && orig[i] <= 90) || (orig[i] >= 97 && orig[i] <= 122)) { // A-Z a-z
       dest[dlen] = '\xe7';
       dlen++;
-    }
-    dest[dlen] = orig[i];
+      dest[dlen] = orig[i];
+    } else if((orig[i] >= 48 && orig[i] <= 57)) { // 0-9
+      dest[dlen] = '\xe5';
+      dlen++;
+      dest[dlen] = orig[i]-48+208;
+    } else if(orig[i] == '+') {
+      dest[dlen] = '\xe5';
+      dlen++;
+      dest[dlen] = '\xdb';
+    } else dest[dlen] = orig[i];
     dlen++;
   }
   dest[dlen] = '\0';
