@@ -31,11 +31,10 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
   if(menu->selection-1 < menu->scroll)
     menu->scroll = menu->selection -1;
   
-  // prepare item background filler string according to menu width
   while(1) {
     if(menu->statusText != NULL) DefineStatusMessage(menu->statusText, 1, 0, 0);
     // Clear the area of the screen we are going to draw on
-    if(0 == menu->pBaRtR) drawRectangle(18*(menu->startX-1), 24*(menu->miniMiniTitle ? itemsStartY:menu->startY), 18*menu->width, 24*menu->height-(menu->miniMiniTitle ? 24:0), COLOR_WHITE);
+    if(0 == menu->pBaRtR) drawRectangle(18*(menu->startX-1), 24*(menu->miniMiniTitle ? itemsStartY:menu->startY), 18*menu->width+(menu->scrollbar && menu->scrollout?6:0), 24*menu->height-(menu->miniMiniTitle ? 24:0), COLOR_WHITE);
     if (menu->numitems>0) {
       for(int curitem=0; curitem < menu->numitems; curitem++) {
         // print the menu item only when appropriate

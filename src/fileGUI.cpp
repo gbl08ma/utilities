@@ -122,18 +122,17 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   menu.scrollout=1;
   menu.nodatamsg = (char*)"No Data";
   menu.title = (char*)"Files";
-  char statusbuffer[75];
+  char statusbuffer[120];
   while(1) {
-    Bdisp_AllClr_VRAM();
     fillMenuStatusWithClip((char*)statusbuffer, *itemsinclip, 0);
     menu.statusText = statusbuffer;
     if(menu.fkeypage == 0) {
-      drawFkeyLabels(-1, // set by menu as SELECT [empty]
+      drawFkeyLabels(0, // set by menu as SELECT [empty], otherwise make it white (we're not using Bdisp_AllClr_VRAM)
         (menu.numselitems>0 ? 0x0069 : 0x03B6), // CUT (white) or SEQ
-        (menu.numselitems>0 ? 0x0034 : (menu.numitems>0 ? 0x0187 : -1)), // COPY (white) or SEARCH (only if there are items)
+        (menu.numselitems>0 ? 0x0034 : (menu.numitems>0 ? 0x0187 : 0)), // COPY (white) or SEARCH (only if there are items)
         0x0186, // NEW
-        (menu.numitems>0 ? 0x0188 : -1), // RENAME or nothing
-        (menu.numselitems>0 ? 0x0038 : -1)); // DELETE or nothing
+        (menu.numitems>0 ? 0x0188 : 0), // RENAME or white
+        (menu.numselitems>0 ? 0x0038 : 0)); // DELETE or white
     }
     res = doMenu(&menu, icontable);
     switch(res) {
