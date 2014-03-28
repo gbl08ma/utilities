@@ -97,11 +97,8 @@ int viewMonthCalendar(int dateselection) {
         break;
       case KEY_CTRL_F2:
         if (menu == 2) {
-          if (y != 0)
-              m--;
-          else if (m!=1) m--;
-          if (m == 0)
-          {
+          if(!(y==0 && m == 1)) m--;
+          if (m == 0) {
               m = 12;
               y--;
           }
@@ -111,11 +108,8 @@ int viewMonthCalendar(int dateselection) {
         break;
       case KEY_CTRL_F3:
         if (menu == 2) {
-          if (y != 9999)
-              m++;
-          else if (m!=12) m++;
-          if (m == 13)
-          {
+          if (!(y == 9999 && m == 12)) m++;
+          if (m == 13) {
               m = 1;
               y++;
           }
