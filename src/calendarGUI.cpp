@@ -297,7 +297,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   char buffer[10];
   int wkn = getWeekNumber(*y,*m,*d);
   itoa(wkn, (unsigned char*)buffer);
-  char menutitle[50];
+  char menutitle[70];
   strcpy(menutitle, "Week ");
   strcat(menutitle, buffer);
   itoa(*y, (unsigned char*)buffer);
@@ -379,6 +379,17 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
       }
     }
     ddays++;
+  }
+  if(GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT)) {
+    strcat(menutitle, " (");
+    if(cursce) {
+      char buffer[10];
+      itoa((int)cursce, (unsigned char*)buffer);
+      strcat(menutitle, buffer);
+    } else strcat(menutitle, "No");
+    strcat(menutitle, " event");
+    if(cursce != 1) strcat(menutitle, "s");
+    strcat(menutitle, ")");
   }
   menu->numitems = curmenu;
   menu->items = menuitems;
