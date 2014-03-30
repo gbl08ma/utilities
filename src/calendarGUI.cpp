@@ -894,7 +894,7 @@ void viewEvent(CalendarEvent* event, int istask) {
 }
 
 void fillInputDate(int yr, int m, int d, char* buffer) {
-  if(yr != 0 || m != 0 || d != 0) {
+  if(yr || m || d) {
     char buffer2[8];
     char day[5] = "";
     char month[5] = "";
@@ -935,7 +935,7 @@ void fillInputDate(int yr, int m, int d, char* buffer) {
 
 void fillInputTime(int h, int m, int s, char* buffer) {
   buffer[0] = '\0'; // This sets the first character to \0, also represented by "", an empty string
-  if(h != 0 || m != 0 || s != 0) {
+  if(h || m || s) {
     char buffer2[8];
     if (h < 10) { strcat(buffer, "0"); }
     itoa(h, (unsigned char*) buffer2);
@@ -1001,7 +1001,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       case 0:
         {
           drawScreenTitle(NULL, (char*)"Title:");
-          clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
           input.forcetext=1; //force text so title must be at least one char.
@@ -1019,7 +1018,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       case 1:
         {
           drawScreenTitle(NULL, (char*)"Location:");
-          clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
           input.charlimit=128;
@@ -1037,7 +1035,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       case 2:
         {
           drawScreenTitle(NULL, (char*)"Description:");
-          clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
           
           textInput input;
           input.charlimit=1024;

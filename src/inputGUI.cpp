@@ -26,7 +26,10 @@ int doTextInput(textInput* input) {
   int wasInClip=0;
   if (input->key) { input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, input->key); }
   int widthForSyscalls = input->width;
-  if(input->width == 21) widthForSyscalls = 20;
+  if(input->width == 21) {
+    widthForSyscalls = 20;
+    clearLine(1, input->y); // remove aestethically unpleasing bit of background at the end of the field
+  }
   while(1)
   {
     if(input->forcetext && strlen(input->buffer)==0) {

@@ -307,7 +307,6 @@ int makeFolderGUI(char* browserbasepath) {
   //returns 1 if user aborts, 0 if makes folder.
   SetBackGround(10);
   clearLine(1,8);
-  clearLine(1,3); // clear background at end of input
   drawScreenTitle((char*)"Create folder", (char*)"Name:");
   char newname[MAX_NAME_SIZE] = "";
   textInput input;
@@ -337,7 +336,6 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   //returns 0 if user aborts, 1 if renames.
   SetBackGround(6);
   clearLine(1,8);
-  clearLine(1,3); // clear background at end of input
   char title[MAX_NAME_SIZE+6];
   strcpy(title, menu->items[menu->selection-1].text);
   strcat(title, " to:");
@@ -409,7 +407,6 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
     if(curstep == 0) {
       SetBackGround(9);
       drawScreenTitle((char*)"File Search", (char*)"Search for:");
-      clearLine(1, 3); // remove aestethically unpleasing bit of background at the end of the field
       drawFkeyLabels(0, 0, 0, 0, 0, 0x04A3); // Next
       while(1) {
         input.key=0;
