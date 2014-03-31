@@ -209,6 +209,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
       hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // always open, since file did not exist so it must be closed
       if(hAddFile < 0) // Still failing?
       {
+        setDBneedsRepairFlag(1);
         return 1;
       }
       char finalcontents[2060];
@@ -221,15 +222,20 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
     } else {
       // file doesn't exist, but can't be created?
       // if we're calling ourselves for the second time, return:
-      if(secondCall) return 2;
+      if(secondCall) {
+        setDBneedsRepairFlag(1);
+        return 2;
+      }
       // it's probably because the DB has never been used and is not initialized (i.e. we haven't created the calendar folder).
       // create the folder:
       unsigned short pFolder[MAX_FILENAME_SIZE];
       Bfile_StrToName_ncpy(pFolder, (unsigned char*)folder, MAX_FILENAME_SIZE);
       Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0);
       // now let's call ourselves again, then according to the return value of our second instance, decide if there was an error or not.
-      if(AddEvent(calEvent, folder,1)) return 2; // another error ocurred
-      else return 0; //event was added without error, now that we created the folder
+      if(AddEvent(calEvent, folder,1)) {
+        setDBneedsRepairFlag(1);
+        return 2; // another error ocurred
+      } else return 0; //event was added without error, now that we created the folder
     }
   } else {
     /*File exists and is open. Check its size and if its OK, append new event to it.
@@ -264,7 +270,10 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   unsigned short pFile[MAX_FILENAME_SIZE];
   smemFilenameFromDate(startdate, pFile, folder);
   int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-  if(hAddFile < 0) return 1;
+  if(hAddFile < 0) {
+    setDBneedsRepairFlag(1);
+    return 1;
+  }
   int oldsize = Bfile_GetFileSize_OS(hAddFile);
   if(newsize < oldsize) {
     // new file is smaller than old file; we must recreate with new size.
@@ -272,7 +281,10 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
     Bfile_DeleteEntry(pFile);
     if(Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize) < 0) return 2;
     hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle again
-    if(hAddFile < 0) return 3;
+    if(hAddFile < 0) {
+      setDBneedsRepairFlag(1);
+      return 3;
+    }
   }
   
   // write new contents. WriteFile will take care of expanding the file if needed.
