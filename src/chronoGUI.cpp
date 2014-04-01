@@ -497,7 +497,6 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
         if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 1) {
           // notification with screen flashing
           PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-          Bdisp_PutDisp_DD();
           flashLight(1); // with parameter set to 1, it doesn't change VRAM, and since it returns on pressing EXIT...*/
           mMsgBoxPop();
         } else {
