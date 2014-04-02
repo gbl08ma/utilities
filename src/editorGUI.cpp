@@ -62,10 +62,11 @@ void fileTextEditor(char* filename, char* basefolder) {
     SetBackGround(newfile ? 10 : 6);
     clearLine(1,8);
     drawScreenTitle((char*)"Text Editor", (char*)"File contents:");
-    clearLine(1,3);
     int res = doTextInput(&input);
+    int backToEditor = 0;
     if (res==INPUT_RETURN_EXIT) return; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
+      unsigned short newfilenameshort[0x10A];
       if(newfile) {
         SetBackGround(13);
         clearLine(1,3);
@@ -79,8 +80,11 @@ void fileTextEditor(char* filename, char* basefolder) {
         while(1) {
           ninput.key = 0;
           int nres = doTextInput(&ninput);
-          if (nres==INPUT_RETURN_EXIT || (nres==INPUT_RETURN_KEYCODE && ninput.key==KEY_CTRL_F1)) break; // user aborted
-          else if (nres==INPUT_RETURN_CONFIRM) {
+          if (nres==INPUT_RETURN_EXIT || (nres==INPUT_RETURN_KEYCODE && ninput.key==KEY_CTRL_F1)) {
+            // user aborted
+            backToEditor = 1;
+            break;
+          } else if (nres==INPUT_RETURN_CONFIRM) {
             if(stringEndsInG3A(nfilename)) {
               mMsgBoxPush(4);
               mPrintXY(3, 2, (char*)"g3a files can't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -92,39 +96,27 @@ void fileTextEditor(char* filename, char* basefolder) {
               char newfilename[MAX_FILENAME_SIZE];
               strcpy(newfilename, basefolder);
               strcat(newfilename, nfilename);
-              unsigned short newfilenameshort[0x10A];
               Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
-              int size = strlen(sText);
-              Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size); //create the file
-              
-              int h = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
-              if(h < 0) // Still failing?
-              {
-                return;
-              }
-              //Write file contents
-              Bfile_WriteFile_OS(h, sText, size);
-              Bfile_CloseFile_OS(h);
-              return;
+              break;
             }
           }
         }
+        if(backToEditor) continue;
       } else {
         // delete, then create and save file
-        unsigned short newfilenameshort[0x10A];
         Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)filename, 0x10A);
         Bfile_DeleteEntry(newfilenameshort);
-        int size = strlen(sText);
-        Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size); //create the file
-        
-        int h = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
-        if(h >= 0) { // Still failing?
-          //Write file contents
-          Bfile_WriteFile_OS(h, sText, size);
-          Bfile_CloseFile_OS(h);
-        }
-        return;
       }
+      int size = strlen(sText);
+      Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size); //create the file
+      
+      int h = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
+      if(h >= 0) { // Still failing?
+        //Write file contents
+        Bfile_WriteFile_OS(h, sText, size);
+        Bfile_CloseFile_OS(h);
+      }
+      return;
     }
   }
 }
