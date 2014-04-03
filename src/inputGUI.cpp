@@ -40,10 +40,12 @@ int doTextInput(textInput* input) {
     
     drawLine(input->x*18-18, input->y*24-1, (input->width==21?LCD_WIDTH_PX-1:input->width*18+input->x*18-18-1), input->y*24-1, COLOR_GRAY);
     drawLine(input->x*18-18, input->y*24+23, (input->width==21?LCD_WIDTH_PX-1:input->width*18+input->x*18-18-1), input->y*24+23, COLOR_GRAY);
-    if(input->type==INPUTTYPE_DATE) {
+    if(input->type==INPUTTYPE_DATE || input->type==INPUTTYPE_TIME) {
       //vertical lines, start and end
       drawLine(input->x*18-18, input->y*24-1, input->x*18-18, input->y*24+23, COLOR_GRAY);
       drawLine((input->x*18-18)+18*input->width, input->y*24-1, (input->x*18-18)+18*input->width, input->y*24+23, COLOR_GRAY);
+    }
+    if(input->type==INPUTTYPE_DATE) {
       //vertical lines: dd, mm and yyyy separators
       switch(GetSetting(SETTING_DATEFORMAT)) {
         case 0:
@@ -57,9 +59,6 @@ int doTextInput(textInput* input) {
           break;
       }
     } else if(input->type==INPUTTYPE_TIME) {
-      //vertical lines, start and end
-      drawLine(input->x*18-18, input->y*24-1, input->x*18-18, input->y*24+23, COLOR_GRAY);
-      drawLine((input->x*18-18)+18*input->width, input->y*24-1, (input->x*18-18)+18*input->width, input->y*24+23, COLOR_GRAY);
       //vertical lines: hh, mm and ss separators
       drawLine((input->x*18-18)+18*2, input->y*24-1, (input->x*18-18)+18*2, input->y*24+23, COLOR_GRAY);
       drawLine((input->x*18-18)+18*4, input->y*24-1, (input->x*18-18)+18*4, input->y*24+23, COLOR_GRAY);
