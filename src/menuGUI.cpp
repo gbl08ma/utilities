@@ -245,7 +245,6 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
 }
 
 int getMenuSelectionSeparators(Menu* menu, int ignoreSeparators) {
-  // exact opposite of function above
   if(ignoreSeparators) { if(menu->items[menu->selection-1].type == MENUITEM_SEPARATOR) return 0; } //current selection is not a "traditional" menu item, return invalid position
   else { if(menu->items[menu->selection-1].type != MENUITEM_SEPARATOR) return 0; } //current selection is not a separator, return invalid position
   int selS = 0, selNS = 0;
