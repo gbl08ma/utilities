@@ -202,16 +202,12 @@ void powerInformation() {
   doTextArea(&text);
 }
 const unsigned int PLLs[] = {PLL_1x, PLL_2x, PLL_3x, PLL_4x, PLL_6x, PLL_8x, PLL_12x, PLL_15x, PLL_16x, PLL_18x, PLL_20x, PLL_24x, PLL_26x, PLL_28x};
+#define FREQ_ARROW_BOTTOM 84
 void updateCurrentFreq() {
   // this does not draw the VRAM contents to screen, only changes them!
   char*cur = 0x00000000;
   char*desc = 0x00000000;
   volatile unsigned int*FRQCR = (unsigned int*) 0xA4150000;
-  
-  int arrowBottom = 84;
-  
-  //Clear area where the cursor arrow appears
-  drawRectangle(0, 65, 384, 20, COLOR_WHITE);
   
   switch((*FRQCR & 0x3F000000) >> 24) {
     case PLL_28x:
@@ -221,67 +217,67 @@ void updateCurrentFreq() {
     case PLL_26x:
       cur = (char*)"94.3";
       desc = (char*)"Overclocked";
-      drawArrowDown(368, arrowBottom, COLOR_ORANGE);
+      drawArrowDown(368, FREQ_ARROW_BOTTOM, COLOR_ORANGE);
       break;
     case PLL_24x:
       cur = (char*)"87";
       desc = (char*)"Overclocked";
-      drawArrowDown(331, arrowBottom, COLOR_ORANGE);
+      drawArrowDown(331, FREQ_ARROW_BOTTOM, COLOR_ORANGE);
       break;
     case PLL_20x:
       cur = (char*)"72.5";
       desc = (char*)"Overclocked";
-      drawArrowDown(274, arrowBottom, COLOR_ORANGE);
+      drawArrowDown(274, FREQ_ARROW_BOTTOM, COLOR_ORANGE);
       break;
     case PLL_18x:
       cur = (char*)"65.3";
       desc = (char*)"Overclocked";
-      drawArrowDown(246, arrowBottom, COLOR_ORANGE);
+      drawArrowDown(246, FREQ_ARROW_BOTTOM, COLOR_ORANGE);
       break;
     case PLL_16x:
       cur = (char*)"58";
       desc = (char*)"Normal speed";
-      drawArrowDown(217, arrowBottom, COLOR_LIMEGREEN);
+      drawArrowDown(217, FREQ_ARROW_BOTTOM, COLOR_LIMEGREEN);
       break;
     case PLL_15x:
       cur = (char*)"54.4";
       desc = (char*)"Underclocked";
-      drawArrowDown(203, arrowBottom, COLOR_LIGHTBLUE);
+      drawArrowDown(203, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
       break;
     case PLL_12x:
       cur = (char*)"43.5";
       desc = (char*)"Underclocked";
-      drawArrowDown(169, arrowBottom, COLOR_LIGHTBLUE);
+      drawArrowDown(169, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
       break;
     case PLL_8x:
       cur = (char*)"29";
       desc = (char*)"Underclocked";
-      drawArrowDown(112, arrowBottom, COLOR_LIGHTBLUE);
+      drawArrowDown(112, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
       break;
     case PLL_6x:
       cur = (char*)"21.7";
       desc = (char*)"Underclocked";
-      drawArrowDown(84, arrowBottom, COLOR_LIGHTBLUE);
+      drawArrowDown(84, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
       break;
     case PLL_4x:
       cur = (char*)"14.5";
       desc = (char*)"Underclocked";
-      drawArrowDown(56, arrowBottom, COLOR_LIGHTBLUE);
+      drawArrowDown(56, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
       break;
     case PLL_3x:
       cur = (char*)"10.8";
       desc = (char*)"Underclocked";
-      drawArrowDown(41, arrowBottom, COLOR_LIGHTBLUE);
+      drawArrowDown(41, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
       break;
     case PLL_2x:
       cur = (char*)"7.25";
       desc = (char*)"Underclocked";
-      drawArrowDown(27, arrowBottom, COLOR_LIGHTBLUE);
+      drawArrowDown(27, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
       break;
     case PLL_1x:
       cur = (char*)"3.6";
       desc = (char*)"Underclocked";
-      drawArrowDown(13, arrowBottom, COLOR_LIGHTBLUE);
+      drawArrowDown(13, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
       break;
     default:
       cur = (char*)"UNKNOWN";
