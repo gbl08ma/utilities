@@ -69,7 +69,6 @@ void fileTextEditor(char* filename, char* basefolder) {
       unsigned short newfilenameshort[0x10A];
       if(newfile) {
         SetBackGround(13);
-        clearLine(1,3);
         drawScreenTitle((char*)"Text Editor", (char*)"Save file as:");
         drawFkeyLabels(0x036F); // <
         textInput ninput;

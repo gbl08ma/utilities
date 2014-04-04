@@ -1608,7 +1608,6 @@ void searchEventsGUI(int y, int m, int d) {
   
   SetBackGround(9);
   clearLine(1,8);
-  clearLine(1,3);
   drawScreenTitle((char*)"Event Search", (char*)"Search for:");
   drawFkeyLabels(-1,-1,-1,-1,-1,0x00A5); // SEARCH (white)
   
