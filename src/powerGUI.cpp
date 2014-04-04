@@ -115,26 +115,35 @@ void powerInformation() {
   elem[3].text = (char*)"Power source:";
   elem[3].spaceAtEnd = 1;
   int key = *(unsigned char*)P11DR;
-  if (key==0x0000) {
-    elem[4].text = (char*)"Emulated";
-  } else if (key==0x0008) {
-    elem[4].text = (char*)"Batteries";
-  } else if (key==0x000A) {
-    elem[4].text = (char*)"USB";
-  } else {
-    elem[4].text = (char*)"Unknown";
+  switch(key) {
+    case 0x00:
+      elem[4].text = (char*)"Emulated";
+      break;
+    case 0x08:
+      elem[4].text = (char*)"Batteries";
+      break;
+    case 0x0A:
+      elem[4].text = (char*)"USB";
+      break;
+    default:
+      elem[4].text = (char*)"Unknown";
+      break;
   }
   
   elem[5].newLine = 1;
   elem[5].text = (char*)"Battery type setting:";
   elem[5].spaceAtEnd = 1;
   
-  if (GetBatteryType()==1) {
-    elem[6].text = (char*)"Alkaline";
-  } else if (GetBatteryType()==2) {
-    elem[6].text = (char*)"Ni-MH";
-  } else {
-    elem[6].text = (char*)"Not defined";
+  switch(GetBatteryType()) {
+    case 1:
+      elem[6].text = (char*)"Alkaline";
+      break;
+    case 2:
+      elem[6].text = (char*)"Ni-MH";
+      break;
+    default:
+      elem[6].text = (char*)"Not defined";
+      break;
   }
   
   elem[7].newLine = 1;
