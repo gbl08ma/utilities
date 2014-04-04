@@ -34,7 +34,6 @@
 #include "lockGUI.hpp"
 #include "fileGUI.hpp"
 #include "editorGUI.hpp"
-#include "debugGUI.hpp"
 
 void showHome(chronometer* chrono) {
   unsigned short key = 0;
@@ -134,11 +133,10 @@ void showHome(chronometer* chrono) {
           SetSetupSetting( (unsigned int)0x14, 0);
           char code[25] = "";
           textInput input;
-          input.y=8;
           input.charlimit=21;
           input.buffer = (char*)code;
           int res = doTextInput(&input);
-          if (res==INPUT_RETURN_CONFIRM && !strcmp(code, "qazedcol")) masterControl();
+          if (res==INPUT_RETURN_CONFIRM && !strcmp(code, "qazedcol")) return; // kill main interface; currently this opens masterControl.
         }
         break;
       case KEY_PRGM_RIGHT:

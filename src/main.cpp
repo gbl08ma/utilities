@@ -117,6 +117,7 @@ int main()
   
   while(1) {
     showHome(chrono);
+    masterControl(); //only accessible when showHome returns, and it shouldn't return unless we want to access masterControl.
   }
 }
 

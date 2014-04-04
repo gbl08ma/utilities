@@ -30,8 +30,7 @@ int doTextInput(textInput* input) {
     widthForSyscalls = 20;
     clearLine(1, input->y); // remove aestethically unpleasing bit of background at the end of the field
   }
-  while(1)
-  {
+  while(1) {
     if(input->forcetext && strlen(input->buffer)==0) {
       input->buffer[0]='\xd8';
       input->buffer[1]='\x0';
