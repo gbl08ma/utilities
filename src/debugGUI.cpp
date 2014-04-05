@@ -93,18 +93,16 @@ void masterControl() {
         case 1: SaveSettings(); break;
         case 2: LoadSettings(); break;
         case 3: 
-          SetSetting(SETTING_ENABLE_LOCK, 0, 0); // do not autosave, to allow full control of the operator
-          break;
         case 4:
-          SetSetting(SETTING_ENABLE_LOCK, 1, 0); // do not autosave, to allow full control of the operator
+          SetSetting(SETTING_ENABLE_LOCK, menu.selection-3, 0); // do not autosave, to allow full control of the operator
           break;
-        case 5: SetDebugMode(0); break;
-        case 6: SetDebugMode(1); break;
+        case 5:
+        case 6:
+          SetDebugMode(menu.selection-5);
+          break;
         case 7:
-          SetSetting(SETTING_IS_FIRST_RUN, 0, 0); // do not autosave, to allow full control of the operator
-          break;
         case 8:
-          SetSetting(SETTING_IS_FIRST_RUN, 1, 0); // do not autosave, to allow full control of the operator
+          SetSetting(SETTING_IS_FIRST_RUN, menu.selection-7, 0); // do not autosave, to allow full control of the operator
           break;
         case 9:
           //CallbackAtQuitMainFunction( mycallback );
