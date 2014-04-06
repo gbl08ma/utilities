@@ -34,7 +34,7 @@ void fileManager() {
   int shownMainMemHelp = 0;
   char browserbasepath[MAX_FILENAME_SIZE+1] = "\\\\fls0\\";
   char filetoedit[MAX_FILENAME_SIZE+1] = "";
-  File* clipboard = (File*)alloca((MAX_ITEMS_IN_CLIPBOARD+1)*sizeof(File));
+  File clipboard[MAX_ITEMS_IN_CLIPBOARD+1];
   while(res) {
     strcpy(filetoedit, (char*)"");
     res = fileManagerSub(browserbasepath, &itemsinclip, &shownClipboardHelp, &shownMainMemHelp, clipboard, filetoedit);
@@ -753,15 +753,10 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
     } else if(*(asrc+bcur) == '\r' || *(asrc+bcur) == '\n') text.numelements++;
     bcur += jump;
   }
-  
-  textElement* elem = (textElement*)alloca(text.numelements*sizeof(textElement));
+
+  textElement elem[text.numelements];
   text.elements = elem;
   elem[0].text = (char*)asrc;
-  elem[0].newLine=0;
-  elem[0].color=COLOR_BLACK;
-  elem[0].lineSpacing = 0;
-  elem[0].spaceAtEnd = 0;
-  elem[0].minimini = 0;
   int ecur = 1;
   bcur = 0;
   while(bcur < filesize && ecur <= text.numelements) {
@@ -773,10 +768,6 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
       *(asrc+bcur)='\0';
       elem[ecur].text = (char*)(asrc+bcur+jump);
       elem[ecur].newLine=1;
-      elem[ecur].color=COLOR_BLACK;
-      elem[ecur].lineSpacing = 0;
-      elem[ecur].spaceAtEnd = 0;
-      elem[ecur].minimini = 0;
       ecur++;
     }
     bcur += jump;

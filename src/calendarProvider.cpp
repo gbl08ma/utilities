@@ -260,7 +260,7 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   // count: number of events in newEvents (number of events in old file doesn't matter). starts at 1.
 
   //convert the calevents back to char. assuming each event, as string, doesn't take more than 1250 bytes
-  unsigned char* newfilecontents = (unsigned char*)alloca(7+count*1250);
+  unsigned char newfilecontents [7+count*1250];
   strcpy((char*)newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
   for(int j = 0; j < count; j++) {
     calEventToChar(&newEvents[j], newfilecontents); //calEventToChar only does strncat, so it can append directly.

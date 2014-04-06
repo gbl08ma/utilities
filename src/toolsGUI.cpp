@@ -218,7 +218,6 @@ void changeFKeyColor() {
   elem[0].minimini = 1;
   text.numelements = 1;
   doTextArea(&text);
-  Bdisp_PutDisp_DD();
   selcolor = ColorIndexDialog1( *keycolor, 0 );
   if(selcolor != (unsigned char)0xFF) {
     //user didn't press EXIT, QUIT or AC/ON. input is validated.

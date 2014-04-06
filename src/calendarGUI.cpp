@@ -325,7 +325,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   // allocate SimpleCalendarEvents
   SimpleCalendarEvent* events = (SimpleCalendarEvent*)alloca(numevents*sizeof(SimpleCalendarEvent));
   // allocate MenuItems:
-  MenuItem* menuitems = (MenuItem*)alloca((numevents+7)*sizeof(MenuItem));
+  MenuItem menuitems[numevents+7];
   
   // read events this time
   unsigned int curmenu = 0;
@@ -361,7 +361,6 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
     strcat(menuitemtext[curday], (char*)")");
     menuitems[curmenu].text = menuitemtext[curday];
     menuitems[curmenu].type = MENUITEM_SEPARATOR;
-    menuitems[curmenu].color = TEXT_COLOR_BLACK;
     if(ny==oy&&nm==om&&nd==od&&*jumpToSel==1) menu->selection=curmenu+1;
     curmenu++;
     if(fevcount[curday]) {
@@ -372,7 +371,6 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
       for(unsigned int k = 0; k < fevcount[curday]; k++) {
         // build menuitem
         menuitems[curmenu].text = (char*)events[cursce].title;
-        menuitems[curmenu].type = MENUITEM_NORMAL;
         menuitems[curmenu].color = events[cursce].category-1;
         curmenu++;
         cursce++;
