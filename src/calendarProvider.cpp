@@ -355,8 +355,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
     unsigned char token[2048];
     unsigned char* src = asrc;
     src = toksplit(src, EVENT_SEPARATOR , token, 2048);
-    int notfinished = 1;
-    while (notfinished) {
+    while (1) {
       //pass event to the parser and store it in the string event array
       if(calEvents != NULL) charToCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &calEvents[startArray+curevent]); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
       // we don't want full CalendarEvents, but do we want SimpleCalendarEvents?
@@ -366,8 +365,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
       }
       curevent++;
       if (strlen((char*)src) < 5) { //5 bytes is not enough space to hold an event, so that means there are no more events to process... right?
-        notfinished = 0;
-        break; //force it to stop. strtok can't happen again, otherwise token will be null and a system error is approaching!
+        break; //stop now. strtok can't happen again, otherwise token will be null and a system error is approaching!
       }
       if (curevent >= MAX_DAY_EVENTS || (limit > 0 && curevent >= limit)) { //check if we aren't going over the limit
         //we are, return now. events past this point will be ignored.
