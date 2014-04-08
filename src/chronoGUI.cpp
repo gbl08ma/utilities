@@ -199,9 +199,6 @@ void chronoScreen(chronometer* chrono) {
             menu.scroll = menu.selection -1;
         }
         break;
-      case KEY_PRGM_RETURN:
-        saveChronoArray(chrono, NUMBER_OF_CHRONO);
-        break;
       case KEY_PRGM_F1:
         if (GetSetupSetting( (unsigned int)0x14) == 1) {
           SetSetupSetting( (unsigned int)0x14, 0);
@@ -212,7 +209,7 @@ void chronoScreen(chronometer* chrono) {
         }
         break;
       case KEY_PRGM_F2:
-        if(menu.fkeypage==0) { setChronoGUI(&menu, chrono); saveChronoArray(chrono, NUMBER_OF_CHRONO); }
+        if(menu.fkeypage==0) setChronoGUI(&menu, chrono);
         else if (menu.fkeypage==1) {
           // select all
           for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = MENUITEM_VALUE_CHECKED;
@@ -420,6 +417,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
     }
   }
   if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], ms, type); // if there was no selected chrono, do it for the currently selected menu position
+  saveChronoArray(tchrono, NUMBER_OF_CHRONO);
 }
 
 void setBuiltinChrono(Menu* menu, chronometer* tchrono) {
@@ -470,6 +468,7 @@ void setBuiltinChrono(Menu* menu, chronometer* tchrono) {
     }
   }
   if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], duration, CHRONO_TYPE_DOWN); // if there was no selected chrono, do it for the currently selected menu position
+  saveChronoArray(tchrono, NUMBER_OF_CHRONO);
   Bdisp_AllClr_VRAM();
 }
 
