@@ -117,7 +117,6 @@ void chronoScreen(chronometer* chrono) {
   int curcolor = TEXT_COLOR_BLUE;
   for(int curitem=0; curitem < NUMBER_OF_CHRONO; curitem++) {
     menuitems[curitem].type = MENUITEM_CHECKBOX;
-    menuitems[curitem].value = MENUITEM_VALUE_NONE;
     menuitems[curitem].color = curcolor;
     switch(curcolor) {
       case TEXT_COLOR_BLUE: curcolor = TEXT_COLOR_RED; break;
@@ -135,7 +134,6 @@ void chronoScreen(chronometer* chrono) {
   menu.scrollout=1;
   menu.title = (char*)"Chronometers";
   
-  Bdisp_AllClr_VRAM();
   short unsigned int key;
   unsigned short prevkey = 0;
   while(1) {
@@ -174,26 +172,20 @@ void chronoScreen(chronometer* chrono) {
         }
         break;
       case KEY_PRGM_DOWN:
-        if(menu.selection == menu.numitems)
-        {
+        if(menu.selection == menu.numitems) {
           menu.selection = 1;
           menu.scroll = 0;
-        }
-        else
-        {
+        } else {
           menu.selection++;
           if(menu.selection > menu.scroll+(menu.numitems>6 ? 6 : menu.numitems))
             menu.scroll = menu.selection -(menu.numitems>6 ? 6 : menu.numitems);
         }
         break;
       case KEY_PRGM_UP:
-        if(menu.selection == 1)
-        {
+        if(menu.selection == 1) {
           menu.selection = menu.numitems;
           menu.scroll = menu.selection-6;
-        }
-        else
-        {
+        } else {
           menu.selection--;
           if(menu.selection-1 < menu.scroll)
             menu.scroll = menu.selection -1;
@@ -401,10 +393,9 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
           mPrintXY(3, 3, (char*)"past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           closeMsgBox();
           return;
-        } else {
-          type=CHRONO_TYPE_DOWN;
-          break;
         }
+        type=CHRONO_TYPE_DOWN;
+        break;
       }
     }
   }
