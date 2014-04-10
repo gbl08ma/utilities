@@ -27,7 +27,7 @@
 void firstRunWizard() {
   setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
   Bdisp_AllClr_VRAM();
-
+  DrawFrame(COLOR_WHITE);
   drawtnyimLogo( LCD_WIDTH_PX/2-138/2, LCD_HEIGHT_PX/2-42/2);
   int textY = LCD_HEIGHT_PX/2-42/2-24 - 20;
   int textX = 104;
