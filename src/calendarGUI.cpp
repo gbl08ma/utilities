@@ -426,21 +426,19 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
         else menu->fkeypage = 0;
         break;
       case MENU_RETURN_SELECTION:
-        if(menu->numitems > 0) {
-          if(msel>0) viewNthEventOnDay(&events[msel-1].startdate, events[msel-1].origpos);
-          else if(ssel>0) {
-            long int dd = DateToDays(*y, *m, *d) + ssel-1;
-            long int ny, nm, nd;
-            DaysToDate(dd, &ny, &nm, &nd);
-            EventDate date;
-            date.year = ny; date.month = nm; date.day = nd;
-            searchValid = 1;
-            viewEvents(date.year, date.month, date.day);
-            if(!searchValid) {
-              *y=ny; *m=nm; *d=nd;
-              *jumpToSel=1;
-              return 1;
-            }
+        if(msel>0) viewNthEventOnDay(&events[msel-1].startdate, events[msel-1].origpos);
+        else if(ssel>0) {
+          long int dd = DateToDays(*y, *m, *d) + ssel-1;
+          long int ny, nm, nd;
+          DaysToDate(dd, &ny, &nm, &nd);
+          EventDate date;
+          date.year = ny; date.month = nm; date.day = nd;
+          searchValid = 1;
+          viewEvents(date.year, date.month, date.day);
+          if(!searchValid) {
+            *y=ny; *m=nm; *d=nd;
+            *jumpToSel=1;
+            return 1;
           }
         }
         break;
@@ -750,7 +748,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         }
         break;
       case MENU_RETURN_SELECTION:
-        if(menu->numitems > 0) viewEvent(&events[menu->selection-1]);
+        viewEvent(&events[menu->selection-1]);
         break;
       case KEY_CTRL_F2:
         if(menu->fkeypage == 0) {
@@ -1717,9 +1715,7 @@ void searchEventsGUI(int y, int m, int d) {
         break;
       case KEY_CTRL_F1:
       case MENU_RETURN_SELECTION:
-        if(menu.numitems>0) {
-          viewNthEventOnDay(&events[menu.selection-1].startdate, events[menu.selection-1].origpos);
-        }
+        viewNthEventOnDay(&events[menu.selection-1].startdate, events[menu.selection-1].origpos);
         break;
       case KEY_CTRL_F2:
         if(menu.numitems>0) {

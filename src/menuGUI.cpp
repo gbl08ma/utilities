@@ -241,7 +241,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         break;
     }
   }
-  return MENU_RETURN_SELECTION;
+  return MENU_RETURN_EXIT;
 }
 
 int getMenuSelectionSeparators(Menu* menu, int ignoreSeparators) {

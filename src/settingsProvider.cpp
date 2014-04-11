@@ -153,7 +153,6 @@ void SetSetting(int setting, int value, int autosave) {
       // This automatically sets the statusbar to show or hide throughout all the UI:
       if (setting_display_statusbar) {
         EnableStatusArea(0);
-        DefineStatusAreaFlags(DSA_SETDEFAULT, 0, 0, 0);
         DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
       } else {
         EnableStatusArea(3);
