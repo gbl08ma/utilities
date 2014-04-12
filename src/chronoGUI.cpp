@@ -113,7 +113,6 @@ void chronoScreen(chronometer* chrono) {
   
   // construct menu items
   MenuItem menuitems[NUMBER_OF_CHRONO];
-  int curitem = 0;
   int curcolor = TEXT_COLOR_BLUE;
   for(int curitem=0; curitem < NUMBER_OF_CHRONO; curitem++) {
     menuitems[curitem].type = MENUITEM_CHECKBOX;
@@ -139,7 +138,7 @@ void chronoScreen(chronometer* chrono) {
   while(1) {
     checkChronoComplete();
     unsigned char text[NUMBER_OF_CHRONO][42];
-    for(curitem=0; curitem < NUMBER_OF_CHRONO; curitem++) {
+    for(int curitem=0; curitem < NUMBER_OF_CHRONO; curitem++) {
       formatChronoString(&chrono[curitem], curitem+1, text[curitem]);
       menuitems[curitem].text = (char*)text[curitem];
     }
