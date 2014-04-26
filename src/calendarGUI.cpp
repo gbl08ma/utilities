@@ -2211,16 +2211,15 @@ void importCalendarEvents() {
   // the files should be numbered from 00001.pce to 00099.pce
   // they do not collide with existing event files, because the month 0 is reserved for non-calendar files (tasks and files to import).
   EventDate thisday;
-  thisday.day = 1; thisday.month = 0; thisday.year = 0;
+  thisday.month = 0; thisday.year = 0;
   int successful = 0;
-  while(thisday.day<100) {
+  for(thisday.day = 1; thisday.day<100; thisday.day++) {
     int count = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
     if(count && count<=MAX_DAY_EVENTS) {
       successful = importHelper(&thisday, count, &text, elem, successful);
       // delete so we don't import this day again, if user calls the import function again.
       RemoveDay(&thisday, CALENDARFOLDER);
     }
-    thisday.day++;
   }
   text.type = TEXTAREATYPE_NORMAL;
   char buffer1[20];
