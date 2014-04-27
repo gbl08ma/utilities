@@ -22,6 +22,7 @@ void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager);
 int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard, char* filetoedit);
 int deleteFilesGUI(File* files, Menu* menu);
 int makeFolderGUI(char* browserbasepath);
+int makeg3pGUI(char* browserbasepath);
 int renameFileGUI(File* files, Menu* menu, char* browserbasepath);
 int searchFilesGUI(char* browserbasepath, int itemsinclip);
 int fileInformation(File* file, int allowEdit, int itemsinclip);

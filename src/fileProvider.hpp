@@ -66,7 +66,7 @@ int stringEndsInG3A(char* string);
 // compression settings:
 #define COMPRESSED_FILE_HEADER "PHSCOMPR" //Prizm heatshrink compressed
 #define COMPRESSED_FILE_EXTENSION ".phc"
-void compressFile(char* oldfilename, char* newfilename, int action);
+void compressFile(char* oldfilename, char* newfilename, int action, int silent=0);
 int isFileCompressed(char* filename, int* origfilesize);
 
 #endif

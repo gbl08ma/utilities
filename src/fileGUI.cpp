@@ -26,6 +26,7 @@
 #include "sha2.h"
 #include "editorGUI.hpp"
 #include "debugGUI.hpp"
+#include "sprites.h"
 
 void fileManager() {
   int res = 1;
@@ -249,10 +250,11 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         MenuItem smallmenuitems[5];
         smallmenuitems[0].text = (char*)"Folder";
         smallmenuitems[1].text = (char*)"Text File";
+        smallmenuitems[2].text = (char*)"Blank g3p file";
         
         Menu smallmenu;
         smallmenu.items=smallmenuitems;
-        smallmenu.numitems=2;
+        smallmenu.numitems=3;
         smallmenu.width=17;
         smallmenu.height=4;
         smallmenu.startX=3;
@@ -267,6 +269,8 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             if(makeFolderGUI(browserbasepath)) return 1; // if user said yes and a folder was created, reload file list
           } else if(smallmenu.selection == 2) {
             fileTextEditor(NULL, browserbasepath); return 1;
+          } else if(smallmenu.selection == 3) {
+            if(makeg3pGUI(browserbasepath)) return 1;
           }
         }
         break;
@@ -304,7 +308,7 @@ int deleteFilesGUI(File* files, Menu* menu) {
 int makeFolderGUI(char* browserbasepath) {
   //browserbasepath: folder we're working at
   //reload the files array after using this function!
-  //returns 1 if user aborts, 0 if makes folder.
+  //returns 1 if user creates folder, 0 if aborts.
   SetBackGround(10);
   clearLine(1,8);
   drawScreenTitle((char*)"Create folder", (char*)"Name:");
@@ -325,6 +329,49 @@ int makeFolderGUI(char* browserbasepath) {
       unsigned short newfilenameshort[0x10A];
       Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
       Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FOLDER, 0); //create a folder
+      return 1;
+    }
+  }
+  return 0;
+}
+
+int makeg3pGUI(char* browserbasepath) {
+  //browserbasepath: folder we're working at
+  //reload the files array after using this function!
+  //returns 1 if user creates file, 0 if aborts.
+  SetBackGround(10);
+  clearLine(1,8);
+  drawScreenTitle((char*)"Create g3p file", (char*)"Name:");
+  char newname[MAX_NAME_SIZE] = "";
+  textInput input;
+  input.forcetext=1;
+  input.charlimit=MAX_NAME_SIZE;
+  input.buffer = (char*)newname;
+  while(1) {
+    input.key=0;
+    int res = doTextInput(&input);
+    if (res==INPUT_RETURN_EXIT) return 0; // user aborted
+    else if (res==INPUT_RETURN_CONFIRM) {
+      unsigned short tempfilenameshort[0x10A];
+      Bfile_StrToName_ncpy(tempfilenameshort, (unsigned char*)"\\\\fls0\\UTILSTM2.PCT", 0x10A);
+      int filesize = Blank_g3p_phc_len;
+      int BCEres = Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &filesize);
+      if(BCEres < 0) return 0;
+      int hFile = Bfile_OpenFile_OS(tempfilenameshort, READWRITE, 0);
+      if(hFile < 0) return 0;
+      // file write buffer must be in RAM:
+      unsigned char filebuf[Blank_g3p_phc_len+5] = "";
+      memcpy(filebuf, Blank_g3p_phc, filesize);
+
+      Bfile_WriteFile_OS(hFile, (char*)filebuf, filesize);
+      Bfile_CloseFile_OS(hFile);
+
+      char newfilename[MAX_FILENAME_SIZE];
+      strcpy(newfilename, browserbasepath);
+      strcat(newfilename, newname);
+      strcat(newfilename, ".g3p");
+
+      compressFile((char*)"\\\\fls0\\UTILSTM2.PCT", (char*)newfilename, 1, 1); // will also delete temp file
       return 1;
     }
   }

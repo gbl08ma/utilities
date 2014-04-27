@@ -517,8 +517,9 @@ static int decoder_sink_read(int writehandle, heatshrink_decoder *hsd, uint8_t *
   return 0;
 }
 
-void compressFile(char* oldfilename, char* newfilename, int action) {
+void compressFile(char* oldfilename, char* newfilename, int action, int silent) {
   // with action == 0, compresses. with action == 1, decompresses.
+  // if silent is true, GUI is not touched.
   if(!strcmp(newfilename, oldfilename) || stringEndsInG3A(newfilename)) {
     //trying to overwrite the original file, or this is a g3a file (which we can't "touch")
     return;
@@ -559,12 +560,14 @@ void compressFile(char* oldfilename, char* newfilename, int action) {
     }
     if(smallestsize >= origfilesize) {
       Bfile_CloseFile_OS(hOldFile);
-      mMsgBoxPush(5);
-      mPrintXY(3, 2, (char*)"Compressing this", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 3, (char*)"file doesn't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 4, (char*)"yield a smaller", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 5, (char*)"size; aborted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      closeMsgBox(0, 6);
+      if(!silent) {
+        mMsgBoxPush(5);
+        mPrintXY(3, 2, (char*)"Compressing this", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 3, (char*)"file doesn't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 4, (char*)"yield a smaller", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 5, (char*)"size; aborted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        closeMsgBox(0, 6);
+      }
       return;
     }
   }
@@ -655,11 +658,13 @@ cleanexit:
     // now rename the temp file to the correct file name
     Bfile_RenameEntry(tempfilenameshort , newfilenameshort);
 
+    if(!silent) {
     mMsgBoxPush(5);
     mPrintXY(3, 2, (action? (char*)"Decompression" : (char*)"Compression"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     mPrintXY(3, 3, (char*)"successful.Delete", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     mPrintXY(3, 4, (action? (char*)"compressed file?" : (char*)"original file?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    if(closeMsgBox(1)) {
+    }
+    if(silent || closeMsgBox(1)) {
       Bfile_DeleteEntry(oldfilenameshort);
       return;
     }
