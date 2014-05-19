@@ -378,7 +378,9 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
     }
     ddays++;
   }
-  if(GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT)) {
+  if(GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) && GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) {
+    // SETTING_SHOW_CALENDAR_BUSY_MAP is checked because the title only becomes minimini if the busy map is shown
+    // if the title is not minimini, there's not enough space for the events count
     strcat(menutitle, " (");
     if(cursce) {
       char buffer[10];
