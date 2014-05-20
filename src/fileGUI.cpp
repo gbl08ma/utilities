@@ -287,6 +287,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         return 1;
         break;
       case KEY_CTRL_OPTN:
+      case KEY_CTRL_CLIP:
         viewFilesInClipboard(clipboard, itemsinclip);
         break;
     }
@@ -828,7 +829,13 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
   menu.scrollout = 1;
   menu.type=MENUTYPE_FKEYS;
   while(1) {
-    if(*itemsinclip<=0) return;
+    if(*itemsinclip<=0) {
+      mMsgBoxPush(4);
+      mPrintXY(3, 2, (char*)"No files in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      closeMsgBox();
+      return;
+    }
     if(menu.selection > *itemsinclip) menu.selection = 1;
     MenuItem menuitems[MAX_ITEMS_IN_CLIPBOARD];
     menu.title = (char*)"Clipboard";

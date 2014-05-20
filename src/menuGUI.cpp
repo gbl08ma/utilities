@@ -177,7 +177,9 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         if (menu->type == MENUTYPE_FKEYS || menu->type==MENUTYPE_MULTISELECT) return key; // MULTISELECT also returns on Fkeys
         break;
       case KEY_CTRL_PASTE:
-        if (menu->type==MENUTYPE_MULTISELECT) return key; // MULTISELECT also returns on paste
+      case KEY_CTRL_CLIP:
+        if (menu->type==MENUTYPE_MULTISELECT) return key; // MULTISELECT also returns on paste and clip
+        break;
       case KEY_CTRL_OPTN:
         if (menu->type==MENUTYPE_FKEYS || menu->type==MENUTYPE_MULTISELECT) return key;
         break;
