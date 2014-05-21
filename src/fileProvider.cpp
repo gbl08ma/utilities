@@ -442,8 +442,7 @@ int fileIconFromName(char* name) {
 }
 
 int stringEndsInG3A(char* string) {
-  if(EndsIWith(string, (char*)".g3a")) return 1;
-  else return 0;
+  return EndsIWith(string, (char*)".g3a");
 }
 
 // (DE)COMPRESSION CODE - START
@@ -680,11 +679,8 @@ int isFileCompressed(char* filename, int* origfilesize) {
   unsigned char header[14] = "";
   int chl = strlen((char*)COMPRESSED_FILE_HEADER);
   Bfile_ReadFile_OS(hFile, header, chl+4, -1 ); // +4 bytes for the original filesize info
-  if(strncmp((char*)header, (char*)COMPRESSED_FILE_HEADER, chl)) {
-    Bfile_CloseFile_OS(hFile);
-    return 0;
-  }
-  *origfilesize = (header[chl] << 24) | (header[chl+1] << 16) | (header[chl+2] << 8) | header[chl+3];
   Bfile_CloseFile_OS(hFile);
+  if(strncmp((char*)header, (char*)COMPRESSED_FILE_HEADER, chl)) return 0;
+  *origfilesize = (header[chl] << 24) | (header[chl+1] << 16) | (header[chl+2] << 8) | header[chl+3];
   return 1;
 }
