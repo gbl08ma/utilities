@@ -510,10 +510,14 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   if(searchRecursively) newsetting |= (1U << 2);
   if(matchCase) newsetting |= (1U << 3);
   SetSetting(SETTING_FILE_MANAGER_SEARCH, newsetting, 1); // remember search preferences
-  SearchForFiles(NULL, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
+  int sres = SearchForFiles(NULL, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
+  if(sres == GETFILES_USER_ABORTED) return 0;
   MenuItem* resitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
   File* files = (File*)alloca(menu.numitems*sizeof(File));
-  if(menu.numitems) SearchForFiles(files, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
+  if(menu.numitems) {
+    sres = SearchForFiles(files, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
+    if(sres == GETFILES_USER_ABORTED) return 0;
+  }
   int curitem = 0;
   while(curitem < menu.numitems) {
     resitems[curitem].text = files[curitem].visname;

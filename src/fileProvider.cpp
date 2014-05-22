@@ -137,7 +137,8 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
   int findhandle;
   Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
-  while(!ret) {
+  int abortkey = 0;
+  while(!ret && abortkey != KEY_PRGM_ACON) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
     if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0
       || strcmp((char*)buffer, SELFFILE) == 0
@@ -194,6 +195,7 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
         }
         *count=*count+1;
       }
+      abortkey = PRGM_GetKey();
     }
     if (*count-1==MAX_ITEMS_IN_DIR) {
       Bfile_FindClose(findhandle);
@@ -201,6 +203,7 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
     } else ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
   Bfile_FindClose(findhandle);
+  if(abortkey == KEY_PRGM_ACON) return GETFILES_USER_ABORTED;
   // now that all handles are closed, look inside the folders we found, if recursive search is enabled
   if((0x881E0000 - (int)GetStackPtr()) < 350000) { // if stack usage is below 350000 bytes...
     if(searchRecursively) for(int i=0; i<numberOfFoldersToSearchInTheEnd; i++) {
@@ -209,8 +212,11 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
       strcpy(newfolder, basepath);
       strcat(newfolder, foldersToSearchInTheEnd[i]);
       strcat(newfolder, "\\");
-      if(GETFILES_MAX_FILES_REACHED == SearchForFiles(files, newfolder, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, count, 1))
+      int sres = SearchForFiles(files, newfolder, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, count, 1);
+      if(GETFILES_MAX_FILES_REACHED == sres)
         return GETFILES_MAX_FILES_REACHED; // if the files array is full, there's no point in searching again
+      else if(GETFILES_USER_ABORTED == sres)
+        return GETFILES_USER_ABORTED;
     }
   }
   return GETFILES_SUCCESS;

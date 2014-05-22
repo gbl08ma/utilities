@@ -41,6 +41,7 @@ typedef struct
 
 #define GETFILES_SUCCESS 0
 #define GETFILES_MAX_FILES_REACHED 1
+#define GETFILES_USER_ABORTED 2
 
 void insertSortFileMenuArray(File* data, MenuItem* mdata, int size);
 int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count);
