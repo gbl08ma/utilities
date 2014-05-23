@@ -282,6 +282,10 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         if(menu.numselitems>0 && deleteFilesGUI(files, &menu)) return 1; // if user said yes and files were deleted, reload file list
         break;
       case KEY_CTRL_PASTE:
+        // clear shift icon and "Shift->9=Paste" part from status bar before pasting
+        fillMenuStatusWithClip((char*)statusbuffer, *itemsinclip, 1);
+        DefineStatusMessage(statusbuffer, 1, 0, 0);
+        DisplayStatusArea();
         filePasteClipboardItems(clipboard, browserbasepath, *itemsinclip);
         *itemsinclip = 0;
         return 1;
