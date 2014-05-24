@@ -34,10 +34,9 @@ void fileManager() {
   int shownClipboardHelp = 0;
   int shownMainMemHelp = 0;
   char browserbasepath[MAX_FILENAME_SIZE+1] = "\\\\fls0\\";
-  char filetoedit[MAX_FILENAME_SIZE+1] = "";
   File clipboard[MAX_ITEMS_IN_CLIPBOARD+1];
   while(res) {
-    strcpy(filetoedit, (char*)"");
+    char filetoedit[MAX_FILENAME_SIZE+1] = "";
     res = fileManagerSub(browserbasepath, &itemsinclip, &shownClipboardHelp, &shownMainMemHelp, clipboard, filetoedit);
     if(strlen(filetoedit)) {
       fileTextEditor(filetoedit);
