@@ -48,7 +48,6 @@ void appendDayEnding(int day, char* buffer) {
 
 void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminiinvert) {
   if (format==NULL) format = GetSetting(SETTING_LONGDATEFORMAT);
-  if (miniminiinvert==NULL) miniminiinvert = 0;
   // Draw long date as seen on the home screen, according to format.
   // textY is the y coordinate at which the date should start to be drawn.
   // x coordinate is set automatically (text is always centered on screen)

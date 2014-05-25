@@ -66,7 +66,7 @@ int comparePasswordHash(unsigned char* inputPassword) {
   if (!compare(mcsHash, smemHash, 32)) {
     //hash stored in main mem matches with storage memory.
     //now compare the hash with the hash of the inserted password
-    unsigned char inputHash[32] = "";    
+    unsigned char inputHash[32];    
     hashPassword(inputPassword, inputHash);
     if (!compare(inputHash, smemHash, 32)) {
       return RETURN_PASSWORD_MATCH;
@@ -78,7 +78,7 @@ int comparePasswordHash(unsigned char* inputPassword) {
   }
 }
 int savePassword(unsigned char* password) {
-  unsigned char hash[32] = "";
+  unsigned char hash[32];
   hashPassword(password, hash);
   //now that we hashed, save in the main memory and storage memory.
   //Save to SMEM

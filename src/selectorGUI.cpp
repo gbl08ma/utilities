@@ -34,7 +34,7 @@ int doSelector(Selector* selector) {
     clearLine(5,5);
     if(selector->type == SELECTORTYPE_LONGDATEFORMAT) {
       clearLine(1,4);
-      drawLongDate(82,selector->value, COLOR_BLACK, COLOR_WHITE, NULL);
+      drawLongDate(82,selector->value, COLOR_BLACK, COLOR_WHITE);
     } else {
       char buffer1[50];
       switch(selector->type) {

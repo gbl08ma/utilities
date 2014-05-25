@@ -17,7 +17,7 @@
 
 #include "settingsProvider.hpp"
 
-void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminiinvert);
+void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminiinvert=0);
 void drawAnalogClock(int cx, int cy, int radius, int colorbg, int colorfg);
 void RTCunadjustedWizard(int helpMessage);
 void setTimeGUI(int canExit = 1);
