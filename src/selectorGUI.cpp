@@ -42,7 +42,7 @@ int doSelector(Selector* selector) {
           strcpy(buffer1, getMonthAsString(selector->value));
           break;
         case SELECTORTYPE_STARTUP_BRIGHTNESS:
-          if(selector->value == 250) strcpy(buffer1, "Do not force");
+          if(selector->value == 250) strcpy(buffer1, "Do not change");
           else itoa(selector->value, (unsigned char*)buffer1);
           break;
         case SELECTORTYPE_BACKLIGHT_DURATION:
