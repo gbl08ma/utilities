@@ -514,12 +514,20 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   if(matchCase) newsetting |= (1U << 3);
   SetSetting(SETTING_FILE_MANAGER_SEARCH, newsetting, 1); // remember search preferences
   int sres = SearchForFiles(NULL, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
-  if(sres == GETFILES_USER_ABORTED) return 0;
+  if(sres == GETFILES_USER_ABORTED) {
+    int bkey; GetKey(&bkey); // key debouncing to avoid getting "Break" message closed because AC is still pressed
+    AUX_DisplayErrorMessage( 0x01 );
+    return 0;
+  }
   MenuItem* resitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
   File* files = (File*)alloca(menu.numitems*sizeof(File));
   if(menu.numitems) {
     sres = SearchForFiles(files, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
-    if(sres == GETFILES_USER_ABORTED) return 0;
+    if(sres == GETFILES_USER_ABORTED) {
+      int bkey; GetKey(&bkey);
+      AUX_DisplayErrorMessage( 0x01 );
+      return 0;
+    }
   }
   int curitem = 0;
   while(curitem < menu.numitems) {
