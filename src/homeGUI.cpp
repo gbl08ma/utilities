@@ -63,10 +63,10 @@ void showHome(chronometer* chrono) {
       DefineStatusMessage((char*)message, 1, 0, 0);
     } else DefineStatusMessage((char*)"", 1, 0, 0);
     DisplayStatusArea();
+    if (GetSetting(SETTING_THEME)) darkenStatusbar();
     
     // Print time
     drawHomeClock(GetSetting(SETTING_CLOCK_TYPE));
-    if (GetSetting(SETTING_THEME)) darkenStatusbar();
 
     //Show FKeys
     if (GetSetting(SETTING_DISPLAY_FKEYS)) {
