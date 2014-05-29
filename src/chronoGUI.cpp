@@ -138,13 +138,19 @@ void chronoScreen(chronometer* chrono) {
   while(1) {
     checkChronoComplete();
     unsigned char text[NUMBER_OF_CHRONO][42];
+    int hasSelection = 0;
     for(int curitem=0; curitem < NUMBER_OF_CHRONO; curitem++) {
       formatChronoString(&chrono[curitem], curitem+1, text[curitem]);
       menuitems[curitem].text = (char*)text[curitem];
+      if(menuitems[curitem].value) hasSelection = 1;
     }
     if(menu.fkeypage==0) {
-      // SELECT (white), SET, CLEAR, play icon, stop icon, BUILT-IN
-      drawFkeyLabels(0x0037, 0x0010, 0x0149, 0x040A, 0x0031, 0x0156);
+      drawFkeyLabels(0x0037, // SELECT (white)
+        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED ? 0x0010 : 0), // SET
+        (hasSelection || chrono[menu.selection-1].state != CHRONO_STATE_CLEARED ? 0x0149 : 0), // CLEAR
+        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_STOPPED ? 0x040A : 0), // play icon
+        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_RUNNING ? 0x0031 : 0), // stop icon
+        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED ? 0x0156 : 0)); // BUILT-IN
       // "hack" the stop icon, turning it into a pause icon
       drawRectangle(286, 197, 4, 14, COLOR_WHITE);
     } else if (menu.fkeypage==1) {
@@ -200,7 +206,7 @@ void chronoScreen(chronometer* chrono) {
         }
         break;
       case KEY_PRGM_F2:
-        if(menu.fkeypage==0) setChronoGUI(&menu, chrono);
+        if(menu.fkeypage==0 && (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED)) setChronoGUI(&menu, chrono);
         else if (menu.fkeypage==1) {
           // select all
           for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = MENUITEM_VALUE_CHECKED;
@@ -224,7 +230,7 @@ void chronoScreen(chronometer* chrono) {
         if(menu.fkeypage==0) stopSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
         break;
       case KEY_PRGM_F6:
-        if(menu.fkeypage==0) setBuiltinChrono(&menu, chrono);
+        if(menu.fkeypage==0 && (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED)) setBuiltinChrono(&menu, chrono);
         break;
       case KEY_PRGM_EXIT:
         if(menu.fkeypage==0) {
