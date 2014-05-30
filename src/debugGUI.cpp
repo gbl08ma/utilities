@@ -70,21 +70,21 @@ void showRAMused() {
 
 void masterControl() {
   MenuItem menuitems[10];
-  menuitems[0].text = (char*)"SS()";
-  menuitems[1].text = (char*)"LS()";
-  menuitems[2].text = (char*)"Lk Off";
-  menuitems[3].text = (char*)"Lk On";
-  menuitems[4].text = (char*)"Dbg Off";
-  menuitems[5].text = (char*)"Dbg On";
-  menuitems[6].text = (char*)"FR Off";
-  menuitems[7].text = (char*)"FR On";
+  menuitems[0].text = (char*)"SS";
+  menuitems[1].text = (char*)"LS";
+  menuitems[2].text = (char*)"Lk0";
+  menuitems[3].text = (char*)"Lk1";
+  menuitems[4].text = (char*)"Dbg0";
+  menuitems[5].text = (char*)"Dbg1";
+  menuitems[6].text = (char*)"FR0";
+  menuitems[7].text = (char*)"FR1";
   menuitems[8].text = (char*)"Rst";
   
   Menu menu;
   menu.items=menuitems;
   menu.numitems=9;
   menu.scrollout=1;
-  menu.title = (char*)"UTILS CTRL";
+  menu.title = (char*)"CTRL";
   while(1) {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;

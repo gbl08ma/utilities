@@ -37,7 +37,6 @@
 
 void showHome(chronometer* chrono) {
   unsigned short key = 0;
-  unsigned short prevkey = 0;
   int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
   int pane_keycache = 0;
   while (1) {
@@ -146,7 +145,7 @@ void showHome(chronometer* chrono) {
         currentTimeToBasicVar();
         break;
     }
-    if (key!=prevkey && key!=KEY_PRGM_SHIFT) SetSetupSetting( (unsigned int)0x14, 0);
+    if (key && key!=KEY_PRGM_SHIFT) SetSetupSetting( (unsigned int)0x14, 0);
   }
 }
 

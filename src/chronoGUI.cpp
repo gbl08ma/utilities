@@ -59,7 +59,7 @@ inline void formatChronoString(chronometer* tchrono, int num, unsigned char* str
     else unixdiff = unixtime-tchrono->starttime;
   }
 
-  long long int days=0,hours=0,minutes=0,seconds=0, milliseconds=0;
+  long long int days,hours,minutes,seconds,milliseconds;
 
   milliseconds=unixdiff;  
   seconds = milliseconds / 1000;
@@ -134,7 +134,6 @@ void chronoScreen(chronometer* chrono) {
   menu.title = (char*)"Chronometers";
   
   short unsigned int key;
-  unsigned short prevkey = 0;
   while(1) {
     checkChronoComplete();
     unsigned char text[NUMBER_OF_CHRONO][42];
@@ -240,7 +239,7 @@ void chronoScreen(chronometer* chrono) {
         else menu.fkeypage=0;
         break;
     }
-    if (key!=prevkey && key!=KEY_PRGM_SHIFT) SetSetupSetting( (unsigned int)0x14, 0);
+    if (key && key!=KEY_PRGM_SHIFT) SetSetupSetting( (unsigned int)0x14, 0);
   }
 }
 
