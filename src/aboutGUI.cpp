@@ -107,7 +107,7 @@ void buildExpiredMessage() {
   text.elements = elem;
   text.scrollbar = 0;
   
-  elem[0].text = (char*)"A new version of Utilities has probably been released by now.";
+  elem[0].text = (char*)"A new version of Utilities may have been released by now.";
   elem[1].newLine = 1;
   elem[1].text = (char*)"Please check for updates at the following URL:";
   elem[2].newLine = 1;

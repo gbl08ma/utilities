@@ -1933,8 +1933,8 @@ void repairCalendarDatabase() {
   textElement elem[8];
   text.elements = elem;
   if(getDBneedsRepairFlag()) {
-    elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This situation is often experienced when a version of Utilities prior to v1.1 has been used, or when events with invalid data are imported.";
-    elem[1].text = (char*)"Repairing the database now is very important to avoid further problems. You should not see this message again once you repair the database.";
+    elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This often happens when a version of Utilities prior to v1.1 has been used, or when events with invalid data are imported.";
+    elem[1].text = (char*)"Repairing the database now, to avoid further problems, is very important. After doing it, you should not see this message again.";
   } else {
     elem[0].text = (char*)"Repairing the calendar events' database will fix any inconsistent data, such as events with an end time preceding their start time.";
     elem[1].text = (char*)"Doing this is highly recommended if you used a version of Utilities prior to v1.1, or if you are experiencing problems viewing and manipulating calendar events.";
@@ -1946,7 +1946,7 @@ void repairCalendarDatabase() {
   elem[2].text = (char*)"Repairing the database should not result in data loss, except for any corrupt entries that despite their state, are still partially readable (these will be deleted). You may want to create backups of such entries using pen and paper - never use Utilities to perform operations on corrupt events or others in their start date!";
   elem[3].newLine = 1;
   elem[3].lineSpacing = 5;
-  elem[3].text = (char*)"If there are many events registered, this operation may take a long time. Press F1 to start or EXIT to cancel.";
+  elem[3].text = (char*)"If there are many events stored, this operation may take a long time. Press F1 to start or EXIT to cancel.";
   
   text.allowF1 = 1;
   text.numelements = 4;
