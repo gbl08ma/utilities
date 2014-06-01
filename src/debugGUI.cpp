@@ -19,6 +19,7 @@
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 
+#ifdef ENABLE_DEBUG
 static int debugMode = 0; // when 1, debug mode is on
 int GetDebugMode() {
   return debugMode;
@@ -45,6 +46,8 @@ void showRAMused() {
   debugMessage((char*)"  RAM", (char*)"  b:", ramused);
   debugMessage((char*)"  MB", (char*)"  c:", getNumberOfMsgBoxPushed());
 }
+
+#endif
 
 /*void showRAMusedStatus() {
   int usedStack = (int)GetStackPtr();
@@ -74,17 +77,25 @@ void masterControl() {
   menuitems[1].text = (char*)"LS";
   menuitems[2].text = (char*)"Lk0";
   menuitems[3].text = (char*)"Lk1";
+#ifdef ENABLE_DEBUG
   menuitems[4].text = (char*)"Dbg0";
   menuitems[5].text = (char*)"Dbg1";
   menuitems[6].text = (char*)"FR0";
   menuitems[7].text = (char*)"FR1";
   menuitems[8].text = (char*)"Rst";
+#endif
   
   Menu menu;
   menu.items=menuitems;
+#ifdef ENABLE_DEBUG  
   menu.numitems=9;
+#else 
+  menu.numitems=4;
+#endif
   menu.scrollout=1;
+#ifdef ENABLE_DEBUG  
   menu.title = (char*)"CTRL";
+#endif
   while(1) {
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
@@ -96,6 +107,7 @@ void masterControl() {
         case 4:
           SetSetting(SETTING_ENABLE_LOCK, menu.selection-3, 0); // do not autosave, to allow full control of the operator
           break;
+#ifdef ENABLE_DEBUG          
         case 5:
         case 6:
           SetDebugMode(menu.selection-5);
@@ -108,6 +120,7 @@ void masterControl() {
           //CallbackAtQuitMainFunction( mycallback );
           Restart();
           break;
+#endif
       }
     }
   }

@@ -37,3 +37,8 @@
 #ifndef BUILD_EXPIRE_TIMESTAMP
 #define BUILD_EXPIRE_TIMESTAMP 1403222400*1000 // after the calc RTC is in a timestamp past this, users will be prompted to check for updates
 #endif
+
+/*
+#ifndef ENABLE_DEBUG
+#define ENABLE_DEBUG 1
+#endif*/
