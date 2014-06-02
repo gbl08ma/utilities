@@ -26,6 +26,14 @@
 #define SMEMHASHFILE (unsigned char*)"\\\\fls0\\@UTILS\\Hash.plp"
 #endif
 
+#ifndef TEMPFILE
+#define TEMPFILE (unsigned char*)"\\\\fls0\\UTILSTMP.PCT"
+#endif
+
+#ifndef TEMPFILE2
+#define TEMPFILE2 (unsigned char*)"\\\\fls0\\UTILSTM2.PCT"
+#endif
+
 #ifndef SELFFILE
 #define SELFFILE (char*)"utilities.g3a"
 #endif

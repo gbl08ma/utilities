@@ -357,7 +357,7 @@ int makeg3pGUI(char* browserbasepath) {
     if (res==INPUT_RETURN_EXIT) return 0; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
       unsigned short tempfilenameshort[0x10A];
-      Bfile_StrToName_ncpy(tempfilenameshort, (unsigned char*)"\\\\fls0\\UTILSTM2.PCT", 0x10A);
+      Bfile_StrToName_ncpy(tempfilenameshort, TEMPFILE2, 0x10A);
       int filesize = Blank_g3p_phc_len;
       int BCEres = Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &filesize);
       if(BCEres < 0) return 0;
@@ -375,7 +375,7 @@ int makeg3pGUI(char* browserbasepath) {
       strcat(newfilename, newname);
       strcat(newfilename, ".g3p");
 
-      compressFile((char*)"\\\\fls0\\UTILSTM2.PCT", (char*)newfilename, 1, 1); // will also delete temp file
+      compressFile((char*)TEMPFILE2, (char*)newfilename, 1, 1); // will also delete temp file
       return 1;
     }
   }

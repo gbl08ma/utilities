@@ -264,7 +264,7 @@ void copyFile(char* oldfilename, char* newfilename) {
   unsigned short tempfilenameshort[0x10A];
   Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)oldfilename, 0x10A);
   Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
-  Bfile_StrToName_ncpy(tempfilenameshort, (unsigned char*)"\\\\fls0\\UTILSTMP.PCT", 0x10A);
+  Bfile_StrToName_ncpy(tempfilenameshort, TEMPFILE, 0x10A);
   
   int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0); // Get handle for the old file
   if(hOldFile < 0) {
@@ -534,7 +534,7 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
   unsigned short tempfilenameshort[0x10A];
   Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)oldfilename, 0x10A);
   Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
-  Bfile_StrToName_ncpy(tempfilenameshort, (unsigned char*)"\\\\fls0\\UTILSTMP.PCT", 0x10A);
+  Bfile_StrToName_ncpy(tempfilenameshort, TEMPFILE, 0x10A);
   
   int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0); // Get handle for the old file
   if(hOldFile < 0) return;
