@@ -60,17 +60,17 @@ int getMonthDaysWithLeap(int month, int year) {
 }
 const char* getCurrentDOWAsString()
 {
-    return dayofweek[(*RWKCNT & 0b111)];
+  return dayofweek[(*RWKCNT & 0b111)];
 }
 
 const char* getCurrentDOWAsShortString()
 {
-    return dayofweekshort[(*RWKCNT & 0b111)];
+  return dayofweekshort[(*RWKCNT & 0b111)];
 }
 
 const char* getCurrentMonthAsString()
 {
-    return monthNames[((*RMONCNT & 0b10000)>>4)*10 + (*RMONCNT & 0b1111) - 1];
+  return monthNames[((*RMONCNT & 0b10000)>>4)*10 + (*RMONCNT & 0b1111) - 1];
 }
 const char* getMonthAsString(int month) {
   return monthNames[month-1]; 
@@ -186,9 +186,7 @@ int getRTCisUnadjusted() {
   //   (because that date has passed on all timezones and of course no adjusted clock will have it).
   //this function is only meant to be useful for detecting if the RTC performed a reset, e.g. after taking out the batteries.
   //in that case, the RTC usually resets to some date around 2010. So this function will serve its purpose.
-  if((long long int)KNOWN_PAST_TIMESTAMP > currentUnixTime()) {
-    return 1;
-  } return 0;
+  return ((long long int)KNOWN_PAST_TIMESTAMP > currentUnixTime());
 }
 void currentDateToString(char *buffer, int format) {
   dateToString(buffer, getCurrentYear(), getCurrentMonth(), getCurrentDay(), format);
@@ -383,9 +381,9 @@ void stringToDate(char* string, int* yr, int* m, int *d, int format) {
   // result goes into arguments 2-4. format is the format to expect (values are the same as on the dateformat setting)
   // if format is not specified, it is read according to settings.
   // does not check if the date read is valid or if the string has the right size.
-  char year[6] = "";
-  char month[3] = "";
-  char day[3] = "";
+  char year[6];
+  char month[3];
+  char day[3];
   switch(format) {
     case 0:
       day[0] = string[0]; day[1] = string[1]; day[2] = '\0';

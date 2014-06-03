@@ -99,7 +99,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
     {
       if ((keyflag == 0x08 || keyflag == 0x88) && key >= KEY_CHAR_A && key <= KEY_CHAR_Z) //if lowercase and key is char...
       {
-        key = key + 32; //so we switch to lowercase characters... Casio is smart
+        key = key + 32; //so we switch to lowercase characters
       }
       cursor = EditMBStringChar((unsigned char*)buffer, charlimit, cursor, key);
     }

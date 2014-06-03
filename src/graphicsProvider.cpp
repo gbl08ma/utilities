@@ -146,7 +146,6 @@ void drawArrowDown(int bottomX, int bottomY, int color) {
 }
 void drawFkeyPopup(int Fkey, char* title) {
 //draws a big popup pointing to a Fkey (index zero based, F1 = 0, F6 = 5) with the selected color scheme.
-//showclosemessage - select to show a minimini message on the right left saying "...or press: [EXIT]"
 // PrintXY text inside the popup starts at X=2 and Y=2
   int fgcolor = COLOR_BLACK;
   int bgcolor = COLOR_WHITE;
