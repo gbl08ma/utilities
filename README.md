@@ -79,7 +79,7 @@ The Add-In manager is unstable because of technical limitations, and may cause s
 ## Checking for updates
 Utilities, like most software, receives updates from time to time. Starting with the v1.2 release, Utilities includes a little function that, assuming the calculator's clock is adjusted, will remind you to check for updates after a certain date in the future. However, you do not need to wait for that message to appear. You should check for updates to Utilities periodically, to ensure you have the greatest feature pack and the most stable version. To check for new versions, you should visit the following page:
 
-[http://gbl08ma.com/casio-prizm-software/](http://http://gbl08ma.com/casio-prizm-software/)
+[http://gbl08ma.com/casio-prizm-software/](http://gbl08ma.com/casio-prizm-software/)
 
 If the above page isn't available, you can try checking for news at the tny. internet media website:
 
@@ -93,6 +93,19 @@ gbl08ma@gmail.com
 For a detailed changelog, including lots of developer anger and jargon, take a look at the commit history on the GitHub page.
 
 Here is a summary of the changes, in no special order:
+
+From v1.3 to v1.4:
+  - Show more information on date difference tool ("Count days" on the calendar OPTN menu);
+  - Show reminder on how to adjust clock on DST start/end dates for Europe and USA;
+  - On calendar week view, the events count for the week is now shown when there's enough space;
+  - Fixed bug where chronometers set through the "Built-in" menu would not be saved;
+  - Function key labels on the chronometer screen now show and hide depending on the available functions;
+  - Added functionality for creating blank g3p files suitable for use on the Geometry add-in (same as saving an empty image through the Geometry add-in);
+  - On file manager, the clipboard manager can now be accessed using Shift+8 (CLIP);
+  - Allow for aborting file search by pressing AC/ON (you may need to hold the key down for a while);
+  - Added option to dismiss "Check for updates" screen, in the case v1.4 is the last version of Utilities;
+  - Minor graphical corrections on the UI;
+  - Fixed small bugs and changed small details.
 
 From v1.2 to v1.3:
   - Added setting for choosing the type of notification shown when a chronometer finishes;
@@ -167,7 +180,7 @@ Distributing this Read-Me along with the g3a binary is not mandatory.
 Any derivative work based on this software must clearly state it is not the original Utilities add-in by gbl08ma at tny. internet media.
 
 ## Last words
-Utilities is the result of over one year of research, work and extensive testing. That said, we can't guarantee you will have no problems using the add-in or that everything will work as described. You are welcome to report problems to the contacts above, as well as modify the source code to your needs as long as you respect the license.
+Utilities is the result of over two years of research, work and extensive testing. That said, we can't guarantee you will have no problems using the add-in or that everything will work as described. You are welcome to report problems to the contacts above, as well as modify the source code to your needs as long as you respect the license.
 
 We hope you enjoy using Utilities as much as we did developing it. And if this add-in ever becomes useful, you just found a secret feature ;)
 
