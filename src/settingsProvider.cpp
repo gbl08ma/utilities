@@ -15,7 +15,7 @@
 #include "settingsProvider.hpp"
 #include "constantsProvider.hpp"
 
-#define SETTINGSFILE_VERSION 10 // NOTE: update this when changing the amount or meaning of settings!
+#define SETTINGSFILE_VERSION 11 // NOTE: update this when changing the amount or meaning of settings!
 static int setting_self_fileversion = SETTINGSFILE_VERSION; // this is a special setting
 static int setting_timeformat = 0; // 0 = 24-hour HH:MM:SS ; 1 = 12-hour HH:MM:SS AM/PM
 static int setting_longdateformat = 0;
@@ -42,7 +42,7 @@ static int setting_show_advanced = 0; //whether to show advanced things like CPU
 static int setting_display_fkeys = 1;
 static int setting_password_privacy = 1; // 0: show last input character when entering passwords; 1: do not show last char NOTE: this had a different name before and the meaning of the value is now different!
 static int setting_show_calendar_events_count = 1; // had a different name before, value meaning is the same
-static int setting_is_first_run = 1; //should be 1 for the first time the add-in is run, then it's set to zero and never changed
+static int setting_is_first_run = 1; // 1 if this is the first time the add-in is run, then it's set to zero and never changed, unless the user cancels update checking, in which case it's set to 2. So: if 1 is first run, if any other value is not first run.
 static int setting_enable_lock = 1; //whether lock functionality is available or not. Should always be on and not changeable on the settings menu, except when a specific code is entered on master-control in order to disable it to make people who don't want the lock, because they accidentally lock their calculators, happier (I'm thinking of you Catarina...)
 static int setting_lock_autooff = 0; //whether to turn off automatically after locking the calc
 static int setting_lock_on_exe = 0; //when enabled, calculator is locked when EXE is pressed on the home screen (i.e. legacy support for people used to the old lock add-in).

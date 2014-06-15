@@ -15,9 +15,10 @@
 #include "aboutGUI.hpp"
 #include "textGUI.hpp"
 #include "versionProvider.hpp"
-#include "graphicsProvider.hpp" 
+#include "graphicsProvider.hpp"
 #include "hardwareProvider.hpp"
 #include "keyboardProvider.hpp"
+#include "settingsProvider.hpp"
 
 void showAbout() {
   int key;
@@ -100,12 +101,14 @@ void showAbout() {
 }
 
 void buildExpiredMessage() {
+  if(GetSetting(SETTING_IS_FIRST_RUN) == 2) return;
   textArea text;
   text.title = (char*)"Check for updates";
   
   textElement elem[5];
   text.elements = elem;
   text.scrollbar = 0;
+  text.allowF1 = 1;
   
   elem[0].text = (char*)"A new version of Utilities may have been released by now.";
   elem[1].newLine = 1;
@@ -116,8 +119,10 @@ void buildExpiredMessage() {
   elem[2].text = (char*)"http://tny.im/utupd";
   elem[3].newLine = 1;
   elem[3].lineSpacing = 16;
-  elem[3].text = (char*)"Press EXIT to continue.";
+  elem[3].text = (char*)"Press EXIT to continue, or F1 if you don't want to see this message again.";
   
   text.numelements = 4;
-  doTextArea(&text);
+  if(doTextArea(&text) == TEXTAREA_RETURN_F1) {
+    SetSetting(SETTING_IS_FIRST_RUN, 2, 1);
+  }
 }

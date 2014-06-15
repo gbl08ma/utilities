@@ -61,7 +61,7 @@ int main()
   setBrightnessToStartupSetting();
   Bdisp_EnableColor(1);
   
-  if(GetSetting(SETTING_IS_FIRST_RUN)) {
+  if(GetSetting(SETTING_IS_FIRST_RUN) == 1) { // must include "== 1", see setting description
     firstRunWizard();
     RTCunadjustedWizard(0);
   } else {
