@@ -689,6 +689,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
         return 0;
         break;
       case KEY_CTRL_F1:
+      case KEY_CTRL_EXE:
         if(!compressed) {
           if(stringEndsInJPG(file->filename)) viewImage(file->filename);
           else fileViewAsText(file->filename);
