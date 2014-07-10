@@ -25,6 +25,7 @@
 #include "textGUI.hpp"
 #include "sha2.h"
 #include "editorGUI.hpp"
+#include "imageGUI.hpp"
 #include "debugGUI.hpp"
 #include "sprites.h"
 
@@ -688,7 +689,10 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
         return 0;
         break;
       case KEY_CTRL_F1:
-        if(!compressed) fileViewAsText(file->filename);
+        if(!compressed) {
+          if(stringEndsInJPG(file->filename)) viewImage(file->filename);
+          else fileViewAsText(file->filename);
+        }
         break;
       case KEY_CTRL_F2:
         if(allowEdit && !compressed) {

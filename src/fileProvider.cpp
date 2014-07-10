@@ -451,6 +451,10 @@ int stringEndsInG3A(char* string) {
   return EndsIWith(string, (char*)".g3a");
 }
 
+int stringEndsInJPG(char* string) {
+  return EndsIWith(string, (char*)".jpg") || EndsIWith(string, (char*)".jpeg");
+}
+
 // (DE)COMPRESSION CODE - START
 
 static int encoder_sink_read(int writehandle, heatshrink_encoder *hse, uint8_t *data, size_t data_sz, size_t* final_sz) {
