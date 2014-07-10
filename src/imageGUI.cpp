@@ -37,6 +37,7 @@ void viewImage(char* filename) {
   unsigned short filenameshort[0x10A];
   Bfile_StrToName_ncpy(filenameshort, (unsigned char*)filename, 0x10A);
   while(1) {
+    int key;
     Bdisp_AllClr_VRAM();
     /* Open a JPEG file */
     devid.fp = Bfile_OpenFile_OS(filenameshort, READWRITE, 0);
@@ -63,53 +64,83 @@ void viewImage(char* filename) {
 
     Bfile_CloseFile_OS(devid.fp);     /* Close the JPEG file */
 
-    int key; 
+    int inkeyloop = 1;
     EnableStatusArea(3);
-    GetKey(&key);
-    EnableStatusArea(0);
-    switch(key) {
-      case KEY_CTRL_EXIT:
-        return;
-      case KEY_CTRL_DOWN:
-        devid.yoff += 64;
-        break;
-      case KEY_CTRL_UP:
-        devid.yoff -= 64;
-        break;
-      case KEY_CTRL_RIGHT:
-        devid.xoff += 64;
-        break;
-      case KEY_CTRL_LEFT:
-        devid.xoff -= 64;
-        break;
-      case KEY_CHAR_2:
-      case KEY_CTRL_PAGEDOWN:
-        devid.yoff += LCD_HEIGHT_PX;
-        break;
-      case KEY_CHAR_8:
-      case KEY_CTRL_PAGEUP:
-        devid.yoff -= LCD_HEIGHT_PX;
-        break;
-      case KEY_CHAR_6:
-        devid.xoff += LCD_WIDTH_PX;
-        break;
-      case KEY_CHAR_4:
-        devid.xoff -= LCD_WIDTH_PX;
-        break;
-      case KEY_CHAR_MINUS:
-        if(scale < 3) {
-          scale++;
-          devid.xoff /= 2;
-          devid.yoff /= 2;
-        }
-        break;
-      case KEY_CHAR_PLUS:
-        if(scale > 0) {
-          scale--;
-          devid.xoff *= 2;
-          devid.yoff *= 2;
-        }
-        break;
+    while(inkeyloop) {
+      GetKey(&key);
+      switch(key) {
+        case KEY_CTRL_EXIT:
+          EnableStatusArea(0);
+          return;
+        case KEY_CTRL_DOWN:
+          devid.yoff += 64;
+          inkeyloop = 0;
+          break;
+        case KEY_CTRL_UP:
+          devid.yoff -= 64;
+          inkeyloop = 0;
+          break;
+        case KEY_CTRL_RIGHT:
+          devid.xoff += 64;
+          inkeyloop = 0;
+          break;
+        case KEY_CTRL_LEFT:
+          devid.xoff -= 64;
+          inkeyloop = 0;
+          break;
+        case KEY_CHAR_2:
+          devid.yoff += LCD_HEIGHT_PX;
+          inkeyloop = 0;
+          break;
+        case KEY_CHAR_8:
+          devid.yoff -= LCD_HEIGHT_PX;
+          inkeyloop = 0;
+          break;
+        case KEY_CHAR_6:
+          devid.xoff += LCD_WIDTH_PX;
+          inkeyloop = 0;
+          break;
+        case KEY_CHAR_4:
+          devid.xoff -= LCD_WIDTH_PX;
+          inkeyloop = 0;
+          break;
+        case KEY_CHAR_7:
+          devid.xoff -= LCD_WIDTH_PX;
+          devid.yoff -= LCD_HEIGHT_PX;
+          inkeyloop = 0;
+          break;
+        case KEY_CHAR_9:
+          devid.xoff += LCD_WIDTH_PX;
+          devid.yoff -= LCD_HEIGHT_PX;
+          inkeyloop = 0;
+          break;
+        case KEY_CHAR_1:
+          devid.xoff -= LCD_WIDTH_PX;
+          devid.yoff += LCD_HEIGHT_PX;
+          inkeyloop = 0;
+          break;
+        case KEY_CHAR_3:
+          devid.xoff += LCD_WIDTH_PX;
+          devid.yoff += LCD_HEIGHT_PX;
+          inkeyloop = 0;
+          break;
+        case KEY_CHAR_MINUS:
+          if(scale < 3) {
+            scale++;
+            devid.xoff /= 2;
+            devid.yoff /= 2;
+            inkeyloop = 0;
+          }
+          break;
+        case KEY_CHAR_PLUS:
+          if(scale > 0) {
+            scale--;
+            devid.xoff *= 2;
+            devid.yoff *= 2;
+            inkeyloop = 0;
+          }
+          break;
+      }
     }
   }
 }
