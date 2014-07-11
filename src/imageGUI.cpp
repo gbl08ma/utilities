@@ -48,6 +48,12 @@ void viewImage(char* filename) {
     if (res == JDR_OK) {
       /* Ready to dcompress. Image info is available here. */
       //printf("Image dimensions: %u by %u. %u bytes used.\n", jdec.width, jdec.height, 3100 - jdec.sz_pool);
+      if(jdec.width < LCD_WIDTH_PX) {
+        devid.xoff = -(LCD_WIDTH_PX/2 - jdec.width/2);
+      }
+      if(jdec.height < LCD_HEIGHT_PX) {
+        devid.yoff = -(LCD_HEIGHT_PX/2 - jdec.height/2);
+      }
 
       res = jd_decomp(&jdec, out_func, scale);   /* Start to decompress with set scaling */
       if (res == JDR_OK) {
