@@ -849,17 +849,11 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
   menu.scrollout = 1;
   menu.type=MENUTYPE_FKEYS;
   while(1) {
-    if(*itemsinclip<=0) {
-      mMsgBoxPush(4);
-      mPrintXY(3, 2, (char*)"No files in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 3, (char*)"clipboard.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      closeMsgBox();
-      return;
-    }
     if(menu.selection > *itemsinclip) menu.selection = 1;
     MenuItem menuitems[MAX_ITEMS_IN_CLIPBOARD];
     menu.title = (char*)"Clipboard";
     menu.subtitle = (char*)"Black=cut, Red=copy";
+    menu.nodatamsg = (char*)"No items in clipboard";
     char statusbuffer[72];
     fillMenuStatusWithClip(statusbuffer, *itemsinclip, 1);
     menu.statusText = statusbuffer;
@@ -871,19 +865,21 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
       curitem++;
     }
     menu.numitems = *itemsinclip;
-    drawFkeyLabels(0x0149, 0x04DB, 0x049D, 0, 0, 0); // CLEAR [white], X symbol [white], Switch [white], clear rest of line
+    if(*itemsinclip > 0) drawFkeyLabels(0x0149, 0x04DB, 0x049D, 0, 0, 0); // CLEAR [white], X symbol [white], Switch [white], clear rest of line
+    else clearLine(1, 8);
     int res = doMenu(&menu);
     switch(res) {
       case MENU_RETURN_SELECTION:
         if(!clipboard[menu.selection-1].isfolder) fileInformation(&clipboard[menu.selection-1], 0, *itemsinclip);
         break;
       case KEY_CTRL_F1:
-        *itemsinclip = 0;
+        if(*itemsinclip <= 0) break;
+        else *itemsinclip = 0; //fallthrough
       case MENU_RETURN_EXIT:
         return;
         break;
       case KEY_CTRL_F2:
-        if (menu.selection-1 >= *itemsinclip) {} // safety check
+        if (menu.selection-1 >= *itemsinclip || *itemsinclip==0) {} // safety check
         else {
           for (int k = menu.selection-1; k < *itemsinclip - 1; k++) {
             menuitems[k] = menuitems[k+1];
@@ -893,9 +889,11 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
         }
         break;
       case KEY_CTRL_F3:
-        clipboard[menu.selection-1].action = !clipboard[menu.selection-1].action;
-        if(clipboard[menu.selection-1].action) menuitems[menu.selection-1].color = TEXT_COLOR_BLACK;
-        else menuitems[menu.selection-1].color = TEXT_COLOR_RED;
+        if(*itemsinclip > 0) {
+          clipboard[menu.selection-1].action = !clipboard[menu.selection-1].action;
+          if(clipboard[menu.selection-1].action) menuitems[menu.selection-1].color = TEXT_COLOR_BLACK;
+          else menuitems[menu.selection-1].color = TEXT_COLOR_RED;
+        }
         break;
     }
   }
