@@ -63,9 +63,9 @@ void fileTextEditor(char* filename, char* basefolder) {
     clearLine(1,8);
     drawScreenTitle((char*)"Text Editor", (char*)"File contents:");
     int res = doTextInput(&input);
-    int backToEditor = 0;
     if (res==INPUT_RETURN_EXIT) return; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
+      int backToEditor = 0;
       unsigned short newfilenameshort[0x10A];
       if(newfile) {
         SetBackGround(13);

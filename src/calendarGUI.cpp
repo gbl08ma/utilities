@@ -932,7 +932,7 @@ void fillInputDate(int yr, int m, int d, char* buffer) {
 }
 
 void fillInputTime(int h, int m, int s, char* buffer) {
-  buffer[0] = '\0'; // This sets the first character to \0, also represented by "", an empty string
+  buffer[0] = '\0';
   if(h || m || s) {
     char buffer2[8];
     if (h < 10) { strcat(buffer, "0"); }
@@ -949,7 +949,6 @@ void fillInputTime(int h, int m, int s, char* buffer) {
   }
 }
 int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask) {
-  // returns 0 if success, 1
   DefineStatusMessage((char*)"", 1, 0, 0); // clear "press OPTN for more options" message
   if(type == EVENTEDITORTYPE_ADD) {
     event = (CalendarEvent*)alloca(sizeof(CalendarEvent));
@@ -1669,11 +1668,11 @@ void searchEventsGUI(int y, int m, int d) {
       
       int yc = userEndYear-userStartYear+1;
       int pc = 0;
-      int ic = 0, firstYwithEvents = 0, lastYwithEvents = 0, c = 0;
+      int ic = 0, firstYwithEvents = 0, lastYwithEvents = 0;
       int maxPerYear = 250/yc; // calculate maximum number of events we can get on each year
       progressMessage((char*)" Searching...", 0, yc);
       for(int i=userStartYear; i<=userEndYear; i++) {
-        c = SearchEventsOnYearOrMonth(i, 0, CALENDARFOLDER, NULL, needle, maxPerYear, ic); //get event count
+        int c = SearchEventsOnYearOrMonth(i, 0, CALENDARFOLDER, NULL, needle, maxPerYear, ic); //get event count
         if(!firstYwithEvents && c>0) firstYwithEvents = i;
         if(c>0) lastYwithEvents = i;
         pc++;

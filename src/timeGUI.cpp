@@ -204,12 +204,11 @@ inline static void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, 
   drawFilledCircle(cx, cy, radius, colorfg);
   drawFilledCircle(cx, cy, radius-2, colorbg);
   int theta=0,i=0;
-  double x,y,x1,y1;
   do{
-    x=cx+(radius-radius/10.0)*cosine(theta*M_PI/180);
-    x1=cx+(radius-radius/12.0)*cosine(theta*M_PI/180);
-    y=cy+(radius-radius/10.0)*sine(theta*M_PI/180);
-    y1=cy+(radius-radius/12.0)*sine(theta*M_PI/180);
+    double x=cx+(radius-radius/10.0)*cosine(theta*M_PI/180);
+    double x1=cx+(radius-radius/12.0)*cosine(theta*M_PI/180);
+    double y=cy+(radius-radius/10.0)*sine(theta*M_PI/180);
+    double y1=cy+(radius-radius/12.0)*sine(theta*M_PI/180);
     drawLine(x,y,x1,y1,COLOR_GRAY);
     // Increase angle by 30 degrees, which is the circular distance between each numeric point:
     theta+=30;

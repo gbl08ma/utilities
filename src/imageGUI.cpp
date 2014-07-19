@@ -24,7 +24,6 @@
 void viewImage(char* filename) {
   void *work;     /* Pointer to the decompressor work area */
   JDEC jdec;    /* Decompression object */
-  JRESULT res;    /* Result code of TJpgDec API */
   IODEV devid;    /* User defined device identifier */
 
   /* Allocate a work area for TJpgDec */
@@ -44,7 +43,7 @@ void viewImage(char* filename) {
     if (devid.fp < 0) return /*-1*/;
 
     /* Prepare to decompress */
-    res = jd_prepare(&jdec, in_func, work, 8100, &devid);
+    JRESULT res = jd_prepare(&jdec, in_func, work, 8100, &devid);
     if (res == JDR_OK) {
       /* Ready to dcompress. Image info is available here. */
       //printf("Image dimensions: %u by %u. %u bytes used.\n", jdec.width, jdec.height, 3100 - jdec.sz_pool);

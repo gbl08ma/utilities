@@ -202,7 +202,6 @@ int addinManagerSub(Menu* menu) {
 
 void changeFKeyColor() {
   unsigned char*keycolor = (unsigned char*) 0xFD8013E4;
-  unsigned char selcolor = (unsigned char) 0xFF; //just so it isn't uninitialized
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
   drawScreenTitle((char*)"Function Key Color");
@@ -218,7 +217,7 @@ void changeFKeyColor() {
   elem[0].minimini = 1;
   text.numelements = 1;
   doTextArea(&text);
-  selcolor = ColorIndexDialog1( *keycolor, 0 );
+  unsigned char selcolor = ColorIndexDialog1( *keycolor, 0 );
   if(selcolor != (unsigned char)0xFF) {
     //user didn't press EXIT, QUIT or AC/ON. input is validated.
     *keycolor = selcolor;
