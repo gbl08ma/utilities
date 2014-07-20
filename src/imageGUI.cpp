@@ -55,16 +55,27 @@ void viewImage(char* filename) {
       }
 
       res = jd_decomp(&jdec, out_func, scale);   /* Start to decompress with set scaling */
-      if (res == JDR_OK) {
+      if (res == JDR_OK || res == JDR_INTR) {
         /* Decompression succeeded. You have the decompressed image in the frame buffer here. */
-        //printf("\rOK  \n");
 
       } else {
-        //printf("Failed to decompress: rc=%d\n", res);
+        Bfile_CloseFile_OS(devid.fp);
+        mMsgBoxPush(4);
+        mPrintXY(3, 2, (char*)"An error occurred", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 3, (char*)"(failed to", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 4, (char*)"decompress)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        closeMsgBox();
+        return;
       }
 
     } else {
-      //printf("Failed to prepare: rc=%d\n", res);
+      Bfile_CloseFile_OS(devid.fp);
+      mMsgBoxPush(4);
+      mPrintXY(3, 2, (char*)"An error occurred", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"(failed to", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 4, (char*)"prepare)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      closeMsgBox();
+      return;
     }
 
     Bfile_CloseFile_OS(devid.fp);     /* Close the JPEG file */
