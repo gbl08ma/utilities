@@ -27,7 +27,6 @@ void viewImage(char* filename) {
   IODEV devid;    /* User defined device identifier */
 
   /* Allocate a work area for TJpgDec */
-  //work = alloca(3100*2);
   work = (char*)0xE5007000; // first "additional on-chip RAM area", 8192 bytes
 
   devid.xoff = 0;
@@ -40,7 +39,14 @@ void viewImage(char* filename) {
     Bdisp_AllClr_VRAM();
     /* Open a JPEG file */
     devid.fp = Bfile_OpenFile_OS(filenameshort, READWRITE, 0);
-    if (devid.fp < 0) return /*-1*/;
+    if (devid.fp < 0) {
+      mMsgBoxPush(4);
+      mPrintXY(3, 2, (char*)"An error occurred", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"(failed to open", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 4, (char*)"file)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      closeMsgBox();
+      return;
+    }
 
     /* Prepare to decompress */
     JRESULT res = jd_prepare(&jdec, in_func, work, 8100, &devid);
@@ -180,10 +186,6 @@ UINT in_func (JDEC* jd, BYTE* buff, UINT nbyte)
 UINT out_func (JDEC* jd, void* bitmap, JRECT* rect)
 {
   IODEV *dev = (IODEV*)jd->device;
-  /* Put progress indicator */
-  /*if (rect->left == 0) {
-    printf("\r%lu%%", (rect->top << jd->scale) * 100UL / jd->height);
-  }*/
   TDispGraph Graph;
   Graph.x = rect->left - dev->xoff;
   Graph.y = rect->top - dev->yoff; //24 px for status bar...
