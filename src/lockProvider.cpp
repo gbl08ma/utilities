@@ -90,7 +90,7 @@ int savePassword(unsigned char* password) {
   unsigned short pFile[MAX_FILENAME_SIZE]; // Make buffer
   Bfile_StrToName_ncpy(pFile, (unsigned char*)SMEMHASHFILE, MAX_FILENAME_SIZE); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-  int size = 32;
+  size_t size = 32;
   if(hFile < 0) // Check if it opened
   {
     //error, file doesn't exist. create it

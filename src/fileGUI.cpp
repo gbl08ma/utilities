@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <alloca.h>
 
 #include "constantsProvider.hpp"
 #include "timeProvider.hpp"
@@ -359,7 +360,7 @@ int makeg3pGUI(char* browserbasepath) {
     else if (res==INPUT_RETURN_CONFIRM) {
       unsigned short tempfilenameshort[0x10A];
       Bfile_StrToName_ncpy(tempfilenameshort, TEMPFILE2, 0x10A);
-      int filesize = Blank_g3p_phc_len;
+      size_t filesize = Blank_g3p_phc_len;
       int BCEres = Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &filesize);
       if(BCEres < 0) return 0;
       int hFile = Bfile_OpenFile_OS(tempfilenameshort, READWRITE, 0);

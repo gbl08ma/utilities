@@ -19,6 +19,8 @@
 #include "graphicsProvider.hpp"
 #include "selectorGUI.hpp"
 
+typedef scrollbar TScrollbar;
+
 int doTextArea(textArea* text) {
   int scroll = 0;
   int isFirstDraw = 1;

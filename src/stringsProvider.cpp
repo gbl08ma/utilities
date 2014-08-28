@@ -11,54 +11,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <ctype.h>
 
 #include "stringsProvider.hpp"
-
-char tolower(char c)
-{
-  if (c >= 'A' && c <= 'Z')
-          c += 32;
-  return c;
-}
-char toupper(char c)
-{
-  if (c >= 'a' && c <= 'z')
-          c -= 32;
-  return c;
-}
-int strncasecmp(const char *s1, const char *s2, size_t n)
-{
-        if (n != 0) {
-                const unsigned char *us1 = (const unsigned char *)s1;
-                const unsigned char *us2 = (const unsigned char *)s2;
-
-                do {
-                        if (tolower(*us1) != tolower(*us2++))
-                                return (tolower(*us1) - tolower(*--us2));
-                        if (*us1++ == '\0')
-                                break;
-                } while (--n != 0);
-        }
-        return (0);
-}
-char *strcasestr(const char *s, const char *find)
-{
-    char c;
-
-    if ((c = *find++) != 0) {
-            c = tolower((unsigned char)c);
-            size_t len = strlen(find);
-            do {
-                    char sc;
-                    do {
-                            if ((sc = *s++) == 0)
-                                    return (NULL);
-                    } while ((char)tolower((unsigned char)sc) != c);
-            } while (strncasecmp(s, find, len) != 0);
-            s--;
-    }
-    return ((char *)s);
-}
 
 
 /* copy over the next token from an input string, WITHOUT

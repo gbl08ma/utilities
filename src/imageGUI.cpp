@@ -182,6 +182,7 @@ UINT in_func (JDEC* jd, BYTE* buff, UINT nbyte)
   }
 }
 
+typedef display_graph TDispGraph;
 UINT out_func (JDEC* jd, void* bitmap, JRECT* rect)
 {
   IODEV *dev = (IODEV*)jd->device;

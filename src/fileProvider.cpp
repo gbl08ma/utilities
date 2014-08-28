@@ -270,7 +270,7 @@ void copyFile(char* oldfilename, char* newfilename) {
     //returned error: couldn't open file to copy.
     return; //skip this file
   }
-  int copySize = Bfile_GetFileSize_OS(hOldFile);
+  size_t copySize = Bfile_GetFileSize_OS(hOldFile);
   Bfile_CloseFile_OS(hOldFile); // close for now
 
   int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
@@ -594,7 +594,8 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
   // source file is closed so CreateEntry can proceed.
   // create a temp file in root because copying into subdirectories directly fails with sys error
   // so we create a temp file in root, and rename in the end
-  int BCEres, filesize = 1;
+  int BCEres;
+  size_t filesize = 1;
   BCEres = Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &filesize);
   if(BCEres >= 0) // Did it create?
   {

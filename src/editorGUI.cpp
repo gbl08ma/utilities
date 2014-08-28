@@ -106,7 +106,7 @@ void fileTextEditor(char* filename, char* basefolder) {
         Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)filename, 0x10A);
         Bfile_DeleteEntry(newfilenameshort);
       }
-      int size = strlen(sText);
+      size_t size = strlen(sText);
       Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size); //create the file
       
       int h = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);

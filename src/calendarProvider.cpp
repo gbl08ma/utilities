@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <alloca.h>
 
 #include "constantsProvider.hpp"
 #include "chronoProvider.hpp"
@@ -195,7 +196,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
   //Returns 0 on success, other values on error.
   char newevent[2048] = "";
   calEventToChar(calEvent, (unsigned char*)newevent);
-  int size = strlen(FILE_HEADER) + strlen(newevent);
+  size_t size = strlen(FILE_HEADER) + strlen(newevent);
   unsigned short pFile[MAX_FILENAME_SIZE];
   smemFilenameFromDate(&calEvent->startdate, pFile, folder);
   int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
@@ -265,7 +266,7 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   for(int j = 0; j < count; j++) {
     calEventToChar(&newEvents[j], newfilecontents); //calEventToChar only does strncat, so it can append directly.
   }
-  int newsize = strlen((char*)newfilecontents);
+  size_t newsize = strlen((char*)newfilecontents);
 
   unsigned short pFile[MAX_FILENAME_SIZE];
   smemFilenameFromDate(startdate, pFile, folder);
@@ -274,7 +275,7 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
     setDBneedsRepairFlag(1);
     return 1;
   }
-  int oldsize = Bfile_GetFileSize_OS(hAddFile);
+  size_t oldsize = Bfile_GetFileSize_OS(hAddFile);
   if(newsize < oldsize) {
     // new file is smaller than old file; we must recreate with new size.
     Bfile_CloseFile_OS(hAddFile);
