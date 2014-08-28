@@ -21,6 +21,17 @@
 #include "inputGUI.hpp"
 #include "tjpgd.h"
 
+int ipow(int base, int exp)
+{
+  int result = 1;
+  while (exp) {
+    if (exp & 1) result *= base;
+    exp >>= 1;
+    base *= base;
+  }
+  return result;
+}
+
 void viewImage(char* filename) {
   void *work;     /* Pointer to the decompressor work area */
   JDEC jdec;    /* Decompression object */
@@ -51,12 +62,19 @@ void viewImage(char* filename) {
     /* Prepare to decompress */
     JRESULT res = jd_prepare(&jdec, in_func, work, 8100, &devid);
     if (res == JDR_OK) {
-      /* Ready to dcompress. Image info is available here. */
-      if(jdec.width < LCD_WIDTH_PX) {
-        devid.xoff = -(LCD_WIDTH_PX/2 - jdec.width/2);
+      /* Ready to decompress. Image info is available here. */
+      int sdiv = ipow(2, scale);
+      if(jdec.width/sdiv < LCD_WIDTH_PX) {
+        devid.xoff = -(LCD_WIDTH_PX/2 - (jdec.width/sdiv)/2);
+      } else {
+        if(devid.xoff<0) devid.xoff = 0;
+        if(devid.xoff>(int)jdec.width/sdiv-LCD_WIDTH_PX) devid.xoff=jdec.width/sdiv-LCD_WIDTH_PX;
       }
-      if(jdec.height < LCD_HEIGHT_PX) {
-        devid.yoff = -(LCD_HEIGHT_PX/2 - jdec.height/2);
+      if(jdec.height/sdiv < LCD_HEIGHT_PX) {
+        devid.yoff = -(LCD_HEIGHT_PX/2 - (jdec.height/sdiv)/2);
+      } else {
+        if(devid.yoff<0) devid.yoff = 0;
+        if(devid.yoff>(int)jdec.height/sdiv-LCD_HEIGHT_PX) devid.yoff=jdec.height/sdiv-LCD_HEIGHT_PX;
       }
 
       res = jd_decomp(&jdec, out_func, scale);   /* Start to decompress with set scaling */

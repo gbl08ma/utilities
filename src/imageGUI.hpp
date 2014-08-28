@@ -18,8 +18,8 @@
 
 typedef struct {
   int fp;        /* File pointer for input function */
-  UINT xoff;    /* Image cursor */
-  UINT yoff;    /* Image cursor */
+  INT xoff;    /* Image cursor */
+  INT yoff;    /* Image cursor */
 } IODEV;
 void viewImage(char* filename);
 UINT in_func (JDEC* jd, BYTE* buff, UINT nbyte);
