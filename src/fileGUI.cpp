@@ -873,11 +873,10 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
       case MENU_RETURN_SELECTION:
         if(!clipboard[menu.selection-1].isfolder) fileInformation(&clipboard[menu.selection-1], 0, *itemsinclip);
         break;
-      case KEY_CTRL_F1:
-        if(*itemsinclip <= 0) break;
-        else *itemsinclip = 0; //fallthrough
       case MENU_RETURN_EXIT:
         return;
+      case KEY_CTRL_F1:
+        if(*itemsinclip > 0) *itemsinclip = 0;
         break;
       case KEY_CTRL_F2:
         if (menu.selection-1 >= *itemsinclip || *itemsinclip==0) {} // safety check
