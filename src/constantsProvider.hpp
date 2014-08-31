@@ -23,15 +23,15 @@
 #endif
 
 #ifndef SMEMHASHFILE
-#define SMEMHASHFILE (unsigned char*)"\\\\fls0\\@UTILS\\Hash.plp"
+#define SMEMHASHFILE (char*)"\\\\fls0\\@UTILS\\Hash.plp"
 #endif
 
 #ifndef TEMPFILE
-#define TEMPFILE (unsigned char*)"\\\\fls0\\UTILSTMP.PCT"
+#define TEMPFILE (char*)"\\\\fls0\\UTILSTMP.PCT"
 #endif
 
 #ifndef TEMPFILE2
-#define TEMPFILE2 (unsigned char*)"\\\\fls0\\UTILSTM2.PCT"
+#define TEMPFILE2 (char*)"\\\\fls0\\UTILSTM2.PCT"
 #endif
 
 #ifndef SELFFILE

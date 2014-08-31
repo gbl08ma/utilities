@@ -194,7 +194,7 @@ int lockCalc() {
     Bdisp_AllClr_VRAM();
     Bdisp_EnableColor(1);
     DisplayStatusArea();
-    PrintMini(&textX, &textY, (unsigned char*)"Calculator locked", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
+    PrintMini(&textX, &textY, (char*)"Calculator locked", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
     GetKey(&key); //oh, the pleasure of using GetKey and still have the Menu blocked
     setBrightnessToStartupSetting();
     if (key == KEY_CTRL_ALPHA) {

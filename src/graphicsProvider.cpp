@@ -171,7 +171,7 @@ void drawFkeyPopup(int Fkey, char* title) {
 
   int textX = FKEY_C3X-111-4;
   int textY = FKEY_C3Y-14-20;
-  PrintMiniMini( &textX, &textY, (unsigned char*)"...or press: [EXIT]", (GetSetting(SETTING_THEME) == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
+  PrintMiniMini( &textX, &textY, (char*)"...or press: [EXIT]", (GetSetting(SETTING_THEME) == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
 
   mPrintXY(2, 2, title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
 }
@@ -279,8 +279,8 @@ void closeProgressMessage() {
   MsgBoxPop(); //closes progressbar
 }
 
-void printCentered(unsigned char* text, int y, int FGC, int BGC) {
-  int len = strlen((char*)text);
+void printCentered(char* text, int y, int FGC, int BGC) {
+  int len = strlen(text);
   int x = LCD_WIDTH_PX/2-(len*18)/2;
   int cur = 0;
   while(cur<len) {

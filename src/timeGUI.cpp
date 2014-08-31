@@ -143,18 +143,18 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
 
   int textX = 0;
   //Use PrintMini to get length in pixels of the string, then draw it on the middle of the screen
-  PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, colorfg, colorbg, 0, 0); //get length
+  PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, colorfg, colorbg, 0, 0); //get length
   textX = LCD_WIDTH_PX/2 - textX/2; //center
-  PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, colorfg, colorbg, 1, 0); //draw
+  PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, colorfg, colorbg, 1, 0); //draw
   
   if (format == 0 || format == 1 || format == 4 || format == 7) {
     // draw year in minimini font
     itoa(curYear, (unsigned char*)buffer2);
     int newTextX = 0;
     textY = textY+17;
-    PrintMiniMini( &newTextX, &textY, (unsigned char*)buffer2, 0, TEXT_COLOR_BLACK, 1 ); //fake draw
+    PrintMiniMini( &newTextX, &textY, buffer2, 0, TEXT_COLOR_BLACK, 1 ); //fake draw
     textX = textX - newTextX;
-    PrintMiniMini( &textX, &textY, (unsigned char*)buffer2, (miniminiinvert == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
+    PrintMiniMini( &textX, &textY, buffer2, (miniminiinvert == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
   }
   return;
 }
@@ -435,18 +435,18 @@ void drawHomeClock(int format, int theme) {
   switch(format) {
     case 0:
       // show digital time and long date
-      printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
+      printCentered(timeStr, 3*24, fgcolor, bgcolor);
       drawLongDate(90, NULL, fgcolor, bgcolor, theme);
       break;
     case 1:
       // show digital time only
-      printCentered((unsigned char*)timeStr, 4*24, fgcolor, bgcolor);
+      printCentered(timeStr, 4*24, fgcolor, bgcolor);
       break;
     case 2:
       // show digital time and short date
-      printCentered((unsigned char*)timeStr, 3*24, fgcolor, bgcolor);
+      printCentered(timeStr, 3*24, fgcolor, bgcolor);
       currentDateToString(timeStr);
-      printCentered((unsigned char*)timeStr, 5*24, fgcolor, bgcolor);
+      printCentered(timeStr, 5*24, fgcolor, bgcolor);
       break;
     case 3:
       // show long date only
@@ -454,7 +454,7 @@ void drawHomeClock(int format, int theme) {
       break;
     case 4:
       // show short date only
-      printCentered((unsigned char*)timeStr, 4*24, fgcolor, bgcolor);
+      printCentered(timeStr, 4*24, fgcolor, bgcolor);
       break;
     case 5:
       // show analog clock only
@@ -486,7 +486,7 @@ void drawHomeClock(int format, int theme) {
     case 10:
       // show analog clock with short date
       drawAnalogClock(LCD_WIDTH_PX/2, 58+24, 50, bgcolor, fgcolor);
-      printCentered((unsigned char*)timeStr, 120+24, fgcolor, bgcolor);
+      printCentered(timeStr, 120+24, fgcolor, bgcolor);
       break;
     // 11 is for showing nothing at all... so put nothing in VRAM.
   }

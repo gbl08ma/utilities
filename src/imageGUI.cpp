@@ -44,7 +44,7 @@ void viewImage(char* filename) {
   devid.yoff = 0;
   int scale = 0;
   unsigned short filenameshort[0x10A];
-  Bfile_StrToName_ncpy(filenameshort, (unsigned char*)filename, 0x10A);
+  Bfile_StrToName_ncpy(filenameshort, filename, 0x10A);
   while(1) {
     int key;
     Bdisp_AllClr_VRAM();

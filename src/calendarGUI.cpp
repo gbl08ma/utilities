@@ -1057,9 +1057,9 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int textX = 0;
         int textY = 5*24;
-        PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will be a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        PrintMini(&textX, &textY, (char*)"If left blank, the event will be a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
         textX=0; textY += 17;
-        PrintMini(&textX, &textY, (unsigned char*)"full-day event.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        PrintMini(&textX, &textY, (char*)"full-day event.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
         
         textInput input;
         input.x=8;
@@ -1101,9 +1101,9 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         mPrintXY(7, 4, (char*)dateSettingToInputDisplay(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int textX = 0;
         int textY = 5*24;
-        PrintMini(&textX, &textY, (unsigned char*)"If left blank, the event will end on", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        PrintMini(&textX, &textY, (char*)"If left blank, the event will end on", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
         textX=0; textY += 17;
-        PrintMini(&textX, &textY, (unsigned char*)"the same day that it starts.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        PrintMini(&textX, &textY, (char*)"the same day that it starts.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
         
         textInput input;
         input.x=7;
@@ -1255,8 +1255,8 @@ inline static void PrintMiniFix( int x, int y, const char*Msg, const int flags, 
   int i=0;
   while (Msg[i]) {
     int textX = x;
-    unsigned char sb[2] = {(unsigned char)Msg[i], '\0'};
-    PrintMini(&textX, &y, (unsigned char*)sb, 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
+    char sb[2] = {Msg[i], '\0'};
+    PrintMini(&textX, &y, sb, 0, 0xFFFFFFFF, 0, 0, color, bcolor, 1, 0);
     x += 12;
     i++;
   }
@@ -1279,7 +1279,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   drawLine(RIGHT-1,BOTTOM-1,RIGHT-1,TOP,COLOR_BLACK);
   drawRectangle(LEFT+2,TOP+2,RIGHT-2-2-LEFT,THICKNESS,COLOR_BLACK);
   textX=LEFT+5; textY= TOP+2-TOPOFFSET;
-  PrintMini(&textX, &textY, (unsigned char*)getMonthAsString(month), 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
+  PrintMini(&textX, &textY, getMonthAsString(month), 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
   int x,y = 0; int k = 1;
   drawRectangle(LEFT+2,TOP+2+THICKNESS,RIGHT-2-2-LEFT,THICKNESS,COLOR_LIGHTGRAY);
   drawRectangle(RIGHT-2-WIDTH,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
@@ -1297,7 +1297,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   {
     textX = x+2;
     textY = TOP+2+THICKNESS-TOPOFFSET;
-    PrintMini(&textX, &textY, (unsigned char*)getDOWAsShortString(k++), 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_LIGHTGRAY, 1, 0);
+    PrintMini(&textX, &textY, getDOWAsShortString(k++), 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_LIGHTGRAY, 1, 0);
   }
 
   int startingday = dow(year,month,1),day = 1;
@@ -1328,13 +1328,13 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
         if(eventcount[day] > 0) {
           int textX = LEFT+2+WIDTH*x+2+12*2+2; //12+2 to have space to write the day and some padding
           int textY = TOP+2+y*THICKNESS-TOPOFFSET+1; //+1 to have some padding
-          unsigned char eventstr[10];
+          char eventstr[10];
           if (eventcount[day] < 100) {
             itoa(eventcount[day], (unsigned char*)eventstr); 
           } else {
-            strcpy((char*)eventstr, (char*)"++");
+            strcpy(eventstr, (char*)"++");
           }
-          PrintMiniMini( &textX, &textY, (unsigned char*)eventstr, 0, TEXT_COLOR_BLACK, 0 );
+          PrintMiniMini( &textX, &textY, eventstr, 0, TEXT_COLOR_BLACK, 0 );
           if(day == d) {
             // color replacements for when background is red
             VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+1+24, 8*2, 12, COLOR_WHITE, COLOR_RED);
@@ -1375,9 +1375,9 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   itoa(year,(unsigned char*)buffer);
   textX = 0; //RIGHT-5-50;
   textY = TOP+2-TOPOFFSET;
-  PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 0, 0);
+  PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 0, 0);
   textX = RIGHT-4-textX;
-  PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
+  PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
 }
 
 int deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask) {
@@ -1979,10 +1979,10 @@ void repairCalendarDatabase() {
   int problemsfound = 0;
   
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
-  unsigned char buffer[MAX_FILENAME_SIZE+1];
+  char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy((char*)buffer, CALENDARFOLDER"\\*.pce");
+  strcpy(buffer, CALENDARFOLDER"\\*.pce");
   
   file_type_t fileinfo;
   int findhandle;
@@ -2073,10 +2073,10 @@ void trimCalendarDatabase() {
       if(!closeMsgBox(1)) return;
     }
     unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
-    unsigned char buffer[MAX_FILENAME_SIZE+1];
+    char buffer[MAX_FILENAME_SIZE+1];
 
     // make the buffer
-    strcpy((char*)buffer, CALENDARFOLDER"\\*.pce");
+    strcpy(buffer, CALENDARFOLDER"\\*.pce");
     
     file_type_t fileinfo;
     int findhandle;
@@ -2141,9 +2141,9 @@ void trimCalendarDatabase() {
           }
         }
         if(deleteThisFile) {
-          unsigned char delfname[MAX_FILENAME_SIZE+1];
-          strcpy((char*)delfname, CALENDARFOLDER"\\");
-          strcat((char*)delfname, (char*)buffer);
+          char delfname[MAX_FILENAME_SIZE+1];
+          strcpy(delfname, CALENDARFOLDER"\\");
+          strcat(delfname, (char*)buffer);
           unsigned short path2[MAX_FILENAME_SIZE+1];
           Bfile_StrToName_ncpy(path2, delfname, MAX_FILENAME_SIZE+1);
           Bfile_DeleteEntry( path2 );

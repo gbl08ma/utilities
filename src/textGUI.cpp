@@ -40,17 +40,17 @@ int doTextArea(textArea* text) {
         textY=textY+text->lineHeight+text->elements[cur].lineSpacing; 
       }
       int tlen = strlen(text->elements[cur].text);
-      unsigned char* singleword = (unsigned char*)malloc(tlen); // because of this, a single text element can't have more bytes than malloc can provide
-      unsigned char* src = (unsigned char*)text->elements[cur].text;
+      char* singleword = (char*)malloc(tlen); // because of this, a single text element can't have more bytes than malloc can provide
+      char* src = (char*)text->elements[cur].text;
       while(*src)
       {
         temptextX = 0;
-        src = toksplit(src, ' ', (unsigned char*)singleword, tlen); //break into words; next word
+        src = (char*)toksplit((unsigned char*)src, ' ', (unsigned char*)singleword, tlen); //break into words; next word
         //check if printing this word would go off the screen, with fake PrintMini drawing:
         if(text->elements[cur].minimini) {
-          PrintMiniMini( &temptextX, &temptextY, (unsigned char*)singleword, 0, text->elements[cur].color, 1 );
+          PrintMiniMini( &temptextX, &temptextY, singleword, 0, text->elements[cur].color, 1 );
         } else {
-          PrintMini(&temptextX, &temptextY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 0, 0);
+          PrintMini(&temptextX, &temptextY, singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 0, 0);
         }
         if(temptextX + textX > text->width-6) {
           //time for a new line
@@ -59,12 +59,12 @@ int doTextArea(textArea* text) {
         } //else still fits, print new word normally (or just increment textX, if we are not "on stage" yet)
         if(textY >= -24 && textY < LCD_HEIGHT_PX) {
           if(text->elements[cur].minimini) {
-            PrintMiniMini( &textX, &textY, (unsigned char*)singleword, 0, text->elements[cur].color, 0 );
+            PrintMiniMini( &textX, &textY, singleword, 0, text->elements[cur].color, 0 );
           } else {
-            PrintMini(&textX, &textY, (unsigned char*)singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 1, 0);
+            PrintMini(&textX, &textY, singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 1, 0);
           }
           //add a space, since it was removed from token
-          if(*src || text->elements[cur].spaceAtEnd) PrintMini(&textX, &textY, (unsigned char*)" ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+          if(*src || text->elements[cur].spaceAtEnd) PrintMini(&textX, &textY, (char*)" ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
         } else {
           textX += temptextX;
           if(*src || text->elements[cur].spaceAtEnd) textX += 7; // size of a PrintMini space

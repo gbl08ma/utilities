@@ -289,7 +289,7 @@ void updateCurrentFreq() {
   strcpy(buffer, (char*)"Running at ");
   strcat(buffer, cur);
   strcat(buffer, (char*)" MHz");
-  PrintMini(&textX, &textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   mPrintXY(1, 8, desc, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
 }
 
@@ -321,9 +321,9 @@ void setCPUclock() {
     CopySpriteNbit(selector, 10, 105, 364, 22, selector_palette, 1);
     
     textX=0; textY=118;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"USE AT YOUR OWN RISK! NO WARRANTY PROVIDED.", 0, TEXT_COLOR_RED, 0 );
+    PrintMiniMini( &textX, &textY, (char*)"USE AT YOUR OWN RISK! NO WARRANTY PROVIDED.", 0, TEXT_COLOR_RED, 0 );
     textX=0; textY=130;
-    PrintMiniMini( &textX, &textY, (unsigned char*)"Note: changes are applied instantly.", 0, TEXT_COLOR_BLACK, 0 );
+    PrintMiniMini( &textX, &textY, (char*)"Note: changes are applied instantly.", 0, TEXT_COLOR_BLACK, 0 );
     
     updateCurrentFreq();
     mGetKey(&key);

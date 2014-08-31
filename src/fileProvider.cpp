@@ -68,11 +68,11 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
   // this function always returns status codes defined on fileProvider.hpp
   // basepath should start with \\fls0\ and should always have a slash (\) at the end
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
-  unsigned char buffer[MAX_FILENAME_SIZE+1];
+  char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy((char*)buffer, basepath);
-  strcat((char*)buffer, "*");
+  strcpy(buffer, basepath);
+  strcat(buffer, "*");
   
   *count = 0;
   file_type_t fileinfo;
@@ -123,14 +123,14 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
   // this function always returns status codes defined on fileProvider.hpp
   // basepath should start with \\fls0\ and should always have a slash (\) at the end
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
-  unsigned char buffer[MAX_FILENAME_SIZE+1];
+  char buffer[MAX_FILENAME_SIZE+1];
 
   int numberOfFoldersToSearchInTheEnd = 0;
   char foldersToSearchInTheEnd[MAX_ITEMS_PER_FOLDER_COPY][MAX_NAME_SIZE];
 
   // make the buffer
-  strcpy((char*)buffer, basepath);
-  strcat((char*)buffer, "*");
+  strcpy(buffer, basepath);
+  strcat(buffer, "*");
   
   if(!isRecursiveCall) *count = 0;
   file_type_t fileinfo;
@@ -161,7 +161,7 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
           strcpy(filename, basepath);
           strcat(filename, (char*)buffer);
           unsigned short pFile[MAX_FILENAME_SIZE+1];
-          Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, MAX_FILENAME_SIZE); 
+          Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
           int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
           if(hFile >= 0) // Check if it opened
           { //opened
@@ -233,7 +233,7 @@ void deleteFiles(File* files, Menu* menu) {
     progressMessage((char*)" Deleting...", 0, menu->numselitems);
     while(curfile < menu->numitems  && delfiles < menu->numselitems) {  
       if (menu->items[curfile].isselected) {
-        Bfile_StrToName_ncpy(path, (unsigned char*)files[curfile].filename, MAX_FILENAME_SIZE+1);
+        Bfile_StrToName_ncpy(path, files[curfile].filename, MAX_FILENAME_SIZE+1);
         Bfile_DeleteEntry( path );
         delfiles++;
       }
@@ -261,8 +261,8 @@ void copyFile(char* oldfilename, char* newfilename) {
   unsigned short newfilenameshort[0x10A];
   unsigned short oldfilenameshort[0x10A];
   unsigned short tempfilenameshort[0x10A];
-  Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)oldfilename, 0x10A);
-  Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+  Bfile_StrToName_ncpy(oldfilenameshort, oldfilename, 0x10A);
+  Bfile_StrToName_ncpy(newfilenameshort, newfilename, 0x10A);
   Bfile_StrToName_ncpy(tempfilenameshort, TEMPFILE, 0x10A);
   
   int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0); // Get handle for the old file
@@ -329,7 +329,7 @@ void copyFile(char* oldfilename, char* newfilename) {
 void copyFolder(char* oldfilename, char* newfilename) {
   // create destination folder:
   unsigned short newfilenameshort[0x10A];
-  Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+  Bfile_StrToName_ncpy(newfilenameshort, newfilename, 0x10A);
   if(0 < Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FOLDER, 0)) return; //return if error
 
   // now that we created the new folder, copy each item in the old folder into the new one.
@@ -338,11 +338,11 @@ void copyFolder(char* oldfilename, char* newfilename) {
   int itemsToCopyIsFolder[MAX_ITEMS_PER_FOLDER_COPY];
 
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
-  unsigned char buffer[MAX_FILENAME_SIZE+1];
+  char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy((char*)buffer, oldfilename);
-  strcat((char*)buffer, "\\*");
+  strcpy(buffer, oldfilename);
+  strcat(buffer, "\\*");
   
   file_type_t fileinfo;
   int findhandle;
@@ -416,8 +416,8 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         //move file
         unsigned short newfilenameshort[0x10A];
         unsigned short oldfilenameshort[0x10A];
-        Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)clipboard[curfile].filename, 0x10A);
-        Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+        Bfile_StrToName_ncpy(oldfilenameshort, clipboard[curfile].filename, 0x10A);
+        Bfile_StrToName_ncpy(newfilenameshort, newfilename, 0x10A);
         Bfile_RenameEntry(oldfilenameshort , newfilenameshort);
       }
       curfile++;
@@ -535,8 +535,8 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
   unsigned short newfilenameshort[0x10A];
   unsigned short oldfilenameshort[0x10A];
   unsigned short tempfilenameshort[0x10A];
-  Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)oldfilename, 0x10A);
-  Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+  Bfile_StrToName_ncpy(oldfilenameshort, oldfilename, 0x10A);
+  Bfile_StrToName_ncpy(newfilenameshort, newfilename, 0x10A);
   Bfile_StrToName_ncpy(tempfilenameshort, TEMPFILE, 0x10A);
   
   int hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0); // Get handle for the old file
@@ -683,7 +683,7 @@ cleanexit:
 int isFileCompressed(char* filename, int* origfilesize) {
   if(!EndsIWith(filename, (char*)COMPRESSED_FILE_EXTENSION)) return 0;
   unsigned short filenameshort[MAX_FILENAME_SIZE];
-  Bfile_StrToName_ncpy(filenameshort, (unsigned char*)filename, MAX_FILENAME_SIZE);
+  Bfile_StrToName_ncpy(filenameshort, filename, MAX_FILENAME_SIZE);
   int hFile = Bfile_OpenFile_OS(filenameshort, READWRITE, 0); // Get handle for the old file
   if(hFile < 0) return 0;
   unsigned char header[14] = "";

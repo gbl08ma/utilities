@@ -180,14 +180,14 @@ void filenameFromDate(EventDate* date, char* filename) {
   strcat(filename, smallbuf);
 }
 void smemFilenameFromDate(EventDate* date, unsigned short* shortfn, const char* folder) {
-  unsigned char filename[MAX_FILENAME_SIZE];
+  char filename[MAX_FILENAME_SIZE];
   char buffer[10];
-  strcpy((char*)filename, folder);
-  strcat((char*)filename, "\\");
+  strcpy(filename, folder);
+  strcat(filename, "\\");
   filenameFromDate(date, buffer);
-  strcat((char*)filename, buffer);
-  strcat((char*)filename, ".pce"); //filenameFromDate does not include file extension, so add it
-  Bfile_StrToName_ncpy(shortfn, (unsigned char*)filename, MAX_FILENAME_SIZE); 
+  strcat(filename, buffer);
+  strcat(filename, ".pce"); //filenameFromDate does not include file extension, so add it
+  Bfile_StrToName_ncpy(shortfn, filename, MAX_FILENAME_SIZE); 
 }
 
 int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
@@ -230,7 +230,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
       // it's probably because the DB has never been used and is not initialized (i.e. we haven't created the calendar folder).
       // create the folder:
       unsigned short pFolder[MAX_FILENAME_SIZE];
-      Bfile_StrToName_ncpy(pFolder, (unsigned char*)folder, MAX_FILENAME_SIZE);
+      Bfile_StrToName_ncpy(pFolder, folder, MAX_FILENAME_SIZE);
       Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0);
       // now let's call ourselves again, then according to the return value of our second instance, decide if there was an error or not.
       if(AddEvent(calEvent, folder,1)) {
@@ -409,17 +409,17 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   }
 
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
-  unsigned char buffer[MAX_FILENAME_SIZE+1];
+  char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy((char*)buffer, CALENDARFOLDER"\\");
+  strcpy(buffer, CALENDARFOLDER"\\");
   char smallbuf[5];
   itoa(year, (unsigned char*)smallbuf);
-  strcat((char*)buffer, smallbuf);
+  strcat(buffer, smallbuf);
   itoa(month, (unsigned char*)smallbuf);
-  if (month < 10) strcat((char*)buffer, "0");  //if month below 10, add leading 0
-  strcat((char*)buffer, smallbuf);
-  strcat((char*)buffer, "*.pce");
+  if (month < 10) strcat(buffer, "0");  //if month below 10, add leading 0
+  strcat(buffer, smallbuf);
+  strcat(buffer, "*.pce");
   
   file_type_t fileinfo;
   int findhandle;
@@ -484,20 +484,20 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   int curfpos = arraystart;
   
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
-  unsigned char buffer[MAX_FILENAME_SIZE+1];
+  char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy((char*)buffer, folder);
-  strcat((char*)buffer, "\\");
+  strcpy(buffer, folder);
+  strcat(buffer, "\\");
   char smallbuf[5];
   itoa(y, (unsigned char*)smallbuf);
-  strcat((char*)buffer, smallbuf);
+  strcat(buffer, smallbuf);
   if(m) {
     itoa(m, (unsigned char*)smallbuf);
-    if (m < 10) strcat((char*)buffer, "0");  //if month below 10, add leading 0
-    strcat((char*)buffer, smallbuf);
+    if (m < 10) strcat(buffer, "0");  //if month below 10, add leading 0
+    strcat(buffer, smallbuf);
   }
-  strcat((char*)buffer, "*.pce");
+  strcat(buffer, "*.pce");
   
   file_type_t fileinfo;
   int findhandle;
@@ -565,7 +565,7 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   strcat(filename, name);
   
   unsigned short pFile[MAX_FILENAME_SIZE];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, MAX_FILENAME_SIZE); 
+  Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   // Check if file opened
   if(hFile >= 0)

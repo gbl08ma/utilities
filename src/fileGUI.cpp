@@ -103,7 +103,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
   while(1) {
     int temptextX=5*18+10; // px length of menu title + 10, like menuGUI goes.
     int temptextY=0;
-    PrintMini(&temptextX, &temptextY, (unsigned char*)friendlypath, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); // fake draw
+    PrintMini(&temptextX, &temptextY, friendlypath, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); // fake draw
     if(temptextX>LCD_WIDTH_PX-6) {
       char newfriendlypath[MAX_FILENAME_SIZE];
       shortenDisplayPath(friendlypath, newfriendlypath, (jump4 ? 4 : 1));
@@ -333,7 +333,7 @@ int makeFolderGUI(char* browserbasepath) {
       strcpy(newfilename, browserbasepath);
       strcat(newfilename, newname);
       unsigned short newfilenameshort[0x10A];
-      Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+      Bfile_StrToName_ncpy(newfilenameshort, newfilename, 0x10A);
       Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FOLDER, 0); //create a folder
       return 1;
     }
@@ -409,8 +409,8 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
       strcat(newfilename, newname);
       unsigned short newfilenameshort[0x10A];
       unsigned short oldfilenameshort[0x10A];
-      Bfile_StrToName_ncpy(oldfilenameshort, (unsigned char*)files[menu->selection-1].filename, 0x10A);
-      Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+      Bfile_StrToName_ncpy(oldfilenameshort, files[menu->selection-1].filename, 0x10A);
+      Bfile_StrToName_ncpy(newfilenameshort, newfilename, 0x10A);
       Bfile_RenameEntry(oldfilenameshort , newfilenameshort);
       return 1;
     }
@@ -729,7 +729,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
       case KEY_CTRL_F6:
         if(file->size > 0) {
           unsigned short pFile[MAX_FILENAME_SIZE+1];
-          Bfile_StrToName_ncpy(pFile, (unsigned char*)file->filename, MAX_FILENAME_SIZE); 
+          Bfile_StrToName_ncpy(pFile, file->filename, MAX_FILENAME_SIZE); 
           int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
           if(hFile >= 0) // Check if it opened
           { //opened
@@ -748,14 +748,14 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
             
             mMsgBoxPush(4);
             int textX=2*18, textY=24;
-            PrintMini(&textX, &textY, (unsigned char*)"SHA-256 checksum:", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+            PrintMini(&textX, &textY, (char*)"SHA-256 checksum:", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
             textY=textY+20;
             textX=2*18;
             for(int i=0; i<32;i++) {
               unsigned char niceout[32] = "";
               ByteToHex( output[i], niceout );
               if((LCD_WIDTH_PX-2*18-textX) < 15) { textX=2*18; textY=textY+12; }
-              PrintMiniMini( &textX, &textY, (unsigned char*)niceout, 0, TEXT_COLOR_BLACK, 0 );
+              PrintMiniMini( &textX, &textY, (char*)niceout, 0, TEXT_COLOR_BLACK, 0 );
             }
             closeMsgBox();
           }
@@ -772,7 +772,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   unsigned char* asrc = NULL;
   //Get file contents
   unsigned short pFile[MAX_FILENAME_SIZE];
-  Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, MAX_FILENAME_SIZE); 
+  Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   unsigned int filesize = 0;
   if(hFile >= 0) // Check if it opened

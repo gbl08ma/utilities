@@ -30,7 +30,7 @@ void fileTextEditor(char* filename, char* basefolder) {
     newfile = 0;
     int openerror = 0;
     unsigned short pFile[MAX_FILENAME_SIZE];
-    Bfile_StrToName_ncpy(pFile, (unsigned char*)filename, MAX_FILENAME_SIZE); 
+    Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
     int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
     if(hFile >= 0) // Check if it opened
     { //opened
@@ -95,7 +95,7 @@ void fileTextEditor(char* filename, char* basefolder) {
               char newfilename[MAX_FILENAME_SIZE];
               strcpy(newfilename, basefolder);
               strcat(newfilename, nfilename);
-              Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)newfilename, 0x10A);
+              Bfile_StrToName_ncpy(newfilenameshort, newfilename, 0x10A);
               break;
             }
           }
@@ -103,7 +103,7 @@ void fileTextEditor(char* filename, char* basefolder) {
         if(backToEditor) continue;
       } else {
         // delete, then create and save file
-        Bfile_StrToName_ncpy(newfilenameshort, (unsigned char*)filename, 0x10A);
+        Bfile_StrToName_ncpy(newfilenameshort, filename, 0x10A);
         Bfile_DeleteEntry(newfilenameshort);
       }
       size_t size = strlen(sText);

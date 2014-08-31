@@ -32,12 +32,12 @@ void drawCapacityBar(int textY, long long int cur, long long int full) {
   
   int newTextX = 0;
   int newTextY = textY+5;
-  unsigned char buffer[50];
-  itoa(100*cur/full, buffer);
-  strcat((char*)buffer, "% used");
-  PrintMiniMini( &newTextX, &newTextY, (unsigned char*)buffer, 0, TEXT_COLOR_CYAN, 1 ); //fake draw
+  char buffer[50];
+  itoa(100*cur/full, (unsigned char*)buffer);
+  strcat(buffer, "% used");
+  PrintMiniMini( &newTextX, &newTextY, buffer, 0, TEXT_COLOR_CYAN, 1 ); //fake draw
   int textX = LCD_WIDTH_PX/2 - newTextX/2;
-  PrintMiniMini( &textX, &newTextY, (unsigned char*)buffer, 0, TEXT_COLOR_CYAN, 0 ); //draw  
+  PrintMiniMini( &textX, &newTextY, buffer, 0, TEXT_COLOR_CYAN, 0 ); //draw  
   
   VRAMReplaceColorInRect(0, textY+24, LCD_WIDTH_PX, 20, COLOR_WHITE, COLOR_GRAY);  
   VRAMReplaceColorInRect(0, textY+24, barwidthcpl, 20, COLOR_GRAY, COLOR_BLUE);
@@ -45,21 +45,21 @@ void drawCapacityBar(int textY, long long int cur, long long int full) {
 }
 
 void drawCapacityText(int* textY, const char* desc, long long int cur, long long int full) {
-  unsigned char buffer[50];
-  itoa(full-cur, buffer);
+  char buffer[50];
+  itoa(full-cur, (unsigned char*)buffer);
   *textY=*textY+22; int textX = 0;
-  PrintMini(&textX, textY, (unsigned char*)desc, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, textY, (unsigned char*)buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, textY, (unsigned char*)" bytes free", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, textY, desc, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, textY, (char*)" bytes free", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
 
   *textY = *textY + 17; textX = 60;
-  PrintMiniMini( &textX, textY, (unsigned char*)"out of ", 0, TEXT_COLOR_BLACK, 0 );
-  itoa(full, buffer);
+  PrintMiniMini( &textX, textY, (char*)"out of ", 0, TEXT_COLOR_BLACK, 0 );
+  itoa(full, (unsigned char*)buffer);
   PrintMiniMini( &textX, textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
-  PrintMiniMini( &textX, textY, (unsigned char*)" bytes (", 0, TEXT_COLOR_BLACK, 0 );
-  itoa(cur, buffer);
+  PrintMiniMini( &textX, textY, (char*)" bytes (", 0, TEXT_COLOR_BLACK, 0 );
+  itoa(cur, (unsigned char*)buffer);
   PrintMiniMini( &textX, textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
-  PrintMiniMini( &textX, textY, (unsigned char*)" bytes used)", 0, TEXT_COLOR_BLACK, 0 );
+  PrintMiniMini( &textX, textY, (char*)" bytes used)", 0, TEXT_COLOR_BLACK, 0 );
 
   *textY = *textY + 12;
 }
@@ -100,21 +100,21 @@ void memoryCapacityViewer() {
 int GetAddins(AddIn addins[]) {
   /*searches storage memory for active and inactive add-ins, returns their count*/
   unsigned short path[MAX_FILENAME_SIZE+1], path2[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
-  unsigned char buffer[MAX_FILENAME_SIZE+1];
+  char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy((char*)buffer, "\\\\fls0\\*");
+  strcpy(buffer, "\\\\fls0\\*");
   
   int curitem = 0;
   file_type_t fileinfo;
   int findhandle;
   Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
-  Bfile_StrToName_ncpy(path, (unsigned char*)"*.g3a", MAX_FILENAME_SIZE+1);
-  Bfile_StrToName_ncpy(path2, (unsigned char*)"*.h3a", MAX_FILENAME_SIZE+1);
+  Bfile_StrToName_ncpy(path, (char*)"*.g3a", MAX_FILENAME_SIZE+1);
+  Bfile_StrToName_ncpy(path2, (char*)"*.h3a", MAX_FILENAME_SIZE+1);
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "utilities.g3a") == 0) &&
+    if(!(strcmp(buffer, "..") == 0 || strcmp(buffer, ".") == 0 || strcmp(buffer, "utilities.g3a") == 0) &&
         ((Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) || (Bfile_Name_MatchMask((const short int*)path2, (const short int*)found))))
     {
       strcpy(addins[curitem].filename, (char*)buffer);
@@ -171,13 +171,13 @@ int addinManagerSub(Menu* menu) {
       if(menu->numitems > 0) {
         strcpy(buffer, "\\\\fls0\\");
         strcat(buffer, addins[menu->selection-1].filename);
-        Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, MAX_FILENAME_SIZE+1);
+        Bfile_StrToName_ncpy(oldpath, buffer, MAX_FILENAME_SIZE+1);
         if(addins[menu->selection-1].active) { //disable
           buffer[strlen((char*)buffer)-3] = 'h'; //so it goes from g3a to h3a
         } else { //enable
           buffer[strlen((char*)buffer)-3] = 'g'; //so it goes from h3a to g3a
         }
-        Bfile_StrToName_ncpy(newpath, (unsigned char*)buffer, MAX_FILENAME_SIZE+1);
+        Bfile_StrToName_ncpy(newpath, buffer, MAX_FILENAME_SIZE+1);
         Bfile_RenameEntry( oldpath , newpath );
         return 1; //reload list
       }
@@ -190,7 +190,7 @@ int addinManagerSub(Menu* menu) {
         if(closeMsgBox(1, 4)) {
           strcpy(buffer, "\\\\fls0\\");
           strcat(buffer, addins[menu->selection-1].filename);
-          Bfile_StrToName_ncpy(oldpath, (unsigned char*)buffer, MAX_FILENAME_SIZE+1);
+          Bfile_StrToName_ncpy(oldpath, buffer, MAX_FILENAME_SIZE+1);
           Bfile_DeleteEntry( oldpath );
         }
         return 1;

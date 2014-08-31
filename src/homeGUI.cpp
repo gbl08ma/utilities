@@ -342,32 +342,32 @@ inline void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int start
   int textY = starty;
   if (numevents>0) {
     int curevent = 0; //current processing event
-    unsigned char itemtext[25];
-    PrintMini(&textX, &textY, (unsigned char*)"Events starting today", 0, 0xFFFFFFFF, 0, 0, color_title, color_bg, 1, 0); //draw
+    char itemtext[25];
+    PrintMini(&textX, &textY, (char*)"Events starting today", 0, 0xFFFFFFFF, 0, 0, color_title, color_bg, 1, 0); //draw
     while(curevent < numevents && curevent < maxevents) {
       textX = startx + 5;
       textY = textY + 18;
-      strcpy((char*)itemtext, "- ");
-      strcat((char*)itemtext, (char*)calevents[curevent].title);
+      strcpy(itemtext, "- ");
+      strcat(itemtext, (char*)calevents[curevent].title);
       int tcolor = calevents[curevent].category-1;
       if (GetSetting(SETTING_THEME) && tcolor == TEXT_COLOR_BLACK) tcolor = TEXT_COLOR_WHITE;
       color_t tfcolor = textColorToFullColor(tcolor);
-      PrintMini(&textX, &textY, (unsigned char*)itemtext, 0, 0xFFFFFFFF, 0, 0, tfcolor, color_bg, 1, 0); //draw
+      PrintMini(&textX, &textY, itemtext, 0, 0xFFFFFFFF, 0, 0, tfcolor, color_bg, 1, 0); //draw
       curevent++;
     }
     if(numevents>maxevents) {
       textX = startx + 5;
       textY = textY + 20;
-      strcpy((char*)itemtext, (char*)"  ...and ");
+      strcpy(itemtext, (char*)"  ...and ");
       unsigned char buffer[10] = "";
       itoa(numevents-maxevents, buffer);
-      strcat((char*)itemtext, (char*)buffer);
-      strcat((char*)itemtext, (char*)" more event");
-      if(numevents-maxevents > 1) strcat((char*)itemtext, (char*)"s");
-      PrintMini(&textX, &textY, (unsigned char*)itemtext, 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
+      strcat(itemtext, (char*)buffer);
+      strcat(itemtext, (char*)" more event");
+      if(numevents-maxevents > 1) strcat(itemtext, (char*)"s");
+      PrintMini(&textX, &textY, itemtext, 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
     }
   } else {
-    PrintMini(&textX, &textY, (unsigned char*)"  No events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
+    PrintMini(&textX, &textY, (char*)"  No events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
   } 
 }
 #define HOME_EVENTS_DISPLAY_FULL 6
