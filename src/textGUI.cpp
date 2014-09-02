@@ -55,7 +55,7 @@ int doTextArea(textArea* text) {
         if(temptextX + textX > text->width-6) {
           //time for a new line
           textX=text->x;
-          textY=textY+text->lineHeight;
+          textY=textY+(text->elements[cur].minimini ? -7 : 0)+text->lineHeight;
         } //else still fits, print new word normally (or just increment textX, if we are not "on stage" yet)
         if(textY >= -24 && textY < LCD_HEIGHT_PX) {
           if(text->elements[cur].minimini) {
