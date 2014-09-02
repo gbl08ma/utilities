@@ -29,7 +29,7 @@
 #include "stringsProvider.hpp"
 #include "fileProvider.hpp"
 #include "settingsGUI.hpp"
-#include "debugGUI.hpp"
+#include "sprites.h"
 
 int bufmonth = 0; //this is global so that it's easier to make the events count refresh
 int searchValid = 0; // whether the last search results are valid or not. Set to zero when modifying events in any way.
@@ -1803,6 +1803,7 @@ void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int
     if(date.year == (unsigned)getCurrentYear() && date.month == (unsigned)getCurrentMonth() && date.day == (unsigned)getCurrentDay())
       drawRectangle(startx+daywidth*curday+1, starty-2, daywidth-1, 2, COLOR_YELLOW);
     drawDayBusyMap(&date, startx+curday*daywidth, starty, daywidth, height, 0,curday+1,startx+daywidth*7);
+    CopySpriteNbitMasked(busymap_labels[dow(date.year,date.month,date.day)], startx+daywidth*curday+1, starty+1, 17, 7, busymap_labels_palette, 0, 1);
     ddays++;
     curday++;
   }

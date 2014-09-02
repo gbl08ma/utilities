@@ -318,7 +318,7 @@ void setCPUclock() {
     drawRectangle(331, 85, 2, 19, COLOR_BLACK);
     drawRectangle(368, 85, 2, 19, COLOR_BLACK);
 
-    CopySpriteNbit(selector, 10, 105, 364, 22, selector_palette, 1);
+    CopySpriteNbitMasked(selector, 10, 105, 364, 22, selector_palette, 0xffff, 1);
     
     textX=0; textY=118;
     PrintMiniMini( &textX, &textY, (char*)"USE AT YOUR OWN RISK! NO WARRANTY PROVIDED.", 0, TEXT_COLOR_RED, 0 );

@@ -191,27 +191,30 @@ void CopySpriteMasked(unsigned short* data, int x, int y, int width, int height,
     VRAM += (LCD_WIDTH_PX-width);
   }
 }
-void CopySpriteNbit(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, unsigned int bitwidth) {
-   color_t* VRAM = (color_t*)0xA8000000;
-   VRAM += (LCD_WIDTH_PX*y + x);
-   int offset = 0;
-   unsigned char buf = 0;
-   for(int j=y; j<y+height; j++) {
-      int availbits = 0;
-      for(int i=x; i<x+width;  i++) {
-         if (!availbits) {
-            buf = data[offset++];
-            availbits = 8;
-         }
-         color_t thisthis = ((color_t)buf>>(8-bitwidth));
-         *VRAM = palette[(color_t)thisthis];
-         VRAM++;
-         buf<<=bitwidth;
-         availbits-=bitwidth;
+
+void CopySpriteNbitMasked(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, color_t maskColor, unsigned int bitwidth) {
+  color_t* VRAM = (color_t*)0xA8000000;
+  VRAM += (LCD_WIDTH_PX*y + x);
+  int offset = 0;
+  unsigned char buf = 0;
+  for(int j=y; j<y+height; j++) {
+    int availbits = 0;
+    for(int i=x; i<x+width;  i++) {
+      if (!availbits) {
+        buf = data[offset++];
+        availbits = 8;
       }
-      VRAM += (LCD_WIDTH_PX-width);
-   }
-} 
+      color_t thisthis = ((color_t)buf>>(8-bitwidth));
+      color_t color = palette[(color_t)thisthis];
+      if(color != maskColor) *VRAM = color;
+      VRAM++;
+      buf<<=bitwidth;
+      availbits-=bitwidth;
+    }
+    VRAM += (LCD_WIDTH_PX-width);
+  }
+}
+
 //the following does not update the screen automatically; it will draw the tny.im logo starting at screen coordinates x,y
 //the tny.im logo is great enough not to require any sprites! yay!
 //w:138
