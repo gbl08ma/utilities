@@ -305,8 +305,7 @@ void mPrintXY(int x, int y, char*msg, int mode, int color) {
   char nmsg[50];
   nmsg[0] = 0x20;
   nmsg[1] = 0x20;
-  nmsg[2] = '\0';
-  strncat(nmsg, msg, 48);
+  strncpy(nmsg+2, msg, 48);
   PrintXY(x, y, nmsg, mode, color );
 }
 
