@@ -15,7 +15,7 @@
 #include <math.h>
 
 #define TNYIM_ORANGE 0xd222
-void plot(int x0, int y0, unsigned short color);
+#define plot(x,y,c) Bdisp_SetPoint_VRAM(x, y, c)
 void drawRectangle(int x, int y, int width, int height, unsigned short color);
 void drawLine(int x1, int y1, int x2, int y2, int color);
 void drawFilledCircle(int centerx, int centery, int radius, color_t color);

@@ -170,7 +170,7 @@ void charToSimpleCalEvent(unsigned char* src, SimpleCalendarEvent* calEvent) {
 }
 
 void filenameFromDate(EventDate* date, char* filename) {
-  char smallbuf[8] = "";
+  char smallbuf[8];
   itoa(date->year, (unsigned char*)smallbuf); strcpy(filename, smallbuf);
   itoa(date->month, (unsigned char*)smallbuf);
   if (date->month < 10) strcat(filename, "0");  //if month below 10, add leading 0
@@ -194,7 +194,8 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
   //Saves a calendar event on an existing calendar with specified file name.
   //If the specified file doesn't exist, it is created and the event is added to it.
   //Returns 0 on success, other values on error.
-  char newevent[2048] = "";
+  char newevent[2048];
+  newevent[0] = 0;
   calEventToChar(calEvent, (unsigned char*)newevent);
   size_t size = strlen(FILE_HEADER) + strlen(newevent);
   unsigned short pFile[MAX_FILENAME_SIZE];
@@ -524,15 +525,16 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
         }
       }
       if(isValid) {
-        char tmpbuf[10] = "";
-        for(int i = 0; i<8-nlen; i++) {
-          strcat(tmpbuf, "0");
+        char tmpbuf[10];
+        int i;
+        for(i = 0; i<8-nlen; i++) {
+          strcpy(tmpbuf+i, "0");
         }
-        strcat(tmpbuf, mainname);
+        strcpy(tmpbuf+i, mainname);
         strcpy(mainname, tmpbuf);
         EventDate thisday;
         int fy, fm, fd;
-        stringToDate(mainname, &fy, &fm, &fd, 2);
+        stringToDate(tmpbuf, &fy, &fm, &fd, 2);
         thisday.year=fy; thisday.month=fm; thisday.day=fd;
         
         // see if the date in the filename is valid, and that it is in the year we are searching in
@@ -655,15 +657,15 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
       return;
     }
   }
-  char tmpbuf[10] = "";
-  for(int i = 0; i<8-nlen; i++) {
-    strcat(tmpbuf, "0");
+  char tmpbuf[10];
+  int i;
+  for(i = 0; i<8-nlen; i++) {
+    strcpy(tmpbuf+i, "0");
   }
-  strcat(tmpbuf, mainname);
-  strcpy(mainname, tmpbuf);
+  strcpy(tmpbuf+i, mainname);
   EventDate thisday;
   int y, m, d;
-  stringToDate(mainname, &y, &m, &d, 2);
+  stringToDate(tmpbuf, &y, &m, &d, 2);
   thisday.year=y; thisday.month=m; thisday.day=d;
   
   // final step on filename checking: see if the date in the filename is valid

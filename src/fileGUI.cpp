@@ -38,7 +38,8 @@ void fileManager() {
   char browserbasepath[MAX_FILENAME_SIZE+1] = "\\\\fls0\\";
   File clipboard[MAX_ITEMS_IN_CLIPBOARD+1];
   while(res) {
-    char filetoedit[MAX_FILENAME_SIZE+1] = "";
+    char filetoedit[MAX_FILENAME_SIZE+1];
+    filetoedit[0] = 0;
     res = fileManagerSub(browserbasepath, &itemsinclip, &shownClipboardHelp, &shownMainMemHelp, clipboard, filetoedit);
     if(strlen(filetoedit)) {
       fileTextEditor(filetoedit);
@@ -47,7 +48,7 @@ void fileManager() {
 }
 int smemfree = 0;
 void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager) {
-  char titleBuffer[120] = "";
+  char titleBuffer[120];
   if(!itemsinclip) {
     itoa(smemfree, (unsigned char*)title);
     LocalizeMessage1( 340, titleBuffer ); //"bytes free"
@@ -361,7 +362,8 @@ int makeFolderGUI(char* browserbasepath) {
   SetBackGround(10);
   clearLine(1,8);
   drawScreenTitle((char*)"Create folder", (char*)"Name:");
-  char newname[MAX_NAME_SIZE] = "";
+  char newname[MAX_NAME_SIZE];
+  newname[0] = 0;
   textInput input;
   input.forcetext=1;
   input.charlimit=MAX_NAME_SIZE;
@@ -391,7 +393,8 @@ int makeg3pGUI(char* browserbasepath) {
   SetBackGround(10);
   clearLine(1,8);
   drawScreenTitle((char*)"Create g3p file", (char*)"Name:");
-  char newname[MAX_NAME_SIZE] = "";
+  char newname[MAX_NAME_SIZE];
+  newname[0] = 0;
   textInput input;
   input.forcetext=1;
   input.charlimit=MAX_NAME_SIZE;
@@ -404,16 +407,16 @@ int makeg3pGUI(char* browserbasepath) {
       unsigned short tempfilenameshort[0x10A];
       Bfile_StrToName_ncpy(tempfilenameshort, TEMPFILE2, 0x10A);
       size_t filesize = Blank_g3p_phc_len;
-      int BCEres = Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &filesize);
-      if(BCEres < 0) return 0;
-      int hFile = Bfile_OpenFile_OS(tempfilenameshort, READWRITE, 0);
-      if(hFile < 0) return 0;
+      int h = Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &filesize);
+      if(h < 0) return 0;
+      h = Bfile_OpenFile_OS(tempfilenameshort, READWRITE, 0);
+      if(h < 0) return 0;
       // file write buffer must be in RAM:
-      unsigned char filebuf[Blank_g3p_phc_len+5] = "";
-      memcpy(filebuf, Blank_g3p_phc, filesize);
+      char filebuf[Blank_g3p_phc_len+5] = "";
+      memcpy(filebuf, Blank_g3p_phc, Blank_g3p_phc_len);
 
-      Bfile_WriteFile_OS(hFile, (char*)filebuf, filesize);
-      Bfile_CloseFile_OS(hFile);
+      Bfile_WriteFile_OS(h, filebuf, Blank_g3p_phc_len);
+      Bfile_CloseFile_OS(h);
 
       char newfilename[MAX_FILENAME_SIZE];
       strcpy(newfilename, browserbasepath);
@@ -678,7 +681,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
   unsigned short iconbuffer[0x12*0x18];
   unsigned short folder[7]={};
   SMEM_MapIconToExt( (unsigned char*)name, folder, &msgno, iconbuffer );
-  char mresult[88] = "";
+  char mresult[88];
   LocalizeMessage1( msgno, mresult );
   
   if(compressed) elem[text.numelements].text = (char*)"Utilities Compressed File";

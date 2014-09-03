@@ -626,7 +626,7 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
       if (hsd == NULL) goto cleanexit;
       HSD_finish_res fres;
       while(1) {
-        unsigned char in_buf[FILE_COMPORIGBUF+5] = "";
+        unsigned char in_buf[FILE_COMPORIGBUF+5];
         unsigned int read_sz = Bfile_ReadFile_OS( hOldFile, in_buf, FILE_COMPORIGBUF, -1 );
         if (read_sz <= 0) {
           fres = heatshrink_decoder_finish(hsd);
@@ -640,7 +640,7 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
     } else {
       // COMPRESS
       // we can't write header directly because source buffers for WriteFile can't be in ROM
-      unsigned char header[16] = "";
+      unsigned char header[16];
       strcpy((char*)header, (char*)COMPRESSED_FILE_HEADER);
       // write uncompressed filesize to header
       int len=strlen((char*)COMPRESSED_FILE_HEADER);
@@ -654,7 +654,7 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
       heatshrink_encoder *hse = heatshrink_encoder_alloc(windowsize, lookahead);
       if (hse == NULL) goto cleanexit;
       while(1) {
-        unsigned char in_buf[FILE_COMPORIGBUF+5] = "";
+        unsigned char in_buf[FILE_COMPORIGBUF+5];
         unsigned int read_sz = Bfile_ReadFile_OS( hOldFile, in_buf, FILE_COMPORIGBUF, -1 );
         if(encoder_sink_read(hNewFile, hse, in_buf, read_sz, NULL)) break;
       }

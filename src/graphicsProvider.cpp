@@ -16,14 +16,6 @@
 #include "settingsProvider.hpp"
 #include "debugGUI.hpp"
 
-//draws a point of color color at (x0, y0) 
-void plot(int x0, int y0, unsigned short color) {
-  unsigned short* VRAM = (unsigned short*)0xA8000000; 
-  VRAM += (y0*LCD_WIDTH_PX + x0); 
-  *VRAM = color;
-  return; 
-}
-
 void drawRectangle(int x, int y, int width, int height, unsigned short color) {
   unsigned short*VRAM = (unsigned short*)0xA8000000;
   for(int j = y; j < y+height; j++) {
@@ -32,75 +24,53 @@ void drawRectangle(int x, int y, int width, int height, unsigned short color) {
     }
   }
 }
-//Uses the Bresenham line algorithm 
-void drawLine(int x1, int y1, int x2, int y2, int color) { 
-    signed char ix; 
-    signed char iy; 
-  
-    // if x1 == x2 or y1 == y2, then it does not matter what we set here 
-    int delta_x = (x2 > x1?(ix = 1, x2 - x1):(ix = -1, x1 - x2)) << 1; 
-    int delta_y = (y2 > y1?(iy = 1, y2 - y1):(iy = -1, y1 - y2)) << 1; 
-  
-    plot(x1, y1, color);  
-    if (delta_x >= delta_y) { 
-        int error = delta_y - (delta_x >> 1);        // error may go below zero 
-        while (x1 != x2) { 
-            if (error >= 0) { 
-                if (error || (ix > 0)) { 
-                    y1 += iy; 
-                    error -= delta_x; 
-                }                           // else do nothing 
-         }                              // else do nothing 
-            x1 += ix; 
-            error += delta_y; 
-            plot(x1, y1, color); 
-        } 
-    } else { 
-        int error = delta_x - (delta_y >> 1);      // error may go below zero 
-        while (y1 != y2) { 
-            if (error >= 0) { 
-                if (error || (iy > 0)) { 
-                    x1 += ix; 
-                    error -= delta_y; 
-                }                           // else do nothing 
-            }                              // else do nothing 
-            y1 += iy; 
-            error += delta_x;  
-            plot(x1, y1, color); 
-        } 
-    } 
+
+// Algorithm found on:
+// http://members.chello.at/easyfilter/bresenham.html
+void drawLine(int x0, int y0, int x1, int y1, int color) {
+   int dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
+   int dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
+   int err = dx+dy, e2;                                   /* error value e_xy */
+                                                    
+   for (;;) {                                                         /* loop */
+      plot(x0,y0,color);                              
+      e2 = 2*err;                                   
+      if (e2 >= dy) {                                         /* e_xy+e_x > 0 */
+         if (x0 == x1) break;                       
+         err += dy; x0 += sx;                       
+      }                                             
+      if (e2 <= dx) {                                         /* e_xy+e_y < 0 */
+         if (y0 == y1) break;
+         err += dx; y0 += sy;
+      }
+   }
 }
 
 // Wikipedia/Bresenham 
 void drawFilledCircle(int centerx, int centery, int radius, color_t color) { 
-  int f = 1 - radius; 
-  int ddF_x = 1; 
-  int ddF_y = -2 * radius; 
-  int x = 0; 
-  int y = radius; 
+  int f = 1 - radius;
+  int ddF_x = 1;
+  int ddF_y = -2 * radius;
+  int x = 0;
+  int y = radius;
   
-  drawLine(centerx, centery + radius, centerx, centery - radius, color); 
-  drawLine(centerx + radius, centery, centerx - radius, centery, color); 
+  drawLine(centerx, centery + radius, centerx, centery - radius, color);
+  drawLine(centerx + radius, centery, centerx - radius, centery, color);
   
-  while(x < y) 
-    { 
-      // ddF_x == 2 * x + 1; 
-      // ddF_y == -2 * y; 
-      // f == x*x + y*y - radius*radius + 2*x - y + 1; 
-      if(f >= 0)  
-   { 
-     y--; 
-     ddF_y += 2; 
-     f += ddF_y; 
-   } 
-      x++; 
-      ddF_x += 2; 
-      f += ddF_x;     
-      drawLine(centerx + x, centery + y, centerx - x, centery + y, color); 
-      drawLine(centerx + x, centery - y, centerx - x, centery - y, color); 
-      drawLine(centerx + y, centery + x, centerx - y, centery + x, color); 
-      drawLine(centerx + y, centery - x, centerx - y, centery - x, color); 
-    } 
+  while(x < y) {
+    if(f >= 0) {
+      y--;
+      ddF_y += 2;
+      f += ddF_y;
+    }
+    x++;
+    ddF_x += 2;
+    f += ddF_x;
+    drawLine(centerx + x, centery + y, centerx - x, centery + y, color);
+    drawLine(centerx + x, centery - y, centerx - x, centery - y, color);
+    drawLine(centerx + y, centery + x, centerx - y, centery + x, color);
+    drawLine(centerx + y, centery - x, centerx - y, centery - x, color);
+  } 
 } 
 
 //ReplaceColor By Kerm:

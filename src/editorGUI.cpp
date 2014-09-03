@@ -74,7 +74,8 @@ void fileTextEditor(char* filename, char* basefolder) {
         textInput ninput;
         ninput.forcetext=1;
         ninput.charlimit=MAX_NAME_SIZE;
-        char nfilename[MAX_NAME_SIZE] = "";
+        char nfilename[MAX_NAME_SIZE];
+        nfilename[0] = 0;
         ninput.buffer = (char*)nfilename;
         while(1) {
           ninput.key = 0;

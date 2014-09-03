@@ -372,7 +372,8 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         input.charlimit=6;
         input.acceptF6=1;
         input.type=INPUTTYPE_TIME;
-        char etbuffer[15] = "";
+        char etbuffer[15];
+        etbuffer[0] = 0;
         input.buffer = (char*)etbuffer;
         int h=0,mi=0,s=0;
         while(1) {
