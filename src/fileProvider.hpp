@@ -37,7 +37,7 @@ typedef struct
   unsigned long fsize, dsize;
   unsigned int property;
   unsigned long address;
-} file_type_t; 
+} file_type_t;
 
 #define GETFILES_SUCCESS 0
 #define GETFILES_MAX_FILES_REACHED 1

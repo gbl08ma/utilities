@@ -102,7 +102,7 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
       }
       *count=*count+1;
     }
-    if (*count-1==MAX_ITEMS_IN_DIR) {
+    if (*count==MAX_ITEMS_IN_DIR) {
       Bfile_FindClose(findhandle);
       if(files != NULL && menuitems != NULL) insertSortFileMenuArray(files, menuitems, *count);
       return GETFILES_MAX_FILES_REACHED; // Don't find more files, the array is full. 
@@ -196,7 +196,7 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
       }
       abortkey = PRGM_GetKey();
     }
-    if (*count-1==MAX_ITEMS_IN_DIR) {
+    if (*count==MAX_ITEMS_IN_DIR) {
       Bfile_FindClose(findhandle);
       return GETFILES_MAX_FILES_REACHED; // Don't find more files, the array is full. 
     } else ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
