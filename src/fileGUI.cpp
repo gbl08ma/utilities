@@ -292,6 +292,49 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         return 1;
         break;
       case KEY_CTRL_OPTN:
+      {
+        int allcompressed = 1;
+        if(menu.numselitems) {
+          for(int i = 0; i < menu.numitems; i++) {
+            if(!menu.items[i].isfolder && menu.items[i].isselected) {
+              int origfilesize;
+              if(!isFileCompressed(files[i].filename, &origfilesize)) {
+                allcompressed = 0;
+                break; // no need to check more, at least one of the selected files is not compressed.
+              }
+            }
+          }
+        }
+        mMsgBoxPush(4);
+        MenuItem smallmenuitems[5];
+        smallmenuitems[0].text = (char*)"Folder statistics";
+        smallmenuitems[1].text = (char*)"View clipboard";
+        smallmenuitems[2].text = (char*)(allcompressed ? "Decompr. selected" : "Compress selected");
+        
+        Menu smallmenu;
+        smallmenu.items=smallmenuitems;
+        smallmenu.numitems=(menu.numselitems ? 3 : 2);
+        smallmenu.width=17;
+        smallmenu.height=4;
+        smallmenu.startX=3;
+        smallmenu.startY=2;
+        smallmenu.scrollbar=0;
+        int sres = doMenu(&smallmenu);
+        mMsgBoxPop();
+        
+        if(sres == MENU_RETURN_SELECTION) {
+          if(smallmenu.selection == 1) {
+            folderStatistics(files, &menu);
+          } else if(smallmenu.selection == 2) {
+            viewFilesInClipboard(clipboard, itemsinclip);
+          } else if(smallmenu.selection == 3) {
+            if(allcompressed) decompressSelectedFiles(files, &menu);
+            else compressSelectedFiles(files, &menu);
+            return 1;
+          }
+        }
+        break;
+      }
       case KEY_CTRL_CLIP:
         viewFilesInClipboard(clipboard, itemsinclip);
         break;
@@ -897,6 +940,139 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
         break;
     }
   }
+}
+
+void folderStatistics(File* files, Menu* menu) {
+  textArea text;
+  text.type = TEXTAREATYPE_NORMAL;
+  text.scrollbar=0;
+  text.title = (char*)"Folder statistics";
+  
+  textElement elem[15];
+  text.elements = elem;
+  text.numelements = 0; //we will use this as element cursor
+
+  char ficbuffer[20];
+  char focbuffer[20];
+  int filescount = 0;
+  int folderscount = 0;
+  for(int i = 0; i < menu->numitems; i++) {
+    if(files[i].isfolder) folderscount++;
+    else filescount++;
+  }
+
+  itoa(filescount, (unsigned char*)ficbuffer);
+  elem[text.numelements].text = (char*)ficbuffer;
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
+  
+  elem[text.numelements].text = (char*)"files";
+  text.numelements++;
+
+  itoa(folderscount, (unsigned char*)focbuffer);
+  elem[text.numelements].newLine=1;
+  elem[text.numelements].text = (char*)focbuffer;
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
+  
+  elem[text.numelements].text = (char*)"folders";
+  text.numelements++;
+
+  char tsibuffer[20];
+  int totalsize = 0;
+  for(int i = 0; i < menu->numitems; i++) {
+    totalsize += files[i].size;
+  }
+
+  elem[text.numelements].newLine=1;
+  elem[text.numelements].lineSpacing=3;
+  elem[text.numelements].color=COLOR_LIGHTGRAY;
+  elem[text.numelements].text = (char*)"Size of files:";
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
+
+  itoa(totalsize, (unsigned char*)tsibuffer);
+  elem[text.numelements].text = (char*)tsibuffer;
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
+  
+  elem[text.numelements].text = (char*)"bytes";
+  text.numelements++;
+
+  char tssbuffer[20];
+  if(menu->numselitems) {
+    int selsize = 0;
+    for(int i = 0; i < menu->numitems; i++) {
+      if(menu->items[i].isselected) selsize += files[i].size;
+    }
+
+    elem[text.numelements].newLine=1;
+    elem[text.numelements].lineSpacing=3;
+    elem[text.numelements].color=COLOR_LIGHTGRAY;
+    elem[text.numelements].text = (char*)"Size of selected files:";
+    elem[text.numelements].spaceAtEnd=1;
+    text.numelements++;
+
+    itoa(selsize, (unsigned char*)tssbuffer);
+    elem[text.numelements].text = (char*)tssbuffer;
+    elem[text.numelements].spaceAtEnd=1;
+    text.numelements++;
+    
+    elem[text.numelements].text = (char*)"bytes";
+    text.numelements++;
+  }
+  
+  doTextArea(&text);
+}
+
+void compressSelectedFiles(File* files, Menu* menu) {
+  int tf = 0, cf = 0;
+  for(int i = 0; i < menu->numitems; i++) {
+    if(!files[i].isfolder && menu->items[i].isselected) {
+      int origfilesize = 0;
+      if(!isFileCompressed(files[i].filename, &origfilesize)) {
+        tf++;
+      }
+    }
+  }
+  progressMessage((char*)" Compressing...", 0, tf);
+  for(int i = 0; i < menu->numitems; i++) {
+    if(!files[i].isfolder && menu->items[i].isselected) {
+      char newfilename[MAX_FILENAME_SIZE];
+      strcpy(newfilename, files[i].filename);
+      strcat(newfilename, (char*)COMPRESSED_FILE_EXTENSION);
+      int origfilesize = 0;
+      if(!isFileCompressed(files[i].filename, &origfilesize)) {
+        compressFile((char*)files[i].filename, (char*)newfilename, 0, 1);
+        cf++;
+        progressMessage((char*)" Compressing...", cf, tf);
+      }
+    }
+  }
+  closeProgressMessage();
+}
+
+void decompressSelectedFiles(File* files, Menu* menu) {
+  // assumes all selected files in the menu are compressed!
+  int tf = 0, cf = 0;
+  for(int i = 0; i < menu->numitems; i++) {
+    if(!files[i].isfolder && menu->items[i].isselected) {
+      tf++;
+    }
+  }
+  progressMessage((char*)" Decompressing...", 0, tf);
+  for(int i = 0; i < menu->numitems; i++) {
+    if(!files[i].isfolder && menu->items[i].isselected) {
+      char newfilename[MAX_FILENAME_SIZE];
+      int len=strlen(files[i].filename);
+      strncpy(newfilename, files[i].filename, len-4); //strip file extension
+      newfilename[len-4] = '\0'; // strncpy does not zero-terminate when limit is reached
+      compressFile((char*)files[i].filename, (char*)newfilename, 1, 1);
+      cf++;
+      progressMessage((char*)" Decompressing...", cf, tf);
+    }
+  }
+  closeProgressMessage();
 }
 
 void shortenDisplayPath(char* longpath, char* shortpath, int jump) {

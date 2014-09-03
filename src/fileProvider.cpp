@@ -528,7 +528,7 @@ static int decoder_sink_read(int writehandle, heatshrink_decoder *hsd, uint8_t *
 void compressFile(char* oldfilename, char* newfilename, int action, int silent) {
   // with action == 0, compresses. with action == 1, decompresses.
   // if silent is true, GUI is not touched.
-  if(!strcmp(newfilename, oldfilename) || stringEndsInG3A(newfilename)) {
+  if(!strcmp(newfilename, oldfilename) || stringEndsInG3A(newfilename) || stringEndsInG3A(oldfilename)) {
     //trying to overwrite the original file, or this is a g3a file (which we can't "touch")
     return;
   }
@@ -668,10 +668,10 @@ cleanexit:
     Bfile_RenameEntry(tempfilenameshort , newfilenameshort);
 
     if(!silent) {
-    mMsgBoxPush(5);
-    mPrintXY(3, 2, (action? (char*)"Decompression" : (char*)"Compression"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    mPrintXY(3, 3, (char*)"successful.Delete", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    mPrintXY(3, 4, (action? (char*)"compressed file?" : (char*)"original file?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mMsgBoxPush(5);
+      mPrintXY(3, 2, (action? (char*)"Decompression" : (char*)"Compression"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, (char*)"successful.Delete", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(3, 4, (action? (char*)"compressed file?" : (char*)"original file?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     }
     if(silent || closeMsgBox(1)) {
       Bfile_DeleteEntry(oldfilenameshort);

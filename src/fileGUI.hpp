@@ -28,7 +28,9 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip);
 int fileInformation(File* file, int allowEdit, int itemsinclip);
 void fileViewAsText(char* filename);
 void viewFilesInClipboard(File* clipboard, int *itemsinclip);
-void showCopyFolderWarning();
+void folderStatistics(File* files, Menu* menu);
+void compressSelectedFiles(File* files, Menu* menu);
+void decompressSelectedFiles(File* files, Menu* menu);
 void shortenDisplayPath(char* longpath, char* shortpath, int jump=1);
 void buildIconTable(MenuItemIcon* icontable);
 
