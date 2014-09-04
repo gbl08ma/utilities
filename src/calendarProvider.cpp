@@ -456,7 +456,7 @@ void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resC
       NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
       if(calEvents != NULL) {
         strcpy((char*)calEvents[*curfpos].title, (char*)dayEvents[curitem].title);
-        calEvents[*curfpos].startdate = *date;
+        calEvents[*curfpos].startdate = dayEvents[curitem].startdate;
         calEvents[*curfpos].category = dayEvents[curitem].category;
         calEvents[*curfpos].origpos = curitem;
       }
@@ -531,7 +531,6 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
           strcpy(tmpbuf+i, "0");
         }
         strcpy(tmpbuf+i, mainname);
-        strcpy(mainname, tmpbuf);
         EventDate thisday;
         int fy, fm, fd;
         stringToDate(tmpbuf, &fy, &fm, &fd, 2);
