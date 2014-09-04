@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <setjmp.h>
 
 #include "homeGUI.hpp"
 #include "menuGUI.hpp"
@@ -23,7 +24,6 @@
 #include "timeProvider.hpp"
 #include "settingsProvider.hpp"
 #include "hardwareProvider.hpp"
-#include "setjmp.h"
 
 int passwordInput(int x, int y, unsigned char* buffer) {
   //returns: 0 on user abort (EXIT), 1 on EXE
