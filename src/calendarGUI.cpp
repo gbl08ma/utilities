@@ -893,6 +893,7 @@ void viewEvent(CalendarEvent* event, int istask) {
 }
 
 void fillInputDate(int yr, int m, int d, char* buffer) {
+  buffer[0] = '\0';
   if(yr || m || d) {
     char buffer2[8];
     char day[5] = "";
@@ -1067,7 +1068,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         input.charlimit=6;
         input.acceptF6=1;
         input.type=INPUTTYPE_TIME;
-        char stbuffer[15] = "";
+        char stbuffer[15];
         if(event->timed) fillInputTime(event->starttime.hour, event->starttime.minute, event->starttime.second, stbuffer);
         input.buffer = (char*)stbuffer;
         while(1) {
@@ -1111,7 +1112,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         input.charlimit=8;
         input.acceptF6=1;
         input.type=INPUTTYPE_DATE;
-        char edbuffer[15] = "";
+        char edbuffer[15];
         fillInputDate(event->enddate.year, event->enddate.month, event->enddate.day, edbuffer);
         input.buffer = (char*)edbuffer;
         while(1) {
@@ -1155,7 +1156,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           input.charlimit=6;
           input.acceptF6=1;
           input.type=INPUTTYPE_TIME;
-          char etbuffer[15] = "";
+          char etbuffer[15];
           fillInputTime(event->endtime.hour, event->endtime.minute, event->endtime.second, etbuffer);
           input.buffer = (char*)etbuffer;
           while(1) {
@@ -1437,7 +1438,7 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
     input.charlimit=8;
     input.acceptF6=0;
     input.type=INPUTTYPE_DATE;
-    char buffer[15] = "";
+    char buffer[15];
     fillInputDate(*yr, *m, *d, buffer);
     input.buffer = (char*)buffer;
     while(1) {
@@ -2110,14 +2111,14 @@ void trimCalendarDatabase() {
           }
           EventDate thisday;
           if(!deleteThisFile) {
-            char tmpbuf[10] = "";
-            for(int i = 0; i<8-nlen; i++) {
-              strcat(tmpbuf, "0");
+            char tmpbuf[10];
+            int i;
+            for(i = 0; i<8-nlen; i++) {
+              strcpy(tmpbuf+i, "0");
             }
-            strcat(tmpbuf, mainname);
-            strcpy(mainname, tmpbuf);
+            strcpy(tmpbuf+i, mainname);
             int y, m, d;
-            stringToDate(mainname, &y, &m, &d, 2);
+            stringToDate(tmpbuf, &y, &m, &d, 2);
             thisday.year=y; thisday.month=m; thisday.day=d;
             
             // see if the date in the filename is valid

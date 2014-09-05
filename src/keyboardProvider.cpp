@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <alloca.h>
+extern "C" {
+#include <setjmp.h>
+}
 
 #include "keyboardProvider.hpp" 
 #include "settingsGUI.hpp" 
@@ -20,7 +23,6 @@
 #include "chronoGUI.hpp"
 #include "graphicsProvider.hpp"
 #include "settingsProvider.hpp"
-#include "setjmp.h"
 
 extern jmp_buf utilities_return;
 static int mGetKeyMode = MGETKEY_MODE_NORMAL;

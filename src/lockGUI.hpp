@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "setjmp.h"
+#include <setjmp.h>
 int passwordInput(int x, int y, unsigned char* buffer);
 int setPassword();
 int unlockCalc();

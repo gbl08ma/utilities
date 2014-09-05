@@ -46,7 +46,7 @@ LDFLAGS	= $(MACHDEP) -T$(FXCGSDK)/common/prizm.ld -Os -flto -Wl,-static -Wl,-gc-
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	 -lfxcg -lc -lgcc -lfromcasio
+LIBS	:=	 -lfxcg -lc -lgcc
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

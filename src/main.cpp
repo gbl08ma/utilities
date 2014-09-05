@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <alloca.h>
+#include <setjmp.h>
 
 #include "settingsProvider.hpp"
 #include "hardwareProvider.hpp"
@@ -26,7 +27,6 @@
 #include "aboutGUI.hpp"
 #include "graphicsProvider.hpp"
 #include "timeProvider.hpp"
-#include "setjmp.h"
 #include "debugGUI.hpp"
 jmp_buf utilities_return;
 int main()
