@@ -22,7 +22,40 @@
 #include "graphicsProvider.hpp"
 #include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
-
+static unsigned insertChar(char*start,char*pos,unsigned ln,char c){
+	memmove(pos+1,pos,ln-(pos-start)+3);
+	*pos=c;
+	return ln+1;
+}
+static unsigned removeChar(char*start,char*pos,unsigned ln){
+	unsigned len=ln-(pos-start)+1;
+	memmove(pos,pos+1,len);
+	pos[len]=0;
+	return ln-1;
+}
+static char*prevLn(char*sh,char*start){
+	//If already on newline character skip it.
+	if((*sh=='\r')&&(sh>=start))
+		--sh;
+	if((*sh=='\n')&&(sh>=start))
+		--sh;
+	while((*sh)&&(sh>=start)){
+		if(*sh=='\r'){
+			++sh;
+			if(*sh=='\n'){
+				++sh;
+				break;
+			}
+			break;
+		}
+		if(*sh=='\n'){
+			++sh;
+			break;
+		}
+		--sh;
+	}
+	return sh+1;
+}
 void fileTextEditor(char* filename, char* basefolder) {
 	int newfile = (filename == NULL);
 	char sText[TEXT_BUFFER_SIZE];
@@ -56,12 +89,13 @@ void fileTextEditor(char* filename, char* basefolder) {
 		}
 	}
 	while(1){
-		unsigned ln=strlen(sText),large=0;
+		int x,y;
+		unsigned ln=strlen(sText),large=0,mx=216-40;
 		char*pos=sText,*posMax=sText+TEXT_BUFFER_SIZE-1,*posShow=sText,*nextLn=pos,*last=pos,*endc=pos+ln;
 		Bdisp_AllClr_VRAM();
 		for(;;){
 			drawFkeyLabels(0x302, 0, 0,  0x02A1, 0x0307); // CHAR, A<>a
-			int key,x,y;
+			int key;
 			GetKey(&key);
 			Bdisp_AllClr_VRAM();
 			char*sh=posShow;
@@ -69,68 +103,63 @@ void fileTextEditor(char* filename, char* basefolder) {
 				return; // user aborted
 			else if(key==KEY_CTRL_F1)
 				break;//Save file
-			else if(key==KEY_CTRL_F2)
+			else if(key==KEY_CTRL_F2){
 				large=0;
-			else if(key==KEY_CTRL_F3)
+				mx=216-40;
+			}else if(key==KEY_CTRL_F3){
 				large=1;
-			else if(key==KEY_CTRL_EXE){
-				if(pos>last)
+				mx=7;
+			}else if(key==KEY_CTRL_EXE){
+				if(pos>last&&(y>=mx))
 					posShow=nextLn;
-				*pos++='\n';
+				ln=insertChar(sText,pos++,ln,'\n');
 				if(pos>endc){
 					*pos=0;
 					endc=pos;
 				}
+			}else if(key==KEY_CTRL_DEL){
+				if(pos>last&&(y>=mx))
+					posShow=nextLn;
+				if(ln)
+					ln=removeChar(sText,--pos,ln);
 			}else if(key==KEY_CTRL_LEFT){
 				if(pos>sText){
 					--pos;
 					if(pos<posShow){
-						posShow=pos;
 						//Now find start of line
-						sh=posShow;
-						while((*sh)&&(sh>=sText)){
-							if(*sh=='\r'){
-								++sh;
-								if(*sh=='\n'){
-									++sh;
-									break;
-								}
-								break;
-							}
-							if(*sh=='\n'){
-								++sh;
-								break;
-							}
-							--sh;
-						}
-						++sh;
-						posShow=sh;
-
+						posShow=prevLn(posShow,sText);
 					}
 				}
 			}else if(key==KEY_CTRL_RIGHT){
-				if(pos[1])
+				if(pos[0])
 					++pos;
 				if(pos>last)
 					posShow=nextLn;
+			}else if(key==KEY_CTRL_UP){
+				posShow=prevLn(posShow,sText);
+			}else if(key==KEY_CTRL_DOWN){
+				posShow=nextLn;
 			}else if(key<=255){
 				if(pos<posMax){
 					if(pos>last)
 						posShow=nextLn;
-					*pos++=key;
+					ln=insertChar(sText,pos++,ln,key);
 					if(pos>endc){
 						*pos=0;
 						endc=pos;
 					}
 				}
 			}
+			if(posShow>pos)
+				pos=posShow;
 			//Now draw it.
 			nextLn=posShow;
 			if(large){//18x24
 				char tmp[4];
 				tmp[0]=tmp[1]=' ';
 				tmp[3]=0;
-				x=y=1;
+				x=1;
+				y=0;
 				while((*sh)&&(sh<=posMax)){
 					unsigned nl=0;
 					if(sh[0]=='\r'){
