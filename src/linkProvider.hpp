@@ -1,8 +1,7 @@
 #ifndef __LINKPROVIDER_H
 #define __LINKPROVIDER_H
 
-#ifdef UNUSEDCODE_1234
-int SerialFileTransfer( unsigned char*_filename );
-#endif
+void endSerialComm(int error);
+void serialTransferSingleFile(char* filename);
 
 #endif
