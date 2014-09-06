@@ -23,7 +23,7 @@
 #include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
 static unsigned insertChar(char*start,char*pos,unsigned ln,char c){
-	memmove(pos+1,pos,ln-(pos-start)+3);
+	memmove(pos+1,pos,ln-(pos-start)+1);
 	*pos=c;
 	return ln+1;
 }
@@ -91,65 +91,10 @@ void fileTextEditor(char* filename, char* basefolder) {
 	while(1){
 		int x,y;
 		unsigned ln=strlen(sText),large=0,mx=216-40;
-		char*pos=sText,*posMax=sText+TEXT_BUFFER_SIZE-1,*posShow=sText,*nextLn=pos,*last=pos,*endc=pos+ln;
+		char*pos=sText,*posMax=sText+TEXT_BUFFER_SIZE-1,*posShow=sText,*nextLn=pos,*last=pos;
 		Bdisp_AllClr_VRAM();
 		for(;;){
-			drawFkeyLabels(0x302, 0, 0,  0x02A1, 0x0307); // CHAR, A<>a
-			int key;
-			GetKey(&key);
-			Bdisp_AllClr_VRAM();
 			char*sh=posShow;
-			if(key==KEY_CTRL_EXIT)
-				return; // user aborted
-			else if(key==KEY_CTRL_F1)
-				break;//Save file
-			else if(key==KEY_CTRL_F2){
-				large=0;
-				mx=216-40;
-			}else if(key==KEY_CTRL_F3){
-				large=1;
-				mx=7;
-			}else if(key==KEY_CTRL_EXE){
-				if(pos>last&&(y>=mx))
-					posShow=nextLn;
-				ln=insertChar(sText,pos++,ln,'\n');
-				if(pos>endc){
-					*pos=0;
-					endc=pos;
-				}
-			}else if(key==KEY_CTRL_DEL){
-				if(pos>last&&(y>=mx))
-					posShow=nextLn;
-				if(ln)
-					ln=removeChar(sText,--pos,ln);
-			}else if(key==KEY_CTRL_LEFT){
-				if(pos>sText){
-					--pos;
-					if(pos<posShow){
-						//Now find start of line
-						posShow=prevLn(posShow,sText);
-					}
-				}
-			}else if(key==KEY_CTRL_RIGHT){
-				if(pos[0])
-					++pos;
-				if(pos>last)
-					posShow=nextLn;
-			}else if(key==KEY_CTRL_UP){
-				posShow=prevLn(posShow,sText);
-			}else if(key==KEY_CTRL_DOWN){
-				posShow=nextLn;
-			}else if(key<=255){
-				if(pos<posMax){
-					if(pos>last)
-						posShow=nextLn;
-					ln=insertChar(sText,pos++,ln,key);
-					if(pos>endc){
-						*pos=0;
-						endc=pos;
-					}
-				}
-			}
 			if(posShow>pos)
 				pos=posShow;
 			//Now draw it.
@@ -235,6 +180,53 @@ void fileTextEditor(char* filename, char* basefolder) {
 				}
 			}
 			last=sh;
+			drawFkeyLabels(0x302, 0, 0,  0x02A1, 0x0307); // CHAR, A<>a
+			int key;
+			GetKey(&key);
+			Bdisp_AllClr_VRAM();
+			if(key==KEY_CTRL_EXIT)
+				return; // user aborted
+			else if(key==KEY_CTRL_F1)
+				break;//Save file
+			else if(key==KEY_CTRL_F2){
+				large=0;
+				mx=216-40;
+			}else if(key==KEY_CTRL_F3){
+				large=1;
+				mx=7;
+			}else if(key==KEY_CTRL_EXE){
+				if(pos>last&&(y>=mx))
+					posShow=nextLn;
+				ln=insertChar(sText,pos++,ln,'\n');
+			}else if(key==KEY_CTRL_DEL){
+				if(pos>last&&(y>=mx))
+					posShow=nextLn;
+				if(ln)
+					ln=removeChar(sText,--pos,ln);
+			}else if(key==KEY_CTRL_LEFT){
+				if(pos>sText){
+					--pos;
+					if(pos<posShow){
+						//Now find start of line
+						posShow=prevLn(posShow,sText);
+					}
+				}
+			}else if(key==KEY_CTRL_RIGHT){
+				if(pos[0])
+					++pos;
+				if(pos>last)
+					posShow=nextLn;
+			}else if(key==KEY_CTRL_UP){
+				posShow=prevLn(posShow,sText);
+			}else if(key==KEY_CTRL_DOWN){
+				posShow=nextLn;
+			}else if((key<=255)&&key){
+				if(pos<posMax){
+					if(pos>last)
+						posShow=nextLn;
+					ln=insertChar(sText,pos++,ln,key);
+				}
+			}
 		}
 		int backToEditor = 0;
 		unsigned short newfilenameshort[0x10A];
