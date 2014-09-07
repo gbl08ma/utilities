@@ -80,6 +80,8 @@ static char*prevLn(char*sh,char*start){
 			--sh;
 		}
 	}
+	if(*sh&128)
+		++sh;
 	return sh+1;
 }
 void fileTextEditor(char* filename, char* basefolder) {
@@ -229,8 +231,13 @@ void fileTextEditor(char* filename, char* basefolder) {
 			}
 			last=sh;
 			drawFkeyLabels(0x302, 0, 0, 0x02A1, 0x0307); // CHAR, A<>a
-			int key;
+skipRedraw:
+			int keyflag=GetSetupSetting((unsigned int)0x14),key;
 			GetKey(&key);
+			if (GetSetupSetting( (unsigned int)0x14) == 0x01 || GetSetupSetting( (unsigned int)0x14) == 0x04 || GetSetupSetting( (unsigned int)0x14) == 0x84) {
+				keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.
+				//we can't update always because that way alpha-not-lock will cancel when F5 is pressed.
+			}
 			if(key==KEY_CTRL_EXIT)
 				return; // user aborted
 			else if(key==KEY_CTRL_F1)
@@ -253,6 +260,20 @@ void fileTextEditor(char* filename, char* basefolder) {
 					}else
 						ln=insertChar(sText,pos++,ln,character);
 				}
+			}else if(key==KEY_CTRL_F5){
+				// switch between lower and upper-case alpha
+				switch(keyflag){
+					case 0x08:
+					case 0x88:
+						SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
+						goto skipRedraw; //do not process the key, because otherwise we will leave alpha status
+					case 0x04:
+					case 0x84:
+						SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
+						goto skipRedraw; //do not process the key, because otherwise we will leave alpha status
+				}
+			}else if(key==KEY_CTRL_ALPHA){
+				goto skipRedraw;
 			}else if(key==KEY_CTRL_EXE){
 				if(pos>last&&(y>=mx))
 					posShow=nextLn;
