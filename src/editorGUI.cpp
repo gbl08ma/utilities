@@ -27,32 +27,58 @@ static unsigned insertChar(char*start,char*pos,unsigned ln,char c){
 	*pos=c;
 	return ln+1;
 }
+static unsigned insertShort(char*start,char*pos,unsigned ln,unsigned short c){
+	memmove(pos+2,pos,ln-(pos-start)+1);
+	pos[0]=c>>8;
+	pos[1]=c;
+	return ln+2;
+}
 static unsigned removeChar(char*start,char*pos,unsigned ln){
-	unsigned len=ln-(pos-start)+1;
-	memmove(pos,pos+1,len);
+	unsigned len;
+	if(*pos&128){
+		len=ln-(pos-start)+2;
+		memmove(pos,pos+2,len);
+		ln-=2;
+	}else{
+		len=ln-(pos-start)+1;
+		memmove(pos,pos+1,len);
+		--ln;
+	}
 	pos[len]=0;
-	return ln-1;
+	return ln;
 }
 static char*prevLn(char*sh,char*start){
 	//If already on newline character skip it.
+	if(*sh&128)
+		--sh;
 	if((*sh=='\r')&&(sh>=start))
 		--sh;
 	if((*sh=='\n')&&(sh>=start))
 		--sh;
-	while((*sh)&&(sh>=start)){
-		if(*sh=='\r'){
-			++sh;
+	for(unsigned i=0;i<2;++i){
+		while((*sh)&&(sh>=start)){
+			if(*sh=='\r'){
+				if(*(sh-1)&128){
+					sh-=2;
+					continue;
+				}
+				++sh;
+				if(*sh=='\n'){
+					++sh;
+					break;
+				}
+				break;
+			}
 			if(*sh=='\n'){
+				if(*(sh-1)&128){
+					sh-=2;
+					continue;
+				}
 				++sh;
 				break;
 			}
-			break;
+			--sh;
 		}
-		if(*sh=='\n'){
-			++sh;
-			break;
-		}
-		--sh;
 	}
 	return sh+1;
 }
@@ -92,42 +118,53 @@ void fileTextEditor(char* filename, char* basefolder) {
 		int x,y;
 		unsigned ln=strlen(sText),large=0,mx=216-40;
 		char*pos=sText,*posMax=sText+TEXT_BUFFER_SIZE-1,*posShow=sText,*nextLn=pos,*last=pos;
-		Bdisp_AllClr_VRAM();
 		for(;;){
+			Bdisp_AllClr_VRAM();
 			char*sh=posShow;
 			if(posShow>pos)
 				pos=posShow;
 			//Now draw it.
 			nextLn=posShow;
-			if(large){//18x24
-				char tmp[4];
+			if(large){
+				char tmp[6];
 				tmp[0]=tmp[1]=' ';
-				tmp[3]=0;
-				x=1;
-				y=0;
+				tmp[3]=tmp[4]=tmp[5]=0;
+				x=y=1;
 				while((*sh)&&(sh<=posMax)){
 					unsigned nl=0;
-					if(sh[0]=='\r'){
-						if(sh[1]=='\n')
-							++sh;
-						nl=1;
-					}
-					if(sh[0]=='\n'||nl){
-						x=1;
-						++y;
-						++sh;
-						if(nextLn==posShow)
-							nextLn=sh;
-						if(sh==(pos+1)){
-							tmp[2]=' ';
-							PrintXY(x,y,tmp,1,0);
-						}
-					}else{
+					if((*sh)&128){
 						tmp[2]=*sh++;
-						if(sh==(pos+1))
+						tmp[3]=*sh++;
+						if(sh==(pos+2))
 							PrintXY(x,y,tmp,1,0);
 						else
 							PrintXY(x,y,tmp,0,0);
+						tmp[3]=0;
+					}else{
+						if(sh[0]=='\r'){
+							if(sh[1]=='\n')
+								++sh;
+							nl=1;
+						}
+						if(sh[0]=='\n'||nl){
+							x=1;
+							++y;
+							++sh;
+							if(nextLn==posShow)
+								nextLn=sh;
+							if(sh==(pos+1)){
+								tmp[2]=' ';
+								PrintXY(x,y,tmp,1,0);
+							}
+						}else{
+							tmp[2]=*sh++;
+							if(sh==(pos+1))
+								PrintXY(x,y,tmp,1,0);
+							else
+								PrintXY(x,y,tmp,0,0);
+						}
+					}
+					if(!nl){
 						if(y>=7){
 							break;
 						}
@@ -140,50 +177,60 @@ void fileTextEditor(char* filename, char* basefolder) {
 						++x;
 					}
 				}
-			}else{//14x16
-				char tmp[2];
-				tmp[1]=0;
+			}else{
+				char tmp[4];
+				__builtin_memset(tmp,0,sizeof(tmp));//Should treat as writting to integer
 				x=y=0;
 				while((*sh)&&(sh<=posMax)){
 					unsigned nl=0;
-					if(sh[0]=='\r'){
-						if(sh[1]=='\n')
-							++sh;
-						nl=1;
-					}
-					if(sh[0]=='\n'||nl){
-						x=0;
-						y+=16;
-						++sh;
-						if(nextLn==posShow)
-							nextLn=sh;
-						if(sh==(pos+1)){
-							tmp[0]=' ';
-							PrintMini(&x,&y,tmp,0x44,0xFFFFFFFF,0,0,0,0xFFFF,1,0);
-						}
-					}else{
+					if((*sh)&128){
 						tmp[0]=*sh++;
+						tmp[1]=*sh++;
 						unsigned flags=0x40;
-						if(sh==(pos+1))
+						if(sh==(pos+2))
 							flags|=0x4;
 						PrintMini(&x,&y,tmp,flags,0xFFFFFFFF,0,0,0,0xFFFF,1,0);
+						tmp[1]=0;
+					}else{
+						if(sh[0]=='\r'){
+							if(sh[1]=='\n')
+								++sh;
+							nl=1;
+						}
+						if(sh[0]=='\n'||nl){
+							x=0;
+							y+=16;
+							++sh;
+							if(nextLn==posShow)
+								nextLn=sh;
+							if(sh==(pos+1)){
+								tmp[0]=' ';
+								PrintMini(&x,&y,tmp,0x44,0xFFFFFFFF,0,0,0,0xFFFF,1,0);
+							}
+						}else{
+							tmp[0]=*sh++;
+							unsigned flags=0x40;
+							if(sh==(pos+1))
+								flags|=0x4;
+							PrintMini(&x,&y,tmp,flags,0xFFFFFFFF,0,0,0,0xFFFF,1,0);
+						}
+					}
+					if(!nl){
 						if(x>384-14){
 							x=0;
 							y+=16;
 							if(nextLn==posShow)
 								nextLn=sh;
 						}
-						if(y>216-40){
+						if(y>216-40)
 							break;
-						}
 					}
 				}
 			}
 			last=sh;
-			drawFkeyLabels(0x302, 0, 0,  0x02A1, 0x0307); // CHAR, A<>a
+			drawFkeyLabels(0x302, 0, 0, 0x02A1, 0x0307); // CHAR, A<>a
 			int key;
 			GetKey(&key);
-			Bdisp_AllClr_VRAM();
 			if(key==KEY_CTRL_EXIT)
 				return; // user aborted
 			else if(key==KEY_CTRL_F1)
@@ -194,6 +241,18 @@ void fileTextEditor(char* filename, char* basefolder) {
 			}else if(key==KEY_CTRL_F3){
 				large=1;
 				mx=7;
+			}else if(key==KEY_CTRL_F4){
+				Bkey_ClrAllFlags();
+				unsigned short character=CharacterSelectDialog();
+				if(character){
+					if(pos>last&&(y>=mx))
+						posShow=nextLn;
+					if(character>=128){
+						ln=insertShort(sText,pos,ln,character);
+						pos+=2;
+					}else
+						ln=insertChar(sText,pos++,ln,character);
+				}
 			}else if(key==KEY_CTRL_EXE){
 				if(pos>last&&(y>=mx))
 					posShow=nextLn;
@@ -220,7 +279,14 @@ void fileTextEditor(char* filename, char* basefolder) {
 				posShow=prevLn(posShow,sText);
 			}else if(key==KEY_CTRL_DOWN){
 				posShow=nextLn;
-			}else if((key<=255)&&key){
+			}else if((key&32768)&&key){
+				if(pos<posMax){
+					if(pos>last)
+						posShow=nextLn;
+					ln=insertShort(sText,pos,ln,key);
+					pos+=2;
+				}
+			}else if((key<=127)&&key){
 				if(pos<posMax){
 					if(pos>last)
 						posShow=nextLn;
