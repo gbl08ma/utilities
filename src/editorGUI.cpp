@@ -30,7 +30,7 @@ static unsigned insertChar(char*start,char*pos,unsigned ln,char c){
 static unsigned insertShort(char*start,char*pos,unsigned ln,unsigned short c){
 	memmove(pos+2,pos,ln-(pos-start)+1);
 	pos[0]=c>>8;
-	pos[1]=c;
+	pos[1]=c&255;
 	return ln+2;
 }
 static unsigned removeChar(char*start,char*pos,unsigned ln){
@@ -49,40 +49,15 @@ static unsigned removeChar(char*start,char*pos,unsigned ln){
 }
 static char*prevLn(char*sh,char*start){
 	//If already on newline character skip it.
-	if(*sh&128)
-		--sh;
-	if((*sh=='\r')&&(sh>=start))
-		--sh;
-	if((*sh=='\n')&&(sh>=start))
-		--sh;
-	for(unsigned i=0;i<2;++i){
-		while((*sh)&&(sh>=start)){
-			if(*sh=='\r'){
-				if(*(sh-1)&128){
-					sh-=2;
-					continue;
-				}
-				++sh;
-				if(*sh=='\n'){
-					++sh;
-					break;
-				}
+	for(unsigned i=0;i<3;++i){
+		while((*sh)&&(sh>=(start-1))){
+			if(*(sh-1)&128)
+				sh-=2;//Multi byte characters will never be a newline so skip completly
+			if(*sh--=='\n')
 				break;
-			}
-			if(*sh=='\n'){
-				if(*(sh-1)&128){
-					sh-=2;
-					continue;
-				}
-				++sh;
-				break;
-			}
-			--sh;
 		}
 	}
-	if(*sh&128)
-		++sh;
-	return sh+1;
+	return sh+2;//Should return one character after newline is plus two as sh is always subtracted by one per loop.
 }
 void fileTextEditor(char* filename, char* basefolder) {
 	int newfile = (filename == NULL);
