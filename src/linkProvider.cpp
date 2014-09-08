@@ -56,9 +56,9 @@ void serialTransferSingleFile(char* filename) {
   textArea text;
   text.type=TEXTAREATYPE_INSTANT_RETURN;
   text.scrollbar=0;
-  text.title = (char*)"Sending file...";
+  text.title = (char*)"3-pin file sending";
   
-  textElement elem[15];
+  textElement elem[20];
   text.elements = elem;
   text.numelements = 0; //we will use this as element cursor
   
@@ -76,7 +76,7 @@ void serialTransferSingleFile(char* filename) {
   Bfile_StrToName_ncpy(sftb.filename, filename, 0x10A);
   // get filesize:
   int handle = Bfile_OpenFile_OS(sftb.filename, READWRITE, 0);
-  sftb.filesize = Bfile_GetFileSize_OS(handle);
+  int fsize = sftb.filesize = Bfile_GetFileSize_OS(handle);
   Bfile_CloseFile_OS(handle);
 
   sftb.command = 0x45;
@@ -129,7 +129,7 @@ void serialTransferSingleFile(char* filename) {
 
   // get information about remote calculator
 
-  elem[text.numelements].text = (char*)"Getting remote info...";
+  elem[text.numelements].text = (char*)"Getting remote information...";
   elem[text.numelements].newLine = 1;
   text.numelements++;
   doTextArea(&text);
@@ -141,14 +141,44 @@ void serialTransferSingleFile(char* filename) {
     return;
   }
 
-  unsigned int calcType;
-  unsigned short osVer;
+  unsigned int calcType=1;
+  unsigned short osVer=103;
   if(App_LINK_GetDeviceInfo(&calcType, &osVer)) {
     endSerialComm(6);
     return;
   }
 
   // do something with calcType and osVer
+
+  elem[text.numelements].text = (char*)"Remote like";
+  elem[text.numelements].spaceAtEnd = 1;
+  elem[text.numelements].newLine = 1;
+  text.numelements++;
+
+  switch(calcType) {
+    case 1:
+      elem[text.numelements].text = (char*)"Gy363";
+      break;
+    case 2:
+      elem[text.numelements].text = (char*)"Gy362";
+      break;
+    case 3:
+      elem[text.numelements].text = (char*)"Gy490";
+      break;
+    default:
+      elem[text.numelements].text = (char*)"Other";
+      break;
+  }
+  text.numelements++;
+
+  elem[text.numelements].text = (char*)", running OS";
+  elem[text.numelements].spaceAtEnd = 1;
+  text.numelements++;
+
+  char buffer[8];
+  itoa(osVer, (unsigned char*)buffer);
+  elem[text.numelements].text = buffer;
+  text.numelements++;
 
   elem[text.numelements].text = (char*)"Preparing file sending...";
   elem[text.numelements].newLine = 1;
@@ -168,10 +198,12 @@ void serialTransferSingleFile(char* filename) {
   doTextArea(&text);
   Bdisp_PutDisp_DD();
 
+  int sTime = RTC_GetTicks();
   if(App_LINK_Transmit(&sftb)) {
     endSerialComm(8);
     return;
   }
+  int elTime = RTC_GetTicks() - sTime;
 
   elem[text.numelements].text = (char*)"Ending connection...";
   elem[text.numelements].newLine = 1;
@@ -182,99 +214,46 @@ void serialTransferSingleFile(char* filename) {
   // terminate transfer and close serial
   endSerialComm(0);
 
-  elem[text.numelements].text = (char*)"Done, press EXIT";
+  elem[text.numelements].text = (char*)"Done.";
   elem[text.numelements].newLine = 1;
+  elem[text.numelements].spaceAtEnd = 1;
   text.numelements++;
+
+  if(elTime > 0) {
+    elem[text.numelements].text = (char*)"Transfer took";
+    elem[text.numelements].spaceAtEnd = 1;
+    text.numelements++;
+
+    int seconds = elTime/128;
+
+    char sbuf[10];
+    itoa(seconds, (unsigned char*)sbuf);
+    elem[text.numelements].text = sbuf;
+    elem[text.numelements].spaceAtEnd = 1;
+    text.numelements++;
+
+    elem[text.numelements].text = (char*)"seconds, average speed";
+    elem[text.numelements].spaceAtEnd = 1;
+    text.numelements++;
+
+    char spbuf[10];
+    itoa(fsize/seconds, (unsigned char*)spbuf);
+    elem[text.numelements].text = spbuf;
+    elem[text.numelements].spaceAtEnd = 1;
+    text.numelements++;
+
+    elem[text.numelements].text = (char*)"bytes/s.";
+    elem[text.numelements].spaceAtEnd = 1;
+    text.numelements++;
+  }
+
+  elem[text.numelements].text = (char*)"Press EXIT.";
+  text.numelements++;
+
   text.type = TEXTAREATYPE_NORMAL;
+  text.scrollbar = 1;
   doTextArea(&text);
 
   // done!
   return;
-}
-
-int SerialFileTransfer(char*_filename ) {
-  TTransmitBuffer sftb;
-  int l = strlen( (char*)_filename );
-  unsigned int iii, jjj, phase;
-  //FILE_INFO fileinfo;
-  unsigned int calcType;
-  unsigned short osVer;
-
-  if ( l <= 7 ) return -1;
-  if ( _filename[0] != '\\' ) return -2;
-  if ( _filename[1] != '\\' ) return -3;
-  if ( _filename[6] != '\\' ) return -4;
-
-  memset( &sftb, 0, sizeof( sftb ) );
-
-  strncpy( sftb.device, (char*)_filename+2, 4 );
-  if ( strcmp( sftb.device, "fls0" ) ) return -5;
-
-  strcpy( sftb.fname1, (char*)_filename+7 );
-  // strcpy( sftb.fname2, (char*)_filename+7 );
-
-  Bfile_StrToName_ncpy( sftb.filename, _filename, 0x10A );
-  // get filesize:
-  int handle = Bfile_OpenFile_OS(sftb.filename, READWRITE, 0);
-  sftb.filesize = Bfile_GetFileSize_OS(handle);
-  Bfile_CloseFile_OS(handle);
-
-  sftb.command = 0x45;
-  sftb.datatype = 0x80;
-  sftb.handle = -1;
-  sftb.source = 1; // SMEM:1
-  sftb.zero = 0;
-
-  phase = 0;
-
-  while( 1 ){
-    phase = 1;
-    //App_LINK_SetReceiveTimeout_ms( 360000 );
-    App_LINK_SetReceiveTimeout_ms( 6000 );
-    iii = Comm_Open( 0x1000 );
-    if ( iii ) break;
-
-    phase = 2;
-    // Serial_Send_0Ax10_Sequence();
-    //SetGetKeyPhaseFlag(); // 02CA
-    iii = Comm_TryCheckPacket( 0 ); // 1396
-    if ( iii ) break;
-
-    phase = 3;
-    iii = App_LINK_SetRemoteBaud(); // 1397
-    if ( iii ) break;
-
-    OS_InnerWait_ms( 20 );
-
-    phase = 4;
-    iii = Comm_TryCheckPacket( 1 ); // 1396
-    if ( iii ) break;
-
-    phase = 5;
-    iii = App_LINK_Send_ST9_Packet();
-    if ( iii && ( iii != 0x14 ) ) break;
-
-    phase = 6;
-    iii = App_LINK_GetDeviceInfo( &calcType, &osVer );
-    if ( iii ) break;
-
-    phase = 7;
-    iii = App_LINK_TransmitInit( &sftb );
-    //iii = App_LINK_TransmitInit2( &sftb, OVERWRITE );
-    if ( iii ) break;
-
-    phase = 8;
-    iii = App_LINK_Transmit( &sftb );
-    if ( iii ) break;
-
-    phase = 0xFF;
-    break;
-  };
-  Comm_Terminate( 0 );
-  jjj = 1;
-  while ( Comm_Close( 0 ) == 5 ) jjj++;
-
-  phase<<=24;
-  jjj<<=16;
-  return phase + jjj + iii;
 }
