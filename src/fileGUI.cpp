@@ -727,7 +727,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
     fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
     DefineStatusMessage((char*)statusText, 1, 0, 0);
     doTextArea(&text);
-    drawFkeyLabels((compressed? -1 : 0x03B1), (allowEdit && !compressed? 0x0185: -1), (allowEdit? (compressed ? 0x161 : 0x160) : -1), 0x8D, -1, (file->size>0 ? 0x0371 : -1)); //OPEN, EDIT, Comp (white) or Dec (white), CALC (white)
+    drawFkeyLabels((compressed? -1 : 0x03B1), (allowEdit && !compressed? 0x0185: -1), (allowEdit? (compressed ? 0x161 : 0x160) : -1), -1, -1, (file->size>0 ? 0x0371 : -1)); //OPEN, EDIT, Comp (white) or Dec (white), CALC (white)
     int key;
     mGetKey(&key);
     switch(key) {
@@ -772,9 +772,11 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
           return 2;
         }
         break;
+      #ifdef DISABLED_EXPERIMENTAL_CODE
       case KEY_CTRL_F4:
         serialTransferSingleFile(file->filename);
         break;
+      #endif
       case KEY_CTRL_F6:
         if(file->size > 0) {
           unsigned short pFile[MAX_FILENAME_SIZE+1];

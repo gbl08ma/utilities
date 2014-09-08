@@ -22,6 +22,7 @@
 // remote calculator should be in receive mode with cable type set to 3-pin
 // pay attention to CPU clock speeds as they affect the baud rate, causing errors
 
+#ifdef DISABLED_EXPERIMENTAL_CODE
 void endSerialComm(int error) {
   if(error) {
     Comm_Terminate(2); // display "Receive ERROR" on remote
@@ -58,7 +59,7 @@ void serialTransferSingleFile(char* filename) {
   text.scrollbar=0;
   text.title = (char*)"3-pin file sending";
   
-  textElement elem[20];
+  textElement elem[25];
   text.elements = elem;
   text.numelements = 0; //we will use this as element cursor
   
@@ -76,6 +77,10 @@ void serialTransferSingleFile(char* filename) {
   Bfile_StrToName_ncpy(sftb.filename, filename, 0x10A);
   // get filesize:
   int handle = Bfile_OpenFile_OS(sftb.filename, READWRITE, 0);
+  if(handle < 0) {
+    endSerialComm(-1);
+    return;
+  }
   int fsize = sftb.filesize = Bfile_GetFileSize_OS(handle);
   Bfile_CloseFile_OS(handle);
 
@@ -126,59 +131,6 @@ void serialTransferSingleFile(char* filename) {
     endSerialComm(4);
     return;
   }
-
-  // get information about remote calculator
-
-  elem[text.numelements].text = (char*)"Getting remote information...";
-  elem[text.numelements].newLine = 1;
-  text.numelements++;
-  doTextArea(&text);
-  Bdisp_PutDisp_DD();
-
-  int ret = App_LINK_Send_ST9_Packet();
-  if(ret && (ret != 0x14)) {
-    endSerialComm(5);
-    return;
-  }
-
-  unsigned int calcType=1;
-  unsigned short osVer=103;
-  if(App_LINK_GetDeviceInfo(&calcType, &osVer)) {
-    endSerialComm(6);
-    return;
-  }
-
-  // do something with calcType and osVer
-
-  elem[text.numelements].text = (char*)"Remote like";
-  elem[text.numelements].spaceAtEnd = 1;
-  elem[text.numelements].newLine = 1;
-  text.numelements++;
-
-  switch(calcType) {
-    case 1:
-      elem[text.numelements].text = (char*)"Gy363";
-      break;
-    case 2:
-      elem[text.numelements].text = (char*)"Gy362";
-      break;
-    case 3:
-      elem[text.numelements].text = (char*)"Gy490";
-      break;
-    default:
-      elem[text.numelements].text = (char*)"Other";
-      break;
-  }
-  text.numelements++;
-
-  elem[text.numelements].text = (char*)", running OS";
-  elem[text.numelements].spaceAtEnd = 1;
-  text.numelements++;
-
-  char buffer[8];
-  itoa(osVer, (unsigned char*)buffer);
-  elem[text.numelements].text = buffer;
-  text.numelements++;
 
   elem[text.numelements].text = (char*)"Preparing file sending...";
   elem[text.numelements].newLine = 1;
@@ -257,3 +209,4 @@ void serialTransferSingleFile(char* filename) {
   // done!
   return;
 }
+#endif
