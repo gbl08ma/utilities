@@ -33,19 +33,19 @@ static unsigned insertShort(char*start,char*pos,unsigned ln,unsigned short c){
 	pos[1]=c&255;
 	return ln+2;
 }
+static unsigned removeShort(char*start,char*pos,unsigned ln){
+	unsigned len;
+	len=ln-(pos-start);
+	memmove(pos,pos+2,len);
+	pos[len]=0;
+	return ln-2;
+}
 static unsigned removeChar(char*start,char*pos,unsigned ln){
 	unsigned len;
-	if(*pos&128){
-		len=ln-(pos-start)+2;
-		memmove(pos,pos+2,len);
-		ln-=2;
-	}else{
-		len=ln-(pos-start)+1;
-		memmove(pos,pos+1,len);
-		--ln;
-	}
+	len=ln-(pos-start)+1;
+	memmove(pos,pos+1,len);
 	pos[len]=0;
-	return ln;
+	return ln-1;
 }
 static char*prevLn(char*sh,char*start){
 	//If already on newline character skip it.
@@ -96,7 +96,7 @@ void fileTextEditor(char* filename, char* basefolder) {
 		unsigned ln=strlen(sText),large=0,mx=216-40;
 		char*pos=sText,*posMax=sText+TEXT_BUFFER_SIZE-1,*posShow=sText,*nextLn=pos,*last=pos;
 		for(;;){
-			Bdisp_AllClr_VRAM();
+			for(unsigned i=192*384/2,*v=(unsigned*)0xA8004800;i--;*v++=0xFFFFFFFF);
 			char*sh=posShow;
 			if(posShow>pos)
 				pos=posShow;
@@ -124,15 +124,15 @@ void fileTextEditor(char* filename, char* basefolder) {
 							nl=1;
 						}
 						if(sh[0]=='\n'||nl){
-							x=1;
-							++y;
 							++sh;
-							if(nextLn==posShow)
-								nextLn=sh;
 							if(sh==(pos+1)){
 								tmp[2]=' ';
 								PrintXY(x,y,tmp,1,0);
 							}
+							x=1;
+							++y;
+							if(nextLn==posShow)
+								nextLn=sh;
 						}else{
 							tmp[2]=*sh++;
 							if(sh==(pos+1))
@@ -157,7 +157,8 @@ void fileTextEditor(char* filename, char* basefolder) {
 			}else{
 				char tmp[4];
 				__builtin_memset(tmp,0,sizeof(tmp));//Should treat as writting to integer
-				x=y=0;
+				x=0;
+				y=24;
 				while((*sh)&&(sh<=posMax)){
 					unsigned nl=0;
 					if((*sh)&128){
@@ -175,15 +176,15 @@ void fileTextEditor(char* filename, char* basefolder) {
 							nl=1;
 						}
 						if(sh[0]=='\n'||nl){
-							x=0;
-							y+=16;
 							++sh;
-							if(nextLn==posShow)
-								nextLn=sh;
 							if(sh==(pos+1)){
 								tmp[0]=' ';
 								PrintMini(&x,&y,tmp,0x44,0xFFFFFFFF,0,0,0,0xFFFF,1,0);
 							}
+							x=0;
+							y+=16;
+							if(nextLn==posShow)
+								nextLn=sh;
 						}else{
 							tmp[0]=*sh++;
 							unsigned flags=0x40;
@@ -205,6 +206,12 @@ void fileTextEditor(char* filename, char* basefolder) {
 				}
 			}
 			last=sh;
+			if(!((pos-sText)-ln)){
+				if(large)
+					PrintXY(x,y,"   ",1,0);
+				else
+					PrintMini(&x,&y," ",0x44,0xFFFFFFFF,0,0,0,0xFFFF,1,0);
+			}
 			drawFkeyLabels(0x302, 0, 0, 0x02A1, 0x0307); // CHAR, A<>a
 skipRedraw:
 			int keyflag=GetSetupSetting((unsigned int)0x14),key;
@@ -256,25 +263,35 @@ skipRedraw:
 			}else if(key==KEY_CTRL_DEL){
 				if(pos>last&&(y>=mx))
 					posShow=nextLn;
-				if(ln)
-					ln=removeChar(sText,--pos,ln);
+				if(ln){
+					if(*(pos-2)&128){
+						pos-=2;
+						ln=removeShort(sText,pos,ln);
+					}else
+						ln=removeChar(sText,--pos,ln);
+				}
 			}else if(key==KEY_CTRL_LEFT){
 				if(pos>sText){
-					--pos;
+					if(*(pos-2)&128)
+						pos-=2;
+					else
+						--pos;
 					if(pos<posShow){
 						//Now find start of line
 						posShow=prevLn(posShow,sText);
 					}
 				}
 			}else if(key==KEY_CTRL_RIGHT){
-				if(pos[0])
+				if(*pos&128)
+					pos+=2;
+				else if(*pos)
 					++pos;
 				if(pos>last)
 					posShow=nextLn;
 			}else if(key==KEY_CTRL_UP){
-				posShow=prevLn(posShow,sText);
+				pos=posShow=prevLn(posShow,sText);
 			}else if(key==KEY_CTRL_DOWN){
-				posShow=nextLn;
+				pos=posShow=nextLn;
 			}else if((key&32768)&&key){
 				if(pos<posMax){
 					if(pos>last)
