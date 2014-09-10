@@ -206,6 +206,12 @@ void fileTextEditor(char* filename, char* basefolder) {
 				}
 			}
 			last=sh;
+			if(!((pos-sText)-ln)){
+				if(large)
+					PrintXY(x,y,"   ",1,0);
+				else
+					PrintMini(&x,&y," ",0x44,0xFFFFFFFF,0,0,0,0xFFFF,1,0);
+			}
 			drawFkeyLabels(0x302, 0, 0, 0x02A1, 0x0307); // CHAR, A<>a
 skipRedraw:
 			int keyflag=GetSetupSetting((unsigned int)0x14),key;
