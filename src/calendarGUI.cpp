@@ -1069,6 +1069,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         input.acceptF6=1;
         input.type=INPUTTYPE_TIME;
         char stbuffer[15];
+        stbuffer[0] = '\0';
         if(event->timed) fillInputTime(event->starttime.hour, event->starttime.minute, event->starttime.second, stbuffer);
         input.buffer = (char*)stbuffer;
         while(1) {
