@@ -50,11 +50,13 @@ static unsigned removeChar(char*start,char*pos,unsigned ln){
 static char*prevLn(char*sh,char*start){
 	//If already on newline character skip it.
 	for(unsigned i=0;i<3;++i){
-		while((*sh)&&(sh>=(start-1))){
+		while(*sh){
 			if(*(sh-1)&128)
 				sh-=2;//Multi byte characters will never be a newline so skip completly
 			if(*sh--=='\n')
 				break;
+			if(sh<=start)
+				return start;
 		}
 	}
 	return sh+2;//Should return one character after newline is plus two as sh is always subtracted by one per loop.
@@ -124,6 +126,7 @@ void fileTextEditor(char* filename, char* basefolder) {
 							nl=1;
 						}
 						if(sh[0]=='\n'||nl){
+							nl=1;
 							++sh;
 							if(sh==(pos+1)){
 								tmp[2]=' ';
@@ -176,6 +179,7 @@ void fileTextEditor(char* filename, char* basefolder) {
 							nl=1;
 						}
 						if(sh[0]=='\n'||nl){
+							nl=1;
 							++sh;
 							if(sh==(pos+1)){
 								tmp[0]=' ';
