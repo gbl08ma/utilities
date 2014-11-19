@@ -1486,7 +1486,7 @@ int moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
     // add event on new day
     if(GetEventsForDate(&events[pos].startdate, CALENDARFOLDER, NULL)+1 > MAX_DAY_EVENTS) {
       AUX_DisplayErrorMessage( 0x2E );
-      return EVENTEDITOR_RETURN_EXIT; // do not keep running, as we'd delete the original event, even though the move was not sucessful.
+      return EVENTEDITOR_RETURN_CONFIRM; // do not keep running, as we'd delete the original event, even though the move was not sucessful.
     } else {
       //already checked if passes num limit
       int res = AddEvent(&events[pos], CALENDARFOLDER);
@@ -1500,7 +1500,7 @@ int moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
         mPrintXY(3, 3, (char*)"Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(3, 4, (isCopy ? (char*)"be copied." : (char*)"be moved."), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         closeMsgBox();
-        return EVENTEDITOR_RETURN_EXIT;
+        return EVENTEDITOR_RETURN_CONFIRM;
       }
     }
     // delete event on current (old) day
