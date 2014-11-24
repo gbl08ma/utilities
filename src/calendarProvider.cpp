@@ -122,12 +122,15 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
         break;
       case 17: //title
         strncpy((char*)calEvent->title, (char*)token, 21);
+        calEvent->title[22] = '\0';
         break;
       case 18: //location
         strncpy((char*)calEvent->location, (char*)token, 128);
+        calEvent->location[129] = '\0';
         break;
       case 19: //description
         strncpy((char*)calEvent->description, (char*)token, 1024);
+        calEvent->description[1025] = '\0';
         break;
       default: //unknown field. may add special handling later.
         break;
@@ -160,6 +163,7 @@ void charToSimpleCalEvent(unsigned char* src, SimpleCalendarEvent* calEvent) {
         break;
       case 17: //title
         strncpy((char*)calEvent->title, (char*)token, 21);
+        calEvent->title[22] = '\0';
         break;
       default: //some field that doesn't matter to us
         break;
