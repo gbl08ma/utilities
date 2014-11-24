@@ -559,7 +559,19 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   return index;
 }
 
+void fixEventString(unsigned char* asrc, int field_length, int max, int* len, int* i) {
+  int excess = field_length - max;
+  for (int k = *i - field_length + max; k < *len - excess; k++)
+    asrc[k] = asrc[k+excess];
+  *len -= excess; *i -= excess;
+  asrc[*len] = '\0';
+}
+
 void repairEventsFile(char* name, const char* folder, int* checkedevents, int* problemsfound) {
+  // Repairs an event file when possible, or deletes it straight away if it has major problems.
+  // Makes A LOT of assumptions about the format of files and their names, so one must check that files are
+  // still taken as valid by this function after making changes to the file/storage format, and change the
+  // code if necessary.
   // name should only contain the latest part of the name, e.g. 20130415.pce
   // folder does not include \\fls0\ or anything, just the user friendly name for the folder
   
@@ -572,58 +584,97 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   unsigned short pFile[MAX_FILENAME_SIZE];
   Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-  // Check if file opened
-  if(hFile >= 0)
-  { //opened
-    int size = Bfile_GetFileSize_OS(hFile);
-    // File exists and we have its size, let's see if it is above the minimum
-    if(size < 51) {
-      Bfile_CloseFile_OS(hFile);
-      Bfile_DeleteEntry(pFile);
-      *problemsfound = *problemsfound + 1;
-      return;
+  if(hFile < 0) return;
+  // file opened
+  int size = Bfile_GetFileSize_OS(hFile);
+  // File exists and we have its size, let's see if it is above the minimum
+  if(size < 51) {
+    Bfile_CloseFile_OS(hFile);
+    Bfile_DeleteEntry(pFile);
+    *problemsfound = *problemsfound + 1;
+    return;
+  }
+  unsigned char asrc[MAX_EVENT_FILESIZE] = "";
+  // Read file into a buffer
+  if ((unsigned int)size > MAX_EVENT_FILESIZE) {
+    Bfile_CloseFile_OS(hFile);
+    // TODO do something with files that are too big.
+    // delete them or tell the user to send them to the developers to see if any data can be recovered?
+    // for now let's delete them
+    Bfile_DeleteEntry(pFile);
+    *problemsfound = *problemsfound + 1;
+    return;
+  }
+  Bfile_ReadFile_OS(hFile, asrc, size, 0);
+  Bfile_CloseFile_OS(hFile); //we got file contents, close it
+  
+  // Let's see if the file header is OK
+  if(strncmp((char*)asrc, FILE_HEADER, 7)) {
+    // strncmp was not zero, so the header is invalid.
+    Bfile_DeleteEntry(pFile);
+    *problemsfound = *problemsfound + 1;
+    return;
+  }
+  // before we give the file to GetEventsForDate, let's check if it has the right amount of field separators
+  // in relation to the amount of event separators, and check that the length of certain fields is within bounds.
+  int fieldsep = 0;
+  int eventsep = 0;
+  int fieldsep_this_event = 0;
+  int field_length = 0;
+  int invalid_field_length = 0; // if asrc is modified to fix a lengthy field, this becomes 1
+  int len = strlen((char*)asrc);
+  for(int i = 0; i<len; i++) {
+    if(asrc[i] == FIELD_SEPARATOR) {
+      // end of a field, check length
+      if (fieldsep_this_event == 17 && field_length > 21) {
+        // invalid title length
+        fixEventString(asrc, field_length, 21, &len, &i);
+        invalid_field_length = 1;
+        *problemsfound = *problemsfound + 1;
+      } else if (fieldsep_this_event == 18 && field_length > 128) {
+        // invalid location length
+        fixEventString(asrc, field_length, 128, &len, &i);
+        invalid_field_length = 1;
+        *problemsfound = *problemsfound + 1;
+        break;
+      }
+      fieldsep++;
+      fieldsep_this_event++;
+      field_length = 0;
+    } else if(asrc[i] == EVENT_SEPARATOR) {
+      if (field_length > 1024) {
+        // invalid description length
+        fixEventString(asrc, field_length, 1024, &len, &i);
+        invalid_field_length = 1;
+        *problemsfound = *problemsfound + 1;
+        break;
+      }
+      eventsep++;
+      fieldsep_this_event = 0;
+      field_length = 0;
+    } else field_length++;
+  }
+  // there should be 19 field separators per event.
+  // each event has a field separator in the end, even if it is the last event on file
+  // so dividing the total amount of field separators by the total amount of event separators should return 19.
+  if(!fieldsep || !eventsep || fieldsep/eventsep != 19) {
+    // file corrupt / invalid format, delete it.
+    Bfile_DeleteEntry(pFile);
+    *problemsfound = *problemsfound + 1;
+    return;
+  } else if (invalid_field_length) {
+    // delete original file and recreate with fixed contents
+    Bfile_DeleteEntry(pFile);
+    unsigned int size = (unsigned int)len;
+    int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
+    if(BCEres >= 0) {
+      int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+      if(hFile >= 0) {
+        Bfile_WriteFile_OS(hFile, asrc, size);
+        Bfile_CloseFile_OS(hFile);
+      }
     }
-    unsigned char asrc[MAX_EVENT_FILESIZE] = "";
-    // Read file into a buffer
-    if ((unsigned int)size > MAX_EVENT_FILESIZE) {
-      Bfile_CloseFile_OS(hFile);
-      // TODO do something with files that are too big.
-      // delete them or tell the user to send them to the developers to see if any data can be recovered?
-      // for now let's delete them
-      Bfile_DeleteEntry(pFile);
-      *problemsfound = *problemsfound + 1;
-      return;
-    }
-    Bfile_ReadFile_OS(hFile, asrc, size, 0);
-    Bfile_CloseFile_OS(hFile); //we got file contents, close it
-    
-    // Let's see if the file header is OK
-    if(strncmp((char*)asrc, FILE_HEADER, 7)) {
-      // strncmp was not zero, so the header is invalid.
-      // delete file.
-      Bfile_DeleteEntry(pFile);
-      *problemsfound = *problemsfound + 1;
-      return;
-    }
-    // before we give the file to GetEventsForDate, let's check if it has the right amount of field separators
-    // in relation to the amount of event separators.
-    int fieldsep = 0;
-    int eventsep = 0;
-    int len = strlen((char*)asrc);
-    for(int i = 0; i<len; i++) {
-      if(asrc[i] == FIELD_SEPARATOR) fieldsep++;
-      else if(asrc[i] == EVENT_SEPARATOR) eventsep++;
-    }
-    // there should be 19 field separators per event.
-    // each event has a field separator in the end, even if it is the last event on file
-    // so dividing the total amount of field separators by the total amount of event separators should return 19.
-    if(!fieldsep || !eventsep || fieldsep/eventsep != 19) {
-      // file corrupt / invalid format, delete it.
-      Bfile_DeleteEntry(pFile);
-      *problemsfound = *problemsfound + 1;
-      return;
-    }
-  } else return; // it should have opened...
+  }
   
   // if we got to this point, one could assume that the file doesn't suffer from corruption and has a valid format
   // but this is not the case, as we still need to check one thing, see:
