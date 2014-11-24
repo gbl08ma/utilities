@@ -1623,7 +1623,6 @@ void searchEventsGUI(int y, int m, int d) {
     else if (res==INPUT_RETURN_CONFIRM) break; // continue to search
   }
   SimpleCalendarEvent* events;
-  MenuItem* menuitems;
   
   Menu menu;
   menu.scrollout=1;
@@ -1650,7 +1649,6 @@ void searchEventsGUI(int y, int m, int d) {
     //case 4:
     default: //avoids compiler warning
     { int userStartYear = y-2;
-      int userEndYear = y+2;
       Selector sel;
       sel.title = (char*)"Search on year range";
       sel.subtitle = (char*)"Start year";
@@ -1659,52 +1657,54 @@ void searchEventsGUI(int y, int m, int d) {
       sel.max = 9999;
       if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
       userStartYear = sel.value;
-      
+
+      int userEndYear = userStartYear+4;
       sel.subtitle = (char*)"End year";
       sel.value = userEndYear;
       sel.min = userStartYear;
-      sel.max = (userStartYear+254 > 9999 ? 9999 : userStartYear+254); //do not allow for more than 255 years, otherwise maximum will be less than an event per year
+      sel.max = userStartYear+249; //do not allow for more than 255 years, otherwise maximum will be less than an event per year
+      if(sel.max > 9999) sel.max = 9999;
       // also, if more than 255 years it would definitely take too much time, and user would certainly reboot the calculator
       sel.cycle = 0;
       if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
       userEndYear = sel.value;
-      
-      int yc = userEndYear-userStartYear+1;
-      int pc = 0;
-      int ic = 0, firstYwithEvents = 0, lastYwithEvents = 0;
-      int maxPerYear = 250/yc; // calculate maximum number of events we can get on each year
-      progressMessage((char*)" Searching...", 0, yc);
-      for(int i=userStartYear; i<=userEndYear; i++) {
-        int c = SearchEventsOnYearOrMonth(i, 0, CALENDARFOLDER, NULL, needle, maxPerYear, ic); //get event count
-        if(!firstYwithEvents && c>0) firstYwithEvents = i;
-        if(c>0) lastYwithEvents = i;
-        pc++;
-        if(pc <= yc) progressMessage((char*)" Searching...", pc, yc);
-        ic += c;
+      /// NEW code
+      const int yearCount = userEndYear - userStartYear + 1;
+      const int maxEventsPerYear = 250 / yearCount;
+      int searchBottom = 0, searchTop = 0; // the first and last years to have a non-zero amount of events
+      int eventsCount = 0;
+
+      progressMessage((char*)" Searching...", 0, yearCount);
+      for(int i = 0; i < yearCount; i++) {
+        int prev = eventsCount;
+        eventsCount = SearchEventsOnYearOrMonth(userStartYear+i, 0, CALENDARFOLDER, NULL, needle, eventsCount + maxEventsPerYear, eventsCount);
+        if(eventsCount > prev) { // if there are events on this year...
+          searchTop = userStartYear+i;
+          if(!searchBottom) searchBottom = userStartYear+i;
+        }
+        progressMessage((char*)" Searching...", i+1, yearCount);
       }
       closeProgressMessage();
-      events = (SimpleCalendarEvent*)alloca(ic*sizeof(SimpleCalendarEvent));
-      ic=0;
-      yc = lastYwithEvents-firstYwithEvents+1;
-      pc=0;
-      progressMessage((char*)" Searching...", 0, yc);
-      for(int i=firstYwithEvents; i<=lastYwithEvents; i++) {
-        ic += SearchEventsOnYearOrMonth(i, 0, CALENDARFOLDER, events, needle, maxPerYear, ic);
-        pc++;
-        if(pc <= yc) progressMessage((char*)" Searching...", pc, yc);
+
+      events = (SimpleCalendarEvent*)alloca(eventsCount*sizeof(SimpleCalendarEvent));
+      eventsCount = 0; // reset array start index to pass to SearchEventsOnYearOrMonth
+      const int yearWithEventsCount = searchTop - searchBottom + 1;
+
+      progressMessage((char*)" Searching...", 0, yearWithEventsCount);
+      for(int i = 0; i < yearWithEventsCount; i++) {
+        eventsCount = SearchEventsOnYearOrMonth(searchBottom+i, 0, CALENDARFOLDER, events, needle, eventsCount + maxEventsPerYear, eventsCount);
+        progressMessage((char*)" Searching...", i+1, yearWithEventsCount);
       }
       closeProgressMessage();
-      menu.numitems = ic;
+      menu.numitems = eventsCount;
       break;
     }
   }
-  menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
-  int curitem = 0;
-  while(curitem < menu.numitems) {
+  MenuItem* menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
+  for(int curitem = 0; curitem < menu.numitems; curitem++) {
     menuitems[curitem].text = (char*)events[curitem].title;
     menuitems[curitem].type = MENUITEM_NORMAL;
     menuitems[curitem].color = events[curitem].category-1;
-    curitem++;
   }
   menu.items=menuitems;
   while(1) {

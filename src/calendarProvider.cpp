@@ -447,7 +447,9 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   Bfile_FindClose(findhandle);
 }
 
-void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resCount, int daynumevents, const char* folder, char* needle, int limit, int* curfpos) {
+void SearchHelper(EventDate* date, SimpleCalendarEvent* calEvents, int daynumevents, const char* folder, char* needle, int limit, int* index) {
+  // limit is the maximum index, not maximum number of results
+  // (if you want five events at most, and *index is 5, you need to put 10 in limit)
   CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
   daynumevents = GetEventsForDate(date, folder, dayEvents);
   for(int curitem = 0; curitem < daynumevents; curitem++) {
@@ -455,15 +457,17 @@ void SearchYearHelper(EventDate* date, SimpleCalendarEvent* calEvents, int* resC
       NULL != strcasestr((char*)dayEvents[curitem].location, needle) || \
       NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
       if(calEvents != NULL) {
-        strcpy((char*)calEvents[*curfpos].title, (char*)dayEvents[curitem].title);
-        calEvents[*curfpos].startdate = dayEvents[curitem].startdate;
-        calEvents[*curfpos].category = dayEvents[curitem].category;
-        calEvents[*curfpos].origpos = curitem;
+        strncpy((char*)calEvents[*index].title, (char*)dayEvents[curitem].title, 24);
+        calEvents[*index].title[24] = '\0';
+        calEvents[*index].startdate.day = dayEvents[curitem].startdate.day;
+        calEvents[*index].startdate.month = dayEvents[curitem].startdate.month;
+        calEvents[*index].startdate.year = dayEvents[curitem].startdate.year;
+        calEvents[*index].category = dayEvents[curitem].category;
+        calEvents[*index].origpos = curitem;
       }
-      *resCount = *resCount+1;
-      *curfpos = *curfpos+1;
+      *index = *index + 1;
+      if(*index >= limit) return;
     }
-    if(*resCount >= limit) return;
   }
 }
 
@@ -472,25 +476,24 @@ int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* 
    * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)
    * if calEvents is NULL simply returns the number of results
    * returns the search results count */
-  int curfpos = 0, resCount = 0;
+  int index = 0;
   int daynumevents = GetEventsForDate(date, folder, NULL); //get event count only so we know how much to alloc
   if(daynumevents==0) return 0;
-  SearchYearHelper(date, calEvents, &resCount, daynumevents, folder, needle, limit, &curfpos);
-  return resCount;
+  SearchHelper(date, calEvents, daynumevents, folder, needle, limit, &index);
+  return index;
 }
 
-int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int arraystart) {
+int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int index) {
   // if m is zero, will search on year y
-  int resCount = 0;
-  int curfpos = arraystart;
-  
+  // limit is the maximum index, not maximum number of results
+
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
   strcpy(buffer, folder);
   strcat(buffer, "\\");
-  char smallbuf[5];
+  char smallbuf[10];
   itoa(y, (unsigned char*)smallbuf);
   strcat(buffer, smallbuf);
   if(m) {
@@ -506,11 +509,10 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-    // the 00000.pce strcmp is there so we don't search on the tasks file
-    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0)) {
-      // get the start date from the filename
+    // get the start date from the filename
+    int nlen = strlen((char*)buffer);
+    if (nlen <= 12) { // if the filename is bigger than 12, it isn't in the correct format
       char mainname[20];
-      int nlen = strlen((char*)buffer);
       strncpy(mainname, (char*)buffer, nlen-4); //strip the file extension out
       // strcpy will not add a \0 at the end if the limit is reached, let's add it ourselves
       mainname[nlen-4] = '\0';
@@ -527,23 +529,25 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
       if(isValid) {
         char tmpbuf[10];
         int i;
-        for(i = 0; i<8-nlen; i++) {
-          strcpy(tmpbuf+i, "0");
+        for(i = 0; i < 8 - nlen; i++) {
+          tmpbuf[i] = '0';
         }
         strcpy(tmpbuf+i, mainname);
         EventDate thisday;
-        int fy, fm, fd;
-        stringToDate(tmpbuf, &fy, &fm, &fd, 2);
-        thisday.year=fy; thisday.month=fm; thisday.day=fd;
+        int signedYear, signedMonth, signedDay;
+        stringToDate(tmpbuf, &signedYear, &signedMonth, &signedDay, 2);
+        thisday.year = signedYear;
+        thisday.month = signedMonth;
+        thisday.day = signedDay;
         
-        // see if the date in the filename is valid, and that it is in the year we are searching in
+        // see if the date in the filename is valid
         if(isDateValid(thisday.year,thisday.month,thisday.day)) {
           int daynumevents = GetEventsForDate(&thisday, folder, NULL); //get event count only so we know how much to alloc
-          if(daynumevents>0) {
-            SearchYearHelper(&thisday, calEvents, &resCount, daynumevents, folder, needle, limit, &curfpos);
-            if(resCount >= limit) {
+          if(daynumevents > 0) {
+            SearchHelper(&thisday, calEvents, daynumevents, folder, needle, limit, &index);
+            if(index >= limit) {
               Bfile_FindClose(findhandle);
-              return resCount;
+              return index;
             }
           }
         }
@@ -552,7 +556,7 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
     ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
   Bfile_FindClose(findhandle);
-  return resCount;
+  return index;
 }
 
 void repairEventsFile(char* name, const char* folder, int* checkedevents, int* problemsfound) {
