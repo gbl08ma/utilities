@@ -293,6 +293,7 @@ void updateCurrentFreq() {
   mPrintXY(1, 8, desc, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
 }
 
+static const unsigned short markerspos[]={13, 27, 41, 56, 84, 112, 169, 203, 217, 246, 274, 331, 368};
 void setCPUclock() {
   int key; int textX; int textY;
 
@@ -303,20 +304,10 @@ void setCPUclock() {
     drawScreenTitle((char*)"CPU speed");
 
     drawRectangle(13, 88, 357, 2, COLOR_BLACK);
-
-    drawRectangle(13, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(27, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(41, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(56, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(84, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(112, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(169, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(203, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(217, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(246, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(274, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(331, 85, 2, 19, COLOR_BLACK);
-    drawRectangle(368, 85, 2, 19, COLOR_BLACK);
+    
+    // draw vertical ticks on the possible CPU frequencies:
+    for(int i = 0; i < 13; i++)
+      drawRectangle(markerspos[i], 85, 2, 19, COLOR_BLACK);
 
     CopySpriteNbitMasked(selector, 10, 105, 364, 22, selector_palette, 0xffff, 1);
     
