@@ -179,110 +179,53 @@ void powerInformation() {
   elem[13].newLine = 1;
   elem[13].text = (char*)"CPU clock:";
   elem[13].spaceAtEnd = 1;
-  switch((*FRQCR & 0x3F000000) >> 24) {
-    case PLL_28x: elem[14].text = (char*)"101.5"; break;
-    case PLL_26x: elem[14].text = (char*)"94.3"; break;
-    case PLL_24x: elem[14].text = (char*)"87"; break;
-    case PLL_20x: elem[14].text = (char*)"72.5"; break;
-    case PLL_18x: elem[14].text = (char*)"65.3"; break;
-    case PLL_16x: elem[14].text = (char*)"58"; break;
-    case PLL_15x: elem[14].text = (char*)"54.4"; break;
-    case PLL_12x: elem[14].text = (char*)"43.5"; break;
-    case PLL_8x: elem[14].text = (char*)"29"; break;
-    case PLL_6x: elem[14].text = (char*)"21.7"; break;
-    case PLL_4x: elem[14].text = (char*)"14.5"; break;
-    case PLL_3x: elem[14].text = (char*)"10.8"; break;
-    case PLL_2x: elem[14].text = (char*)"7.25"; break;
-    case PLL_1x: elem[14].text = (char*)"3.6"; break;
-    default: elem[14].text = (char*)"Unknown"; break;
-  }
+  char* desc; int c;
+  getPLLinfo((*FRQCR & 0x3F000000) >> 24, &elem[14].text, &desc, &c);
   elem[14].spaceAtEnd = 1;
   elem[15].text = (char*)"MHz";
   text.numelements = 16;
   doTextArea(&text);
 }
 const unsigned int PLLs[] = {PLL_1x, PLL_2x, PLL_3x, PLL_4x, PLL_6x, PLL_8x, PLL_12x, PLL_15x, PLL_16x, PLL_18x, PLL_20x, PLL_24x, PLL_26x, PLL_28x};
+static const unsigned short markerspos[]={13, 27, 41, 56, 84, 112, 169, 203, 217, 246, 274, 331, 368, 0};
+static const char* freqstrings[]={"3.6", "7.25", "10.8", "14.5", "21.7", "29", "43.5", "54.4", "58", "65.3", "72.5", "87", "94.3", "101.5"};
+
+int getPLLinfo(unsigned int PLL, char** freqstr, char** statusstr, int* color) {
+  // gets frequency as string, status (over/underclocked/normal) and returns the X position for the arrow
+  // freqstr and statusstr receive pointers to static strings
+  if(PLL > PLL_16x) {
+    *statusstr = (char*)"Overclocked";
+    *color = COLOR_ORANGE;
+  } else if(PLL < PLL_16x) {
+    *statusstr = (char*)"Underclocked";
+    *color = COLOR_LIGHTBLUE;
+  } else if(PLL == PLL_16x) {
+    *statusstr = (char*)"Normal speed";
+    *color = COLOR_LIMEGREEN;
+  } else {
+    *statusstr = (char*)"???";
+    *color = 0;
+  }
+  for(int i = 0; i < 14; i++) {
+    if(PLLs[i] == PLL) {
+      *freqstr = (char*)freqstrings[i];
+      return markerspos[i];
+    }
+  }
+  *freqstr = (char*)"Unknown";
+  return 0;
+}
 #define FREQ_ARROW_BOTTOM 84
 void updateCurrentFreq() {
   // this does not draw the VRAM contents to screen, only changes them!
-  char*cur = 0x00000000;
-  char*desc = 0x00000000;
+  char* cur;
+  char* desc;
+  int color;
   volatile unsigned int*FRQCR = (unsigned int*) 0xA4150000;
-  
-  switch((*FRQCR & 0x3F000000) >> 24) {
-    case PLL_28x:
-      cur = (char*)"101.5";
-      desc = (char*)"Overclocked";
-      break;
-    case PLL_26x:
-      cur = (char*)"94.3";
-      desc = (char*)"Overclocked";
-      drawArrowDown(368, FREQ_ARROW_BOTTOM, COLOR_ORANGE);
-      break;
-    case PLL_24x:
-      cur = (char*)"87";
-      desc = (char*)"Overclocked";
-      drawArrowDown(331, FREQ_ARROW_BOTTOM, COLOR_ORANGE);
-      break;
-    case PLL_20x:
-      cur = (char*)"72.5";
-      desc = (char*)"Overclocked";
-      drawArrowDown(274, FREQ_ARROW_BOTTOM, COLOR_ORANGE);
-      break;
-    case PLL_18x:
-      cur = (char*)"65.3";
-      desc = (char*)"Overclocked";
-      drawArrowDown(246, FREQ_ARROW_BOTTOM, COLOR_ORANGE);
-      break;
-    case PLL_16x:
-      cur = (char*)"58";
-      desc = (char*)"Normal speed";
-      drawArrowDown(217, FREQ_ARROW_BOTTOM, COLOR_LIMEGREEN);
-      break;
-    case PLL_15x:
-      cur = (char*)"54.4";
-      desc = (char*)"Underclocked";
-      drawArrowDown(203, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
-      break;
-    case PLL_12x:
-      cur = (char*)"43.5";
-      desc = (char*)"Underclocked";
-      drawArrowDown(169, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
-      break;
-    case PLL_8x:
-      cur = (char*)"29";
-      desc = (char*)"Underclocked";
-      drawArrowDown(112, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
-      break;
-    case PLL_6x:
-      cur = (char*)"21.7";
-      desc = (char*)"Underclocked";
-      drawArrowDown(84, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
-      break;
-    case PLL_4x:
-      cur = (char*)"14.5";
-      desc = (char*)"Underclocked";
-      drawArrowDown(56, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
-      break;
-    case PLL_3x:
-      cur = (char*)"10.8";
-      desc = (char*)"Underclocked";
-      drawArrowDown(41, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
-      break;
-    case PLL_2x:
-      cur = (char*)"7.25";
-      desc = (char*)"Underclocked";
-      drawArrowDown(27, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
-      break;
-    case PLL_1x:
-      cur = (char*)"3.6";
-      desc = (char*)"Underclocked";
-      drawArrowDown(13, FREQ_ARROW_BOTTOM, COLOR_LIGHTBLUE);
-      break;
-    default:
-      cur = (char*)"UNKNOWN";
-      desc = (char*)"???";
-      break;
+
+  int xpos = getPLLinfo((*FRQCR & 0x3F000000) >> 24, &cur, &desc, &color);
+  if(xpos) {
+    drawArrowDown(xpos, FREQ_ARROW_BOTTOM, color);
   }
   int textX = 0; int textY = 145;
   char buffer[50];
@@ -293,7 +236,6 @@ void updateCurrentFreq() {
   mPrintXY(1, 8, desc, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
 }
 
-static const unsigned short markerspos[]={13, 27, 41, 56, 84, 112, 169, 203, 217, 246, 274, 331, 368};
 void setCPUclock() {
   int key; int textX; int textY;
 
