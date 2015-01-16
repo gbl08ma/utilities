@@ -471,11 +471,12 @@ void setBuiltinChrono(Menu* menu, chronometer* tchrono) {
 int getLastChronoComplete() { return lastChronoComplete; }
 
 void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
+  long long int curtime = currentUnixTime();
   for(int cur = 0; cur < count; cur++) {
     if(chronoarray[cur].state == CHRONO_STATE_RUNNING && chronoarray[cur].type == CHRONO_TYPE_DOWN && //...
     // check if chrono is complete
     // if end time of chrono (start+duration) <= current time and chrono is running, chrono is complete
-    /*...*/  chronoarray[cur].starttime+chronoarray[cur].duration<=currentUnixTime()) {
+    /*...*/  chronoarray[cur].starttime+chronoarray[cur].duration<=curtime) {
       //clear this chrono
       clearChrono(&chronoarray[cur]);
       saveChronoArray(chronoarray, NUMBER_OF_CHRONO);
