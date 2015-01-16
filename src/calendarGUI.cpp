@@ -33,7 +33,9 @@
 
 int bufmonth = 0; //this is global so that it's easier to make the events count refresh
 int searchValid = 0; // whether the last search results are valid or not. Set to zero when modifying events in any way.
-int sy, sm, sd = 0; //date to which to switch the calendar, or result of date selection
+//date to which to switch the calendar, or result of date selection:
+int sy = LOWEST_SUPPORTED_YEAR-1;
+int sm, sd = 0;
 int dateselRes = 0; //whether user aborted date selection (0) or not (1)
 void viewCalendar(int dateselection) {
   int res = 0;
@@ -57,20 +59,23 @@ int viewMonthCalendar(int dateselection) {
   int y = getCurrentYear();
   int m = getCurrentMonth();
   int d = getCurrentDay();
-  if(!sy || !sm || !sd) {} else {
+  if(sy == LOWEST_SUPPORTED_YEAR-1 || !sm || !sd) {} else {
     y = sy;
     m = sm;
     d = sd;
-    sy=0; sm=0; sd=0;
+    sy = LOWEST_SUPPORTED_YEAR-1; sm=0; sd=0;
   }
   
   int menu = 1;
   int eventcount[32];
   int busydays[32];
-  int bufyear = 0;
+  int bufyear = LOWEST_SUPPORTED_YEAR-1;
   while (1) {
     if(getDBneedsRepairFlag()) repairCalendarDatabase();
-    if(y>9999||y<0) { y=getCurrentYear(); m=getCurrentMonth(); d=getCurrentDay(); } //protection: reset to today's date if somehow we're trying to access the calendar for an year after 9999, or before 0.
+    if(y > HIGHEST_SUPPORTED_YEAR || y < LOWEST_SUPPORTED_YEAR) {
+      // protection: reset to today's date if somehow we're trying to access the calendar for an unsupported year
+      y=getCurrentYear(); m=getCurrentMonth(); d=getCurrentDay();
+    }
     drawCalendar(y,m,d, GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT), eventcount, busydays, &bufmonth, &bufyear);
     switch (menu) {
     case 1:
@@ -94,11 +99,11 @@ int viewMonthCalendar(int dateselection) {
     switch(key) {
       case KEY_CTRL_F1:
         if (menu == 1) { menu = 2; }
-        else if (menu == 2) { if (y > 0) y--; }
+        else if (menu == 2) { if (y > LOWEST_SUPPORTED_YEAR) y--; }
         break;
       case KEY_CTRL_F2:
         if (menu == 2) {
-          if(!(y==0 && m == 1)) m--;
+          if(!(y == LOWEST_SUPPORTED_YEAR && m == 1)) m--;
           if (m == 0) {
               m = 12;
               y--;
@@ -109,7 +114,7 @@ int viewMonthCalendar(int dateselection) {
         break;
       case KEY_CTRL_F3:
         if (menu == 2) {
-          if (!(y == 9999 && m == 12)) m++;
+          if (!(y == HIGHEST_SUPPORTED_YEAR && m == 12)) m++;
           if (m == 13) {
               m = 1;
               y++;
@@ -133,7 +138,7 @@ int viewMonthCalendar(int dateselection) {
         break;
       case KEY_CTRL_F4:
         if (menu == 2) {
-          if (y != 9999) y++;
+          if (y != HIGHEST_SUPPORTED_YEAR) y++;
         } else if (menu == 1 && !dateselection && (!GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0)) {
           if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventUI(y, m, d)) {
             bufmonth=0;//force calendar events to reload
@@ -147,11 +152,11 @@ int viewMonthCalendar(int dateselection) {
           d = getCurrentDay();
         } else if (menu == 1 && !dateselection) {
           searchEventsGUI(y, m, d);
-          if(!sy || !sm || !sd) {} else {
+          if(sy == LOWEST_SUPPORTED_YEAR-1 || !sm || !sd) {} else {
             y = sy;
             m = sm;
             d = sd;
-            sy=0; sm=0; sd=0;
+            sy = LOWEST_SUPPORTED_YEAR-1; sm=0; sd=0;
           }
         }
         break;       
@@ -248,7 +253,7 @@ int viewWeekCalendar() {
   //returns 1 to switch to montly view
   //returns 0 to exit calendar
   int res=1;
-  int y=0, m=0, d=0;
+  int y=LOWEST_SUPPORTED_YEAR-1, m=0, d=0;
   Menu menu;
   
   menu.scrollout=1;
@@ -259,8 +264,8 @@ int viewWeekCalendar() {
   int keepMenuSel=0;
   while(res) {
     if(getDBneedsRepairFlag()) repairCalendarDatabase();
-    if(!sy || !sm || !sd) {
-      if(!y || !m || !d) {
+    if(sy == LOWEST_SUPPORTED_YEAR-1 || !sm || !sd) {
+      if(y == LOWEST_SUPPORTED_YEAR-1 || !m || !d) {
         y = getCurrentYear();
         m = getCurrentMonth();
         d = getCurrentDay();
@@ -270,7 +275,7 @@ int viewWeekCalendar() {
       y = sy;
       m = sm;
       d = sd;
-      sy=0; sm=0; sd=0;
+      sy = LOWEST_SUPPORTED_YEAR-1; sm=0; sd=0;
       jumpToSel=1;
     }
     res = viewWeekCalendarSub(&menu, &y, &m, &d, &jumpToSel, &keepMenuSel);
@@ -315,8 +320,8 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
     EventDate date;
     date.year=ny; date.month=nm; date.day=nd;
     if(!isDateValid(ny,nm,nd)) {
-      *y=0; // one of the dates we're trying to view is not valid (probably because the year is not valid, i.e. below 0 or above 9999).
-      return 1; // reload with *y==0, this makes it go to today's date.
+      *y = LOWEST_SUPPORTED_YEAR-1; // one of the dates we're trying to view is not valid (probably because the year is not valid, i.e. below 0 or above 9999).
+      return 1; // reload with *y == LOWEST_SUPPORTED_YEAR - 1, this makes it go to today's date.
     }
     fevcount[curday] = GetEventsForDate(&date, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW);
     numevents += fevcount[curday];
@@ -579,14 +584,14 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
           } else return 1; //this should never happen
           searchValid=1;
           searchEventsGUI(sey, sem, sed);
-          if(!sy || !sm || !sd) {
+          if(sy == LOWEST_SUPPORTED_YEAR-1 || !sm || !sd) {
             if(!searchValid) return 1;
           } else {
             *jumpToSel=1;
             return 1;
           }
         } else if (menu->fkeypage == 1) {
-          *y=0; // forces a return to today's values
+          *y=LOWEST_SUPPORTED_YEAR-1; // forces a return to today's values
           return 1;
         }
         break;
@@ -1424,7 +1429,7 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
       *m=sm;
       *d=sd;
     }
-    sy = 0; //avoid jumping again
+    sy = LOWEST_SUPPORTED_YEAR-1; //avoid jumping again
     return !dateselRes;
   } else {
     Bdisp_AllClr_VRAM();
@@ -1653,8 +1658,8 @@ void searchEventsGUI(int y, int m, int d) {
       sel.title = (char*)"Search on year range";
       sel.subtitle = (char*)"Start year";
       sel.value = userStartYear;
-      sel.min = 1;
-      sel.max = 9999;
+      sel.min = LOWEST_SUPPORTED_YEAR;
+      sel.max = HIGHEST_SUPPORTED_YEAR;
       if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
       userStartYear = sel.value;
 
@@ -1663,7 +1668,7 @@ void searchEventsGUI(int y, int m, int d) {
       sel.value = userEndYear;
       sel.min = userStartYear;
       sel.max = userStartYear+249; //do not allow for more than 255 years, otherwise maximum will be less than an event per year
-      if(sel.max > 9999) sel.max = 9999;
+      if(sel.max > HIGHEST_SUPPORTED_YEAR) sel.max = HIGHEST_SUPPORTED_YEAR;
       // also, if more than 255 years it would definitely take too much time, and user would certainly reboot the calculator
       sel.cycle = 0;
       if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;

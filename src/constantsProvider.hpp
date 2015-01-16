@@ -1,3 +1,9 @@
+#ifndef ATOI_REPLACEMENT
+#undef atoi
+#define atoi sys_atoi // the strtol-provided atoi defined in libfxcg appears to be broken
+#define ATOI_REPLACEMENT
+#endif
+
 #ifndef DIRNAME
 #define DIRNAME (unsigned char*)"@UTILS"
 #endif
@@ -46,7 +52,15 @@
 #define BUILD_EXPIRE_TIMESTAMP 1412035200*1000 // after the calc RTC is in a timestamp past this, users will be prompted to check for updates
 #endif
 
-/*
+#ifndef HIGHEST_SUPPORTED_YEAR
+#define HIGHEST_SUPPORTED_YEAR 9999 // can't be above 9999 because calendar database format and code expects year to have at most four digits
+#endif
+
+#ifndef LOWEST_SUPPORTED_YEAR
+#define LOWEST_SUPPORTED_YEAR 0
+#endif
+
+
 #ifndef ENABLE_DEBUG
 #define ENABLE_DEBUG 1
-#endif*/
+#endif

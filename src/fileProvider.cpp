@@ -559,7 +559,7 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
         unsigned int read_sz = Bfile_ReadFile_OS( hOldFile, in_buf, FILE_COMPORIGBUF, -1 );
         if(encoder_sink_read(-1, hse, in_buf, read_sz, &newsize)) break;
       }
-      if(newsize < smallestsize || !lookahead) {
+      if(!lookahead || newsize < smallestsize) {
         smallestsize = newsize;
         windowsize = wsArray[i];
         lookahead = laArray[i];
@@ -660,7 +660,7 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
       }
       heatshrink_encoder_free(hse);
     }
-    //done copying, close files.
+    //done compressing, close files.
 cleanexit:    
     Bfile_CloseFile_OS(hOldFile);
     Bfile_CloseFile_OS(hNewFile);

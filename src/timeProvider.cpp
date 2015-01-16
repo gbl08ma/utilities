@@ -341,8 +341,8 @@ int isTimeValid(int h, int m, int s) {
 }
 
 int isDateValid(int y, int m, int d) {
-  if(y<=0 || y>9999) return 0; // otherwise we will have problems with calendar events and the like
-  if (m > 12 || m <= 0 || d > getMonthDaysWithLeap(m, y)) return 0;
+  if(y < LOWEST_SUPPORTED_YEAR || y > HIGHEST_SUPPORTED_YEAR) return 0; // otherwise we will have problems with calendar events and the like
+  if (m > 12 || m <= 0 || d > getMonthDaysWithLeap(m, y) || d <= 0) return 0;
   else return 1;
 }
 
@@ -421,7 +421,7 @@ void stringToTime(char* string, int* h, int* m, int *s) {
 }
 const char *dateSettingInput[] = {"DDMMYYYY",
                                   "MMDDYYYY",
-                                 "YYYYMMDD"
+                                  "YYYYMMDD"
                                  };
 const char* dateSettingToInputDisplay(int setting) {
   if(setting < 0 || setting > 2) return NULL;

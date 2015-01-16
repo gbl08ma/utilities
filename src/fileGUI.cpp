@@ -1087,14 +1087,13 @@ void shortenDisplayPath(char* longpath, char* shortpath, int jump) {
   //this function takes a long path for display, like \myfolder\long\display\path
   //and shortens it one level, like this: ...\long\display\path
   //putting the result in shortpath
+  // jump: amount of characters to jump when parsing the string. useful for jumping the first / or .../
   strcpy(shortpath, (char*)"...");
-  int i = jump; // jump the specified amount of characters... by default it jumps the first /
-  // but it can also be made to jump e.g. 4 characters, which would jump ".../" (useful for when the text has been through this function already)
   int max = strlen(longpath);
-  while (i<max && longpath[i] != '\\')
-          i++;
-  if (longpath[i] == '\\') {
-    strcat(shortpath, longpath+i);
+  while (jump < max && longpath[jump] != '\\')
+          jump++;
+  if (longpath[jump] == '\\') {
+    strcat(shortpath, longpath+jump);
   }
 }
 

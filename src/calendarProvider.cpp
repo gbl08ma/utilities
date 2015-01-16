@@ -65,7 +65,7 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
   /* Parses a string containing a single event and turns it into a CalendarEvent which the program can work with.
   */
   int curfield = 0; //field we are parsing currently. starts at the category, which is 0.
-  unsigned char token[1024];
+  unsigned char token[1024+6];
   src = toksplit(src, FIELD_SEPARATOR, token, 1024);
   while (curfield < 20) {
     switch (curfield) {
@@ -727,8 +727,8 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   thisday.year=y; thisday.month=m; thisday.day=d;
   
   // final step on filename checking: see if the date in the filename is valid
-  // and that year is not zero (so we don't delete the tasks file)
-  if(!isDateValid(thisday.year,thisday.month,thisday.day) && thisday.year) {
+  // and that year, month and date are not zero (so we don't delete the tasks file)
+  if(!isDateValid(thisday.year,thisday.month,thisday.day) && (thisday.year || thisday.month || thisday.day)) {
     // oops, date is not valid, and this is not the tasks file
     Bfile_DeleteEntry(pFile);
     *problemsfound = *problemsfound + 1;

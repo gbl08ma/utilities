@@ -151,9 +151,9 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
     // draw year in minimini font
     itoa(curYear, (unsigned char*)buffer2);
     int newTextX = 0;
-    textY = textY+17;
+    textY += 17;
     PrintMiniMini( &newTextX, &textY, buffer2, 0, TEXT_COLOR_BLACK, 1 ); //fake draw
-    textX = textX - newTextX;
+    textX -= newTextX;
     PrintMiniMini( &textX, &textY, buffer2, (miniminiinvert == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
   }
   return;
@@ -301,7 +301,7 @@ void setDateGUI(int canExit) {
     year.subtitle = (char*)"Year";
     year.value = getCurrentYear();
     year.min = 1970; //don't allow to set below 1970 so it is Unix-time compatible and always has 4 digits
-    year.max = 9999;
+    year.max = HIGHEST_SUPPORTED_YEAR;
     year.cycle = 0;
     int res = doSelector(&year);
     if (res == SELECTOR_RETURN_EXIT && canExit) return; // stop date adjustment
