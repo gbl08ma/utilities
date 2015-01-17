@@ -52,7 +52,7 @@ void endSerialComm(int error) {
 }
 
 void serialTransferSingleFile(char* filename) {
-  if(strncmp(filename, "\\\\fls0\\", 7)) return; // ERROR
+  if(strncmp(filename, SMEM_PREFIX, 7)) return; // ERROR
 
   textArea text;
   text.type=TEXTAREATYPE_INSTANT_RETURN;
@@ -71,7 +71,7 @@ void serialTransferSingleFile(char* filename) {
   TTransmitBuffer sftb;
 
   memset(&sftb, 0, sizeof(sftb));
-  strcpy(sftb.device, "fls0");
+  strcpy(sftb.device, SMEM_DEVICE);
   strcpy(sftb.fname1, (char*)filename+7);
 
   Bfile_StrToName_ncpy(sftb.filename, filename, 0x10A);

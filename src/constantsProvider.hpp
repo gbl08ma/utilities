@@ -4,6 +4,10 @@
 #define ATOI_REPLACEMENT
 #endif
 
+#ifndef ADDIN_FRIENDLYNAME
+#define ADDIN_FRIENDLYNAME "Utilities"
+#endif
+
 #ifndef DIRNAME
 #define DIRNAME (unsigned char*)"@UTILS"
 #endif
@@ -16,12 +20,20 @@
 #define CHRONOFILE (unsigned char*)"Chrono"
 #endif
 
-#ifndef CALENDARFOLDER
-#define CALENDARFOLDER (char*)"\\\\fls0\\@UTILS"
+#ifndef SMEM_DEVICE
+#define SMEM_DEVICE "fls0"
+#endif
+
+#ifndef SMEM_PREFIX
+#define SMEM_PREFIX "\\\\" SMEM_DEVICE "\\"
 #endif
 
 #ifndef CALENDARFOLDER_NAME
-#define CALENDARFOLDER_NAME (char*)"@UTILS"
+#define CALENDARFOLDER_NAME "@UTILS"
+#endif
+
+#ifndef CALENDARFOLDER
+#define CALENDARFOLDER (char*)SMEM_PREFIX CALENDARFOLDER_NAME
 #endif
 
 #ifndef HASHFILE
@@ -29,19 +41,19 @@
 #endif
 
 #ifndef SMEMHASHFILE
-#define SMEMHASHFILE (char*)"\\\\fls0\\@UTILS\\Hash.plp"
+#define SMEMHASHFILE (char*)SMEM_PREFIX CALENDARFOLDER_NAME "\\Hash.plp"
 #endif
 
 #ifndef TEMPFILE
-#define TEMPFILE (char*)"\\\\fls0\\UTILSTMP.PCT"
+#define TEMPFILE (char*)SMEM_PREFIX "UTILSTMP.PCT"
 #endif
 
 #ifndef TEMPFILE2
-#define TEMPFILE2 (char*)"\\\\fls0\\UTILSTM2.PCT"
+#define TEMPFILE2 (char*)SMEM_PREFIX "UTILSTM2.PCT"
 #endif
 
 #ifndef SELFFILE
-#define SELFFILE (char*)"utilities.g3a"
+#define SELFFILE "utilities.g3a"
 #endif
 
 #ifndef KNOWN_PAST_TIMESTAMP

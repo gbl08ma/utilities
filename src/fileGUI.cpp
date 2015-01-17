@@ -35,7 +35,7 @@ void fileManager() {
   int itemsinclip = 0;
   int shownClipboardHelp = 0;
   int shownMainMemHelp = 0;
-  char browserbasepath[MAX_FILENAME_SIZE+1] = "\\\\fls0\\";
+  char browserbasepath[MAX_FILENAME_SIZE+1] = SMEM_PREFIX;
   File clipboard[MAX_ITEMS_IN_CLIPBOARD+1];
   while(res) {
     char filetoedit[MAX_FILENAME_SIZE+1];
@@ -140,7 +140,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
     res = doMenu(&menu, icontable);
     switch(res) {
       case MENU_RETURN_EXIT:
-        if(!strcmp(browserbasepath,"\\\\fls0\\")) { //check that we aren't already in the root folder
+        if(!strcmp(browserbasepath, SMEM_PREFIX)) { //check that we aren't already in the root folder
           //we are, return 0 so we exit
           return 0;
         } else {
@@ -155,7 +155,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
         if(menuitems[menu.selection-1].isfolder) {
           strcpy(browserbasepath, files[menu.selection-1].filename); //switch to selected folder
           strcat(browserbasepath, "\\");
-          if(!strcmp(browserbasepath, "\\\\fls0\\@MainMem\\") && !*shownMainMemHelp) {
+          if(!strcmp(browserbasepath, SMEM_PREFIX "@MainMem\\") && !*shownMainMemHelp) {
             mMsgBoxPush(5);
             mPrintXY(3, 2, (char*)"Note: this is not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             mPrintXY(3, 3, (char*)"the Main Memory,", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
@@ -684,7 +684,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
   char mresult[88];
   LocalizeMessage1( msgno, mresult );
   
-  if(compressed) elem[text.numelements].text = (char*)"Utilities Compressed File";
+  if(compressed) elem[text.numelements].text = (char*)ADDIN_FRIENDLYNAME " Compressed File";
   else elem[text.numelements].text = (char*)mresult;
   text.numelements++;
   char sizebuffer[50];

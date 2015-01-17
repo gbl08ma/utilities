@@ -82,8 +82,8 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
     if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0
-      || strcmp((char*)buffer, SELFFILE) == 0
-      || strcmp((char*)buffer, CALENDARFOLDER_NAME) == 0))
+      || strcmp((char*)buffer, (char*)SELFFILE) == 0
+      || strcmp((char*)buffer, (char*)CALENDARFOLDER_NAME) == 0))
     {
       if(files != NULL) {
         strncpy(files[*count].visname, (char*)buffer, 40);
@@ -141,8 +141,8 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
   while(!ret && abortkey != KEY_PRGM_ACON) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
     if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0
-      || strcmp((char*)buffer, SELFFILE) == 0
-      || strcmp((char*)buffer, CALENDARFOLDER_NAME) == 0))
+      || strcmp((char*)buffer, (char*)SELFFILE) == 0
+      || strcmp((char*)buffer, (char*)CALENDARFOLDER_NAME) == 0))
     {
       if(fileinfo.fsize == 0) {
         //it's a folder. add it to the recursion list, if we are searching recursively.

@@ -22,7 +22,7 @@
 
 void showAbout() {
   int key;
-  DefineStatusMessage((char*)"About Utilities", 1, 0, 0);
+  DefineStatusMessage((char*)"About " ADDIN_FRIENDLYNAME, 1, 0, 0);
   
   textArea ftext;
   ftext.scrollbar=0;
@@ -85,7 +85,7 @@ void showAbout() {
   elem[0].text = (char*)"Contains code by AHelper, merthsoft and KermMartian at Cemetech (http://cemetech.net), by Simon Lothar (http://casiopeia.net) and public domain code by C.B. Falconer. Uses the Heatshrink library by Scott Vokes.";
   elem[1].newLine = 1;
   elem[1].lineSpacing = 8;
-  elem[1].text = (char*)"This Utilities add-in is licensed under the GNU GPL v2, or (at your option) any later version.";
+  elem[1].text = (char*)"This " ADDIN_FRIENDLYNAME " add-in is licensed under the GNU GPL v2, or (at your option) any later version.";
   elem[2].newLine = 1;
   elem[2].lineSpacing = 8;
   elem[2].color = COLOR_RED;
@@ -110,7 +110,7 @@ void buildExpiredMessage() {
   text.scrollbar = 0;
   text.allowF1 = 1;
   
-  elem[0].text = (char*)"A new version of Utilities may have been released by now.";
+  elem[0].text = (char*)"A new version of " ADDIN_FRIENDLYNAME " may have been released by now.";
   elem[1].newLine = 1;
   elem[1].text = (char*)"Please check for updates at the following URL:";
   elem[2].newLine = 1;

@@ -103,7 +103,7 @@ int GetAddins(AddIn addins[]) {
   char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy(buffer, "\\\\fls0\\*");
+  strcpy(buffer, SMEM_PREFIX"*");
   
   int curitem = 0;
   file_type_t fileinfo;
@@ -114,7 +114,7 @@ int GetAddins(AddIn addins[]) {
   Bfile_StrToName_ncpy(path2, (char*)"*.h3a", MAX_FILENAME_SIZE+1);
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-    if(!(strcmp(buffer, "..") == 0 || strcmp(buffer, ".") == 0 || strcmp(buffer, "utilities.g3a") == 0) &&
+    if(!(strcmp(buffer, "..") == 0 || strcmp(buffer, ".") == 0 || strcmp(buffer, (char*)SELFFILE) == 0) &&
         ((Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) || (Bfile_Name_MatchMask((const short int*)path2, (const short int*)found))))
     {
       strcpy(addins[curitem].filename, (char*)buffer);
@@ -169,7 +169,7 @@ int addinManagerSub(Menu* menu) {
   switch(doMenu(menu)) {
     case KEY_CTRL_F1:
       if(menu->numitems > 0) {
-        strcpy(buffer, "\\\\fls0\\");
+        strcpy(buffer, SMEM_PREFIX);
         strcat(buffer, addins[menu->selection-1].filename);
         Bfile_StrToName_ncpy(oldpath, buffer, MAX_FILENAME_SIZE+1);
         if(addins[menu->selection-1].active) { //disable
@@ -188,7 +188,7 @@ int addinManagerSub(Menu* menu) {
         mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(3, 3, (char*)"Selected Add-In?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         if(closeMsgBox(1, 4)) {
-          strcpy(buffer, "\\\\fls0\\");
+          strcpy(buffer, SMEM_PREFIX);
           strcat(buffer, addins[menu->selection-1].filename);
           Bfile_StrToName_ncpy(oldpath, buffer, MAX_FILENAME_SIZE+1);
           Bfile_DeleteEntry( oldpath );
@@ -214,7 +214,7 @@ void changeFKeyColor() {
   text.elements = elem;
   text.scrollbar=0;
   
-  elem[0].text = (char*)"Please note that only the Utilities add-in and a hidden debug screen on your calculator are able to change this setting, which persists across reboots. To reset it back to the black color you need to use this add-in, the hidden debug screen or to reset the Main Memory.";
+  elem[0].text = (char*)"Please note that only the " ADDIN_FRIENDLYNAME " add-in and a hidden debug screen on your calculator are able to change this setting, which persists across reboots. To reset it back to the black color you need to use this add-in, the hidden debug screen or to reset the Main Memory.";
   elem[0].minimini = 1;
   text.numelements = 1;
   doTextArea(&text);

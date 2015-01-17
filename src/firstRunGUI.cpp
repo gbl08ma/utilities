@@ -44,7 +44,7 @@ void firstRunWizard() {
   blockForMilliseconds(3500);
   
   textArea text;
-  text.title = (char*)"Welcome to Utilities";
+  text.title = (char*)"Welcome to " ADDIN_FRIENDLYNAME;
   
   textElement elem[14];
   text.elements = elem;

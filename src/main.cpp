@@ -83,7 +83,7 @@ int main()
 #ifdef LOG_BATTERY_VOLTAGE
   // log battery voltage on every start-up
   char smemfile[50];
-  strcpy(smemfile, "\\\\fls0\\battlog.txt");
+  strcpy(smemfile, SMEM_PREFIX"battlog.txt");
   unsigned short pFile[sizeof(smemfile)*2]; // Make buffer
   Bfile_StrToName_ncpy(pFile, (unsigned char*)smemfile, strlen(smemfile)+1); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
