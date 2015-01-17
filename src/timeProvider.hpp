@@ -49,7 +49,7 @@ int getCurrentMinute();
 int getCurrentSecond();
 int getCurrentMillisecond();
 
-long long int DateTime2Unix(long long int year, long long int month, long long int day, long long int hour, long long int minute, long long int second, long long int millisecond);
+long long int DateTime2Unix(int year, int month, int day, int hour, int minute, int second, int millisecond);
 
 int getRTCisUnadjusted();
 

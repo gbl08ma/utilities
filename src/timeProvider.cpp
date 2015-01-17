@@ -147,35 +147,35 @@ int getCurrentMillisecond() {
 // Distributed as GPL, donated to wiki.secondlife.com on 19 sep 2007
 // Modified by gbl08ma for use in the Casio Prizm Utilities add-in
 #define DAYS_PER_YEAR 365
-#define SECONDS_PER_DAY 86400
-#define SECONDS_PER_HOUR 3600
-#define SECONDS_PER_MINUTE 60
-long long int DateTime2Unix(long long int year, long long int month, long long int day, long long int hour, long long int minute, long long int second, long long int millisecond)
+#define SECONDS_PER_DAY 86400LL
+#define SECONDS_PER_HOUR 3600LL
+#define SECONDS_PER_MINUTE 60LL
+long long int DateTime2Unix(int year, int month, int day, int hour, int minute, int second, int millisecond)
 {
   long long int time = 0;
-  long long int yr = 1970;
-  long long int mt = 1;
-  long long int days;
+  int yr = 1970;
+  int mt = 1;
+  int days;
 
   while(yr < year)
   {
     days = (isLeap(yr++) ? DAYS_PER_YEAR + 1 : DAYS_PER_YEAR);
-    time += days * SECONDS_PER_DAY*1000;
+    time += (long long int)days * SECONDS_PER_DAY*1000LL;
   }
 
   while (mt < month)
   {
     if(mt!=2) days = getMonthDays(mt++);
     else { days = (isLeap(year)? 29 : 28); mt++; }
-    time += days * SECONDS_PER_DAY*1000;
+    time += (long long int)days * SECONDS_PER_DAY*1000LL;
   }
 
   days = day - 1;
-  time += days * SECONDS_PER_DAY*1000;
-  time += hour * SECONDS_PER_HOUR*1000;
-  time += minute * SECONDS_PER_MINUTE*1000;
-  time += second*1000;
-  time += millisecond;
+  time += (long long int)days * SECONDS_PER_DAY*1000LL;
+  time += (long long int)hour * SECONDS_PER_HOUR*1000LL;
+  time += (long long int)minute * SECONDS_PER_MINUTE*1000LL;
+  time += (long long int)second*1000LL;
+  time += (long long int)millisecond;
 
   return time;
 }

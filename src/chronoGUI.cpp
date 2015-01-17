@@ -59,12 +59,13 @@ inline void formatChronoString(chronometer* tchrono, int num, unsigned char* str
     else unixdiff = unixtime-tchrono->starttime;
   }
 
-  long long int days,hours,minutes,seconds,milliseconds;
+  int days, hours, minutes;
+  long long int seconds, milliseconds;
 
   milliseconds=unixdiff;  
   seconds = milliseconds / 1000;
   milliseconds %= 1000;
-  minutes = seconds / 60;
+  minutes = (int)(seconds / 60);
   seconds %= 60;
   hours = minutes / 60;
   minutes %= 60;
@@ -87,12 +88,12 @@ inline void formatChronoString(chronometer* tchrono, int num, unsigned char* str
   strcat((char*)string, buffer);
   strcat((char*)string, ":");
 
-  itoa(seconds, (unsigned char*)buffer);
+  itoa((int)seconds, (unsigned char*)buffer);
   if (seconds < 10) strcat((char*)string, "0");
   strcat((char*)string, buffer);
   
   strcat((char*)string, ".");
-  itoa(milliseconds, (unsigned char*)buffer);
+  itoa((int)milliseconds, (unsigned char*)buffer);
   strcat((char*)string, buffer);
 }
 void doNothing() {}
@@ -330,7 +331,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         sel.cycle = 0;
         sel.type = SELECTORTYPE_NORMAL;
         if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
-        long int days = sel.value;
+        int days = sel.value;
         
         sel.subtitle = (char*)"Hours";
         sel.max = 23;
@@ -349,7 +350,8 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
         sel.value = sel.min = (days == 0 && hours == 0 && minutes == 0);
         sel.max = 59;
         if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
-        ms = 1000 * (sel.value + 60*minutes + 60*60*hours + 60*60*24*days);
+        ms = 1000LL * ((long long int)sel.value + 60LL*(long long int)minutes +
+                        60LL*60LL*(long long int)hours + 60LL*60LL*24LL*(long long int)days);
         type=CHRONO_TYPE_DOWN;
         break;
       } else if(bmenu.selection == 3) {
