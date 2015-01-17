@@ -14,9 +14,11 @@
 
 #include "selectorGUI.hpp"
 #include "timeGUI.hpp"
+#include "inputGUI.hpp"
 #include "keyboardProvider.hpp"
 #include "timeProvider.hpp"
 #include "graphicsProvider.hpp"
+#include "constantsProvider.hpp"
 
 int doSelector(Selector* selector) {
   int key;
@@ -51,12 +53,14 @@ int doSelector(Selector* selector) {
           } else { // timeout is X min 30 sec.
             itoa((selector->value-1)/2, (unsigned char*)buffer1);
           }
-          strcat(buffer1, " Minutes");
+          strcat(buffer1, " Minute");
+          if(selector->value != 2 && selector->value != 3) strcat(buffer1, "s");
           if(selector->value % 2 != 0) strcat(buffer1, " 30 Sec.");
           break;
         case SELECTORTYPE_TIMEOUT_MINUTES:
           itoa(selector->value, (unsigned char*)buffer1);
-          strcat(buffer1, " Minutes");
+          strcat(buffer1, " Minute");
+          if(selector->value != 1) strcat(buffer1, "s");
           break;
         default:
           itoa(selector->value, (unsigned char*)buffer1);
@@ -82,6 +86,47 @@ int doSelector(Selector* selector) {
       case KEY_CTRL_EXIT:
         selector->value = initialValue;
         return SELECTOR_RETURN_EXIT;
+      case KEY_CHAR_0:
+      case KEY_CHAR_1:
+      case KEY_CHAR_2:
+      case KEY_CHAR_3:
+      case KEY_CHAR_4:
+      case KEY_CHAR_5:
+      case KEY_CHAR_6:
+      case KEY_CHAR_7:
+      case KEY_CHAR_8:
+      case KEY_CHAR_9:
+        if(selector->type != SELECTORTYPE_BACKLIGHT_DURATION && selector->type != SELECTORTYPE_LONGDATEFORMAT) {
+          // find maximum number of digits allowed
+          int ndigits = 9; // limit of a 32-bits number has 10 digits, so even unlimited isn't really unlimited
+          if(selector->max && selector->max != -1) {
+            int v = selector->max;
+            for(ndigits = 0; v != 0; ndigits++)
+              v /= 10;
+          }
+          char nvals[25] = "";
+          textInput input;
+          input.type = INPUTTYPE_NUMERIC;
+          input.charlimit=ndigits;
+          input.width = ndigits;
+          input.x = 5;
+          input.y = 5;
+          input.key = key;
+          input.buffer = (char*)nvals;
+          clearLine(5,5);
+          if(selector->type == SELECTORTYPE_TIMEOUT_MINUTES) {
+            mPrintXY(9, 5, (char*)"Minutes", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          }
+          int res = doTextInput(&input);
+          if (res==INPUT_RETURN_CONFIRM && strlen(nvals)) {
+            int nval = atoi(nvals);
+            if(nval >= selector->min && (selector->max == -1 || nval <= selector->max)) {
+              selector->value = nval;
+              if(selector->type == SELECTORTYPE_INSTANT_RETURN) return SELECTOR_RETURN_INSTANT;
+            }
+          }
+        }
+        break;
     }
   }
   return SELECTOR_RETURN_EXIT;
