@@ -227,7 +227,7 @@ void updateCurrentFreq() {
   if(xpos) {
     drawArrowDown(xpos, FREQ_ARROW_BOTTOM, color);
   }
-  int textX = 0; int textY = 145;
+  int textX = 0; int textY = 147;
   char buffer[50];
   strcpy(buffer, (char*)"Running at ");
   strcat(buffer, cur);
@@ -237,7 +237,7 @@ void updateCurrentFreq() {
 }
 
 void setCPUclock() {
-  int key; int textX; int textY;
+  int key;
 
   volatile unsigned int*FRQCR = (unsigned int*) 0xA4150000;
   while (1) {
@@ -253,10 +253,22 @@ void setCPUclock() {
 
     CopySpriteNbitMasked(selector, 10, 105, 364, 22, selector_palette, 0xffff, 1);
     
-    textX=0; textY=118;
-    PrintMiniMini( &textX, &textY, (char*)"USE AT YOUR OWN RISK! NO WARRANTY PROVIDED.", 0, TEXT_COLOR_RED, 0 );
-    textX=0; textY=130;
-    PrintMiniMini( &textX, &textY, (char*)"Note: changes are applied instantly.", 0, TEXT_COLOR_BLACK, 0 );
+    textArea text;
+    text.type = TEXTAREATYPE_INSTANT_RETURN;
+    text.y = 118;
+    text.lineHeight=14;
+    textElement elem[2];
+    text.elements = elem;
+    text.scrollbar=0;
+    
+    elem[0].text = (char*)"USE AT YOUR OWN RISK! NO WARRANTY PROVIDED.";
+    elem[0].color = TEXT_COLOR_RED;
+    elem[0].minimini = 1;
+    elem[1].text = (char*)"Note: changes are applied instantly.";
+    elem[1].newLine = 1;
+    elem[1].minimini = 1;
+    text.numelements = 2;
+    doTextArea(&text);
     
     updateCurrentFreq();
     mGetKey(&key);
