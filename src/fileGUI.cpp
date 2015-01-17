@@ -467,7 +467,7 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
 int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   // returns 1 when it wants the caller to jump to browserbasepath
   // returns 0 otherwise.
-  char statusText[100];
+  char statusText[120];
   fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
   DefineStatusMessage((char*)statusText, 1, 0, 0);
   
@@ -723,7 +723,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
   }
   
   while (1) {
-    char statusText[100];
+    char statusText[120];
     fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
     DefineStatusMessage((char*)statusText, 1, 0, 0);
     doTextArea(&text);
@@ -906,7 +906,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     menu.title = (char*)"Clipboard";
     menu.subtitle = (char*)"Black=cut, Red=copy";
     menu.nodatamsg = (char*)"No items in clipboard";
-    char statusbuffer[72];
+    char statusbuffer[120];
     fillMenuStatusWithClip(statusbuffer, *itemsinclip, 1);
     menu.statusText = statusbuffer;
     menu.items = menuitems;

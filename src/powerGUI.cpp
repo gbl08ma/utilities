@@ -269,7 +269,7 @@ void setCPUclock() {
             break;
           }
         }
-         break;
+        break;
       case KEY_CTRL_LEFT:
       case KEY_CTRL_DOWN:
         for(int i = 1; i < 14; i++) {

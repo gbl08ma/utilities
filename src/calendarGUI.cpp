@@ -1583,7 +1583,7 @@ int changeEventCategory(CalendarEvent* event) {
 void viewNthEventOnDay(EventDate* date, int pos) {
   int num = GetEventsForDate(date, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
   CalendarEvent* tmpevents = (CalendarEvent*)alloca(num*sizeof(CalendarEvent));
-  num = GetEventsForDate(date, CALENDARFOLDER, tmpevents);
+  GetEventsForDate(date, CALENDARFOLDER, tmpevents);
   viewEvent(&tmpevents[pos]); 
 }
 
