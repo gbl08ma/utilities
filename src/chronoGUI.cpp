@@ -93,6 +93,8 @@ inline void formatChronoString(chronometer* tchrono, int num, unsigned char* str
   strcat((char*)string, buffer);
   
   strcat((char*)string, ".");
+  if (milliseconds < 10) strcat((char*)string, "0");
+  if (milliseconds < 100) strcat((char*)string, "0");
   itoa((int)milliseconds, (unsigned char*)buffer);
   strcat((char*)string, buffer);
 }
