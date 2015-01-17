@@ -260,7 +260,9 @@ int viewWeekCalendar() {
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnInfiniteScrolling=1;
-  int jumpToSel=1;
+  // whether to make the menu jump to the day specified on y, m, d.
+  int jumpToSel=1; // possible values: 0 not to jump, 1 to jump to day, 2 to jump to menu bottom
+
   int keepMenuSel=0;
   while(res) {
     if(getDBneedsRepairFlag()) repairCalendarDatabase();
@@ -333,7 +335,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   // allocate MenuItems:
   MenuItem menuitems[numevents+7];
   
-  // read events this time
+  // read events this time, populating menu at the same time
   unsigned int curmenu = 0;
   unsigned int cursce = 0; // current SimpleCalendarEvent, in the end it will have the SimpleCalendarEvent count
   ddays=DateToDays(*y, *m, *d);
@@ -399,9 +401,11 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   }
   menu->numitems = curmenu;
   menu->items = menuitems;
-  if(*jumpToSel==0) {
+  if(*jumpToSel == 0) {
     if(*keepMenuSel) *keepMenuSel=0;
     else menu->selection = 1;
+  } else if(*jumpToSel == 2) {
+    menu->selection = menu->numitems;
   }
   int hasBusyMap = 0;
   unsigned short busyMapBuffer[LCD_WIDTH_PX*12];
@@ -455,7 +459,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
           ddays = DateToDays(*y, *m, *d) - 1; // decrease by one day (go to another week and jump to menu bottom)
           long int ny, nm, nd;
           DaysToDate(ddays, &ny, &nm, &nd);
-          *y=ny; *m=nm; *d=nd; *jumpToSel=1;
+          *y=ny; *m=nm; *d=nd; *jumpToSel=2; // make menu jump to the bottom of the previous week
           return 1;
         } else {
           ddays = DateToDays(*y, *m, *d) + 7; // increase by one week
@@ -619,7 +623,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
             *y=ny;*m=nm;*d=nd;
             *jumpToSel=1; //if user inserted a specific day, it makes sense to display that day without scrolling.
             return 1;
-          } 
+          }
         }
         break;
       case KEY_CTRL_FORMAT:
