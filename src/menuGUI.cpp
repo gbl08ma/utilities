@@ -101,7 +101,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
       }
       if(menu->type==MENUTYPE_MULTISELECT && menu->fkeypage == 0) drawFkeyLabels(0x0037); // SELECT (white)
     } else {
-      printCentered(menu->nodatamsg, (itemsStartY*24)+(itemsHeight*24)/2-12, COLOR_BLACK, COLOR_WHITE);
+      if(menu->nodatamsg != NULL) printCentered(menu->nodatamsg, (itemsStartY*24)+(itemsHeight*24)/2-12, COLOR_BLACK, COLOR_WHITE);
     }
     if(showtitle) {
       if(menu->miniMiniTitle) {
