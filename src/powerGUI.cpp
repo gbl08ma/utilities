@@ -158,22 +158,26 @@ void powerInformation() {
   elem[9].text = (char*)"Backlight timeout:";
   elem[9].spaceAtEnd = 1;
   char btimeout[20];
-  int btimeoutval = GetBacklightDuration();
-  if(btimeoutval % 2 == 0) { //even, so timeout is X min 0 sec.
-    itoa(btimeoutval/2, (unsigned char*)btimeout);
+  int timeoutval = GetBacklightDuration();
+
+  if(timeoutval % 2 == 0) { //even, so timeout is X min 0 sec.
+    itoa(timeoutval/2, (unsigned char*)btimeout);
   } else { // timeout is X min 30 sec.
-    itoa((btimeoutval-1)/2, (unsigned char*)btimeout);
+    itoa((timeoutval-1)/2, (unsigned char*)btimeout);
   }
-  strcat(btimeout, " Minutes");
-  if(btimeoutval % 2 != 0) strcat(btimeout, " 30 Sec.");
+  strcat(btimeout, " Minute");
+  if(timeoutval != 2 && timeoutval != 3) strcat(btimeout, "s");
+  if(timeoutval % 2 != 0) strcat(btimeout, " 30 Sec.");
   elem[10].text = btimeout;
 
   elem[11].newLine = 1;
   elem[11].text = (char*)"Power off timeout:";
   elem[11].spaceAtEnd = 1;
   char ptimeout[20];
-  itoa(GetAutoPowerOffTime(), (unsigned char*)ptimeout);
-  strcat(ptimeout, " Minutes");
+  timeoutval = GetAutoPowerOffTime();
+  itoa(timeoutval, (unsigned char*)ptimeout);
+  strcat(ptimeout, " Minute");
+  if(timeoutval != 1) strcat(ptimeout, "s");
   elem[12].text = ptimeout;
   
   elem[13].newLine = 1;
