@@ -24,41 +24,54 @@
 #include "fileProvider.hpp" 
 #include "debugGUI.hpp" 
 
-inline void append(unsigned char* s, char c) //beacuse strcat seems to have problems with 1-byte non-null-terminated chars like the field and event separators
-{
-  int len = strlen((char*)s);
-  s[len] = c;
-  s[len + 1] = '\0';
-}
-
 void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
   /* Parses a CalendarEvent struct and turns it into a string which can be written to a file.
+     The resulting string is appended to the end of buf.
      The first field (category) begins with no separator.
      An event doesn't begin with any separators, and the last field ends with a field separator followed by an event separator.
      An event (as bytes) can take at most 1,3 KiB. The lengthy fields are obviously the title, the location and mainly the description.*/
   unsigned char smallbuf[50]; 
   int zero = 0;
-  itoa(calEvent->category, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
-  /*itoa(calEvent->daterange, (unsigned char*)smallbuf);*/ itoa(zero, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf,2); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->startdate.day, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->startdate.month, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->startdate.year, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 5); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->enddate.day, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->enddate.month, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->enddate.year, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 5); append(buf, FIELD_SEPARATOR);
-  /*itoa(calEvent->dayofweek, (unsigned char*)smallbuf);*/ itoa(zero, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->repeat, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->timed, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 2); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->starttime.hour, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->starttime.minute, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->starttime.second, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->endtime.hour, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->endtime.minute, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
-  itoa(calEvent->endtime.second, (unsigned char*)smallbuf); strncat((char*)buf, (char*)smallbuf, 3); append(buf, FIELD_SEPARATOR);
-  strncat((char*)buf, (char*)calEvent->title,21); append(buf, FIELD_SEPARATOR);
-  strncat((char*)buf, (char*)calEvent->location,128); append(buf, FIELD_SEPARATOR);
-  strncat((char*)buf, (char*)calEvent->description,1024); append(buf, EVENT_SEPARATOR);
+  buf += strlen((char*)buf); // so we append to the end of buf
+  itoa(calEvent->category, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 2); *(buf++) = FIELD_SEPARATOR;
+  /*itoa(calEvent->daterange, (unsigned char*)smallbuf);*/ itoa(zero, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 2); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->startdate.day, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 3); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->startdate.month, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 3); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->startdate.year, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 5); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->enddate.day, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 3); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->enddate.month, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 3); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->enddate.year, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 5); *(buf++) = FIELD_SEPARATOR;
+  /*itoa(calEvent->dayofweek, (unsigned char*)smallbuf);*/ itoa(zero, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 2); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->repeat, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 2); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->timed, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 2); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->starttime.hour, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 3); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->starttime.minute, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 3); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->starttime.second, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 3); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->endtime.hour, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 3); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->endtime.minute, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 3); *(buf++) = FIELD_SEPARATOR;
+  itoa(calEvent->endtime.second, (unsigned char*)smallbuf);
+  buf += strncpy_retlen(buf, smallbuf, 3); *(buf++) = FIELD_SEPARATOR;
+  buf += strncpy_retlen(buf, calEvent->title, 21); *(buf++) = FIELD_SEPARATOR;
+  buf += strncpy_retlen(buf, calEvent->location, 128); *(buf++) = FIELD_SEPARATOR;
+  buf += strncpy_retlen(buf, calEvent->description, 1024); *(buf++) = EVENT_SEPARATOR;
   //the last field ends with an event separator (EVENT_SEPARATOR), without a field separator.
+  *buf = 0; // null-terminate string
 }
 
 void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {

@@ -105,6 +105,16 @@ void* memmem(char* haystack, int hlen, char* needle, int nlen, int matchCase) {
   return NULL;
 }
 
+// strncpy_retlen works like strncpy, but returns the length copied to the string.
+int strncpy_retlen(unsigned char* dest, unsigned char* src, int n) {
+  int i;
+  int l = strlen((char*)src);
+  for (i = 0; i < n; i++) {
+    dest[i] = (i <= l ? src[i] : 0);
+  }
+  return (l > n ? n : l);
+}
+
 // convert a normal text string into a multibyte one where letters become their mini variants (F5 screen of the OS's character select dialog)
 // dest must be at least double the size of orig.
 void stringToMini(char* dest, char* orig) {
