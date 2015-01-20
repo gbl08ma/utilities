@@ -36,6 +36,10 @@
 #define CALENDARFOLDER (char*)SMEM_PREFIX CALENDARFOLDER_NAME
 #endif
 
+#ifndef BALANCEFOLDER
+#define BALANCEFOLDER (char*)SMEM_PREFIX CALENDARFOLDER_NAME "\\Balance"
+#endif
+
 #ifndef HASHFILE
 #define HASHFILE (unsigned char*)"Hash"
 #endif

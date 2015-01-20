@@ -157,25 +157,40 @@ long long int DateTime2Unix(int year, int month, int day, int hour, int minute, 
   int mt = 1;
   int days;
 
-  while(yr < year)
-  {
-    days = (isLeap(yr++) ? DAYS_PER_YEAR + 1 : DAYS_PER_YEAR);
+  if(year < yr) {
+    while(year+1 < yr) {
+      days = (isLeap(yr--) ? DAYS_PER_YEAR + 1 : DAYS_PER_YEAR);
+      time -= (long long int)days * SECONDS_PER_DAY*1000LL;
+    }
+    mt = 12;
+    while (month < mt) {
+      if(mt!=2) days = getMonthDays(mt--);
+      else { days = (isLeap(year)? 29 : 28); mt--; }
+      time -= (long long int)days * SECONDS_PER_DAY*1000LL;
+    }
+    days = getMonthDays(month) - day + 1;
+    time -= (long long int)days * SECONDS_PER_DAY*1000LL;
+    time -= (long long int)(23LL-hour) * SECONDS_PER_HOUR*1000LL;
+    time -= (long long int)(59LL-minute) * SECONDS_PER_MINUTE*1000LL;
+    time -= (long long int)(59LL-second)*1000LL;
+    time -= (long long int)(1000LL-millisecond);
+  } else {
+    while(yr < year) {
+      days = (isLeap(yr++) ? DAYS_PER_YEAR + 1 : DAYS_PER_YEAR);
+      time += (long long int)days * SECONDS_PER_DAY*1000LL;
+    }
+    while (mt < month) {
+      if(mt!=2) days = getMonthDays(mt++);
+      else { days = (isLeap(year)? 29 : 28); mt++; }
+      time += (long long int)days * SECONDS_PER_DAY*1000LL;
+    }
+    days = day - 1;
     time += (long long int)days * SECONDS_PER_DAY*1000LL;
+    time += (long long int)hour * SECONDS_PER_HOUR*1000LL;
+    time += (long long int)minute * SECONDS_PER_MINUTE*1000LL;
+    time += (long long int)second*1000LL;
+    time += (long long int)millisecond;
   }
-
-  while (mt < month)
-  {
-    if(mt!=2) days = getMonthDays(mt++);
-    else { days = (isLeap(year)? 29 : 28); mt++; }
-    time += (long long int)days * SECONDS_PER_DAY*1000LL;
-  }
-
-  days = day - 1;
-  time += (long long int)days * SECONDS_PER_DAY*1000LL;
-  time += (long long int)hour * SECONDS_PER_HOUR*1000LL;
-  time += (long long int)minute * SECONDS_PER_MINUTE*1000LL;
-  time += (long long int)second*1000LL;
-  time += (long long int)millisecond;
 
   return time;
 }

@@ -247,9 +247,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
       }
       // it's probably because the DB has never been used and is not initialized (i.e. we haven't created the calendar folder).
       // create the folder:
-      unsigned short pFolder[MAX_FILENAME_SIZE];
-      Bfile_StrToName_ncpy(pFolder, folder, MAX_FILENAME_SIZE);
-      Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0);
+      createFolderRecursive(folder);
       // now let's call ourselves again, then according to the return value of our second instance, decide if there was an error or not.
       if(AddEvent(calEvent, folder,1)) {
         setDBneedsRepairFlag(1);

@@ -31,7 +31,7 @@ typedef struct {
   int width=21; // again, in character coordinates. note that last space of the input is reserved for scrolling and never gets hit by a char, only the cursor
   int forcetext=0; // if 1, user will be forced to enter text
   int charlimit; // maximum number of chars to admit in bytes (which means that if users enter multibyte it will allow for less chars)
-  int symbols=1; // if 1, user will be able to enter symbols with the OS's character select screen
+  int symbols=1; // if 1, user will be able to enter symbols with the OS's character select screen. If type is INPUTTYPE_NUMERIC, this has a different meaning: when 0, the user can enter the decimal separator.
   int key=0; // put a key here to provide for the initial keypress. also, when input returns INPUT_RETURN_KEYCODE, the keycode is here.
   int acceptF6=0; // accept F6 as a way to confirm the input (useful for wizards)
   int cursor=0;

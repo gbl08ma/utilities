@@ -117,7 +117,8 @@ int doTextInput(textInput* input) {
       }
     } 
     if(input->key && input->key < 30000) {
-      if(input->type == INPUTTYPE_NORMAL || (input->key >= KEY_CHAR_0 && input->key <= KEY_CHAR_9)) { // either a normal input, or only allow digits
+      if(input->type == INPUTTYPE_NORMAL || (input->key >= KEY_CHAR_0 && input->key <= KEY_CHAR_9) ||
+        (input->key == KEY_CHAR_DP && !input->symbols && input->type == INPUTTYPE_NUMERIC)) { // either a normal input, or only allow digits and eventually the decimal separator
         if ((GetSetupSetting( (unsigned int)0x14) == 0x08 || GetSetupSetting( (unsigned int)0x14) == 0x88) && input->key >= KEY_CHAR_A && input->key <= KEY_CHAR_Z) //if lowercase and key is char...
           input->key = input->key + 32; // to switch to lower-case characters
 

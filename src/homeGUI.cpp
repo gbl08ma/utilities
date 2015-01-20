@@ -32,6 +32,7 @@
 #include "tasksGUI.hpp"
 #include "calendarGUI.hpp"
 #include "toolsGUI.hpp"
+#include "memsysGUI.hpp"
 #include "lockGUI.hpp"
 #include "fileGUI.hpp"
 #include "editorGUI.hpp"
@@ -70,7 +71,7 @@ void showHome(chronometer* chrono) {
 
     //Show FKeys
     if (GetSetting(SETTING_DISPLAY_FKEYS)) {
-      drawFkeyLabels(0x043A, 0x043E, 0x012A, 0x011C, (GetSetting(SETTING_ENABLE_LOCK) ? 0x04D3 : -1)); //POWER, LIGHT, TIME, TOOL, key icon (lock)
+      drawFkeyLabels(0x043A, 0x043E, 0x012A, 0x011C, 0x03E7, (GetSetting(SETTING_ENABLE_LOCK) ? 0x04D3 : -1)); //POWER, LIGHT, TIME, TOOL, M&S, key icon (lock)
       if (GetSetting(SETTING_THEME)) {
         darkenFkeys((GetSetting(SETTING_ENABLE_LOCK) == 1 ? 5 : 4));
       }
@@ -94,6 +95,8 @@ void showHome(chronometer* chrono) {
           key = KEY_PRGM_F4; break;
         case KEY_CTRL_F5:
           key = KEY_PRGM_F5; break;
+        case KEY_CTRL_F6:
+          key = KEY_PRGM_F6; break;
       }
       pane_keycache = 0;
     }
@@ -120,13 +123,14 @@ void showHome(chronometer* chrono) {
       case KEY_PRGM_F4:
         toolsMenu(&pane_keycache);
         break;
+      case KEY_PRGM_F5:
+        memsysMenu(&pane_keycache);
+        break;
       case KEY_PRGM_RETURN:
         if(!GetSetting(SETTING_LOCK_ON_EXE)) break;
         // else fallthrough
-      case KEY_PRGM_F5:
-        lockApp();
-        break;
       case KEY_PRGM_F6:
+        lockApp();
         break;
       case 71: //KEY_PRGM_0, which is not defined in the SDK and I'm too lazy to add it every time I update the includes folder...
         if (GetSetupSetting( (unsigned int)0x14) == 1) {
@@ -187,11 +191,12 @@ inline void powerMenu(int* pane_keycache) {
           case 5: setCPUclock(); break;
         }
         return;
-      case KEY_CTRL_F5:
+      case KEY_CTRL_F6:
         if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
       case KEY_CTRL_F4:
+      case KEY_CTRL_F5:
         *pane_keycache = res;
       case MENU_RETURN_EXIT:
         return;
@@ -230,11 +235,12 @@ inline void lightMenu(int* pane_keycache) {
           case 4: colorLight(); break;
         }
         return;
-      case KEY_CTRL_F5:
+      case KEY_CTRL_F6:
         if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
       case KEY_CTRL_F1:
       case KEY_CTRL_F3:
       case KEY_CTRL_F4:
+      case KEY_CTRL_F5:
         *pane_keycache = res;
       case MENU_RETURN_EXIT:
         return;
@@ -272,11 +278,12 @@ inline void timeMenu(chronometer* chrono, int* pane_keycache) {
           case 3: chronoScreen(chrono); break;
         }
         return;
-      case KEY_CTRL_F5:
+      case KEY_CTRL_F6:
         if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
       case KEY_CTRL_F1:
       case KEY_CTRL_F2:
       case KEY_CTRL_F4:
+      case KEY_CTRL_F5:
         *pane_keycache = res;
       case MENU_RETURN_EXIT:
         return;
@@ -286,6 +293,47 @@ inline void timeMenu(chronometer* chrono, int* pane_keycache) {
 
 inline void toolsMenu(int* pane_keycache) {
   drawFkeyPopup(3, (char*)"Tools");
+  
+  MenuItem menuitems[5];
+  menuitems[0].text = (char*)"Balance manager";
+  menuitems[1].text = (char*)"Password generator";
+  
+  Menu menu;
+  menu.items=menuitems;
+  menu.numitems=2;
+  menu.scrollbar=0;
+  menu.width=19;
+  menu.height=4;
+  menu.startX=2;
+  menu.startY=3;
+  menu.type=MENUTYPE_FKEYS;
+  menu.darken=GetSetting(SETTING_THEME);
+
+  while(1) {
+    int res = doMenu(&menu);
+    switch(res) {
+      case MENU_RETURN_SELECTION:
+        DrawFrame(COLOR_WHITE);
+        switch(menu.selection) {
+          case 1: balanceManager(); break;
+          case 2: memoryCapacityViewer(); break;
+        }
+        return;
+      case KEY_CTRL_F6:
+        if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
+      case KEY_CTRL_F1:
+      case KEY_CTRL_F2:
+      case KEY_CTRL_F3:
+      case KEY_CTRL_F5:
+        *pane_keycache = res;
+      case MENU_RETURN_EXIT:
+        return;
+    }
+  }
+}
+
+inline void memsysMenu(int* pane_keycache) {
+  drawFkeyPopup(4, (char*)"Memory & System");
   
   MenuItem menuitems[6];
   menuitems[0].text = (char*)"File manager";
@@ -322,17 +370,19 @@ inline void toolsMenu(int* pane_keycache) {
           case 5: addinManager(); break;
         }
         return;
-      case KEY_CTRL_F5:
+      case KEY_CTRL_F6:
         if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
       case KEY_CTRL_F1:
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
+      case KEY_CTRL_F4:
         *pane_keycache = res;
       case MENU_RETURN_EXIT:
         return;
     }
   }
 }
+
 inline void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
   color_t color_fg, color_bg, color_title;
   if (GetSetting(SETTING_THEME)) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; color_title = COLOR_ORANGE; } else

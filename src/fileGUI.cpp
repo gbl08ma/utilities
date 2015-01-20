@@ -453,11 +453,7 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
       char newfilename[MAX_FILENAME_SIZE];
       strcpy(newfilename, browserbasepath);
       strcat(newfilename, newname);
-      unsigned short newfilenameshort[0x10A];
-      unsigned short oldfilenameshort[0x10A];
-      Bfile_StrToName_ncpy(oldfilenameshort, files[menu->selection-1].filename, 0x10A);
-      Bfile_StrToName_ncpy(newfilenameshort, newfilename, 0x10A);
-      Bfile_RenameEntry(oldfilenameshort , newfilenameshort);
+      renameFile(files[menu->selection-1].filename, newfilename);
       return 1;
     }
   }

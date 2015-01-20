@@ -47,6 +47,7 @@ void insertSortFileMenuArray(File* data, MenuItem* mdata, int size);
 int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count);
 int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall=0);
 void deleteFiles(File* files, Menu* menu);
+void renameFile(char* old, char* newf);
 void nameFromFilename(char* filename, char* name, int max=MAX_NAME_SIZE);
 void copyFile(char* oldfilename, char* newfilename);
 void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard);
@@ -64,6 +65,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
 int fileIconFromName(char* name);
 int stringEndsInG3A(char* string);
 int stringEndsInJPG(char* string);
+void createFolderRecursive(const char* folder);
 
 // compression settings:
 #define COMPRESSED_FILE_HEADER "PHSCOMPR" //Prizm heatshrink compressed

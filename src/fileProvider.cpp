@@ -245,6 +245,14 @@ void deleteFiles(File* files, Menu* menu) {
   }
 }
 
+void renameFile(char* old, char* newf) {
+  unsigned short orig[MAX_FILENAME_SIZE+1];
+  unsigned short dest[MAX_FILENAME_SIZE+1];
+  Bfile_StrToName_ncpy(orig, old, MAX_FILENAME_SIZE+1);
+  Bfile_StrToName_ncpy(dest, newf, MAX_FILENAME_SIZE+1);
+  Bfile_RenameEntry(orig, dest);
+}
+
 void nameFromFilename(char* filename, char* name, int max) {
   //this function takes a full filename like \\fls0\Folder\file.123
   //and puts file.123 in name.
@@ -414,11 +422,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
         else copyFile(clipboard[curfile].filename, newfilename);
       } else {
         //move file
-        unsigned short newfilenameshort[0x10A];
-        unsigned short oldfilenameshort[0x10A];
-        Bfile_StrToName_ncpy(oldfilenameshort, clipboard[curfile].filename, 0x10A);
-        Bfile_StrToName_ncpy(newfilenameshort, newfilename, 0x10A);
-        Bfile_RenameEntry(oldfilenameshort , newfilenameshort);
+        renameFile(clipboard[curfile].filename, newfilename);
       }
       curfile++;
     }
@@ -452,6 +456,31 @@ int stringEndsInG3A(char* string) {
 
 int stringEndsInJPG(char* string) {
   return EndsIWith(string, (char*)".jpg") || EndsIWith(string, (char*)".jpeg");
+}
+
+
+void createFolderRecursive(const char* folder) {
+  // creates folder \\fls0\Fol1\Abc even if \\fls0\Fol1 doesn't exist yet
+  // despite the name, this is not a recursive function.
+  int l = strlen(folder);
+  int s = strlen(SMEM_PREFIX);
+  while(1) {
+    char nFolder[MAX_FILENAME_SIZE];
+    unsigned short pFolder[MAX_FILENAME_SIZE];
+    int end = l;
+    for(int i = s; i < l; i++) {
+      if(folder[i] == '\\') {
+        end = i;
+        break;
+      }
+    }
+    s = end + 1;
+    strncpy(nFolder, folder, end);
+    nFolder[end] = 0;
+    Bfile_StrToName_ncpy(pFolder, nFolder, MAX_FILENAME_SIZE);
+    Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0);
+    if(end == l) break;
+  }
 }
 
 // (DE)COMPRESSION CODE - START

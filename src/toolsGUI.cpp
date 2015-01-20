@@ -16,459 +16,444 @@
 #include "toolsGUI.hpp"
 #include "menuGUI.hpp"
 #include "textGUI.hpp"
+#include "inputGUI.hpp"
 #include "settingsProvider.hpp"
 #include "keyboardProvider.hpp"
-#include "hardwareProvider.hpp"
-#include "graphicsProvider.hpp"
-#include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
-#include "debugGUI.hpp"
+#include "graphicsProvider.hpp"
+#include "timeProvider.hpp" 
+#include "toolsProvider.hpp"
+#include "calendarGUI.hpp"
 
-// the following two functions are auxiliars to memoryCapacityViewer
-void drawCapacityBar(int textY, long long int cur, long long int full) {
-  long long int barwidthcpl = (long long int)(LCD_WIDTH_PX*cur)/(long long int)full;
-  drawRectangle(0, textY+24, LCD_WIDTH_PX, 20, COLOR_GRAY);
-  drawRectangle(0, textY+24, (int)barwidthcpl, 20, COLOR_BLUE);
-  
-  int newTextX = 0;
-  int newTextY = textY+5;
-  char buffer[50];
-  itoa(100*cur/full, (unsigned char*)buffer);
-  strcat(buffer, "% used");
-  PrintMiniMini( &newTextX, &newTextY, buffer, 0, TEXT_COLOR_CYAN, 1 ); //fake draw
-  int textX = LCD_WIDTH_PX/2 - newTextX/2;
-  PrintMiniMini( &textX, &newTextY, buffer, 0, TEXT_COLOR_CYAN, 0 ); //draw  
-  
-  VRAMReplaceColorInRect(0, textY+24, LCD_WIDTH_PX, 20, COLOR_WHITE, COLOR_GRAY);  
-  VRAMReplaceColorInRect(0, textY+24, barwidthcpl, 20, COLOR_GRAY, COLOR_BLUE);
-  VRAMReplaceColorInRect(0, textY+24, LCD_WIDTH_PX, 20, COLOR_CYAN, COLOR_WHITE);
-}
-
-void drawCapacityText(int* textY, const char* desc, long long int cur, long long int full) {
-  char buffer[50];
-  itoa(full-cur, (unsigned char*)buffer);
-  *textY=*textY+22; int textX = 0;
-  PrintMini(&textX, textY, desc, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, textY, (char*)" bytes free", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-
-  *textY = *textY + 17; textX = 60;
-  PrintMiniMini( &textX, textY, (char*)"out of ", 0, TEXT_COLOR_BLACK, 0 );
-  itoa(full, (unsigned char*)buffer);
-  PrintMiniMini( &textX, textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
-  PrintMiniMini( &textX, textY, (char*)" bytes (", 0, TEXT_COLOR_BLACK, 0 );
-  itoa(cur, (unsigned char*)buffer);
-  PrintMiniMini( &textX, textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
-  PrintMiniMini( &textX, textY, (char*)" bytes used)", 0, TEXT_COLOR_BLACK, 0 );
-
-  *textY = *textY + 12;
-}
-
-void memoryCapacityViewer() {
-  Bdisp_AllClr_VRAM();
-  drawScreenTitle((char*)"Memory Usage");
-  int smemfree = 0;
-  unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
-  Bfile_GetMediaFree_OS( smemMedia, &smemfree );
-
-  int textY = 8;
-  drawCapacityText(&textY, "Storage: ", (long long int)TOTAL_SMEM-(long long int)smemfree, TOTAL_SMEM);
-  drawCapacityBar(textY, (long long int)TOTAL_SMEM-(long long int)smemfree, TOTAL_SMEM);
-  
-  int MCSmaxspace; int MCScurrentload; int MCSfreespace;  
-  MCS_GetState( &MCSmaxspace, &MCScurrentload, &MCSfreespace );
-  drawCapacityText(&textY, "Main: ", MCScurrentload, MCSmaxspace);
-  drawCapacityBar(textY, MCScurrentload, MCSmaxspace);
-
-  int PWmaxspace=0x1FFFF;
-  char* flagpointer = (char*)0x80BE0000;
-  int PWcurrentload = 0;
-  while(*flagpointer == 0x0F) {
-    flagpointer = flagpointer + 0x40;
-    PWcurrentload += 0x40;
-  }
-  drawCapacityText(&textY, "Password: ", PWcurrentload, PWmaxspace);
-  drawCapacityBar(textY, PWcurrentload, PWmaxspace);
-
-  while(1) {
-    int key;
-    mGetKey(&key);
-    if(key == KEY_CTRL_EXIT) return;
-  }
-}
-
-int GetAddins(AddIn addins[]) {
-  /*searches storage memory for active and inactive add-ins, returns their count*/
-  unsigned short path[MAX_FILENAME_SIZE+1], path2[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
-  char buffer[MAX_FILENAME_SIZE+1];
-
-  // make the buffer
-  strcpy(buffer, SMEM_PREFIX"*");
-  
-  int curitem = 0;
-  file_type_t fileinfo;
-  int findhandle;
-  Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
-  int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
-  Bfile_StrToName_ncpy(path, (char*)"*.g3a", MAX_FILENAME_SIZE+1);
-  Bfile_StrToName_ncpy(path2, (char*)"*.h3a", MAX_FILENAME_SIZE+1);
-  while(!ret) {
-    Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-    if(!(strcmp(buffer, "..") == 0 || strcmp(buffer, ".") == 0 || strcmp(buffer, (char*)SELFFILE) == 0) &&
-        ((Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) || (Bfile_Name_MatchMask((const short int*)path2, (const short int*)found))))
-    {
-      strcpy(addins[curitem].filename, (char*)buffer);
-      //TODO: get friendly add-in name from system add-in table
-      strcpy(addins[curitem].name, (char*)buffer);
-      addins[curitem].name[strlen((char*)buffer)-4] = '\0';
-      addins[curitem].active= (Bfile_Name_MatchMask((const short int*)path, (const short int*)found) ? 1 : 0);
-      curitem++;
-    }
-    ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
-  }
-
-  Bfile_FindClose(findhandle);
-  
-  return curitem;
-}
-
-void addinManager() {
+void balanceManager() {
   int res=1;
   Menu menu;
   
   menu.scrollout=1;
-  menu.height=7;
+  menu.height=5;
+  menu.startY = 3;
   menu.type=MENUTYPE_FKEYS;
-  menu.nodatamsg = (char*)"No Add-Ins";
-  menu.title = (char*)"Add-In Manager";
+  menu.nodatamsg = (char*)"No data - press F2";
   while(res) {
-    res = addinManagerSub(&menu);
+    char currentWallet[MAX_FILENAME_SIZE] = "";
+    if(!getCurrentWallet(currentWallet)) {
+      // there is no wallet yet, prompt user to create one
+      if(createWalletGUI(1) < 0) return; // user aborted first wallet creation, can't continue
+      if(!getCurrentWallet(currentWallet)) return; // error: won't get current wallet not even after creating one and setting it
+    }
+    res = balanceManagerSub(&menu, currentWallet);
   }
 }
 
-int addinManagerSub(Menu* menu) {
-  //returns 1 when it wants to be restarted (refresh addins)
-  //returns 0 if the idea really is to exit the screen
-  AddIn addins[200]; 
-  
-  menu->numitems = GetAddins(addins);
-  MenuItem* menuitems = (MenuItem*)alloca(menu->numitems*sizeof(MenuItem));
-  menu->items = menuitems;
- 
+int balanceManagerSub(Menu* menu, char* currentWallet) {
   Bdisp_AllClr_VRAM();
-  for(int curaddin = 0; curaddin < menu->numitems; curaddin++) {
-    menuitems[curaddin].text = (char*)addins[curaddin].name;
-    menuitems[curaddin].color = (addins[curaddin].active ? TEXT_COLOR_BLACK : TEXT_COLOR_CYAN);
+  Currency balance;
+  getWalletBalance(&balance, currentWallet);
+  char balanceStr[15];
+  currencyToString(balanceStr, &balance);
+  char subtitle[21];
+  strcpy(subtitle, (char*)"Balance: ");
+  strcat(subtitle, balanceStr);
+  Transaction txs[5];
+  char menulabels[5][22];
+  menu->numitems = getWalletTransactions(currentWallet, txs, 5);
+  MenuItem items[menu->numitems];
+  for(int i = 0; i < menu->numitems; i++) {
+    memset(menulabels[i], ' ', 21);
+    int len = strlen(txs[i].description);
+    memcpy(menulabels[i], txs[i].description, (len > 14 ? 14 : len));
+    char amount[15];
+    currencyToString(amount, &txs[i].amount);
+    strncpy(menulabels[i]+15, amount, 6);
+    menulabels[i][21] = 0;
+    if(txs[i].credit) items[i].color = TEXT_COLOR_GREEN;
+    else items[i].color = TEXT_COLOR_RED;
+    items[i].text = menulabels[i];
   }
-  
-  if(menu->numitems>0) drawFkeyLabels(0x0103, 0x0038); // CHANGE (white), DELETE
-  
-  unsigned short newpath[MAX_FILENAME_SIZE+1];
-  char buffer[MAX_FILENAME_SIZE+1];
-  unsigned short oldpath[MAX_FILENAME_SIZE+1];
-  switch(doMenu(menu)) {
-    case KEY_CTRL_F1:
-      if(menu->numitems > 0) {
-        strcpy(buffer, SMEM_PREFIX);
-        strcat(buffer, addins[menu->selection-1].filename);
-        Bfile_StrToName_ncpy(oldpath, buffer, MAX_FILENAME_SIZE+1);
-        if(addins[menu->selection-1].active) { //disable
-          buffer[strlen((char*)buffer)-3] = 'h'; //so it goes from g3a to h3a
-        } else { //enable
-          buffer[strlen((char*)buffer)-3] = 'g'; //so it goes from h3a to g3a
+  menu->items = items;
+  while(1) {
+    Bdisp_AllClr_VRAM();
+    drawScreenTitle((char*)"Balance Manager", subtitle);
+    // VIEW, INSERT, EDIT, DELETE, empty, LOAD
+    drawFkeyLabels(-1, 0x03B4, -1, -1, -1, 0x03B7);
+    if(menu->numitems > 0) drawFkeyLabels(0x049F, -1, 0x0185, 0x0038);
+    if(menu->selection > menu->numitems) menu->selection = menu->numitems;
+    if(menu->selection < 1) menu->selection = 1;
+    int res = doMenu(menu);
+    switch(res) {
+      case MENU_RETURN_EXIT:
+        return 0;
+        break;
+      case KEY_CTRL_F1:
+      case MENU_RETURN_SELECTION:
+        
+        break;
+      case KEY_CTRL_F2:
+        if(addTransactionGUI(currentWallet)) {
+          return 1;
         }
-        Bfile_StrToName_ncpy(newpath, buffer, MAX_FILENAME_SIZE+1);
-        Bfile_RenameEntry( oldpath , newpath );
-        return 1; //reload list
-      }
-      break;
-    case KEY_CTRL_F2:
-      if(menu->numitems > 0) {
-        mMsgBoxPush(4);
-        mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 3, (char*)"Selected Add-In?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        if(closeMsgBox(1, 4)) {
-          strcpy(buffer, SMEM_PREFIX);
-          strcat(buffer, addins[menu->selection-1].filename);
-          Bfile_StrToName_ncpy(oldpath, buffer, MAX_FILENAME_SIZE+1);
-          Bfile_DeleteEntry( oldpath );
+        break;
+      case KEY_CTRL_F3:
+        
+        break;
+      case KEY_CTRL_F4:
+        
+        break;
+      case KEY_CTRL_F6:
+        if(changeWalletGUI()) {
+          return 1;
         }
-        return 1;
-      }
-      break;
-    case MENU_RETURN_EXIT: return 0; break;
+        break;
+    }
   }
+  return 0;
+}
+
+int addTransactionGUI(char* wallet) {
+  Transaction tx;
+  strcpy(tx.description, (char*)"");
+  int curstep = 0;
+  while(1) {
+    SetBackGround(0x0A);
+    drawScreenTitle((char*)"Add transaction");
+    // < (first label) and Next or Finish (last label)
+    drawFkeyLabels((curstep>0 ? 0x036F : -1), -1, -1, -1, -1, (curstep==4 ? 0x04A4 : 0x04A3));
+    if(curstep == 0) {
+      MenuItem menuitems[5];
+      menuitems[0].text = (char*)"Debit";
+      menuitems[1].text = (char*)"Credit";
+
+      Menu menu;
+      menu.items=menuitems;
+      menu.type=MENUTYPE_FKEYS;
+      menu.numitems=2;
+      menu.height=2;
+      menu.startY=3;
+      menu.scrollbar=0;
+      menu.scrollout=1;
+      menu.pBaRtR=1;
+      int inloop=1;
+      while(inloop) {
+        // this must be here, inside this loop:
+        SetBackGround(0x0A);
+        drawScreenTitle((char*)"Add transaction", (char*)"Select type:");
+        drawFkeyLabels(-1, -1, -1, -1, -1, 0x04A3);
+        int res = doMenu(&menu);
+        if(res == MENU_RETURN_EXIT) return 0;
+        else if(res == KEY_CTRL_F6 || res == MENU_RETURN_SELECTION) {
+          tx.credit = menu.selection == 2;
+          curstep++;
+          break;
+        }
+      }
+    } else if(curstep == 1) {
+      drawScreenTitle(NULL, (char*)"Amount:");
+      char samount[20] = "";
+      if(tx.amount.val) {
+        currencyToString(samount, &tx.amount);
+      }
+      textInput input;
+      input.charlimit=12;
+      input.acceptF6=1;
+      input.symbols = 0; // allow the decimal separator
+      input.forcetext = 1;
+      input.buffer = (char*)samount;
+      input.type = INPUTTYPE_NUMERIC;
+      while(1) {
+        input.key=0;
+        int res = doTextInput(&input);
+        if (res==INPUT_RETURN_EXIT) return 0; // user aborted
+        else if (res==INPUT_RETURN_CONFIRM) {
+          if(!stringToCurrency(&tx.amount, samount)) {
+            if(!tx.amount.val) {
+              AUX_DisplayErrorMessage(0x4B);
+            } else {
+              curstep++;
+            }
+            break;
+          } else AUX_DisplayErrorMessage(0x43);
+        } else if (res==INPUT_RETURN_KEYCODE && input.key == KEY_CTRL_F1) {
+          curstep--;
+          break;
+        }
+      }
+    } else if(curstep == 2) {
+      drawScreenTitle(NULL, (char*)"Date:");
+      mPrintXY(7, 4, (char*)dateSettingToInputDisplay(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      textInput input;
+      input.x=7;
+      input.width=8;
+      input.charlimit=8;
+      input.acceptF6=1;
+      input.type=INPUTTYPE_DATE;
+      char datebuffer[15];
+      fillInputDate(getCurrentYear(), getCurrentMonth(), getCurrentDay(), datebuffer);
+      input.buffer = (char*)datebuffer;
+      while(1) {
+        input.key=0;
+        int res = doTextInput(&input);
+        if (res==INPUT_RETURN_EXIT) return 0; // user aborted
+        else if (res==INPUT_RETURN_CONFIRM) {
+          int len = strlen(datebuffer);
+          if(len == input.charlimit) {
+            int yr,m,d;
+            stringToDate(datebuffer, &yr, &m, &d);
+            if(isDateValid(yr, m, d)) {
+                tx.date.year = yr;
+                tx.date.month = m;
+                tx.date.day = d;
+                curstep++;
+                break; // continue to next step
+            } else invalidFieldMsg(0);
+          } else invalidFieldMsg(0);
+        }
+        else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep--; break; }
+      }
+    } else if(curstep == 3) {
+      drawScreenTitle(NULL, (char*)"Time:");
+      mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      
+      textInput input;
+      input.x=8;
+      input.width=6;
+      input.charlimit=6;
+      input.acceptF6=1;
+      input.type=INPUTTYPE_TIME;
+      char tbuffer[15];
+      fillInputTime(getCurrentHour(), getCurrentMinute(), getCurrentSecond(), tbuffer);
+      input.buffer = (char*)tbuffer;
+      while(1) {
+        input.key=0;
+        int res = doTextInput(&input);
+        if (res==INPUT_RETURN_EXIT) return 0; // user aborted
+        else if (res==INPUT_RETURN_CONFIRM) {
+          if((int)strlen(tbuffer) == input.charlimit) {
+            int h, m, s;
+            stringToTime(tbuffer, &h, &m, &s);
+            if(isTimeValid(h, m, s)) {
+              tx.time.hour = h;
+              tx.time.minute = m;
+              tx.time.second = s;
+              curstep++;
+              break; // continue to next step
+            } else invalidFieldMsg(1);
+          } else invalidFieldMsg(1);
+        } 
+        else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep--; break; }
+      }
+    } else if(curstep == 4) {
+      drawScreenTitle(NULL, (char*)"Description:");
+      textInput input;
+      input.charlimit=128;
+      input.acceptF6=1;
+      input.buffer = (char*)tx.description;
+      int inloop = 1;
+      while(inloop) {
+        input.key=0;
+        int res = doTextInput(&input);
+        if (res==INPUT_RETURN_EXIT) return 0; // user aborted
+        else if (res==INPUT_RETURN_CONFIRM) inloop = 0; // all fields complete, continue with transaction adding
+        else if (res==INPUT_RETURN_KEYCODE && input.key == KEY_CTRL_F1) {
+          curstep--;
+          break;
+        }
+      }
+      if(!inloop) break;
+    }
+  }
+  addTransaction(&tx, wallet);
   return 1;
 }
 
-void changeFKeyColor() {
-  unsigned char*keycolor = (unsigned char*) 0xFD8013E4;
-  Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
-  drawScreenTitle((char*)"Function Key Color");
-  textArea text;
-  text.type = TEXTAREATYPE_INSTANT_RETURN;
-  text.y = 132;
-  text.lineHeight=19;
-  textElement elem[2];
-  text.elements = elem;
-  text.scrollbar=0;
-  
-  elem[0].text = (char*)"Please note that only the " ADDIN_FRIENDLYNAME " add-in and a hidden debug screen on your calculator are able to change this setting, which persists across reboots. To reset it back to the black color you need to use this add-in, the hidden debug screen or to reset the Main Memory.";
-  elem[0].minimini = 1;
-  text.numelements = 1;
-  doTextArea(&text);
-  unsigned char selcolor = ColorIndexDialog1( *keycolor, 0 );
-  if(selcolor != (unsigned char)0xFF) {
-    //user didn't press EXIT, QUIT or AC/ON. input is validated.
-    *keycolor = selcolor;
-  }
-}
-
-void systemInfo() {
-  char OSname[12] = "";
-  memcpy(OSname, (void*)0x80020000, 8);
-  OSname[8] = '\0';
-  
-  char OSversion[12] = "";
-  memcpy(OSversion, (void*)0x80020020, 10);
-  OSversion[10] = '\0';
-  
-  char OSdate[20] = "";
-  memcpy(OSdate, (void*)0x80B5FFE0, 14);
-  OSdate[14] = '\0';
-  
-  char pcbModel[6] = "";
-  memcpy(pcbModel, (void*)0x80000300, 4);
-  pcbModel[4] = '\0';
-  
-  char ABSname[12] = "";
-  memcpy(ABSname, (void*)0x80000338, 8);
-  ABSname[8] = '\0';
-  
-  char ABSdate[20] = "";
-  memcpy(ABSdate, (void*)0x8001FFB0, 14);
-  ABSdate[14] = '\0';
-  
-  char devID[10] = "";
-  getHardwareID(devID);
-  devID[8] = '\0';  
-  
-  long pvr = *(long *)0xFF000030;
-  char pvrstr[9];
-  for (int i = 0; i <= 7; i++) {
-    int d = (pvr >> (i * 4)) & 0xF;
-    pvrstr[7 - i] = d + ((d > 9)? 0x37 : 0x30);
-  }
-  pvrstr[8] = '\0';
-  
-  long prr = *(long *)0xFF000044;
-  char prrstr[9];
-  for (int i = 0; i <= 7; i++) {
-    int d = (prr >> (i * 4)) & 0xF;
-    prrstr[7 - i] = d + ((d > 9)? 0x37 : 0x30);
-  }
-  prrstr[8] = '\0';
-  
-  long cvr = *(long *)0xFF000040;
-  char cvrstr[9];
-  for (int i = 0; i <= 7; i++) {
-    int d = (cvr >> (i * 4)) & 0xF;
-    cvrstr[7 - i] = d + ((d > 9)? 0x37 : 0x30);
-  }
-  cvrstr[8] = '\0';
-  
-  textArea text;
-  text.title = (char*)"System Information";
-  
-  textElement elem[25];
-  text.elements = elem;
-  
-  elem[0].text = (char*)"Operating System:";
-  elem[0].spaceAtEnd=1;
-  elem[1].text = OSname;
-  
-  elem[2].newLine = 1;
-  elem[2].text = (char*)"OS version:";
-  elem[2].spaceAtEnd=1;
-  elem[3].text = OSversion;
-  
-  elem[4].newLine = 1;
-  elem[4].text = (char*)"OS date:";
-  elem[4].spaceAtEnd=1;
-  elem[5].text = OSdate;
-  
-  elem[6].newLine = 1;
-  elem[6].text = (char*)"PCB model:";
-  elem[6].spaceAtEnd=1;
-  elem[7].text = pcbModel;
-  
-  elem[8].newLine = 1;
-  elem[8].text = (char*)"Calculator model:";
-  elem[8].spaceAtEnd=1;
-  if(getHardwareModel() == 1) {
-    elem[9].text = (char*)"fx-CG 10";
-  } else if(getHardwareModel() == 2) {
-    elem[9].text = (char*)"fx-CG 20";
-  } else {
-    elem[9].text = (char*)"Unknown";
-  }
-  
-  elem[10].newLine = 1;
-  elem[10].text = (char*)"Real hardware:";
-  elem[10].spaceAtEnd=1;
-  if(getIsEmulated()) {
-    elem[11].text = (char*)"No";
-  } else {
-    elem[11].text = (char*)"Yes";
-  }
-  
-  elem[12].newLine = 1;
-  elem[12].text = (char*)"ABS:";
-  elem[12].spaceAtEnd=1;
-  elem[13].text = ABSname;
-  
-  elem[14].newLine = 1;
-  elem[14].text = (char*)"ABS date:";
-  elem[14].spaceAtEnd=1;
-  elem[15].text = ABSdate;
-    
-  elem[16].newLine = 1;
-  elem[16].text = (char*)"CPU PVR:";
-  elem[16].spaceAtEnd=1;
-  elem[17].text = pvrstr;
-  
-  elem[18].newLine = 1;
-  elem[18].text = (char*)"CPU PRR:";
-  elem[18].spaceAtEnd=1;
-  elem[19].text = prrstr;
-  
-  elem[20].newLine = 1;
-  elem[20].text = (char*)"CPU CVR:";
-  elem[20].spaceAtEnd=1;
-  elem[21].text = cvrstr;
-  
-  elem[22].newLine = 1;
-  elem[22].text = (char*)"Device ID:";
-  elem[22].spaceAtEnd=1;
-  elem[23].text = devID;
-
-  elem[24].lineSpacing = 5;
-  elem[24].newLine = 1;
-  elem[24].text = (char*)"Press F1 to see the registered user information log, or EXIT.";
-
-  text.numelements = 25;
-  text.allowF1=1;
+int createWalletGUI(int isFirstUse) {
+  SetBackGround(0x0A);
+  drawScreenTitle((char*)"Create wallet", (char*)"Name:");
+  drawFkeyLabels(-1, -1, -1, -1, -1, 0x04A3);
+  char wallet[MAX_WALLETNAME_SIZE+2] = "";
+  textInput input;
+  input.charlimit=MAX_WALLETNAME_SIZE;
+  input.acceptF6=1;
+  input.forcetext=1;
+  input.symbols = 0;
+  input.buffer = (char*)wallet;
   while(1) {
-    if(doTextArea(&text) == TEXTAREA_RETURN_F1) {
-      userInfo();
-    } else return;
+    input.key=0;
+    int res = doTextInput(&input);
+    if (res==INPUT_RETURN_EXIT) return -1; // user aborted
+    else if (res==INPUT_RETURN_CONFIRM) break; // continue to next step
+  }
+
+  SetBackGround(0x0A);
+  drawScreenTitle((char*)"Create wallet", (char*)"Initial balance:");
+  drawFkeyLabels(-1, -1, -1, -1, -1, 0x04A4);
+  char balance[20] = "";
+  Currency initialBalance;
+  textInput input2;
+  input2.charlimit=12;
+  input2.acceptF6=1;
+  input2.symbols = 0; // allow the decimal separator
+  input2.buffer = (char*)balance;
+  input2.type = INPUTTYPE_NUMERIC;
+  while(1) {
+    input2.key=0;
+    int res = doTextInput(&input2);
+    if (res==INPUT_RETURN_EXIT) return -1; // user aborted
+    else if (res==INPUT_RETURN_CONFIRM) {
+      if(!stringToCurrency(&initialBalance, balance)) break;
+      else AUX_DisplayErrorMessage(0x43);
+    }
+  }
+  createWallet(wallet, &initialBalance);
+  if(isFirstUse) {
+    char fname[MAX_FILENAME_SIZE];
+    niceNameToWallet(fname, wallet);
+    setCurrentWallet(fname);
+  }
+  return 0;
+}
+
+int changeWalletGUI() {
+  // returns 1 if user changes to another wallet
+  Menu menu;
+  menu.title = (char*)"Wallet List";
+  menu.scrollout=1;
+  menu.type=MENUTYPE_FKEYS;
+  menu.height = 7;
+  menu.nodatamsg = (char*)"No wallets";
+  MenuItem items[MAX_WALLETS];
+  int mustRefresh = 0;
+  while(1) {
+    // TODO list wallets, let user change wallets, create, rename, delete wallets
+
+    char wallets[MAX_WALLETS][MAX_WALLETNAME_SIZE];
+    // build wallet list:
+    unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
+    char buffer[MAX_FILENAME_SIZE+1];
+
+    // make the buffer
+    strcpy(buffer, BALANCEFOLDER"\\*");
+    
+    file_type_t fileinfo;
+    int findhandle;
+    Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
+    int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
+    int i = 0;
+    while(!ret) {
+      Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
+      if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0) && fileinfo.fsize == 0) { // find folders
+        strcpy(wallets[i], buffer);
+        items[i].text = wallets[i];
+        i++;
+        if(i == MAX_WALLETS) break;
+      }
+      ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
+    }
+    menu.items = items;
+    menu.numitems = i;
+    Bfile_FindClose(findhandle);
+    drawFkeyLabels(0x000F, 0x0186, 0x0188, 0x0038, 0, 0); // SELECT, NEW, RENAME, DELETE
+    if(menu.selection > menu.numitems) menu.selection = menu.numitems;
+    if(menu.selection < 1) menu.selection = 1;
+    int res = doMenu(&menu);
+    switch(res) {
+      case MENU_RETURN_EXIT:
+        return mustRefresh;
+        break;
+      case KEY_CTRL_F1:
+      case MENU_RETURN_SELECTION:
+        niceNameToWallet(buffer, wallets[menu.selection-1]);
+        setCurrentWallet(buffer);
+        return 1;
+        break;
+      case KEY_CTRL_F2:
+        if(menu.numitems >= MAX_WALLETS) {
+          AUX_DisplayErrorMessage( 0x2E );
+        } else {
+          createWalletGUI(0);
+        }
+        break;
+      case KEY_CTRL_F3:
+        char newWallet[MAX_FILENAME_SIZE];
+        if(renameWalletGUI(wallets[menu.selection-1], newWallet)) {
+          char currentWallet[MAX_WALLETNAME_SIZE] = "";
+          getCurrentWallet(currentWallet);
+          niceNameToWallet(buffer, wallets[menu.selection-1]);
+          if(!strcmp(currentWallet, buffer)) {
+            // if the renamed wallet was the current one, we must set the current wallet to the
+            // new name.
+            setCurrentWallet(newWallet);
+            mustRefresh = 1;
+          }
+        }
+        break;
+      case KEY_CTRL_F4:
+        niceNameToWallet(buffer, wallets[menu.selection-1]);
+        if(deleteWalletGUI(buffer)) {
+          if(menu.numitems <= 1) {
+            // this was the only wallet: delete pointer file too, so that user is prompted to create a new wallet.
+            unsigned short path[MAX_FILENAME_SIZE+1];
+            strcpy(buffer, BALANCEFOLDER"\\Wallet");
+            Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE);
+            Bfile_DeleteEntry(path);
+            return 1;
+          }
+          char currentWallet[MAX_WALLETNAME_SIZE] = "";
+          getCurrentWallet(currentWallet);
+          if(!strcmp(currentWallet, buffer)) {
+            // if the deleted wallet was the current one, we must set the current wallet to the
+            // first one on the list that is not the deleted one.
+            // (by now we know there is more than one wallet in the list)
+            for(int i = 0; i < menu.numitems; i++) {
+              niceNameToWallet(buffer, wallets[i]);
+              if(strcmp(currentWallet, buffer)) break;
+            }
+            setCurrentWallet(buffer);
+            mustRefresh = 1;
+          }
+        }
+        break;
+    }
   }
 }
 
-void userInfo() {
-  textArea text;
-  text.title = (char*)"User Information";
-
-  textElement elem[10240];
-  text.elements = elem;
-  text.numelements=0;
-  elem[text.numelements].text = (char*)"Current information:";
-  elem[text.numelements].color = COLOR_BLUE;
-  text.numelements++;
-  elem[text.numelements].newLine = 1;
-  elem[text.numelements].text = (char*)"Username:";
-  elem[text.numelements].spaceAtEnd=1;
-  text.numelements++;
-  // here goes the username field, to be set in the loop.
-  int usernamefield = text.numelements;
-  text.numelements++;
-  elem[text.numelements].newLine = 1;
-  elem[text.numelements].text = (char*)"Organization:";
-  elem[text.numelements].spaceAtEnd=1;
-  text.numelements++;
-  // here goes the organization field, to be set in the loop.
-  int organizationfield = text.numelements;
-  text.numelements++;
-  elem[text.numelements].newLine = 1;
-  elem[text.numelements].text = (char*)"Password:";
-  elem[text.numelements].spaceAtEnd=1;
-  text.numelements++;
-  // here goes the password field, to be set in the loop.
-  int passwordfield = text.numelements;
-  text.numelements++;
-  elem[text.numelements].newLine = 1;
-  elem[text.numelements].lineSpacing = 5;
-  elem[text.numelements].text = (char*)"Historical information (oldest first):";
-  elem[text.numelements].color = COLOR_BLUE;
-  text.numelements++;
-
-  char* flagpointer = (char*)0x80BE0000;
-  int counter = 0;
-  while(*flagpointer == 0x0F) {
-    if(text.numelements < 10240-6) { // minus six because on every run we use six elements.
-      elem[text.numelements].lineSpacing = 5;
-      elem[text.numelements].newLine = 1;
-      elem[text.numelements].text = (char*)"Username:";
-      elem[text.numelements].spaceAtEnd=1;
-      text.numelements++;
-      if(*(flagpointer+0x18) != '\0') {
-        elem[text.numelements].text = (flagpointer+0x18);
-      } else {
-        elem[text.numelements].text = (char*)"[Empty]";
-        elem[text.numelements].color = COLOR_LIGHTGRAY;
-      }
-      text.numelements++;
-      elem[text.numelements].newLine = 1;
-      elem[text.numelements].text = (char*)"Organization:";
-      elem[text.numelements].spaceAtEnd=1;
-      text.numelements++;
-      if(*(flagpointer+0x04) != '\0') {
-        elem[text.numelements].text = (flagpointer+0x04);
-      } else {
-        elem[text.numelements].text = (char*)"[Empty]";
-        elem[text.numelements].color = COLOR_LIGHTGRAY;
-      }
-      text.numelements++;
-      elem[text.numelements].newLine = 1;
-      elem[text.numelements].text = (char*)"Password:";
-      elem[text.numelements].spaceAtEnd=1;
-      text.numelements++;
-      if(*(flagpointer+0x2C) != '\0') {
-        elem[text.numelements].text = (flagpointer+0x2C);
-      } else {
-        elem[text.numelements].text = (char*)"[Empty]";
-        elem[text.numelements].color = COLOR_LIGHTGRAY;
-      }
-      text.numelements++;
-    }
-    flagpointer = flagpointer + 0x40;
-    counter++;
+int deleteWalletGUI(char* wallet) {
+  mMsgBoxPush(4);
+  mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 3, (char*)"Selected Wallet?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  if(closeMsgBox(1, 4)) {
+    deleteWallet(wallet);
+    return 1;
   }
-  if(!counter) {
-    elem[0].text = (char*)"No information has ever been registered.";
-    elem[0].color = COLOR_BLACK;
-    text.numelements = 1;
-  } else {
-    flagpointer = flagpointer - 0x40;
-    if(*(flagpointer+0x18) != '\0') {
-      elem[usernamefield].text = (flagpointer+0x18);
-    } else {
-      elem[usernamefield].text = (char*)"[Empty]";
-      elem[usernamefield].color = COLOR_LIGHTGRAY;
-    }
-    if(*(flagpointer+0x04) != '\0') {
-      elem[organizationfield].text = (flagpointer+0x04);
-    } else {
-      elem[organizationfield].text = (char*)"[Empty]";
-      elem[organizationfield].color = COLOR_LIGHTGRAY;
-    }
-    if(*(flagpointer+0x2C) != '\0') {
-      elem[passwordfield].text = (flagpointer+0x2C);
-    } else {
-      elem[passwordfield].text = (char*)"[Empty]";
-      elem[passwordfield].color = COLOR_LIGHTGRAY;
+  return 0;
+}
+
+int renameWalletGUI(char* wallet, char* newWallet) {
+  // reload the wallets array after using this function!
+  // newWallet will receive the new file name (complete, not friendly)
+  // returns 0 if user aborts, 1 if renames.
+  SetBackGround(6);
+  clearLine(1,8);
+  char title[MAX_WALLETNAME_SIZE+6];
+  strcpy(title, wallet);
+  strcat(title, " to:");
+  drawScreenTitle((char*)"Rename wallet", title);
+  char newname[MAX_WALLETNAME_SIZE];
+  strcpy(newname, wallet);
+  textInput input;
+  input.forcetext=1;
+  input.charlimit=MAX_WALLETNAME_SIZE;
+  input.buffer = (char*)newname;
+  while(1) {
+    input.key=0;
+    int res = doTextInput(&input);
+    if (res==INPUT_RETURN_EXIT) return 0; // user aborted
+    else if (res==INPUT_RETURN_CONFIRM) {
+      char fwallet[MAX_FILENAME_SIZE];
+      niceNameToWallet(newWallet, newname);
+      niceNameToWallet(fwallet, wallet);
+      renameFile(fwallet, newWallet);
+      return 1;
     }
   }
-  doTextArea(&text);
+  return 0;
 }
