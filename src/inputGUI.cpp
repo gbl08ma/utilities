@@ -19,6 +19,15 @@
 #include "settingsProvider.hpp"
 #include "debugGUI.hpp"
 
+short selectCharacterAux() {
+  unsigned short VRAMbuffer[LCD_WIDTH_PX*(LCD_HEIGHT_PX-24)];
+  MsgBoxMoveWB(VRAMbuffer, 0, 0, LCD_WIDTH_PX-1, LCD_HEIGHT_PX-24-1, 1);
+  Bkey_ClrAllFlags();
+  short character = CharacterSelectDialog();
+  MsgBoxMoveWB(VRAMbuffer, 0, 0, LCD_WIDTH_PX-1, LCD_HEIGHT_PX-24-1, 0);
+  return character;
+}
+
 int doTextInput(textInput* input) {
   if(input->type==INPUTTYPE_NORMAL) {
     drawFkeyLabels(-1, -1, -1, (input->symbols? 0x02A1 : -1), 0x0307); // CHAR, A<>a
@@ -96,13 +105,8 @@ int doTextInput(textInput* input) {
     } else if(input->key == KEY_CTRL_F1 || input->key == KEY_CTRL_F2) {  
       Cursor_SetFlashOff(); return INPUT_RETURN_KEYCODE;
     } else if(input->key == KEY_CTRL_F4 && input->type == INPUTTYPE_NORMAL) {
-      unsigned short VRAMbuffer[LCD_WIDTH_PX*(LCD_HEIGHT_PX-24)];
-      MsgBoxMoveWB(VRAMbuffer, 0, 0, LCD_WIDTH_PX-1, LCD_HEIGHT_PX-24-1, 1);
-      Bkey_ClrAllFlags();
-      short character;
-      character = CharacterSelectDialog();
+      short character = selectCharacterAux();
       if (character) input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, character);
-      MsgBoxMoveWB(VRAMbuffer, 0, 0, LCD_WIDTH_PX-1, LCD_HEIGHT_PX-24-1, 0);
     } else if(input->key == KEY_CTRL_F5 && input->type == INPUTTYPE_NORMAL) {
       // switch between lower and upper-case alpha
       switch(keyflag) {
