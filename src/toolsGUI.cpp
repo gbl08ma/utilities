@@ -23,6 +23,7 @@
 #include "graphicsProvider.hpp"
 #include "timeProvider.hpp" 
 #include "toolsProvider.hpp"
+#include "calendarProvider.hpp"
 #include "calendarGUI.hpp"
 
 void balanceManager() {
@@ -54,9 +55,9 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
   char subtitle[21];
   strcpy(subtitle, (char*)"Balance: ");
   strcat(subtitle, balanceStr);
-  Transaction txs[5];
-  char menulabels[5][22];
-  menu->numitems = getWalletTransactions(currentWallet, txs, 5);
+  Transaction txs[MAX_DAY_EVENTS];
+  char menulabels[MAX_DAY_EVENTS][22];
+  menu->numitems = getWalletTransactions(currentWallet, txs);
   MenuItem items[menu->numitems];
   for(int i = 0; i < menu->numitems; i++) {
     memset(menulabels[i], ' ', 21);
