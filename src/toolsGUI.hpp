@@ -23,6 +23,7 @@ void balanceManager();
 int balanceManagerSub(Menu* menu, char* currentWallet);
 int addTransactionGUI(char* wallet);
 int deleteTransactionGUI(Transaction* txs, char* wallet, int count, int pos);
+void viewTransaction(Transaction* tx);
 int createWalletGUI(int isFirstUse);
 int changeWalletGUI(char* currentWallet);
 int deleteWalletGUI(char* wallet);

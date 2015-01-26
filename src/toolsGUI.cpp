@@ -87,7 +87,7 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
         break;
       case KEY_CTRL_F1:
       case MENU_RETURN_SELECTION:
-        
+        viewTransaction(&txs[menu->selection-1]);
         break;
       case KEY_CTRL_F2:
         if(addTransactionGUI(currentWallet)) {
@@ -278,6 +278,58 @@ int deleteTransactionGUI(Transaction* txs, char* wallet, int count, int pos) {
     return 1;
   }
   return 0;
+}
+
+void viewTransaction(Transaction* tx) {
+  textArea text;
+  if(tx->credit) {
+    text.title = (char*)"Credit information";
+  } else {
+    text.title = (char*)"Debit information";
+  }
+  
+  textElement elem[15];
+  text.elements = elem;
+  text.numelements = 0; //we will use this as element cursor
+  
+  elem[text.numelements].text = (char*)"Description:";
+  elem[text.numelements].color=COLOR_LIGHTGRAY;
+  elem[text.numelements].spaceAtEnd=1;
+  text.numelements++;
+  
+  elem[text.numelements].text = tx->description;
+  text.numelements++;
+    
+  elem[text.numelements].text = (char*)"Date & time:";
+  elem[text.numelements].newLine = 1;
+  elem[text.numelements].spaceAtEnd=1;
+  elem[text.numelements].color=COLOR_LIGHTGRAY; 
+  text.numelements++;
+  
+  char date[50];
+  dateToString(date, tx->date.year, tx->date.month, tx->date.day);
+  
+  char buffer[15]="";
+  timeToString(buffer, tx->time.hour, tx->time.minute, tx->time.second);
+  strcat(date, (char*)" ");
+  strcat(date, buffer);
+  
+  elem[text.numelements].text = date;
+  text.numelements++;
+  
+  char amount[20];
+  currencyToString(amount, &tx->amount);
+
+  elem[text.numelements].text = (char*)"Amount:";
+  elem[text.numelements].newLine = 1;
+  elem[text.numelements].spaceAtEnd=1;
+  elem[text.numelements].color=COLOR_LIGHTGRAY;
+  text.numelements++;
+  
+  elem[text.numelements].text = amount;
+  text.numelements++;
+
+  doTextArea(&text);
 }
 
 int createWalletGUI(int isFirstUse) {
