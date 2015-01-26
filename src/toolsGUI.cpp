@@ -87,7 +87,7 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
         break;
       case KEY_CTRL_F1:
       case MENU_RETURN_SELECTION:
-        viewTransaction(&txs[menu->selection-1]);
+        if(menu->numitems) viewTransaction(&txs[menu->selection-1]);
         break;
       case KEY_CTRL_F2:
         if(addTransactionGUI(currentWallet)) {
@@ -98,12 +98,14 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
         
         break;
       case KEY_CTRL_F4:
-        if(deleteTransactionGUI(txs, currentWallet, menu->numitems, menu->selection-1)) {
+        if(menu->numitems && deleteTransactionGUI(txs, currentWallet, menu->numitems, menu->selection-1)) {
           return 1;
         }
         break;
       case KEY_CTRL_F6:
         if(changeWalletGUI(currentWallet)) {
+          menu->selection = 0;
+          menu->scroll = 0;
           return 1;
         }
         break;
