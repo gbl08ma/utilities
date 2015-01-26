@@ -265,6 +265,26 @@ void replaceWalletTransactions(Transaction* txs, char* wallet, int count) {
   ReplaceEventFile(&date, events, wallet, count);
 }
 
+void deleteTransaction(Transaction* txs, char* wallet, int count, int pos) {
+  // undo effect of transaction in wallet balance:
+  Currency balance;
+  getWalletBalance(&balance, wallet);
+  if(txs[pos].credit) {
+    subtractCurrency(&balance, &txs[pos].amount);
+  } else {
+    addCurrency(&balance, &txs[pos].amount);
+  }
+  setWalletBalance(&balance, wallet);
+  // now delete from transaction history:
+  CalendarEvent events[MAX_DAY_EVENTS];
+  for(int i = 0; i < count; i++) {
+    transactionToCalendarEvent(&events[i], &txs[i]);
+  }
+  EventDate date;
+  date.day = 0; date.month = 0; date.year = 0;
+  RemoveEvent(&date, events, wallet, count, pos);
+}
+
 void createWallet(char* name, Currency* balance) {
   // creates a wallet without checking if it already exists
   // balance is the initial balance in internal (memory) format

@@ -17,10 +17,12 @@
 
 #include "menuGUI.hpp"
 #include "fileProvider.hpp"
+#include "toolsProvider.hpp"
 
 void balanceManager();
 int balanceManagerSub(Menu* menu, char* currentWallet);
 int addTransactionGUI(char* wallet);
+int deleteTransactionGUI(Transaction* txs, char* wallet, int count, int pos);
 int createWalletGUI(int isFirstUse);
 int changeWalletGUI();
 int deleteWalletGUI(char* wallet);

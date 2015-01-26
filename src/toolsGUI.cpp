@@ -98,7 +98,9 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
         
         break;
       case KEY_CTRL_F4:
-        
+        if(deleteTransactionGUI(txs, currentWallet, menu->numitems, menu->selection-1)) {
+          return 1;
+        }
         break;
       case KEY_CTRL_F6:
         if(changeWalletGUI()) {
@@ -264,6 +266,18 @@ int addTransactionGUI(char* wallet) {
   }
   addTransaction(&tx, wallet);
   return 1;
+}
+
+int deleteTransactionGUI(Transaction* txs, char* wallet, int count, int pos) {
+  mMsgBoxPush(5);
+  mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 3, (char*)"Selected", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 4, (char*)"Transaction?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  if(closeMsgBox(1, 5)) {
+    deleteTransaction(txs, wallet, count, pos);
+    return 1;
+  }
+  return 0;
 }
 
 int createWalletGUI(int isFirstUse) {
