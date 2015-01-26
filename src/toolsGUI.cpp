@@ -77,7 +77,7 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
     drawScreenTitle((char*)"Balance Manager", subtitle);
     // VIEW, INSERT, EDIT, DELETE, empty, LOAD
     drawFkeyLabels(-1, 0x03B4, -1, -1, -1, 0x03B7);
-    if(menu->numitems > 0) drawFkeyLabels(0x049F, -1, 0x0185, 0x0038);
+    if(menu->numitems > 0) drawFkeyLabels(0x049F, -1, 0x0038);
     if(menu->selection > menu->numitems) menu->selection = menu->numitems;
     if(menu->selection < 1) menu->selection = 1;
     int res = doMenu(menu);
@@ -95,9 +95,6 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
         }
         break;
       case KEY_CTRL_F3:
-        
-        break;
-      case KEY_CTRL_F4:
         if(menu->numitems && deleteTransactionGUI(txs, currentWallet, menu->numitems, menu->selection-1)) {
           return 1;
         }
