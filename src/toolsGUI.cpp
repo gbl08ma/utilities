@@ -103,7 +103,7 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
         }
         break;
       case KEY_CTRL_F6:
-        if(changeWalletGUI()) {
+        if(changeWalletGUI(currentWallet)) {
           return 1;
         }
         break;
@@ -327,8 +327,10 @@ int createWalletGUI(int isFirstUse) {
   return 0;
 }
 
-int changeWalletGUI() {
+int changeWalletGUI(char* currentWallet) {
   // returns 1 if user changes to another wallet
+  char currentWalletNice[MAX_WALLETNAME_SIZE];
+  nameFromFilename(currentWallet, currentWalletNice, MAX_WALLETNAME_SIZE);
   Menu menu;
   menu.title = (char*)"Wallet List";
   menu.scrollout=1;
@@ -359,6 +361,7 @@ int changeWalletGUI() {
         strcpy(wallets[i], buffer);
         items[i].text = wallets[i];
         i++;
+        if(!strcmp(buffer, currentWalletNice)) menu.selection = i;
         if(i == MAX_WALLETS) break;
       }
       ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
@@ -376,9 +379,11 @@ int changeWalletGUI() {
         break;
       case KEY_CTRL_F1:
       case MENU_RETURN_SELECTION:
-        niceNameToWallet(buffer, wallets[menu.selection-1]);
-        setCurrentWallet(buffer);
-        return 1;
+        if(strcmp(currentWalletNice, wallets[menu.selection-1])) {
+          niceNameToWallet(buffer, wallets[menu.selection-1]);
+          setCurrentWallet(buffer);
+          return 1;
+        } return mustRefresh;
         break;
       case KEY_CTRL_F2:
         if(menu.numitems >= MAX_WALLETS) {
@@ -390,8 +395,6 @@ int changeWalletGUI() {
       case KEY_CTRL_F3:
         char newWallet[MAX_FILENAME_SIZE];
         if(renameWalletGUI(wallets[menu.selection-1], newWallet)) {
-          char currentWallet[MAX_WALLETNAME_SIZE] = "";
-          getCurrentWallet(currentWallet);
           niceNameToWallet(buffer, wallets[menu.selection-1]);
           if(!strcmp(currentWallet, buffer)) {
             // if the renamed wallet was the current one, we must set the current wallet to the
@@ -412,8 +415,6 @@ int changeWalletGUI() {
             Bfile_DeleteEntry(path);
             return 1;
           }
-          char currentWallet[MAX_WALLETNAME_SIZE] = "";
-          getCurrentWallet(currentWallet);
           if(!strcmp(currentWallet, buffer)) {
             // if the deleted wallet was the current one, we must set the current wallet to the
             // first one on the list that is not the deleted one.
