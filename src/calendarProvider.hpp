@@ -74,7 +74,6 @@ void RemoveDay(EventDate* date, const char* folder);
 int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit=0, SimpleCalendarEvent* simpleCalEvents = NULL, int startArray=0);
 void GetEventCountsForMonth(int year, int month, int* buffer, int* busydays);
 int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit);
-int SearchEventsOnMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit);
 int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int arraystart=0);
 void repairEventsFile(char* name, const char* folder, int* checkedevents, int* problemsfound);
 void setDBneedsRepairFlag(int value);
