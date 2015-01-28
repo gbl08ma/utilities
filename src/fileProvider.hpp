@@ -73,4 +73,10 @@ void createFolderRecursive(const char* folder);
 void compressFile(char* oldfilename, char* newfilename, int action, int silent=0);
 int isFileCompressed(char* filename, int* origfilesize);
 
+#ifdef ENABLE_PICOC_SUPPORT
+extern "C" {
+int picoc(char* SourceFile);
+}
+#endif
+
 #endif

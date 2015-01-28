@@ -33,16 +33,22 @@
 void fileManager() {
   int res = 1;
   int itemsinclip = 0;
-  int shownClipboardHelp = 0;
   int shownMainMemHelp = 0;
   char browserbasepath[MAX_FILENAME_SIZE+1] = SMEM_PREFIX;
   File clipboard[MAX_ITEMS_IN_CLIPBOARD+1];
   while(res) {
     char filetoedit[MAX_FILENAME_SIZE+1];
     filetoedit[0] = 0;
-    res = fileManagerSub(browserbasepath, &itemsinclip, &shownClipboardHelp, &shownMainMemHelp, clipboard, filetoedit);
+    int fileAction = 0;
+    res = fileManagerSub(browserbasepath, &itemsinclip, &fileAction, &shownMainMemHelp, clipboard, filetoedit);
     if(strlen(filetoedit)) {
-      fileTextEditor(filetoedit);
+      if(fileAction) {
+        #ifdef ENABLE_PICOC_SUPPORT
+        picoc(filetoedit);
+        #endif
+      } else {
+        fileTextEditor(filetoedit);
+      }
     }
   }
 }
@@ -67,7 +73,7 @@ void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager) {
   }
 }
 
-int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardHelp, int* shownMainMemHelp, File* clipboard, char* filetoedit) {
+int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int* shownMainMemHelp, File* clipboard, char* filetoedit) {
   Menu menu;
   MenuItemIcon icontable[12];
   buildIconTable(icontable);
@@ -172,6 +178,14 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* shownClipboardH
             strcpy(filetoedit, files[menu.selection-1].filename);
             return 1;
           } else if(2 == res) return 1;
+          #ifdef ENABLE_PICOC_SUPPORT
+          else if(3 == res) {
+            // user wants to run the file in picoc
+            strcpy(filetoedit, files[menu.selection-1].filename);
+            *fileAction = 1;
+            return 1;
+          }
+          #endif
         }
         break;
       case KEY_CTRL_F2:
@@ -724,6 +738,9 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
     DefineStatusMessage((char*)statusText, 1, 0, 0);
     doTextArea(&text);
     drawFkeyLabels((compressed? -1 : 0x03B1), (allowEdit && !compressed? 0x0185: -1), (allowEdit? (compressed ? 0x161 : 0x160) : -1), -1, -1, (file->size>0 ? 0x0371 : -1)); //OPEN, EDIT, Comp (white) or Dec (white), CALC (white)
+    #ifdef ENABLE_PICOC_SUPPORT
+    if(allowEdit && EndsIWith(file->filename, (char*)".c")) drawFkeyLabels(-1, -1, -1, 0x0184); // EXE (white)
+    #endif
     int key;
     mGetKey(&key);
     switch(key) {
@@ -772,6 +789,13 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
       case KEY_CTRL_F4:
         serialTransferSingleFile(file->filename);
         break;
+      #else
+      # ifdef ENABLE_PICOC_SUPPORT
+      case KEY_CTRL_F4:
+        if(allowEdit && EndsIWith(file->filename, (char*)".c"))
+          return 3;
+        break;
+      # endif
       #endif
       case KEY_CTRL_F6:
         if(file->size > 0) {

@@ -21,7 +21,7 @@ include $(FXCGSDK)/common/prizm_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	src
+SOURCES		:=	src src/picoc src/picoc/cstdlib src/picoc/platform
 DATA		:=	data  
 INCLUDES	:=
 

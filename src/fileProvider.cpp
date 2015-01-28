@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <alloca.h>
 
 #include "constantsProvider.hpp"
 #include "graphicsProvider.hpp"
@@ -458,7 +459,6 @@ int stringEndsInJPG(char* string) {
   return EndsIWith(string, (char*)".jpg") || EndsIWith(string, (char*)".jpeg");
 }
 
-
 void createFolderRecursive(const char* folder) {
   // creates folder \\fls0\Fol1\Abc even if \\fls0\Fol1 doesn't exist yet
   // despite the name, this is not a recursive function.
@@ -723,3 +723,76 @@ int isFileCompressed(char* filename, int* origfilesize) {
   *origfilesize = (header[chl] << 24) | (header[chl+1] << 16) | (header[chl+2] << 8) | header[chl+3];
   return 1;
 }
+
+
+#ifdef ENABLE_PICOC_SUPPORT
+extern "C" {
+#include "picoc/picoc.h"
+#include "picoc/interpreter.h"
+
+/* read and scan a file for definitions */
+void PicocPlatformScanFile(const char *filename)
+{
+    char* asrc = NULL;
+    //Get file contents
+    unsigned short pFile[MAX_FILENAME_SIZE];
+    Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
+    int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+    unsigned int filesize = 0;
+    if(hFile >= 0) // Check if it opened
+    { //opened
+        filesize = Bfile_GetFileSize_OS(hFile);
+        if(!filesize) {
+            Bfile_CloseFile_OS(hFile);
+            return;
+        }
+        if(filesize > MAX_TEXTVIEWER_FILESIZE) filesize = MAX_TEXTVIEWER_FILESIZE;
+        // check if there's enough stack to proceed:
+        if(0x881E0000 - (int)GetStackPtr() < 500000 - filesize*sizeof(unsigned char) - 30000) {
+            asrc = (char*)alloca(filesize*sizeof(unsigned char)+5);
+            Bfile_ReadFile_OS(hFile, asrc, filesize, 0);
+            Bfile_CloseFile_OS(hFile);
+            asrc[filesize] = '\0';
+        } else {
+            // there's not enough stack to put the file in RAM, so just return.
+            // this can happen when opening a file from the search results
+            Bfile_CloseFile_OS(hFile);
+            return;
+        }
+    } else {
+        //Error opening file, abort
+        return;
+    }
+    PicocParse(filename, asrc, strlen(asrc), 1, 0, 0);
+}
+
+extern unsigned char* HeapMemory;         /* all memory - stack and heap */
+extern void *HeapBottom;   /* the bottom of the (downward-growing) heap */
+extern void *StackFrame;           /* the current stack frame */
+extern void *HeapStackTop;                /* the top of the stack */
+int picoc(char* SourceFile)
+{
+    int StackSize = HEAP_SIZE;
+    HeapMemory = (unsigned char*)alloca(StackSize);
+    HeapBottom = (void *)(HeapMemory + HEAP_SIZE);
+    StackFrame = (void *)HeapMemory;
+    HeapStackTop = (void *)HeapMemory;
+    
+    PicocInitialise(StackSize);
+
+    if (PicocPlatformSetExitPoint())
+    {
+        PicocCleanup();
+        return PicocExitValue;
+    }
+    
+    PicocPlatformScanFile(SourceFile);
+    
+    //PicocCallMain(argc - ParamCount, &argv[ParamCount]);
+    
+    PicocCleanup();
+    return PicocExitValue;
+}
+
+}
+#endif

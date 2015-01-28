@@ -1,0 +1,1 @@
+void PlatformLibraryInit_cpp(); 

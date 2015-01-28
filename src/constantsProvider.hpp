@@ -80,3 +80,7 @@
 #ifndef ENABLE_DEBUG
 #define ENABLE_DEBUG 1
 #endif
+
+#ifndef ENABLE_PICOC_SUPPORT
+#define ENABLE_PICOC_SUPPORT
+#endif
