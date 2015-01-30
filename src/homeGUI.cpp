@@ -154,7 +154,7 @@ void showHome(chronometer* chrono) {
   }
 }
 
-inline void powerMenu(int* pane_keycache) {
+void powerMenu(int* pane_keycache) {
   drawFkeyPopup(0, (char*)"Power options");
   
   MenuItem menuitems[5];
@@ -204,7 +204,7 @@ inline void powerMenu(int* pane_keycache) {
   }
 }
 
-inline void lightMenu(int* pane_keycache) {
+void lightMenu(int* pane_keycache) {
   drawFkeyPopup(1, (char*)"Light tools");
   
   MenuItem menuitems[5];
@@ -248,7 +248,7 @@ inline void lightMenu(int* pane_keycache) {
   }
 }
 
-inline void timeMenu(chronometer* chrono, int* pane_keycache) {
+void timeMenu(chronometer* chrono, int* pane_keycache) {
   drawFkeyPopup(2, (char*)"Time tools");
   
   MenuItem menuitems[5];
@@ -291,7 +291,7 @@ inline void timeMenu(chronometer* chrono, int* pane_keycache) {
   }
 }
 
-inline void toolsMenu(int* pane_keycache) {
+void toolsMenu(int* pane_keycache) {
   drawFkeyPopup(3, (char*)"Tools");
   
   MenuItem menuitems[5];
@@ -332,7 +332,7 @@ inline void toolsMenu(int* pane_keycache) {
   }
 }
 
-inline void memsysMenu(int* pane_keycache) {
+void memsysMenu(int* pane_keycache) {
   drawFkeyPopup(4, (char*)"Memory & System");
   
   MenuItem menuitems[6];
@@ -383,7 +383,7 @@ inline void memsysMenu(int* pane_keycache) {
   }
 }
 
-inline void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
+void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
   color_t color_fg, color_bg, color_title;
   if (GetSetting(SETTING_THEME)) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; color_title = COLOR_ORANGE; } else
   { color_fg = COLOR_BLACK; color_bg = COLOR_WHITE; color_title = COLOR_BLUE; }

@@ -50,7 +50,6 @@ void replaceWalletTransactions(Transaction* txs, char* wallet, int count);
 void deleteTransaction(Transaction* txs, char* wallet, int count, int pos);
 void createWallet(char* name, Currency* balance);
 void deleteWallet(char* wallet);
-void renameWallet(char* wallet, char* newWallet);
 
 #endif 
  

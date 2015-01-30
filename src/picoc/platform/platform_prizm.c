@@ -27,10 +27,12 @@ int PlatformGetCharacter()
     return 0;
 }
 
+char* curoutptr = (char*)0xE5200000;
 /* write a character to the console */
 void PlatformPutc(unsigned char OutCh, union OutputStreamInfo *Stream)
 {
-    // XXX - unimplemented so far
+    *curoutptr = (char)OutCh;
+    curoutptr++;
 }
 
 /* mark where to end the program for platforms which require this */

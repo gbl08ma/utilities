@@ -8,7 +8,7 @@ struct IncludeLibrary
 {
     char *IncludeName;
     void (*SetupFunction)(void);
-    struct LibraryFunction *FuncList;
+    const struct LibraryFunction *FuncList;
     const char *SetupCSource;
     struct IncludeLibrary *NextLib;
 };
@@ -51,7 +51,7 @@ void IncludeCleanup()
 }
 
 /* register a new build-in include file */
-void IncludeRegister(const char *IncludeName, void (*SetupFunction)(void), struct LibraryFunction *FuncList, const char *SetupCSource)
+void IncludeRegister(const char *IncludeName, void (*SetupFunction)(void), const struct LibraryFunction *FuncList, const char *SetupCSource)
 {
     struct IncludeLibrary *NewLib = HeapAllocMem(sizeof(struct IncludeLibrary));
     NewLib->IncludeName = TableStrRegister(IncludeName);

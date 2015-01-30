@@ -419,7 +419,7 @@ void *VariableDereferencePointer(struct ParseState *Parser, struct Value *Pointe
 /* clibrary.c */
 void BasicIOInit();
 void LibraryInit();
-void LibraryAdd(struct Table *GlobalTable, const char *LibraryName, struct LibraryFunction *FuncList);
+void LibraryAdd(struct Table *GlobalTable, const char *LibraryName, const struct LibraryFunction *FuncList);
 void CLibraryInit();
 void PrintCh(char OutCh, IOFILE *Stream);
 void PrintSimpleInt(long Num, IOFILE *Stream);
@@ -454,7 +454,7 @@ void PlatformLibraryInit();
 /* include.c */
 void IncludeInit();
 void IncludeCleanup();
-void IncludeRegister(const char *IncludeName, void (*SetupFunction)(void), struct LibraryFunction *FuncList, const char *SetupCSource);
+void IncludeRegister(const char *IncludeName, void (*SetupFunction)(void), const struct LibraryFunction *FuncList, const char *SetupCSource);
 void IncludeFile(char *Filename);
 /* the following is defined in picoc.h:
  * void PicocIncludeAllSystemHeaders(); */

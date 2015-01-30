@@ -27,7 +27,7 @@ void LibraryInit()
 }
 
 /* add a library */
-void LibraryAdd(struct Table *GlobalTable, const char *LibraryName, struct LibraryFunction *FuncList)
+void LibraryAdd(struct Table *GlobalTable, const char *LibraryName, const struct LibraryFunction *FuncList)
 {
     struct ParseState Parser;
     int Count;
