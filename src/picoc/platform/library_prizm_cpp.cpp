@@ -2389,7 +2389,7 @@ const struct LibraryFunction UtilitiesCalendarGUI[] =
 
 const struct LibraryFunction UtilitiesCalendarProvider[] =
 {
-    { pcfunc(calEventToChar),        "void calEventToChar(void*, unsigned char*)" },
+    { pcfunc(calEventToChar),        "void calEventToChar(void*, unsigned char*);" },
     { pcfunc(charToCalEvent),        "void charToCalEvent(unsigned char*, void*);" },
     { pcfunc(charToSimpleCalEvent),  "void charToSimpleCalEvent(unsigned char*, void*);" },
     { pcfunc(filenameFromDate),      "void filenameFromDate(void*, char*);" },
@@ -2833,4 +2833,9 @@ void PlatformLibraryInit_cpp()
     IncludeRegister("utilities/toolsGUI.h", &PrizmSetupFunc, &UtilitiesToolsGUI[0], NULL);
     IncludeRegister("utilities/toolsProvider.h", &PrizmSetupFunc, &UtilitiesToolsProvider[0], NULL);
     IncludeRegister("utilities/versionProvider.h", &PrizmSetupFunc, &UtilitiesVersionProvider[0], NULL);
+
+    definition = "#define UTILITIES_API_VERSION 1";
+    PicocParse("utilities/versionProvider.h", definition, strlen(definition), TRUE, TRUE, FALSE);
+    definition = "#define FXCG_API_VERSION 1";
+    PicocParse("utilities/versionProvider.h", definition, strlen(definition), TRUE, TRUE, FALSE);
 }
