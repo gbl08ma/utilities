@@ -44,7 +44,15 @@ void fileManager() {
     if(strlen(filetoedit)) {
       if(fileAction) {
         #ifdef ENABLE_PICOC_SUPPORT
-        picoc(filetoedit);
+        int res = picoc(filetoedit);
+        char resStr[10];
+        itoa(res, (unsigned char*)resStr);
+        mMsgBoxPush(4);
+        mPrintXY(3, 2, (char*)"PicoC execution", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 3, (char*)"finished with", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 4, (char*)"code:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(9, 4, resStr, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        closeMsgBox();
         #endif
       } else {
         fileTextEditor(filetoedit);
