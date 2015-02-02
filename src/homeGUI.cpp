@@ -316,7 +316,7 @@ void toolsMenu(int* pane_keycache) {
         DrawFrame(COLOR_WHITE);
         switch(menu.selection) {
           case 1: balanceManager(); break;
-          case 2: memoryCapacityViewer(); break;
+          case 2: passwordGenerator(); break;
         }
         return;
       case KEY_CTRL_F6:

@@ -2268,6 +2268,10 @@ pcvoid(renameWalletGUI)(struct ParseState *Parser, struct Value *ReturnValue, st
     ReturnValue->Val->Integer = renameWalletGUI((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
+pcvoid(passwordGenerator)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    passwordGenerator();
+}
+
 // toolsProvider
 
 pcvoid(currencyToString)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2332,6 +2336,10 @@ pcvoid(createWallet)(struct ParseState *Parser, struct Value *ReturnValue, struc
 
 pcvoid(deleteWallet)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     deleteWallet((char*)Param[0]->Val->Pointer);
+}
+
+pcvoid(generateRandomString)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    generateRandomString((char*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer, (int*)Param[7]->Val->Pointer);
 }
 
 // versionProvider.hpp
@@ -2731,6 +2739,7 @@ const struct LibraryFunction UtilitiesToolsGUI[] =
     { pcfunc(changeWalletGUI),        "int changeWalletGUI(char*);" },
     { pcfunc(deleteWalletGUI),        "int deleteWalletGUI(char*);" },
     { pcfunc(renameWalletGUI),        "int renameWalletGUI(char*, char*);" },
+    { pcfunc(passwordGenerator),      "void passwordGenerator(void);" },
     { NULL,         NULL }
 };
 
@@ -2752,6 +2761,7 @@ const struct LibraryFunction UtilitiesToolsProvider[] =
     { pcfunc(deleteTransaction),      "void deleteTransaction(void*, char*, int, int);" },
     { pcfunc(createWallet),           "void createWallet(char*, void*);" },
     { pcfunc(deleteWallet),           "void deleteWallet(char*);" },
+    { pcfunc(generateRandomString),   "void generateRandomString(char*, int, int, int, int, int, int, int*);" },
     { NULL,         NULL }
 };
 

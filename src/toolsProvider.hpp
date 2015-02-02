@@ -51,5 +51,7 @@ void deleteTransaction(Transaction* txs, char* wallet, int count, int pos);
 void createWallet(char* name, Currency* balance);
 void deleteWallet(char* wallet);
 
+void generateRandomString(char* dest, int length, int symbols, int numbers, int uppercase, int similar, int vowels, int* seed);
+
 #endif 
  

@@ -25,6 +25,9 @@
 #include "toolsProvider.hpp"
 #include "calendarProvider.hpp"
 #include "calendarGUI.hpp"
+#include "selectorGUI.hpp"
+
+// Balance manager:
 
 void balanceManager() {
   int res=1;
@@ -523,4 +526,84 @@ int renameWalletGUI(char* wallet, char* newWallet) {
     }
   }
   return 0;
+}
+
+// Password generator:
+
+void passwordGenerator() {
+  Menu menu;
+  menu.type = MENUTYPE_FKEYS;
+  menu.scrollbar = 0;
+  menu.title = (char*)"Password Generator";
+  menu.height = 7;
+  MenuItem items[10];
+  int length = 10;
+  int seed = RTC_GetTicks();
+  char lstr[10];
+  while(1) {
+    drawFkeyLabels(0, 0, 0, 0, 0, 0x0184);
+    itoa(length, (unsigned char*)lstr);
+    char t[20] = "Length: ";
+    strcat(t, lstr);
+    items[0].text = t;
+    items[1].text = (char*)"Include symbols";
+    items[1].type = MENUITEM_CHECKBOX;
+    items[2].text = (char*)"Include numbers";
+    items[2].type = MENUITEM_CHECKBOX;
+    items[3].text = (char*)"Include uppercase";
+    items[3].type = MENUITEM_CHECKBOX;
+    items[4].text = (char*)"Include confusable";
+    items[4].type = MENUITEM_CHECKBOX;
+    items[5].text = (char*)"Memorable vowel mix";
+    items[5].type = MENUITEM_CHECKBOX;
+    menu.numitems = 6;
+    menu.items = items;
+    switch(doMenu(&menu)) {
+      case MENU_RETURN_EXIT:
+        return;
+      case MENU_RETURN_SELECTION:
+        if(menu.selection > 1) items[menu.selection-1].value = !items[menu.selection-1].value;
+        else {
+          Selector sel;
+          sel.min = 6;
+          sel.value = length;
+          sel.max = 128;
+          sel.cycle = 1;
+          sel.title = (char*)"Password Generator";
+          sel.subtitle = (char*)"Length";
+          if(doSelector(&sel) == SELECTOR_RETURN_SELECTION) {
+            length = sel.value;
+          }
+        }
+        break;
+      case KEY_CTRL_F6:
+        int inscreen = 1;
+        while(inscreen) {
+          char password[130];
+          generateRandomString(password, length, items[1].value, items[2].value, items[3].value, items[4].value, items[5].value, &seed);
+          clearLine(1,2);
+          drawScreenTitle(NULL, (char*)"Generated password:");
+          textArea text;
+          text.type = TEXTAREATYPE_INSTANT_RETURN;
+          text.scrollbar = 0;
+          text.y = 48;
+          textElement e[5];
+          e[0].text = password;
+          text.elements = e;
+          text.numelements = 1;
+          doTextArea(&text);
+          drawFkeyLabels(0x036F, 0, 0, 0, 0, 0x02B9); // <, REPEAT (white)
+          while(1) {
+            int key;
+            mGetKey(&key);
+            if(key == KEY_CTRL_F6) break;
+            if(key == KEY_CTRL_F1) {
+              inscreen = 0;
+              break;
+            }
+          }
+        }
+        break;
+    }
+  }
 }

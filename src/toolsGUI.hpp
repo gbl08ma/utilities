@@ -29,4 +29,6 @@ int changeWalletGUI(char* currentWallet);
 int deleteWalletGUI(char* wallet);
 int renameWalletGUI(char* wallet, char* newWallet);
 
+void passwordGenerator();
+
 #endif 

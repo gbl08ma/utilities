@@ -312,3 +312,48 @@ void deleteWallet(char* wallet) {
   Bfile_StrToName_ncpy(path, wallet, MAX_FILENAME_SIZE+1);
   Bfile_DeleteEntry(path);
 }
+
+int randInt(int* rnd_seed) {
+  int k1;
+  int ix = *rnd_seed;
+
+  k1 = ix / 127773;
+  ix = 16807 * (ix - k1 * 127773) - k1 * 2836;
+  if (ix < 0)
+      ix += 2147483647;
+  *rnd_seed = ix;
+  return *rnd_seed;
+}
+#define INT_MAX 2147483647
+unsigned int randInterval(unsigned int min, unsigned int max, int* seed) {
+  // from http://stackoverflow.com/a/17554531
+  int r;
+  const unsigned int range = 1 + max - min;
+  const unsigned int buckets = INT_MAX / range;
+  const unsigned int limit = buckets * range;
+
+  /* Create equal size buckets all in a row, then fire randomly towards
+   * the buckets until you land in one of them. All buckets are equally
+   * likely. If you land off the end of the line of buckets, try again. */
+  do
+  {
+      r = randInt(seed);
+  } while (r >= (int)limit);
+
+  return min + (r / buckets);
+}
+
+void generateRandomString(char* dest, int length, int symbols, int numbers, int uppercase, int similar, int vowels, int* seed) {
+  int i = 0;
+  while(i<length) {
+    char next = randInterval(33, 126+1, seed);
+    if(!symbols && (next < 48 || (next > 57 && next < 65) || (next > 90 && next < 97) || next > 122)) continue;
+    if(!numbers && next >= '0' && next <= '9') continue;
+    if(!uppercase && next >= 'A' && next <= 'Z') continue;
+    if(!similar && (next == '0' || next == 'O' || next == 'o' || next == 'I' || next == 'l' || next == '1' ||
+                    next == '(' || next == ')' || next == '[' || next == ']' || next == '{' || next == '}' ||
+                    next == ';' || next == ':' || next == '|' || next == '-' || next == '_')) continue;
+    dest[i++] = next;
+    dest[i] = 0;
+  }
+}
