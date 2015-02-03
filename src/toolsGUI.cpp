@@ -540,27 +540,27 @@ void passwordGenerator() {
   int length = 10;
   int seed = RTC_GetTicks() * (GetMainBatteryVoltage(1) % 100);
   char lstr[10];
+  items[1].text = (char*)"Include symbols";
+  items[1].type = MENUITEM_CHECKBOX;
+  items[2].text = (char*)"Include numbers";
+  items[2].type = MENUITEM_CHECKBOX;
+  items[2].value = MENUITEM_VALUE_CHECKED;
+  items[3].text = (char*)"Include uppercase";
+  items[3].type = MENUITEM_CHECKBOX;
+  items[3].value = MENUITEM_VALUE_CHECKED;
+  items[4].text = (char*)"Include confusable";
+  items[4].type = MENUITEM_CHECKBOX;
+  items[4].value = MENUITEM_VALUE_CHECKED;
+  items[5].text = (char*)"Memorable vowel mix";
+  items[5].type = MENUITEM_CHECKBOX;
+  menu.numitems = 6;
+  menu.items = items;
   while(1) {
     drawFkeyLabels(0, 0, 0, 0, 0, 0x0184);
     itoa(length, (unsigned char*)lstr);
     char t[20] = "Length: ";
     strcat(t, lstr);
     items[0].text = t;
-    items[1].text = (char*)"Include symbols";
-    items[1].type = MENUITEM_CHECKBOX;
-    items[2].text = (char*)"Include numbers";
-    items[2].type = MENUITEM_CHECKBOX;
-    items[2].value = MENUITEM_VALUE_CHECKED;
-    items[3].text = (char*)"Include uppercase";
-    items[3].type = MENUITEM_CHECKBOX;
-    items[3].value = MENUITEM_VALUE_CHECKED;
-    items[4].text = (char*)"Include confusable";
-    items[4].type = MENUITEM_CHECKBOX;
-    items[4].value = MENUITEM_VALUE_CHECKED;
-    items[5].text = (char*)"Memorable vowel mix";
-    items[5].type = MENUITEM_CHECKBOX;
-    menu.numitems = 6;
-    menu.items = items;
     switch(doMenu(&menu)) {
       case MENU_RETURN_EXIT:
         return;
