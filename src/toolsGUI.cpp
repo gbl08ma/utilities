@@ -550,10 +550,13 @@ void passwordGenerator() {
     items[1].type = MENUITEM_CHECKBOX;
     items[2].text = (char*)"Include numbers";
     items[2].type = MENUITEM_CHECKBOX;
+    items[2].value = MENUITEM_VALUE_CHECKED;
     items[3].text = (char*)"Include uppercase";
     items[3].type = MENUITEM_CHECKBOX;
+    items[3].value = MENUITEM_VALUE_CHECKED;
     items[4].text = (char*)"Include confusable";
     items[4].type = MENUITEM_CHECKBOX;
+    items[4].value = MENUITEM_VALUE_CHECKED;
     items[5].text = (char*)"Memorable vowel mix";
     items[5].type = MENUITEM_CHECKBOX;
     menu.numitems = 6;
@@ -579,12 +582,12 @@ void passwordGenerator() {
       case KEY_CTRL_F6:
         int inscreen = 1;
         while(inscreen) {
-          clearLine(1,2);
-          drawScreenTitle(NULL, (char*)"Generated passwords:");
+          Bdisp_AllClr_VRAM();
+          drawScreenTitle((char*)"Password Generator", (char*)"Generated passwords:");
           textArea text;
           text.type = TEXTAREATYPE_INSTANT_RETURN;
           text.scrollbar = 0;
-          text.y = 48;
+          text.y = 48+3;
           text.lineHeight = 20;
           textElement e[5];
           char passwords[5][35];
