@@ -79,7 +79,11 @@ void showAbout() {
   
   textArea text;
 
+  #ifdef ENABLE_PICOC_SUPPORT
+  textElement elem[17];
+  #else
   textElement elem[5];
+  #endif
   text.elements = elem;
   
   elem[0].text = (char*)"Contains code by AHelper, merthsoft and KermMartian at Cemetech (http://cemetech.net), by Simon Lothar (http://casiopeia.net) and public domain code by C.B. Falconer. Uses the Heatshrink library by Scott Vokes.";
@@ -97,6 +101,44 @@ void showAbout() {
   elem[4].lineSpacing = 8;
   elem[4].text = (char*)"In no event will the authors be held liable for any damages arising from the use of this software.";
   text.numelements = 5;
+
+  #ifdef ENABLE_PICOC_SUPPORT
+  elem[5].newLine = 1;
+  elem[5].lineSpacing = 8;
+  elem[5].color = COLOR_BLUE;
+  elem[5].text = (char*)"Licenses for built-in included software:";
+
+  elem[6].newLine = 1;
+  elem[6].text = (char*)"PicoC - C Interpreter";
+
+  elem[7].newLine = 1;
+  elem[7].text = (char*)"Copyright (c) 2009-2011, Zik Saleeba";
+
+  elem[8].newLine = 1;
+  elem[8].text = (char*)"All rights reserved.";
+
+  elem[9].newLine = 1;
+  elem[9].text = (char*)"Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:";
+  
+  elem[10].newLine = 1;
+  elem[10].text = (char*)"1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.";
+  
+  elem[11].newLine = 1;
+  elem[11].text = (char*)"2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.";
+  
+  elem[12].newLine = 1;
+  elem[12].text = (char*)"3. Neither the name of the project nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.";
+  
+  elem[13].newLine = 1;
+  elem[13].text = (char*)"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.";
+  elem[13].spaceAtEnd = 1;
+  elem[14].text = (char*)"IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;";
+  elem[14].spaceAtEnd = 1;
+  elem[15].text = (char*)"LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,";
+  elem[15].spaceAtEnd = 1;
+  elem[16].text = (char*)"EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.";
+  text.numelements = 17;
+  #endif
   doTextArea(&text);
 }
 
