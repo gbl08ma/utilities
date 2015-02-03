@@ -538,7 +538,7 @@ void passwordGenerator() {
   menu.height = 7;
   MenuItem items[10];
   int length = 10;
-  int seed = RTC_GetTicks();
+  int seed = RTC_GetTicks() * (GetMainBatteryVoltage(1) % 100);
   char lstr[10];
   while(1) {
     drawFkeyLabels(0, 0, 0, 0, 0, 0x0184);
@@ -567,7 +567,7 @@ void passwordGenerator() {
           Selector sel;
           sel.min = 6;
           sel.value = length;
-          sel.max = 128;
+          sel.max = 30;
           sel.cycle = 1;
           sel.title = (char*)"Password Generator";
           sel.subtitle = (char*)"Length";
@@ -579,25 +579,29 @@ void passwordGenerator() {
       case KEY_CTRL_F6:
         int inscreen = 1;
         while(inscreen) {
-          char password[130];
-          generateRandomString(password, length, items[1].value, items[2].value, items[3].value, items[4].value, items[5].value, &seed);
           clearLine(1,2);
-          drawScreenTitle(NULL, (char*)"Generated password:");
+          drawScreenTitle(NULL, (char*)"Generated passwords:");
           textArea text;
           text.type = TEXTAREATYPE_INSTANT_RETURN;
           text.scrollbar = 0;
           text.y = 48;
+          text.lineHeight = 20;
           textElement e[5];
-          e[0].text = password;
+          char passwords[5][35];
+          for(int i = 0; i < 5; i++) {
+            generateRandomString(passwords[i], length, items[1].value, items[2].value, items[3].value, items[4].value, items[5].value, &seed);
+            e[i].text = passwords[i];
+            if(i) e[i].newLine = 1;
+          }
           text.elements = e;
-          text.numelements = 1;
+          text.numelements = 5;
           doTextArea(&text);
           drawFkeyLabels(0x036F, 0, 0, 0, 0, 0x02B9); // <, REPEAT (white)
           while(1) {
             int key;
             mGetKey(&key);
             if(key == KEY_CTRL_F6) break;
-            if(key == KEY_CTRL_F1) {
+            if(key == KEY_CTRL_F1 || key == KEY_CTRL_EXIT) {
               inscreen = 0;
               break;
             }
