@@ -9,12 +9,12 @@
 float math_floor(float x);
 double math_modf(double x, double *ipart);
 
-typedef struct{
+typedef struct {
   unsigned char hnibble:4;
   unsigned char lnibble:4;
 } TBCDbyte;
 
-typedef struct{
+typedef struct {
   unsigned short exponent:12;
   unsigned short mantissa0:4;
   TBCDbyte mantissa[7];
@@ -22,7 +22,7 @@ typedef struct{
   short info;
 } TBCDvalue;
 
-typedef struct{
+typedef struct {
   int exponent;
   int sign;
   int unknown;
@@ -30,17 +30,17 @@ typedef struct{
 } TBCDInternal;
 class TBCD{
   public:
-        TBCDvalue*PValue();
-        int Get( TBCDvalue&value );
-        int Set( TBCDvalue&value );
-        int Set( double&value );
-        int Get( double&value );
-        int SetError( int error );
-        int GetError();
-        void Swap();
+    TBCDvalue*PValue();
+    int Get(TBCDvalue&value);
+    int Set(TBCDvalue&value);
+    int Set(double&value);
+    int Get(double&value);
+    int SetError(int error);
+    int GetError();
+    void Swap();
   protected:
   private:
-        TBCDvalue FValue[2];
+    TBCDvalue FValue[2];
 };
 
 #endif

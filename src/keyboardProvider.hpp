@@ -23,6 +23,6 @@
 void saveVRAMandCallSettings();
 void mGetKey(int* key, int darkenStatus=0);
 void setmGetKeyMode(int mode);
-unsigned int SetGetkeyToMainFunctionReturnFlag( unsigned int enabled );
+unsigned int SetGetkeyToMainFunctionReturnFlag(unsigned int enabled);
 
 #endif
