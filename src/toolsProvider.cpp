@@ -345,14 +345,25 @@ unsigned int randInterval(unsigned int min, unsigned int max, int* seed) {
 
 void generateRandomString(char* dest, int length, int symbols, int numbers, int uppercase, int similar, int vowels, int* seed) {
   int i = 0;
+  int vowelSpacing = randInterval(1, 2, seed);
   while(i<length) {
-    char next = randInterval(33, 126+1, seed);
+    char next = randInterval(33, 126, seed);
     if(!symbols && (next < 48 || (next > 57 && next < 65) || (next > 90 && next < 97) || next > 122)) continue;
     if(!numbers && next >= '0' && next <= '9') continue;
     if(!uppercase && next >= 'A' && next <= 'Z') continue;
     if(!similar && (next == '0' || next == 'O' || next == 'o' || next == 'I' || next == 'l' || next == '1' ||
                     next == '(' || next == ')' || next == '[' || next == ']' || next == '{' || next == '}' ||
-                    next == ';' || next == ':' || next == '|' || next == '-' || next == '_')) continue;
+                    next == ';' || next == ':' || next == '|' || next == '-' || next == '_' || next == 'B' ||
+                    next == '8' )) continue;
+    if(vowels) {
+      if(!vowelSpacing) {
+        if(!strchr((char*)"aeiouy", next) && !strchr((char*)"AEIOUY", next)) continue;
+        vowelSpacing = randInterval(1, 2, seed);
+      } else {
+        if(strchr((char*)"aeiouy", next) || strchr((char*)"AEIOUY", next)) continue;
+        vowelSpacing--;
+      }
+    }
     dest[i++] = next;
     dest[i] = 0;
   }
