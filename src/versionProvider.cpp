@@ -6,7 +6,11 @@
 #include "timeProvider.hpp"
 
 const char* getVersion() {
-  return __GIT_VERSION;
+  #ifdef ENABLE_PICOC_SUPPORT
+    return __GIT_VERSION "\xE7\x63";
+  #else
+    return __GIT_VERSION;
+  #endif
 }
 const char* getTimestamp() {
   return __GIT_TIMESTAMP;
