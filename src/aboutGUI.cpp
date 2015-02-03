@@ -86,7 +86,7 @@ void showAbout() {
   #endif
   text.elements = elem;
   
-  elem[0].text = (char*)"Contains code by AHelper, merthsoft and KermMartian at Cemetech (http://cemetech.net), by Simon Lothar (http://casiopeia.net) and public domain code by C.B. Falconer. Uses the Heatshrink library by Scott Vokes.";
+  elem[0].text = (char*)"Contains code by AHelper, merthsoft and KermMartian at Cemetech (http://cemetech.net), by Simon Lothar (http://casiopeia.net) and public domain code by C.B. Falconer. Uses the Heatshrink library by Scott Vokes. Uses TJpgDec - (C)ChaN, 2012.";
   elem[1].newLine = 1;
   elem[1].lineSpacing = 8;
   elem[1].text = (char*)"This " ADDIN_FRIENDLYNAME " add-in is licensed under the GNU GPL v2, or (at your option) any later version.";
