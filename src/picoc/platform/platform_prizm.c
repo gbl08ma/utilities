@@ -31,8 +31,10 @@ char* curoutptr = (char*)0xE5200000;
 /* write a character to the console */
 void PlatformPutc(unsigned char OutCh, union OutputStreamInfo *Stream)
 {
-    *curoutptr = (char)OutCh;
-    curoutptr++;
+    if(curoutptr < (char*)0xE5200FFF) {
+        *curoutptr = (char)OutCh;
+        curoutptr++;
+    }
 }
 
 /* mark where to end the program for platforms which require this */
