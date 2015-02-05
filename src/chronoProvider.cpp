@@ -20,35 +20,10 @@
 #include "chronoProvider.hpp"
 #include "chronoGUI.hpp"
 
-// Converts a chronometer to a char array which can then be saved
-void chronoToBuffer(chronometer* tchrono, long long int* buffer) {
-  buffer[0] = tchrono->starttime;
-  buffer[1] = tchrono->duration;
-  buffer[2] = tchrono->laststop;
-  buffer[3] = tchrono->state;
-  buffer[4] = tchrono->type;
-}
-
-// Converts a char array to a chronometer struct
-void bufferToChrono(long long int* buffer, chronometer* tchrono) {
-  tchrono->starttime = buffer[0];
-  tchrono->duration = buffer[1];
-  tchrono->laststop = buffer[2];
-  tchrono->state = buffer[3];
-  tchrono->type = buffer[4];
-}
-
 void saveChronoArray(chronometer* chronoarray, int count) { // count is the amount of chrono in array
-  long long int buffer[5];
-  unsigned char* finalbuffer = (unsigned char*)alloca(count*sizeof(buffer));
-
-  // convert each chrono in chronoarray to a buffer, and concat it to finalbuffer
-  
   int allClear = 1;
   for(int cur = 0; cur < count; cur++) {
     if(chronoarray[cur].state != CHRONO_STATE_CLEARED) allClear=0;
-    chronoToBuffer(&chronoarray[cur], buffer);
-    memcpy(finalbuffer+cur*8*5,buffer,8*5);
   }
   if(allClear) {
     // all chronos are clear
@@ -60,27 +35,21 @@ void saveChronoArray(chronometer* chronoarray, int count) { // count is the amou
   // Check if directory exists:
   if(MCS_CreateDirectory(DIRNAME)) // directory already exists, so delete the exiting file that may be there
     MCSDelVar2(DIRNAME, CHRONOFILE);
-  MCSPutVar2(DIRNAME, CHRONOFILE, count*8*5, finalbuffer);
+  MCSPutVar2(DIRNAME, CHRONOFILE, count*sizeof(chronometer), chronoarray);
 }
 
 void loadChronoArray(chronometer* chronoarray, int count) { // count is the amount of chrono to load to array
-  long long int buffer[5];
   int size;
   MCSGetDlen2(DIRNAME, CHRONOFILE, &size);
   // check if file exists, and compare read file size to expected file size to detect incompatibility.
   // if there is, delete old file and return
-  if (size != count*(int)sizeof(buffer)) {
+  if (size != count*(int)sizeof(chronometer)) {
     // doesn't exist or is incompatible. We could return right now, but other code may be expecting a "clean" chronoarray,
     // so we must clear each chrono manually
     for(int cur=0; cur < count; cur++) clearChrono(&chronoarray[cur]);
     return;
   }
-
-  unsigned char* finalbuffer = (unsigned char*)alloca(count*sizeof(buffer));
-  MCSGetData1(0, count*8*5, finalbuffer);
-  
-  // convert each chrono (as string) in finalbuffer to a chrono in chronoarray
-  for(int cur=0; cur < count; cur++) bufferToChrono((long long int*)(finalbuffer+cur*8*5), &chronoarray[cur]);
+  MCSGetData1(0, count*sizeof(chronometer), chronoarray);
 }
 
 void setChrono(chronometer* tchrono, long long int duration, long long int type) {
