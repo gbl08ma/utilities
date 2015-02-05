@@ -800,6 +800,10 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
           }
         }
         break;
+      case KEY_CTRL_DEL:
+        if(menu->numitems > 0 && EVENTDELETE_RETURN_CONFIRM == deleteEventUI(y, m, d, events, menu->numitems, menu->selection-1)) {
+          bufmonth = 0; searchValid = 0; return 1;
+        }
       case KEY_CTRL_F6:
         if(menu->numitems > 0) menu->fkeypage = !menu->fkeypage;
         break;

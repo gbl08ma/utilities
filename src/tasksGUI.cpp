@@ -100,6 +100,7 @@ int viewTasksSub(Menu* menu) {
         }
         break;
       case KEY_CTRL_F4:
+      case KEY_CTRL_DEL:
         if(menu->numitems > 0)
           if(EVENTDELETE_RETURN_CONFIRM == deleteEventUI(0, 0, 0, tasks, menu->numitems, menu->selection-1, 1)) {
             return 1;

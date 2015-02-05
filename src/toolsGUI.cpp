@@ -101,6 +101,7 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
         }
         break;
       case KEY_CTRL_F3:
+      case KEY_CTRL_DEL:
         if(menu->numitems && deleteTransactionGUI(txs, currentWallet, menu->numitems, menu->selection-1)) {
           return 1;
         }
@@ -462,6 +463,7 @@ int changeWalletGUI(char* currentWallet) {
         }
         break;
       case KEY_CTRL_F4:
+      case KEY_CTRL_DEL:
         niceNameToWallet(buffer, wallets[menu.selection-1]);
         if(deleteWalletGUI(buffer)) {
           if(menu.numitems <= 1) {

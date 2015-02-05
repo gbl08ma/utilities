@@ -182,6 +182,7 @@ int addinManagerSub(Menu* menu) {
       }
       break;
     case KEY_CTRL_F2:
+    case KEY_CTRL_DEL:
       if(menu->numitems > 0) {
         mMsgBoxPush(4);
         mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
