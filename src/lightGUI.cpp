@@ -114,6 +114,7 @@ void colorLight() {
   Menu menu;
   menu.items=menuitems;
   menu.numitems=8;
+  menu.scrollout = 1;
   menu.title = (char*)"Color light";
   int res = doMenu(&menu);
   if (res == MENU_RETURN_EXIT) return;

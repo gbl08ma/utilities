@@ -69,12 +69,10 @@ void mGetKey(int* key, int darkenStatus) {
       break;
 #ifdef ENABLE_DEBUG
     } else if (*key == KEY_SHIFT_OPTN && GetDebugMode()) {
-      SaveVRAM_1();
-      TestMode( 1 );
+      TestMode(1);
       const unsigned int default_fkeys[] = { 0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0 };
-      Set_FKeys1( 0, (unsigned int*)default_fkeys );
-      Set_FKeys2( 0 );
-      LoadVRAM_1();
+      Set_FKeys1(0, (unsigned int*)default_fkeys);
+      Set_FKeys2(0);
     } else if (*key == KEY_CTRL_PRGM && GetDebugMode()) {
       showRAMused();
 #endif
