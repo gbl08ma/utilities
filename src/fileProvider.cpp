@@ -37,8 +37,17 @@ int compareFileStructs(File* f1, File* f2, int type) {
     case 3:
       return f1->size-f2->size;
     case 4:
-    default:
       return f2->size-f1->size;
+    case 5:
+    case 6:
+    default:
+    {
+      char* ptr1 = f1->filename + strlen(f1->filename);
+      char* ptr2 = f2->filename + strlen(f2->filename);
+      for(; ptr1 > f1->filename && *ptr1 != '.'; ptr1--);
+      for(; ptr2 > f2->filename && *ptr2 != '.'; ptr2--);
+      return (type == 5 ? 1 : -1) * strcmp(ptr1, ptr2);
+    }
   }
 }
 

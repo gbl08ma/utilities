@@ -239,21 +239,24 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
         } else if (menu.numselitems == 0) {
           if(res==KEY_CTRL_F2) {
             mMsgBoxPush(6);
-            MenuItem smallmenuitems[5];
+            MenuItem smallmenuitems[7];
             smallmenuitems[0].text = (char*)"Do not sort";
             smallmenuitems[1].text = (char*)"Name (A to Z)";
             smallmenuitems[2].text = (char*)"Name (Z to A)";
             smallmenuitems[3].text = (char*)"Size (small 1st)";
             smallmenuitems[4].text = (char*)"Size (big 1st)";
+            smallmenuitems[5].text = (char*)"Type (A to Z)";
+            smallmenuitems[6].text = (char*)"Type (Z to A)";
             
             Menu smallmenu;
             smallmenu.items=smallmenuitems;
-            smallmenu.numitems=5;
+            smallmenu.numitems=7;
             smallmenu.width=17;
             smallmenu.height=6;
             smallmenu.startX=3;
             smallmenu.startY=2;
-            smallmenu.scrollbar=0;
+            smallmenu.scrollbar=1;
+            smallmenu.scrollout=1;
             smallmenu.selection = GetSetting(SETTING_FILE_MANAGER_SORT)+1;
             smallmenu.title = (char*)"Sort items by:";
             int sres = doMenu(&smallmenu);

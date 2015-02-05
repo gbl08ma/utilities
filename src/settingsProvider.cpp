@@ -68,7 +68,7 @@ static int setting_default_calendar_view = 1; // default calendar view. 0 = week
 static int setting_week_start_day = 0; // 0 = sunday, 1 = monday
 static int setting_show_calendar_busy_map = 1;
 static int setting_chrono_notification_type = 1; // notification for when a downwards chrono finishes. 0: no notification; 1: pop-up with screen flashing; 2: pop-up without screen flashing; 3: message on home screen without pop-up
-static int setting_file_manager_sort = 1; // file list sort in file manager. 0: no sort (list as they appear), 1: A-Z, 2: Z-A, 3: size (ascending), 4: size (descending)
+static int setting_file_manager_sort = 1; // file list sort in file manager. 0: no sort (list as they appear), 1: A-Z, 2: Z-A, 3: size (ascending), 4: size (descending), 5: type A-Z, 6: type Z-A
 static int setting_file_manager_search = 1; // settings for search in the file manager; the value of this int is never used as a whole, but its bits are set individually for each search option.
 
 // Routines for accessing and setting settings
