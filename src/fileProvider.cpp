@@ -29,15 +29,20 @@ extern "C" {
 int compareFileStructs(File* f1, File* f2, int type) {
   if(f1->isfolder < f2->isfolder) return 1;
   else if(f1->isfolder > f2->isfolder) return -1;
+  int retval;
   switch(type) {
     case 1:
-      return strcmp( f1->filename, f2->filename );
+      retval = strcmp( f1->filename, f2->filename );
+      break;
     case 2:
-      return -strcmp( f1->filename, f2->filename );
+      retval = -strcmp( f1->filename, f2->filename );
+      break;
     case 3:
-      return f1->size-f2->size;
+      retval = f1->size-f2->size;
+      break;
     case 4:
-      return f2->size-f1->size;
+      retval = f2->size-f1->size;
+      break;
     case 5:
     case 6:
     default:
@@ -46,9 +51,13 @@ int compareFileStructs(File* f1, File* f2, int type) {
       char* ptr2 = f2->filename + strlen(f2->filename);
       for(; ptr1 > f1->filename && *ptr1 != '.'; ptr1--);
       for(; ptr2 > f2->filename && *ptr2 != '.'; ptr2--);
-      return (type == 5 ? 1 : -1) * strcmp(ptr1, ptr2);
+      retval = (type == 5 ? 1 : -1) * strcmp(ptr1, ptr2);
+      break;
     }
   }
+  // make A-Z the sub-sorting for items that are otherwise the same, according to the chosen criteria
+  if(!retval) return strcmp(f1->filename, f2->filename);
+  return retval;
 }
 
 void insertSortFileMenuArray(File* data, MenuItem* mdata, int size) {
