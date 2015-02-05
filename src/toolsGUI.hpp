@@ -30,5 +30,10 @@ int deleteWalletGUI(char* wallet);
 int renameWalletGUI(char* wallet, char* newWallet);
 
 void passwordGenerator();
+void totpClient();
+void viewTOTPcodeGUI(totp* tkn);
+int addTOTPGUI();
+int renameTOTPGUI(int index, char* oldname);
+int deleteTOTPGUI(int index);
 
 #endif 

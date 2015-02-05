@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <alloca.h>
+#include <ctype.h>
 
 #include "toolsGUI.hpp"
 #include "menuGUI.hpp"
@@ -21,11 +22,13 @@
 #include "keyboardProvider.hpp"
 #include "fileProvider.hpp"
 #include "graphicsProvider.hpp"
+#include "stringsProvider.hpp"
 #include "timeProvider.hpp" 
 #include "toolsProvider.hpp"
 #include "calendarProvider.hpp"
 #include "calendarGUI.hpp"
 #include "selectorGUI.hpp"
+#include "timeGUI.hpp"
 
 // Balance manager:
 
@@ -613,4 +616,208 @@ void passwordGenerator() {
         break;
     }
   }
+}
+
+// TOTP authenticator:
+
+void totpClient() {
+  RTCunadjustedWizard(1);
+  if(getRTCisUnadjusted()) {
+    mMsgBoxPush(6);
+    mPrintXY(3, 2, (char*)"The OATH TOTP", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 3, (char*)"authenticator", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 4, (char*)"can't work with", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 5, (char*)"the clock", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 6, (char*)"unadjusted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    closeMsgBox(0, 7);
+    return;
+  }
+  totp ts[MAX_DAY_EVENTS];
+  Menu menu;
+  menu.type = MENUTYPE_FKEYS;
+  MenuItem items[MAX_DAY_EVENTS];
+  menu.items = items;
+  reload:
+  menu.numitems = loadTOTPs(ts);
+  for(int i = 0; i < menu.numitems; i++) {
+    items[i].text = ts[i].name;
+  }
+  menu.title = (char*)"TOTP authenticator";
+  menu.scrollbar = 1;
+  menu.scrollout = 1;
+  menu.height = 7;
+  menu.nodatamsg = (char*)"No tokens - press F2";
+  while(1) {
+    drawFkeyLabels(0, 0x0186, 0, 0, 0, 0); // NEW
+    if(menu.numitems) {
+      drawFkeyLabels(0x0235, -1, 0x0188, 0x0038); // FACTOR, RENAME, DELETE
+    }
+    int res = doMenu(&menu);
+    switch(res) {
+      case MENU_RETURN_EXIT:
+        return;
+      case KEY_CTRL_F1:
+        if(!menu.numitems) break;
+      case MENU_RETURN_SELECTION:
+        viewTOTPcodeGUI(&ts[menu.selection-1]);
+        break;
+      case KEY_CTRL_F2:
+        if(menu.numitems >= MAX_DAY_EVENTS) {
+          AUX_DisplayErrorMessage(0x2E);
+        } else {
+          if(addTOTPGUI()) goto reload;
+        }
+        break;
+      case KEY_CTRL_F3:
+        if(menu.numitems && renameTOTPGUI(menu.selection-1, ts[menu.selection-1].name))
+          goto reload;
+        break;
+      case KEY_CTRL_F4:
+      case KEY_CTRL_DEL:
+        if(menu.numitems && deleteTOTPGUI(menu.selection-1)) goto reload;
+        break;
+    }
+  }
+}
+
+void viewTOTPcodeGUI(totp* tkn) {
+  unsigned short key = 0; int keyCol, keyRow;
+  Bdisp_AllClr_VRAM();
+  DisplayStatusArea();
+  drawScreenTitle(tkn->name);
+  while(key != KEY_PRGM_EXIT) {
+    int ThirtySecCode = computeTOTP(tkn);
+    char buffer[10] = "";
+    char buffer2[10];
+    itoa(tkn->totpcode, (unsigned char*)buffer2);
+    // pad with zeros:
+    char* ptr = buffer;
+    for(int i = 100000; i != 1; i /= 10) {
+      if(tkn->totpcode < i) {
+        *ptr = '0';
+        ptr++;
+      }
+    }
+    strcpy(ptr, buffer2);
+    long long int ms_spent_ll = currentUnixTime() - (long long int)ThirtySecCode * 30LL * 1000LL;
+    int ms_spent = (int)(ms_spent_ll);
+
+    drawCircularCountdownIndicator(LCD_WIDTH_PX/2, 104, 44, COLOR_BLACK, COLOR_WHITE, (ms_spent*43)/30000);
+    // fade in/out animation for text
+    int val = 0;
+    if(ms_spent >= 29000) {
+      val += (-29000 + ms_spent)/4;
+    } else if (ms_spent <= 1020) {
+      val += (1020 - ms_spent)/4;
+    }
+    int color = drawRGB24toRGB565(val, val, val);
+    printCentered(buffer, 164, color, COLOR_WHITE);
+    Bdisp_PutDisp_DD();
+    key = PRGM_GetKey();
+    if(key == KEY_PRGM_MENU) GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); //this is here just to handle the Menu key
+  }
+  // clean keybuffer:
+  GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key);
+}
+
+int addTOTPGUI() {
+  char friendlyname[25] = "";
+  char key[32] = "";
+  int curstep = 0;
+  while(1) {
+    SetBackGround(0x0A);
+    clearLine(1,8);
+    drawScreenTitle((char*)"Add TOTP token");
+    // < (first label) and Next or Finish (last label)
+    drawFkeyLabels((curstep>0 ? 0x036F : -1), -1, -1, -1, -1, (curstep==1 ? 0x04A4 : 0x04A3));
+    if(curstep == 0) {
+      drawScreenTitle(NULL, (char*)"Friendly name:");
+      textInput input;
+      input.charlimit=21;
+      input.acceptF6=1;
+      input.forcetext = 1;
+      input.buffer = friendlyname;
+      while(1) {
+        input.key=0;
+        int res = doTextInput(&input);
+        if (res==INPUT_RETURN_EXIT) return 0; // user aborted
+        else if (res==INPUT_RETURN_CONFIRM) {
+          curstep++;
+          break;
+        }
+      }
+    } else if(curstep == 1) {
+      drawScreenTitle(NULL, (char*)"Base32 key:");
+      textInput input;
+      input.charlimit=32;
+      input.acceptF6=1;
+      input.buffer = key;
+      int inloop = 1;
+      while(inloop) {
+        input.key=0;
+        int res = doTextInput(&input);
+        if (res==INPUT_RETURN_EXIT) return 0; // user aborted
+        else if (res==INPUT_RETURN_CONFIRM) {
+          char* b = key;
+          for(; *b; b++) {
+            *b = toupper(*b);
+            // commonly mistyped characters:
+            if(*b == '0') *b = 'O';
+            if(*b == '1') *b = 'I';
+          }
+          if(base32_validate(key)) {
+            inloop = 0; // all fields complete, continue with token adding
+          } else {
+            AUX_DisplayErrorMessage(0x3E);
+          }
+        }
+        else if (res==INPUT_RETURN_KEYCODE && input.key == KEY_CTRL_F1) {
+          curstep--;
+          break;
+        }
+      }
+      if(!inloop) break;
+    }
+  }
+  addTOTP(friendlyname, key);
+  return 1;
+}
+
+int renameTOTPGUI(int index, char* oldname) {
+  //reload the files array after using this function!
+  //returns 0 if user aborts, 1 if renames.
+  SetBackGround(6);
+  clearLine(1,8);
+  drawScreenTitle((char*)"Rename TOTP token");
+  char newname[25];
+  strcpy(newname, oldname);
+  textInput input;
+  input.forcetext=1;
+  input.charlimit=21;
+  input.buffer = (char*)newname;
+  while(1) {
+    input.key=0;
+    int res = doTextInput(&input);
+    if (res==INPUT_RETURN_EXIT) return 0; // user aborted
+    else if (res==INPUT_RETURN_CONFIRM) {
+      renameTOTP(index, newname);
+      return 1;
+    }
+  }
+  return 0;
+}
+
+int deleteTOTPGUI(int index) {
+  mMsgBoxPush(5);
+  mPrintXY(3, 2, (char*)"Remove the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 3, (char*)"Selected Token?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  int textX = 2*18; int textY = 3*24;
+  PrintMiniMini(&textX, &textY, (char*)"Make sure you do not lock yourself out", 16, TEXT_COLOR_RED, 0);
+  textX = 2*18; textY += 12;
+  PrintMiniMini(&textX, &textY, (char*)"of any website or other system.", 16, TEXT_COLOR_RED, 0);
+  if(closeMsgBox(1, 5)) {
+    removeTOTP(index);
+    return 1;
+  }
+  return 0;
 }

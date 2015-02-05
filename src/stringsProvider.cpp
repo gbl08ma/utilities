@@ -136,3 +136,39 @@ void stringToMini(char* dest, char* orig) {
   }
   dest[dlen] = '\0';
 }
+
+int base32_decode(const unsigned char *encoded, unsigned char *result, int size) {
+  // assumes encoded value is perfect (no whitespace, invalid chars, etc.)
+  // further assumes all letters are upper-case
+  int bytes_buffer = 0, bits_count = 0, i = 0;
+  for(; i < size && *encoded; encoded++) {
+    unsigned char cur_bits;
+    if(isupper(*encoded)) {
+      cur_bits = *encoded - 'A';
+    } else if(*encoded > '1' && *encoded < '8') {
+      cur_bits = *encoded - '2' + 26;
+    } else return -1;
+    // add new bits to end of queue:
+    bytes_buffer <<= 5;
+    bytes_buffer |= cur_bits;
+    bits_count += 5;
+    if(bits_count >= 8) {
+      // we have enough to fill another byte of result
+      bits_count -= 8;
+      result[i++] = bytes_buffer >> bits_count;
+    }
+  }
+  if (i < size) {
+    result[i] = 0;
+  }
+  return i;
+}
+
+int base32_validate(char* string) {
+  // returns 1 if the provided string is valid base32
+  // returns 0 if not
+  for(; *string; string++) {
+    if(!(isupper(*string) || (*string > '1' && *string < '8'))) return 0;
+  }
+  return 1;
+}

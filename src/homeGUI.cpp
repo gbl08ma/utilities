@@ -297,10 +297,11 @@ void toolsMenu(int* pane_keycache) {
   MenuItem menuitems[5];
   menuitems[0].text = (char*)"Balance manager";
   menuitems[1].text = (char*)"Password generator";
+  menuitems[2].text = (char*)"TOTP authenticator";
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=2;
+  menu.numitems=3;
   menu.scrollbar=0;
   menu.width=19;
   menu.height=4;
@@ -317,6 +318,7 @@ void toolsMenu(int* pane_keycache) {
         switch(menu.selection) {
           case 1: balanceManager(); break;
           case 2: passwordGenerator(); break;
+          case 3: totpClient(); break;
         }
         return;
       case KEY_CTRL_F6:

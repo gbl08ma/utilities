@@ -19,6 +19,7 @@
 void drawRectangle(int x, int y, int width, int height, unsigned short color);
 void drawLine(int x1, int y1, int x2, int y2, int color);
 void drawFilledCircle(int centerx, int centery, int radius, color_t color);
+void drawCircularCountdownIndicator(int centerx, int centery, int radius, color_t colorfg, color_t colorbg, int inner);
 void VRAMReplaceColorInRect(int x, int y, int width, int height, color_t color_old, color_t color_new);
 void VRAMInvertArea(short x, short y, short width, short height);
 void darkenStatusbar();
@@ -40,5 +41,10 @@ void popAllMsgBoxes();
 int getNumberOfMsgBoxPushed();
 void drawScreenTitle(char* title, char* subtitle = NULL);
 void drawFkeyLabels(int f1=-1, int f2=-1, int f3=-1, int f4=-1, int f5=-1, int f6=-1);
+
+// needed for analog clock and some other... circular things:
+int drawRGB24toRGB565(int r, int g, int b);
+double sine(double x);
+double cosine(double x);
 
 #endif

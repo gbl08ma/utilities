@@ -19,6 +19,8 @@
 #include "constantsProvider.hpp"
 #include "fileProvider.hpp"
 #include "timeProvider.hpp"
+#include "stringsProvider.hpp"
+#include "sha1.h"
 
 long long int llabs(long long int i) {
   if(i < 0) i = -i;
@@ -364,4 +366,76 @@ void generateRandomString(char* dest, int length, int symbols, int numbers, int 
     dest[i++] = next;
     dest[i] = 0;
   }
+}
+
+unsigned int computeTOTP(totp* t) {
+  long long int curtime = currentUnixTime() / 1000LL; // seconds since 1 Jan 1970
+  // TODO, adjust for timezone here!!!!!
+  curtime /= 30LL; // 30 second intervals since 1970 like TOTP wants
+  unsigned int code = (unsigned int)curtime;
+
+  int i;
+  unsigned char challenge[8];
+  challenge[0] = 0;
+  challenge[1] = 0;
+  challenge[2] = 0;
+  challenge[3] = 0;
+  challenge[4] = (int)((code >> 24) & 0xFF) ;
+  challenge[5] = (int)((code >> 16) & 0xFF) ;
+  challenge[6] = (int)((code >> 8) & 0XFF);
+  challenge[7] = (int)((code & 0XFF));
+
+  unsigned char digest[20];
+  sha1_hmac(t->key, t->keylen, challenge, 8, digest);
+  unsigned char offset = digest[19] & 0xF;
+
+  t->totpcode = 0;
+  for (i = 0; i < 4; ++i) {
+    t->totpcode <<= 8;
+    t->totpcode  |= digest[offset + i];
+  }
+  t->totpcode &= 0x7FFFFFFF;
+  t->totpcode %= 1000000;
+  return code;
+}
+
+int loadTOTPs(totp* ts) {
+  CalendarEvent events[MAX_DAY_EVENTS];
+  EventDate date;
+  date.day = 0; date.month = 0; date.year = 0;
+  int tokencount = GetEventsForDate(&date, TOTPFOLDER, events);
+  for(int i = 0; i<tokencount; i++) {
+    ts[i].keylen = base32_decode(events[i].description, ts[i].key, 32); // create key from secret string
+    strcpy(ts[i].name, (char*)events[i].title);
+  }
+  return tokencount;
+}
+
+void addTOTP(char* name, char* key) {
+  // key is the base32 encoded key. will not be checked for validity
+  CalendarEvent event;
+  strcpy((char*)event.title, name);
+  strcpy((char*)event.description, key);
+  strcpy((char*)event.location, (char*)"");
+  EventDate date;
+  date.day = 0; date.month = 0; date.year = 0;
+  event.startdate = date;
+  AddEvent(&event, TOTPFOLDER);
+}
+
+void removeTOTP(int index) {
+  EventDate date;
+  date.day = 0; date.month = 0; date.year = 0;
+  CalendarEvent events[MAX_DAY_EVENTS];
+  int c = GetEventsForDate(&date, TOTPFOLDER, events);
+  RemoveEvent(&date, events, TOTPFOLDER, c, index);
+}
+
+void renameTOTP(int index, char* newname) {
+  EventDate date;
+  date.day = 0; date.month = 0; date.year = 0;
+  CalendarEvent events[MAX_DAY_EVENTS];
+  int c = GetEventsForDate(&date, TOTPFOLDER, events);
+  strcpy((char*)events[index].title, newname);
+  ReplaceEventFile(&date, events, TOTPFOLDER, c);
 }

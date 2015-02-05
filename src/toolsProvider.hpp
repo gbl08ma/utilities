@@ -53,5 +53,18 @@ void deleteWallet(char* wallet);
 
 void generateRandomString(char* dest, int length, int symbols, int numbers, int uppercase, int similar, int vowels, int* seed);
 
+typedef struct {
+  char name[25];         // human-friendly name for this token (email address, web site name, etc.)
+  unsigned char key[20]; // decoded secret key
+  int keylen;            // key length when decoded
+  int totpcode;          // TOTP computed code
+} totp;
+
+unsigned int computeTOTP(totp* t);
+int loadTOTPs(totp* ts);
+void addTOTP(char* name, char* key);
+void removeTOTP(int index);
+void renameTOTP(int index, char* newname);
+
 #endif 
  

@@ -40,6 +40,10 @@
 #define BALANCEFOLDER (char*)SMEM_PREFIX CALENDARFOLDER_NAME "\\Balance"
 #endif
 
+#ifndef TOTPFOLDER
+#define TOTPFOLDER (char*)SMEM_PREFIX CALENDARFOLDER_NAME "\\TOTP"
+#endif
+
 #ifndef HASHFILE
 #define HASHFILE (unsigned char*)"Hash"
 #endif

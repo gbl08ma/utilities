@@ -1677,6 +1677,10 @@ pcvoid(drawFilledCircle)(struct ParseState *Parser, struct Value *ReturnValue, s
     drawFilledCircle(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->UnsignedShortInteger);
 }
 
+pcvoid(drawCircularCountdownIndicator)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    drawCircularCountdownIndicator(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->UnsignedShortInteger, Param[4]->Val->UnsignedShortInteger, Param[5]->Val->Integer);
+}
+
 pcvoid(VRAMReplaceColorInRect)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     VRAMReplaceColorInRect(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->UnsignedShortInteger, Param[5]->Val->UnsignedShortInteger);
 }
@@ -1759,6 +1763,10 @@ pcvoid(drawScreenTitle)(struct ParseState *Parser, struct Value *ReturnValue, st
 
 pcvoid(drawFkeyLabels)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     drawFkeyLabels(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer);
+}
+
+pcvoid(drawRGB24toRGB565)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = drawRGB24toRGB565(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer);
 }
 
 // hardwareProvider
@@ -2046,6 +2054,14 @@ pcvoid(stringToMini)(struct ParseState *Parser, struct Value *ReturnValue, struc
     stringToMini((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
+pcvoid(base32_decode)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = base32_decode((unsigned char*)Param[0]->Val->Pointer, (unsigned char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
+}
+
+pcvoid(base32_validate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = base32_validate((char*)Param[0]->Val->Pointer);
+}
+
 // tasksGUI
 
 pcvoid(viewTasks)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2272,6 +2288,26 @@ pcvoid(passwordGenerator)(struct ParseState *Parser, struct Value *ReturnValue, 
     passwordGenerator();
 }
 
+pcvoid(totpClient)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    totpClient();
+}
+
+pcvoid(viewTOTPcodeGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    viewTOTPcodeGUI((totp*)Param[0]->Val->Pointer);
+}
+
+pcvoid(addTOTPGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = addTOTPGUI();
+}
+
+pcvoid(renameTOTPGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = renameTOTPGUI(Param[0]->Val->Integer, (char*)Param[1]->Val->Pointer);
+}
+
+pcvoid(deleteTOTPGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = deleteTOTPGUI(Param[0]->Val->Integer);
+}
+
 // toolsProvider
 
 pcvoid(currencyToString)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2340,6 +2376,26 @@ pcvoid(deleteWallet)(struct ParseState *Parser, struct Value *ReturnValue, struc
 
 pcvoid(generateRandomString)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     generateRandomString((char*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer, (int*)Param[7]->Val->Pointer);
+}
+
+pcvoid(computeTOTP)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->UnsignedInteger = computeTOTP((totp*)Param[0]->Val->Pointer);
+}
+
+pcvoid(loadTOTPs)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = loadTOTPs((totp*)Param[0]->Val->Pointer);
+}
+
+pcvoid(addTOTP)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    addTOTP((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
+}
+
+pcvoid(removeTOTP)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    removeTOTP(Param[0]->Val->Integer);
+}
+
+pcvoid(renameTOTP)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    renameTOTP(Param[0]->Val->Integer, (char*)Param[1]->Val->Pointer);
 }
 
 // versionProvider.hpp
@@ -2502,6 +2558,7 @@ const struct LibraryFunction UtilitiesGraphicsProvider[] =
     { pcfunc(drawRectangle),         "void drawRectangle(int, int, int, int, unsigned short);" },
     { pcfunc(drawLine),              "void drawLine(int, int, int, int, int);" },
     { pcfunc(drawFilledCircle),      "void drawFilledCircle(int, int, int, unsigned short);" },
+    { pcfunc(drawCircularCountdownIndicator),"void drawCircularCountdownIndicator(int, int, int, unsigned short, unsigned short, int);" },
     { pcfunc(VRAMReplaceColorInRect),"void VRAMReplaceColorInRect(int, int, int, int, unsigned short, unsigned short);" },
     { pcfunc(VRAMInvertArea),        "void VRAMInvertArea(short, short, short, short);" },
     { pcfunc(darkenStatusbar),       "void darkenStatusbar(void);" },
@@ -2523,6 +2580,7 @@ const struct LibraryFunction UtilitiesGraphicsProvider[] =
     { pcfunc(getNumberOfMsgBoxPushed),"int getNumberOfMsgBoxPushed(void);" },
     { pcfunc(drawScreenTitle),       "void drawScreenTitle(char*, char*);" },
     { pcfunc(drawFkeyLabels),        "void drawFkeyLabels(int, int, int, int, int, int);" },
+    { pcfunc(drawRGB24toRGB565),     "int drawRGB24toRGB565(int, int, int);" },
     { NULL,         NULL }
 };
 
@@ -2662,6 +2720,8 @@ const struct LibraryFunction UtilitiesStringsProvider[] =
     { pcfunc(memmem),                "void* memmem(char*, int, char*, int, int);" },
     { pcfunc(strncpy_retlen),        "int strncpy_retlen(unsigned char*, unsigned char*, int);" },
     { pcfunc(stringToMini),          "void stringToMini(char*, char*);" },
+    { pcfunc(base32_decode),         "int base32_decode(unsigned char*, unsigned char*, int);" },
+    { pcfunc(base32_validate),       "int base32_validate(char*);" },
     { NULL,         NULL }
 };
 
@@ -2740,6 +2800,11 @@ const struct LibraryFunction UtilitiesToolsGUI[] =
     { pcfunc(deleteWalletGUI),        "int deleteWalletGUI(char*);" },
     { pcfunc(renameWalletGUI),        "int renameWalletGUI(char*, char*);" },
     { pcfunc(passwordGenerator),      "void passwordGenerator(void);" },
+    { pcfunc(totpClient),             "void totpClient(void);" },
+    { pcfunc(viewTOTPcodeGUI),        "void viewTOTPcodeGUI(void*);" },
+    { pcfunc(addTOTPGUI),             "int addTOTPGUI(void);" },
+    { pcfunc(renameTOTPGUI),          "int renameTOTPGUI(int, char*);" },
+    { pcfunc(deleteTOTPGUI),          "int deleteTOTPGUI(int);" },
     { NULL,         NULL }
 };
 
@@ -2762,6 +2827,11 @@ const struct LibraryFunction UtilitiesToolsProvider[] =
     { pcfunc(createWallet),           "void createWallet(char*, void*);" },
     { pcfunc(deleteWallet),           "void deleteWallet(char*);" },
     { pcfunc(generateRandomString),   "void generateRandomString(char*, int, int, int, int, int, int, int*);" },
+    { pcfunc(computeTOTP),            "unsigned int computeTOTP(void*);" },
+    { pcfunc(loadTOTPs),              "int loadTOTPs(void*);" },
+    { pcfunc(addTOTP),                "void addTOTP(char*, char*);" },
+    { pcfunc(removeTOTP),             "void removeTOTP(int);" },
+    { pcfunc(renameTOTP),             "void renameTOTP(int, char*);" },
     { NULL,         NULL }
 };
 
