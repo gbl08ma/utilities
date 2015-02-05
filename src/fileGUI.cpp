@@ -757,8 +757,12 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
       case KEY_CTRL_LEFT:
         return 0;
         break;
-      case KEY_CTRL_F1:
       case KEY_CTRL_EXE:
+        #ifdef ENABLE_PICOC_SUPPORT
+        if(allowEdit && EndsIWith(file->filename, (char*)".c")) return 3;
+        #endif
+        // else deliberate fallthrough
+      case KEY_CTRL_F1:
         if(!compressed) {
           if(stringEndsInJPG(file->filename)) viewImage(file->filename);
           else fileViewAsText(file->filename);
