@@ -303,6 +303,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
         if(menu.numitems>0 && renameFileGUI(files, &menu, browserbasepath)) return 1;
         break;
       case KEY_CTRL_F6:
+      case KEY_CTRL_DEL:
         if(menu.numselitems>0 && deleteFilesGUI(files, &menu)) return 1; // if user said yes and files were deleted, reload file list
         break;
       case KEY_CTRL_PASTE:
