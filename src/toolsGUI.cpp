@@ -782,7 +782,7 @@ int addTOTPGUI() {
       int textY = 3*24+2;
       PrintMini(&textX, &textY, (char*)"This is usually shown as a QR code.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
       textX=0; textY += 17;
-      PrintMini(&textX, &textY, (char*)"Try to look for the \"I can't scan a QR", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+      PrintMini(&textX, &textY, (char*)"Try looking for the \"I can't scan a QR", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
       textX=0; textY += 17;
       PrintMini(&textX, &textY, (char*)"code\" option. A key usually looks", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
       textX=0; textY += 17;
