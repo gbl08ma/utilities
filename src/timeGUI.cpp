@@ -292,9 +292,9 @@ void setDateGUI(int canExit) {
 }
 
 
-void RTCunadjustedWizard(int helpMessage) {
+void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
   //first check if RTC is unadjusted. if not, return.
-  if(!getRTCisUnadjusted()) return;
+  if(!ignoreAdjusted && !getRTCisUnadjusted()) return;
   if(helpMessage) {
     textArea text;
     text.title = (char*)"Clock unadjusted";
@@ -349,7 +349,7 @@ void RTCunadjustedWizard(int helpMessage) {
   elem[1].text = (char*)"If you ever need to adjust the clock again press Shift->Menu and choose the appropriate options.";
   elem[2].newLine = 1;
   elem[2].lineSpacing = 8;
-  elem[2].text = (char*)"Press EXE or EXIT to close.";
+  elem[2].text = (char*)"Press EXE or EXIT to continue.";
   
   text.numelements = 3;
   doTextArea(&text);

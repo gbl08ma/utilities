@@ -19,7 +19,7 @@
 
 void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminiinvert=0);
 void drawAnalogClock(int cx, int cy, int radius, int colorbg, int colorfg);
-void RTCunadjustedWizard(int helpMessage);
+void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted = 0);
 void setTimeGUI(int canExit = 1);
 void setDateGUI(int canExit = 1);
 void currentTimeToBasicVar();

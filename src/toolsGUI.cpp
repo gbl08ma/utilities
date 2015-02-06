@@ -685,7 +685,6 @@ void totpClient() {
 void viewTOTPcodeGUI(totp* tkn) {
   unsigned short key = 0; int keyCol, keyRow;
   Bdisp_AllClr_VRAM();
-  DisplayStatusArea();
   drawScreenTitle(tkn->name);
   while(key != KEY_PRGM_EXIT) {
     int ThirtySecCode = computeTOTP(tkn);
@@ -714,11 +713,33 @@ void viewTOTPcodeGUI(totp* tkn) {
     }
     int color = drawRGB24toRGB565(val, val, val);
     printCentered(buffer, 164, color, COLOR_WHITE);
+    if(ms_spent < 2500) {
+    } else if(ms_spent < 5000) {
+      DefineStatusMessage((char*)"Having problems with the code?", 1, 0, 0);
+    } else if(ms_spent < 7500) {
+      DefineStatusMessage((char*)"If yes, please make sure that the", 1, 0, 0);
+    } else if(ms_spent < 10000) {
+      DefineStatusMessage((char*)"calculator's clock is adjusted", 1, 0, 0);
+    } else if(ms_spent < 12500) {
+      DefineStatusMessage((char*)"and that the timezone setting", 1, 0, 0);
+    } else if(ms_spent < 15000) {
+      DefineStatusMessage((char*)"is correct.", 1, 0, 0);
+    } else if(ms_spent < 17500) {
+      DefineStatusMessage((char*)"You can press OPTN to adjust both.", 1, 0, 0);
+    } else if(ms_spent < 20000) {
+      DefineStatusMessage((char*)"", 1, 0, 0);
+    }
+    DisplayStatusArea();
     Bdisp_PutDisp_DD();
     key = PRGM_GetKey();
     if(key == KEY_PRGM_MENU) GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); //this is here just to handle the Menu key
+    if(key == KEY_PRGM_OPTN) {
+      GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); // clear keybuffer
+      RTCunadjustedWizard(0, 1);
+      // then the timezone screen (TODO)
+    }
   }
-  // clean keybuffer:
+  // clear keybuffer:
   GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key);
 }
 
