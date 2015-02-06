@@ -245,6 +245,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         if(menu->numitems>=22) {menu->selection = 22; return MENU_RETURN_SELECTION; }
         break;
     }
+    if(menu->type == MENUTYPE_INSTANT_RETURN) return MENU_RETURN_INSTANT;
   }
   return MENU_RETURN_EXIT;
 }

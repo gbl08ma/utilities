@@ -24,4 +24,5 @@ void setTimeGUI(int canExit = 1);
 void setDateGUI(int canExit = 1);
 void currentTimeToBasicVar();
 void drawHomeClock(int format, int theme=GetSetting(SETTING_THEME));
+void changeTimezone();
 #endif

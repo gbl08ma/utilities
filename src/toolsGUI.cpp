@@ -651,7 +651,7 @@ void totpClient() {
   menu.height = 7;
   menu.nodatamsg = (char*)"No tokens - press F2";
   while(1) {
-    drawFkeyLabels(0, 0x0186, 0, 0, 0, 0); // NEW
+    drawFkeyLabels(0, 0x0186, 0, 0, 0, 0x012A); // NEW, TIME
     if(menu.numitems) {
       drawFkeyLabels(0x0235, -1, 0x0188, 0x0038); // FACTOR, RENAME, DELETE
     }
@@ -679,6 +679,9 @@ void totpClient() {
       case KEY_CTRL_DEL:
         if(menu.numitems && deleteTOTPGUI(menu.selection-1)) goto reload;
         break;
+      case KEY_CTRL_F6:
+        changeTimezone();
+        break;
     }
   }
 }
@@ -701,7 +704,7 @@ void viewTOTPcodeGUI(totp* tkn) {
       }
     }
     strcpy(ptr, buffer2);
-    long long int ms_spent_ll = currentUnixTime() - (long long int)ThirtySecCode * 30LL * 1000LL;
+    long long int ms_spent_ll = currentUTCUnixTime() - (long long int)ThirtySecCode * 30LL * 1000LL;
     int ms_spent = (int)(ms_spent_ll);
 
     drawCircularCountdownIndicator(LCD_WIDTH_PX/2, 104, 44, COLOR_BLACK, COLOR_WHITE, (ms_spent*43)/30000);
@@ -738,7 +741,7 @@ void viewTOTPcodeGUI(totp* tkn) {
       DefineStatusMessage((char*)"", 1, 0, 0);
       GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); // clear keybuffer
       RTCunadjustedWizard(0, 1);
-      // then the timezone screen (TODO)
+      changeTimezone();
       return; // so we don't have to redraw etc.
       // Also, this way the Shift+Menu instruction shown in the adjustment wizard becomes valid immediately,
       // which is great if the user wants to repeat the adjustment immediately.

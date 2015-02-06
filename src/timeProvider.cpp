@@ -293,6 +293,10 @@ long long int currentUnixTime() { // please note, this is milliseconds from epoc
   unsigned int fhour=0,fminute=0,fsecond=0,millisecond=0;
   RTC_GetTime( &fhour, &fminute, &fsecond, &millisecond );
   return DateTime2Unix(getCurrentYear(), getCurrentMonth(), getCurrentDay(), getCurrentHour(), getCurrentMinute(), getCurrentSecond(), millisecond);
+}
+
+long long int currentUTCUnixTime() {
+  return currentUnixTime() - (long long int)(GetSetting(SETTING_TIMEZONE) - 51) * 15LL*60LL*1000LL;
 } 
 
 void setTime(int hour, int minute, int second) {

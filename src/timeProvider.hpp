@@ -59,6 +59,7 @@ void currentTimeToString(char *buffer, int format=GetSetting(SETTING_TIMEFORMAT)
 void timeToString(char *buffer, int h, int min, int sec, int format=GetSetting(SETTING_TIMEFORMAT), int showSeconds=1);
 
 long long int currentUnixTime(); // please note, this is milliseconds from epoch and not seconds
+long long int currentUTCUnixTime(); // same as above but adjusted for the offset the user specified for TOTP
 
 void setTime(int hour, int minute, int second);
 void setDate(int year, int month, int day);

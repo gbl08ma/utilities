@@ -369,8 +369,7 @@ void generateRandomString(char* dest, int length, int symbols, int numbers, int 
 }
 
 unsigned int computeTOTP(totp* t) {
-  long long int curtime = currentUnixTime() / 1000LL; // seconds since 1 Jan 1970
-  // TODO, adjust for timezone here!!!!!
+  long long int curtime = currentUTCUnixTime() / 1000LL; // seconds since 1 Jan 1970
   curtime /= 30LL; // 30 second intervals since 1970 like TOTP wants
   unsigned int code = (unsigned int)curtime;
 

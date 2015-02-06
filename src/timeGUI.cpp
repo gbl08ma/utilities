@@ -451,3 +451,81 @@ void drawHomeClock(int format, int theme) {
     // 11 is for showing nothing at all... so put nothing in VRAM.
   }
 }
+
+const char *tzMinutes[] = {"00", "15", "30", "45"};
+
+void changeTimezone() {
+  Bdisp_AllClr_VRAM();
+  textArea text;
+  text.y = 5*24+2;
+  text.type = TEXTAREATYPE_INSTANT_RETURN;
+  text.scrollbar = 0;
+  textElement elem[5];
+  text.elements = elem;
+  elem[0].text = (char*)"Adjust the setting so that the time on the status bar matches with the UTC time. The latter can be seen at http://time.is/UTC";
+  text.numelements = 1;
+  doTextArea(&text);
+
+  Menu menu;
+  menu.type = MENUTYPE_INSTANT_RETURN;
+  menu.title = (char*)"Set Timezone";
+  menu.scrollout = 1;
+  menu.height = 5;
+  MenuItem items[109];
+  menu.items = items;
+  // build list with possible offsets:
+  // (from UTC-12:45 to UTC+14:00)
+  // actually, the following code tries to build up to +14:45, but it stops as i reaches 108.
+  char zonestr[109][15];
+  int hour = -12;
+  int mins = 0;
+  char buffer[5];
+  int hasRepeatedZero = 0;
+  for(int i = 0; i < 109; i++) {
+    strcpy(zonestr[i], (char*)"UTC");
+    if(hasRepeatedZero) strcat(zonestr[i], (char*)"+");
+    else strcat(zonestr[i], (char*)"-");
+    if(abs(hour) < 10) strcat(zonestr[i], (char*)"0");
+    itoa(abs(hour), (unsigned char*)buffer);
+    strcat(zonestr[i], buffer);
+    strcat(zonestr[i], (char*)":");
+    if(!hasRepeatedZero) strcat(zonestr[i], tzMinutes[3-mins]);
+    else strcat(zonestr[i], tzMinutes[mins]);
+    items[i].text = zonestr[i];
+    if(++mins == 4) {
+      mins = 0;
+      if(++hour == 15) break;
+      if(hour == 1 && !hasRepeatedZero) {
+        hour = 0;
+        i--; // avoid having both +00:00 and -00:00
+        hasRepeatedZero = 1;
+      }
+    }
+  }
+  menu.numitems = 108;
+  menu.selection = GetSetting(SETTING_TIMEZONE)+1;
+  while(1) {
+    long long int currentUTC = currentUnixTime() - (long long int)(menu.selection - 52) * 15LL*60LL*1000LL;
+    int hours, minutes;
+    long long int seconds;
+    seconds = currentUTC / 1000;
+    currentUTC %= 1000;
+    minutes = (int)(seconds / 60);
+    seconds %= 60;
+    hours = minutes / 60;
+    minutes %= 60;
+    hours %= 24;
+    char buffer[50];
+    strcpy(buffer, (char*)"UTC time: ");
+    timeToString(buffer, hours, minutes, seconds, GetSetting(SETTING_TIMEFORMAT), 0);
+    DefineStatusMessage(buffer, 1, 0, 0);
+    int r = doMenu(&menu);
+    if(r == MENU_RETURN_EXIT) {
+      DefineStatusMessage((char*)"", 1, 0, 0);
+      return;
+    }
+    else if(r == MENU_RETURN_SELECTION) break;
+  }
+  SetSetting(SETTING_TIMEZONE, menu.selection-1, 1);
+  DefineStatusMessage((char*)"", 1, 0, 0);
+}

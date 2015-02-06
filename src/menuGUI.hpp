@@ -41,6 +41,7 @@ typedef struct
 #define MENUTYPE_MULTISELECT 1
 #define MENUTYPE_NO_KEY_HANDLING 2 //this type of menu doesn't handle any keys, only draws.
 #define MENUTYPE_FKEYS 3 // returns GetKey value of a Fkey when one is pressed
+#define MENUTYPE_INSTANT_RETURN 4 // handles keys but returns immediately after a key press
 typedef struct {
   char* statusText = NULL; // text to be shown on the status bar, may be empty
   char* title = NULL; // title to be shown on the first line if not null
