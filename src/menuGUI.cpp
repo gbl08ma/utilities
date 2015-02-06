@@ -176,6 +176,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
       case KEY_CTRL_F4:
       case KEY_CTRL_F5:
       case KEY_CTRL_F6:
+      case KEY_CTRL_DEL:
         if (menu->type == MENUTYPE_FKEYS || menu->type==MENUTYPE_MULTISELECT) return key; // MULTISELECT also returns on Fkeys
         break;
       case KEY_CTRL_PASTE:
