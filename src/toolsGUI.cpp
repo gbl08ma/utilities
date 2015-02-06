@@ -734,11 +734,16 @@ void viewTOTPcodeGUI(totp* tkn) {
     key = PRGM_GetKey();
     if(key == KEY_PRGM_MENU) GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); //this is here just to handle the Menu key
     if(key == KEY_PRGM_OPTN) {
+      DefineStatusMessage((char*)"", 1, 0, 0);
       GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); // clear keybuffer
       RTCunadjustedWizard(0, 1);
       // then the timezone screen (TODO)
+      return; // so we don't have to redraw etc.
+      // Also, this way the Shift+Menu instruction shown in the adjustment wizard becomes valid immediately,
+      // which is great if the user wants to repeat the adjustment immediately.
     }
   }
+  DefineStatusMessage((char*)"", 1, 0, 0);
   // clear keybuffer:
   GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key);
 }
