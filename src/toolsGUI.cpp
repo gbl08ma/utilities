@@ -778,9 +778,21 @@ int addTOTPGUI() {
       }
     } else if(curstep == 1) {
       drawScreenTitle(NULL, (char*)"Base32 key:");
+      int textX = 0;
+      int textY = 3*24+2;
+      PrintMini(&textX, &textY, (char*)"This is usually shown as a QR code.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+      textX=0; textY += 17;
+      PrintMini(&textX, &textY, (char*)"Try to look for the \"I can't scan a QR", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+      textX=0; textY += 17;
+      PrintMini(&textX, &textY, (char*)"code\" option. A key usually looks", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+      textX=0; textY += 17;
+      PrintMini(&textX, &textY, (char*)"like this: JBSWY3DPEHPK3PXP", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+      textX=0; textY += 17;
+      PrintMini(&textX, &textY, (char*)"Some keys are longer.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
       textInput input;
       input.charlimit=32;
       input.acceptF6=1;
+      input.forcetext = 1;
       input.buffer = key;
       int inloop = 1;
       while(inloop) {
