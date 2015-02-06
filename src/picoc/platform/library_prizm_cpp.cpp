@@ -2108,6 +2108,10 @@ pcvoid(drawHomeClock)(struct ParseState *Parser, struct Value *ReturnValue, stru
     drawHomeClock(Param[0]->Val->Integer, Param[1]->Val->Integer);
 }
 
+pcvoid(changeTimezone)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    changeTimezone();
+}
+
 // timeProvider
 
 pcvoid(getMonthDays)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2747,6 +2751,7 @@ const struct LibraryFunction UtilitiesTimeGUI[] =
     { pcfunc(setDateGUI),            "void setDateGUI(int);" },
     { pcfunc(currentTimeToBasicVar), "void currentTimeToBasicVar(void);" },
     { pcfunc(drawHomeClock),         "void drawHomeClock(int, int);" },
+    { pcfunc(changeTimezone),        "void changeTimezone(void);" },
     { NULL,         NULL }
 };
 
