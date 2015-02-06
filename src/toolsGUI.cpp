@@ -707,7 +707,7 @@ void viewTOTPcodeGUI(totp* tkn) {
     long long int ms_spent_ll = currentUTCUnixTime() - (long long int)ThirtySecCode * 30LL * 1000LL;
     int ms_spent = (int)(ms_spent_ll);
 
-    drawCircularCountdownIndicator(LCD_WIDTH_PX/2, 104, 44, COLOR_BLACK, COLOR_WHITE, (ms_spent*43)/30000);
+    drawCircularCountdownIndicator(LCD_WIDTH_PX/2, 104, 44, COLOR_BLACK, COLOR_WHITE, (ms_spent*43)/30000, getCurrentSecond() < 30 ? 0 : 1);
     // fade in/out animation for text
     int val = 0;
     if(ms_spent >= 29000) {
@@ -723,13 +723,13 @@ void viewTOTPcodeGUI(totp* tkn) {
     } else if(ms_spent < 7500) {
       DefineStatusMessage((char*)"If yes, please make sure that the", 1, 0, 0);
     } else if(ms_spent < 10000) {
-      DefineStatusMessage((char*)"calculator's clock is adjusted", 1, 0, 0);
+      DefineStatusMessage((char*)"calculator's clock is adjusted and", 1, 0, 0);
     } else if(ms_spent < 12500) {
-      DefineStatusMessage((char*)"and that the timezone setting", 1, 0, 0);
+      DefineStatusMessage((char*)"that the timezone is correctly set.", 1, 0, 0);
     } else if(ms_spent < 15000) {
-      DefineStatusMessage((char*)"is correct.", 1, 0, 0);
-    } else if(ms_spent < 17500) {
       DefineStatusMessage((char*)"You can press OPTN to adjust both.", 1, 0, 0);
+    } else if(ms_spent < 17500) {
+      DefineStatusMessage((char*)"", 1, 0, 0);
     } else if(ms_spent < 20000) {
       DefineStatusMessage((char*)"", 1, 0, 0);
     }

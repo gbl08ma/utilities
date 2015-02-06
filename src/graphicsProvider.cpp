@@ -73,10 +73,10 @@ void drawFilledCircle(int centerx, int centery, int radius, color_t color) {
   } 
 }
 
-void drawCircularCountdownIndicator(int centerx, int centery, int radius, color_t colorfg, color_t colorbg, int inner) {
+void drawCircularCountdownIndicator(int centerx, int centery, int radius, color_t colorfg, color_t colorbg, int inner, int swap) {
   drawFilledCircle(centerx, centery, radius, colorfg);
-  drawFilledCircle(centerx, centery, radius-2, colorbg);
-  drawFilledCircle(centerx, centery, inner, colorfg);
+  drawFilledCircle(centerx, centery, radius-2, swap ? colorfg : colorbg);
+  drawFilledCircle(centerx, centery, inner, swap ? colorbg : colorfg);
 }
 
 //ReplaceColor By Kerm:

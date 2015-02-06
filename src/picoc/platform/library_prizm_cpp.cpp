@@ -1678,7 +1678,7 @@ pcvoid(drawFilledCircle)(struct ParseState *Parser, struct Value *ReturnValue, s
 }
 
 pcvoid(drawCircularCountdownIndicator)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    drawCircularCountdownIndicator(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->UnsignedShortInteger, Param[4]->Val->UnsignedShortInteger, Param[5]->Val->Integer);
+    drawCircularCountdownIndicator(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->UnsignedShortInteger, Param[4]->Val->UnsignedShortInteger, Param[5]->Val->Integer, Param[6]->Val->Integer);
 }
 
 pcvoid(VRAMReplaceColorInRect)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2558,7 +2558,7 @@ const struct LibraryFunction UtilitiesGraphicsProvider[] =
     { pcfunc(drawRectangle),         "void drawRectangle(int, int, int, int, unsigned short);" },
     { pcfunc(drawLine),              "void drawLine(int, int, int, int, int);" },
     { pcfunc(drawFilledCircle),      "void drawFilledCircle(int, int, int, unsigned short);" },
-    { pcfunc(drawCircularCountdownIndicator),"void drawCircularCountdownIndicator(int, int, int, unsigned short, unsigned short, int);" },
+    { pcfunc(drawCircularCountdownIndicator),"void drawCircularCountdownIndicator(int, int, int, unsigned short, unsigned short, int, int);" },
     { pcfunc(VRAMReplaceColorInRect),"void VRAMReplaceColorInRect(int, int, int, int, unsigned short, unsigned short);" },
     { pcfunc(VRAMInvertArea),        "void VRAMInvertArea(short, short, short, short);" },
     { pcfunc(darkenStatusbar),       "void darkenStatusbar(void);" },
