@@ -73,7 +73,7 @@ void showHome(chronometer* chrono) {
     if (GetSetting(SETTING_DISPLAY_FKEYS)) {
       drawFkeyLabels(0x043A, 0x043E, 0x012A, 0x011C, 0x03E7, (GetSetting(SETTING_ENABLE_LOCK) ? 0x04D3 : -1)); //POWER, LIGHT, TIME, TOOL, M&S, key icon (lock)
       if (GetSetting(SETTING_THEME)) {
-        darkenFkeys((GetSetting(SETTING_ENABLE_LOCK) == 1 ? 5 : 4));
+        darkenFkeys((GetSetting(SETTING_ENABLE_LOCK) == 1 ? 6 : 5));
       }
     }
     if(!pane_keycache) {

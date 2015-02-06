@@ -536,6 +536,7 @@ int renameWalletGUI(char* wallet, char* newWallet) {
 // Password generator:
 
 void passwordGenerator() {
+  Bdisp_AllClr_VRAM();
   Menu menu;
   menu.type = MENUTYPE_FKEYS;
   menu.scrollbar = 0;
