@@ -730,8 +730,6 @@ void viewTOTPcodeGUI(totp* tkn) {
       DefineStatusMessage((char*)"You can press OPTN to adjust both.", 1, 0, 0);
     } else if(ms_spent < 17500) {
       DefineStatusMessage((char*)"", 1, 0, 0);
-    } else if(ms_spent < 20000) {
-      DefineStatusMessage((char*)"", 1, 0, 0);
     }
     DisplayStatusArea();
     Bdisp_PutDisp_DD();
