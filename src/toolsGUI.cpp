@@ -690,6 +690,7 @@ void viewTOTPcodeGUI(totp* tkn) {
   unsigned short key = 0; int keyCol, keyRow;
   Bdisp_AllClr_VRAM();
   drawScreenTitle(tkn->name);
+  int shown_since_beginning = 0;
   while(key != KEY_PRGM_EXIT) {
     int ThirtySecCode = computeTOTP(tkn);
     char buffer[10] = "";
@@ -717,19 +718,21 @@ void viewTOTPcodeGUI(totp* tkn) {
     }
     int color = drawRGB24toRGB565(val, val, val);
     printCentered(buffer, 164, color, COLOR_WHITE);
-    if(ms_spent < 2500) {
-    } else if(ms_spent < 5000) {
-      DefineStatusMessage((char*)"Having problems with the code?", 1, 0, 0);
-    } else if(ms_spent < 7500) {
-      DefineStatusMessage((char*)"If yes, please make sure that the", 1, 0, 0);
-    } else if(ms_spent < 10000) {
-      DefineStatusMessage((char*)"calculator's clock is adjusted and", 1, 0, 0);
-    } else if(ms_spent < 12500) {
-      DefineStatusMessage((char*)"that the timezone is correctly set.", 1, 0, 0);
-    } else if(ms_spent < 15000) {
-      DefineStatusMessage((char*)"You can press OPTN to adjust both.", 1, 0, 0);
-    } else if(ms_spent < 17500) {
-      DefineStatusMessage((char*)"", 1, 0, 0);
+    if(ms_spent < 2500) shown_since_beginning = 1;
+    else if(shown_since_beginning) {
+      if(ms_spent < 5000) {
+        DefineStatusMessage((char*)"Having problems with the code?", 1, 0, 0);
+      } else if(ms_spent < 7500) {
+        DefineStatusMessage((char*)"If yes, please make sure that the", 1, 0, 0);
+      } else if(ms_spent < 10000) {
+        DefineStatusMessage((char*)"calculator's clock is adjusted and", 1, 0, 0);
+      } else if(ms_spent < 12500) {
+        DefineStatusMessage((char*)"that the timezone is correctly set.", 1, 0, 0);
+      } else if(ms_spent < 15000) {
+        DefineStatusMessage((char*)"You can press OPTN to adjust both.", 1, 0, 0);
+      } else if(ms_spent < 17500) {
+        DefineStatusMessage((char*)"", 1, 0, 0);
+      }
     }
     DisplayStatusArea();
     Bdisp_PutDisp_DD();
