@@ -61,6 +61,7 @@ int main()
   // Set brightness if setting is set
   setBrightnessToStartupSetting();
   Bdisp_EnableColor(1);
+  DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
   
   if(GetSetting(SETTING_IS_FIRST_RUN) == 1) { // must include "== 1", see setting description
     firstRunWizard();
