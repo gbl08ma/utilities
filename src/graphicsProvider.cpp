@@ -233,7 +233,7 @@ int textColorToFullColor(int textcolor) {
   switch(textcolor) {
     case TEXT_COLOR_BLACK: return COLOR_BLACK;
     case TEXT_COLOR_BLUE: return COLOR_BLUE;
-    case TEXT_COLOR_GREEN: return COLOR_GREEN;
+    case TEXT_COLOR_GREEN: return COLOR_LIMEGREEN;
     case TEXT_COLOR_CYAN: return COLOR_CYAN;
     case TEXT_COLOR_RED: return COLOR_RED;
     case TEXT_COLOR_PURPLE: return COLOR_MAGENTA;

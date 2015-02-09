@@ -1765,7 +1765,7 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
   int count = GetEventsForDate(thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
   CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
   count = GetEventsForDate(thisday, CALENDARFOLDER, events);
-  int categoryColors[10] = {COLOR_GRAY, COLOR_BLACK, COLOR_BLUE, COLOR_GREEN, COLOR_CYAN, COLOR_RED, COLOR_MAGENTA, COLOR_YELLOW};
+  int categoryColors[10] = {0xBDF7, COLOR_BLACK, COLOR_BLUE, COLOR_LIMEGREEN, COLOR_CYAN, COLOR_RED, COLOR_MAGENTA, COLOR_YELLOW};
   int curitem = 0;
   while(curitem < count) {
     long int daysduration = DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
