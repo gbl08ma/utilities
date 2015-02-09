@@ -1230,6 +1230,14 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             case KEY_CTRL_F6:
               inscreen = 0;
               break;
+            case KEY_CHAR_0: event->category = 0; break;
+            case KEY_CHAR_1: event->category = 1; break;
+            case KEY_CHAR_2: event->category = 2; break;
+            case KEY_CHAR_3: event->category = 3; break;
+            case KEY_CHAR_4: event->category = 4; break;
+            case KEY_CHAR_5: event->category = 5; break;
+            case KEY_CHAR_6: event->category = 6; break;
+            case KEY_CHAR_7: event->category = 7; break;
             case KEY_CTRL_EXIT: return EVENTEDITOR_RETURN_EXIT;
           }
         }
