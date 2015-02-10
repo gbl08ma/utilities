@@ -1829,8 +1829,16 @@ pcvoid(toolsMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct V
     toolsMenu((int*)Param[0]->Val->Pointer);
 }
 
+pcvoid(handleHomePane)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    handleHomePane(Param[0]->Val->Integer, (int*)Param[1]->Val->Pointer);
+}
+
 pcvoid(eventsPane)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    eventsPane((int*)Param[0]->Val->Pointer);
+    eventsPane(Param[0]->Val->Integer, (int*)Param[1]->Val->Pointer);
+}
+
+pcvoid(memoryUsagePane)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    memoryUsagePane(Param[0]->Val->Integer, (int*)Param[1]->Val->Pointer);
 }
 
 // imageGUI
@@ -1931,7 +1939,7 @@ pcvoid(isPasswordSet)(struct ParseState *Parser, struct Value *ReturnValue, stru
 // memsysGUI
 
 pcvoid(memoryCapacityViewer)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    memoryCapacityViewer();
+    memoryCapacityViewer(Param[0]->Val->Integer);
 }
 
 pcvoid(GetAddins)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2617,7 +2625,9 @@ const struct LibraryFunction UtilitiesHomeGUI[] =
     { pcfunc(timeMenu),              "void timeMenu(void*, int*);" },
     { pcfunc(memsysMenu),            "void memsysMenu(int*);" },
     { pcfunc(toolsMenu),             "void toolsMenu(int*);" },
-    { pcfunc(eventsPane),            "void eventsPane(int*);" },
+    { pcfunc(handleHomePane),        "void handleHomePane(int, int*)" },
+    { pcfunc(eventsPane),            "void eventsPane(int, int*);" },
+    { pcfunc(memoryUsagePane),       "void memoryUsagePane(int, int*);" },
     { NULL,         NULL }
 };
 
@@ -2674,7 +2684,7 @@ const struct LibraryFunction UtilitiesLockProvider[] =
 
 const struct LibraryFunction UtilitiesMemsysGUI[] =
 {
-    { pcfunc(memoryCapacityViewer),  "void memoryCapacityViewer(void);" },
+    { pcfunc(memoryCapacityViewer),  "void memoryCapacityViewer(int);" },
     { pcfunc(GetAddins),             "int GetAddins(void*);" },
     { pcfunc(addinManager),          "void addinManager(void);" },
     { pcfunc(addinManagerSub),       "int addinManagerSub(void*);" },

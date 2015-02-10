@@ -63,14 +63,16 @@ void drawCapacityText(int* textY, const char* desc, long long int cur, long long
   *textY = *textY + 12;
 }
 
-void memoryCapacityViewer() {
-  Bdisp_AllClr_VRAM();
-  drawScreenTitle((char*)"Memory Usage");
+void memoryCapacityViewer(int isPaneOffset) {
+  if(!isPaneOffset) {
+    Bdisp_AllClr_VRAM();
+    drawScreenTitle((char*)"Memory Usage");
+  }
   int smemfree = 0;
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
 
-  int textY = 8;
+  int textY = 8 + isPaneOffset;
   drawCapacityText(&textY, "Storage: ", (long long int)TOTAL_SMEM-(long long int)smemfree, TOTAL_SMEM);
   drawCapacityBar(textY, (long long int)TOTAL_SMEM-(long long int)smemfree, TOTAL_SMEM);
   
@@ -89,7 +91,7 @@ void memoryCapacityViewer() {
   drawCapacityText(&textY, "Password: ", PWcurrentload, PWmaxspace);
   drawCapacityBar(textY, PWcurrentload, PWmaxspace);
 
-  while(1) {
+  while(!isPaneOffset) {
     int key;
     mGetKey(&key);
     if(key == KEY_CTRL_EXIT) return;

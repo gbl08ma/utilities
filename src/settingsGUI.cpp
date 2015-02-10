@@ -270,7 +270,7 @@ inline static int selectPaneType(int orig) {
   
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
-  smallmenu.numitems=2;
+  smallmenu.numitems=3;
   smallmenu.width=17;
   smallmenu.height=4;
   smallmenu.startX=3;
@@ -280,6 +280,7 @@ inline static int selectPaneType(int orig) {
   smallmenu.selection=orig + 1;
   smallmenuitems[0].text = (char*)"Disabled";
   smallmenuitems[1].text = (char*)"Today events";
+  smallmenuitems[2].text = (char*)"Memory usage";
   int sres = doMenu(&smallmenu);
   mMsgBoxPop();
   if(sres == MENU_RETURN_SELECTION) return smallmenu.selection - 1;
@@ -350,12 +351,12 @@ inline static void clockSettingsMenu() {
           SetSetting(SETTING_CLOCK_SECONDS, menuitems[1].value, 1);
           break;
         case 3:
-          menuitems[3].value = !menuitems[3].value;
-          SetSetting(SETTING_DISPLAY_FKEYS, menuitems[3].value, 1);
+          menuitems[2].value = !menuitems[2].value;
+          SetSetting(SETTING_DISPLAY_FKEYS, menuitems[2].value, 1);
           break;
         case 4:
-          menuitems[4].value = !menuitems[4].value;
-          SetSetting(SETTING_THEME, menuitems[4].value, 1); 
+          menuitems[3].value = !menuitems[3].value;
+          SetSetting(SETTING_THEME, menuitems[3].value, 1); 
           break;
         case 5:
         case 6:

@@ -18,7 +18,7 @@
 static unsigned char settings[NUMBER_OF_SETTINGS+1];
 
 // Routines for accessing and setting settings
-// NOTE: directly accessing setting_* variables is now strictly forbidden!
+// NOTE: directly accessing the settings array is strictly forbidden!
 
 int GetSetting(int setting) {
   return settings[setting];

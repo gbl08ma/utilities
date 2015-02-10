@@ -143,8 +143,11 @@ void showHome(chronometer* chrono) {
           if (res==INPUT_RETURN_CONFIRM && !strcmp(code, "qazedcol")) return; // kill main interface; currently this opens masterControl.
         }
         break;
+      case KEY_PRGM_UP:
       case KEY_PRGM_RIGHT:
-        //if(GetSetting(SETTING_HOME_PANES)) eventsPane(&pane_keycache);
+      case KEY_PRGM_DOWN:
+      case KEY_PRGM_LEFT:
+        handleHomePane(key, &pane_keycache);
         break;
       case 76: //x-0-theta key
         currentTimeToBasicVar();
@@ -385,6 +388,21 @@ void memsysMenu(int* pane_keycache) {
   }
 }
 
+void handleHomePane(int key, int* pane_keycache) {
+  int ptype, retkey;
+  switch(key) {
+    case KEY_PRGM_UP:    retkey = KEY_CTRL_DOWN; ptype = GetSetting(SETTING_HOME_PANE_TOP); break;
+    case KEY_PRGM_RIGHT: retkey = KEY_CTRL_LEFT; ptype = GetSetting(SETTING_HOME_PANE_RIGHT); break;
+    case KEY_PRGM_DOWN:  retkey = KEY_CTRL_UP; ptype = GetSetting(SETTING_HOME_PANE_BOTTOM); break;
+    default:             retkey = KEY_CTRL_RIGHT; ptype = GetSetting(SETTING_HOME_PANE_LEFT); break;
+  }
+  switch(ptype) {
+    case 0: return;
+    case 1: eventsPane(retkey, pane_keycache); break;
+    case 2: memoryUsagePane(retkey, pane_keycache); break;
+  }
+}
+
 void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
   color_t color_fg, color_bg, color_title;
   if (GetSetting(SETTING_THEME)) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; color_title = COLOR_ORANGE; } else
@@ -423,7 +441,7 @@ void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int 
   } 
 }
 #define HOME_EVENTS_DISPLAY_FULL 6
-void eventsPane(int* pane_keycache) {
+void eventsPane(int retkey, int* pane_keycache) {
   int key;
   EventDate thisday;
   thisday.day = getCurrentDay(); thisday.month = getCurrentMonth(); thisday.year = getCurrentYear();
@@ -454,9 +472,37 @@ void eventsPane(int* pane_keycache) {
       case KEY_CTRL_F4:
       case KEY_CTRL_F5:
         *pane_keycache = key;
-      case KEY_CTRL_LEFT:
       case KEY_CTRL_EXIT:
-        return; //return to the pane to the left (main)
+        return; //return to the main pane
     }
+    if(key == retkey) return; //return to the main pane
+  }
+}
+
+void memoryUsagePane(int retkey, int* pane_keycache) {
+  if (GetSetting(SETTING_THEME)) DrawFrame(0x000000);
+  else DrawFrame(0xfffff);
+  Bdisp_Fill_VRAM( COLOR_WHITE, 2 ); //fill between the status area and f-key area
+  memoryCapacityViewer(-24);
+  if(GetSetting(SETTING_THEME)) {
+    VRAMReplaceColorInRect(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24*2-1, COLOR_BLACK, COLOR_CYAN);
+    VRAMReplaceColorInRect(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24*2-1, COLOR_WHITE, COLOR_BLACK);
+    VRAMReplaceColorInRect(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24*2-1, COLOR_CYAN, COLOR_WHITE);
+  }
+  while (1) {
+    int key;
+    if (GetSetting(SETTING_THEME)) DrawFrame(0x000000);
+    mGetKey(&key, GetSetting(SETTING_THEME));
+    switch(key) {
+      case KEY_CTRL_F1:
+      case KEY_CTRL_F2:
+      case KEY_CTRL_F3:
+      case KEY_CTRL_F4:
+      case KEY_CTRL_F5:
+        *pane_keycache = key;
+      case KEY_CTRL_EXIT:
+        return; //return to the main pane
+    }
+    if(key == retkey) return; //return to the main pane
   }
 }

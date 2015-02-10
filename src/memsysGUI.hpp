@@ -28,7 +28,7 @@ typedef struct
   char name[MAX_NAME_SIZE]; //friendly name
 } AddIn;
 
-void memoryCapacityViewer();
+void memoryCapacityViewer(int isPaneOffset=0);
 int GetAddins(AddIn addins[]);
 void addinManager();
 int addinManagerSub(Menu* menu);
