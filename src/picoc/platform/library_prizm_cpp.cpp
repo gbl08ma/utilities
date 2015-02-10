@@ -1449,6 +1449,10 @@ pcvoid(getDBneedsRepairFlag)(struct ParseState *Parser, struct Value *ReturnValu
 
 // chronoGUI
 
+pcvoid(formatChronoString)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    formatChronoString((chronometer*)Param[0]->Val->Pointer, Param[1]->Val->Integer, (unsigned char*)Param[2]->Val->Pointer, Param[3]->Val->Integer);
+}
+
 pcvoid(stopAndUninstallStubTimer)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     stopAndUninstallStubTimer();
 }
@@ -1470,7 +1474,7 @@ pcvoid(clearSelectedChronos)(struct ParseState *Parser, struct Value *ReturnValu
 }
 
 pcvoid(setChronoGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    setChronoGUI((Menu*)Param[0]->Val->Pointer, (chronometer*)Param[1]->Val->Pointer);
+    setChronoGUI((Menu*)Param[0]->Val->Pointer, (chronometer*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
 pcvoid(setBuiltinChrono)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2084,6 +2088,10 @@ pcvoid(drawLongDate)(struct ParseState *Parser, struct Value *ReturnValue, struc
     drawLongDate(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer);
 }
 
+pcvoid(drawAnalogChronometer)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    drawAnalogChronometer(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer, Param[7]->Val->Integer, Param[8]->Val->Integer);
+}
+
 pcvoid(drawAnalogClock)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     drawAnalogClock(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer);
 }
@@ -2478,12 +2486,13 @@ const struct LibraryFunction UtilitiesCalendarProvider[] =
 
 const struct LibraryFunction UtilitiesChronoGUI[] =
 {
+    { pcfunc(formatChronoString),    "void formatChronoString(void*, int, unsigned char*, int);" },
     { pcfunc(stopAndUninstallStubTimer),"void stopAndUninstallStubTimer();" },
     { pcfunc(chronoScreen),          "void chronoScreen(void*);" },
     { pcfunc(startSelectedChronos),  "void startSelectedChronos(void*, void*, int);" },
     { pcfunc(stopSelectedChronos),   "void stopSelectedChronos(void*, void*, int);" },
     { pcfunc(clearSelectedChronos),  "void clearSelectedChronos(void*, void*, int);" },
-    { pcfunc(setChronoGUI),          "void setChronoGUI(void*, void*);" },
+    { pcfunc(setChronoGUI),          "void setChronoGUI(void*, void*, int);" },
     { pcfunc(setBuiltinChrono),      "void setBuiltinChrono(void*, void*);" },
     { pcfunc(getLastChronoComplete), "int getLastChronoComplete(void);" },
     { pcfunc(checkDownwardsChronoCompleteGUI),"void checkDownwardsChronoCompleteGUI(void*, int);" },
@@ -2746,6 +2755,7 @@ const struct LibraryFunction UtilitiesTimeGUI[] =
 {
     { pcfunc(drawLongDate),          "void drawLongDate(int, int, int, int, int);" },
     { pcfunc(drawAnalogClock),       "void drawAnalogClock(int, int, int, int, int);" },
+    { pcfunc(drawAnalogChronometer), "void drawAnalogChronometer(int, int, int, int, int, int, int, int, int);" },
     { pcfunc(RTCunadjustedWizard),   "void RTCunadjustedWizard(int);" },
     { pcfunc(setTimeGUI),            "void setTimeGUI(int);" },
     { pcfunc(setDateGUI),            "void setDateGUI(int);" },

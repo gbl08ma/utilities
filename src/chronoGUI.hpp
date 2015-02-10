@@ -18,14 +18,16 @@
 #include "chronoProvider.hpp"
 #include "menuGUI.hpp"
 
+void formatChronoString(chronometer* tchrono, int num, unsigned char* string, int includeBeginning);
 void stopAndUninstallStubTimer();
 void chronoScreen(chronometer* chrono);
 void startSelectedChronos(Menu* menu, chronometer* tchrono, int count);
 void stopSelectedChronos(Menu* menu, chronometer* tchrono, int count);
 void clearSelectedChronos(Menu* menu, chronometer* tchrono, int count);
-void setChronoGUI(Menu* menu, chronometer* tchrono);
+void setChronoGUI(Menu* menu, chronometer* tchrono, int menuSelOnly);
 void setBuiltinChrono(Menu* menu, chronometer* tchrono);
 int getLastChronoComplete();
 void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count);
+void viewChrono(Menu* menu, chronometer* chrnarr);
 
 #endif

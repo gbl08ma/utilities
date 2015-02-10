@@ -31,23 +31,24 @@
 
 static int lastChronoComplete=0; // 1-based. 0 means no chrono completed. for notification on home screen.
 
-inline void formatChronoString(chronometer* tchrono, int num, unsigned char* string)
-{
+void formatChronoString(chronometer* tchrono, int num, char* string, int isChronoView) {
   long long int unixtime = currentUnixTime();
   long long int unixdiff;
   char buffer[20];
-  itoa(num, (unsigned char*)buffer);
-  if(tchrono->state == CHRONO_STATE_CLEARED) {
-    strcpy((char*)string, "\xe6\xa6");
-  } else if (tchrono->state == CHRONO_STATE_RUNNING) {
-    if(tchrono->type == CHRONO_TYPE_UP) strcpy((char*)string, "\xe6\x9C");
-    else strcpy((char*)string, "\xe6\x9D"); 
-  } else {
-    if(tchrono->type == CHRONO_TYPE_UP) strcpy((char*)string, "\xe6\xAC");
-    else strcpy((char*)string, "\xe6\xAD"); 
-  }
-  strcat((char*)string, buffer);
-  strcat((char*)string, ":");
+  if(!isChronoView) {
+    itoa(num, (unsigned char*)buffer);
+    if(tchrono->state == CHRONO_STATE_CLEARED) {
+      strcpy(string, "\xe6\xa6");
+    } else if (tchrono->state == CHRONO_STATE_RUNNING) {
+      if(tchrono->type == CHRONO_TYPE_UP) strcpy(string, "\xe6\x9C");
+      else strcpy(string, "\xe6\x9D"); 
+    } else {
+      if(tchrono->type == CHRONO_TYPE_UP) strcpy(string, "\xe6\xAC");
+      else strcpy(string, "\xe6\xAD"); 
+    }
+    strcat(string, buffer);
+    strcat(string, ":");
+  } else strcpy(string, "");
   
   if(tchrono->state == CHRONO_STATE_CLEARED) { return; } //nothing else to add, chrono is clear
   else if(tchrono->state == CHRONO_STATE_STOPPED) {
@@ -74,29 +75,34 @@ inline void formatChronoString(chronometer* tchrono, int num, unsigned char* str
 
   if (days) {
     itoa(days, (unsigned char*)buffer);
-    strcat((char*)string, buffer);
-    strcat((char*)string, (char*)"\xe7\x64"); // small "d"
+    strcat(string, buffer);
+    strcat(string, (char*)"\xe7\x64"); // small "d"
   }
   
   itoa(hours, (unsigned char*)buffer);
-  if (hours < 10) strcat((char*)string, "0");
-  strcat((char*)string, buffer);
-  strcat((char*)string, ":");
+  if (hours < 10) strcat(string, "0");
+  strcat(string, buffer);
+  strcat(string, ":");
 
   itoa(minutes, (unsigned char*)buffer);
-  if (minutes < 10) strcat((char*)string, "0");
-  strcat((char*)string, buffer);
-  strcat((char*)string, ":");
+  if (minutes < 10) strcat(string, "0");
+  strcat(string, buffer);
+  strcat(string, ":");
 
   itoa((int)seconds, (unsigned char*)buffer);
-  if (seconds < 10) strcat((char*)string, "0");
-  strcat((char*)string, buffer);
+  if (seconds < 10) strcat(string, "0");
+  strcat(string, buffer);
   
-  strcat((char*)string, ".");
-  if (milliseconds < 10) strcat((char*)string, "0");
-  if (milliseconds < 100) strcat((char*)string, "0");
-  itoa((int)milliseconds, (unsigned char*)buffer);
-  strcat((char*)string, buffer);
+  if(!isChronoView || !days) {
+    strcat(string, ".");
+    if (milliseconds < 10) strcat(string, "0");
+    if (milliseconds < 100) strcat(string, "0");
+    itoa((int)milliseconds, (unsigned char*)buffer);
+    strcat(string, buffer);
+  }
+  if(isChronoView) {
+    drawAnalogChronometer(LCD_WIDTH_PX / 2, LCD_HEIGHT_PX / 2 + 10, 65, COLOR_WHITE, COLOR_BLACK, days, hours, minutes, seconds);
+  }
 }
 void doNothing() {}
 static int stubTimer=0;
@@ -139,11 +145,11 @@ void chronoScreen(chronometer* chrono) {
   short unsigned int key;
   while(1) {
     checkChronoComplete();
-    unsigned char text[NUMBER_OF_CHRONO][42];
+    char text[NUMBER_OF_CHRONO][42];
     int hasSelection = 0;
     for(int curitem=0; curitem < NUMBER_OF_CHRONO; curitem++) {
-      formatChronoString(&chrono[curitem], curitem+1, text[curitem]);
-      menuitems[curitem].text = (char*)text[curitem];
+      formatChronoString(&chrono[curitem], curitem+1, text[curitem], 0);
+      menuitems[curitem].text = text[curitem];
       if(menuitems[curitem].value) hasSelection = 1;
     }
     if(menu.fkeypage==0) {
@@ -198,6 +204,9 @@ void chronoScreen(chronometer* chrono) {
             menu.scroll = menu.selection -1;
         }
         break;
+      case KEY_PRGM_RETURN:
+        viewChrono(&menu, chrono);
+        break;
       case KEY_PRGM_F1:
         if (GetSetupSetting( (unsigned int)0x14) == 1) {
           SetSetupSetting( (unsigned int)0x14, 0);
@@ -208,7 +217,7 @@ void chronoScreen(chronometer* chrono) {
         }
         break;
       case KEY_PRGM_F2:
-        if(menu.fkeypage==0 && (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED)) setChronoGUI(&menu, chrono);
+        if(menu.fkeypage==0 && (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED)) setChronoGUI(&menu, chrono, 0);
         else if (menu.fkeypage==1) {
           // select all
           for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = MENUITEM_VALUE_CHECKED;
@@ -256,7 +265,7 @@ void startSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
     }
   }
   if(!hasPerformedAny) startChrono(&tchrono[menu->selection-1]); // if there was no selected chrono, do it for the currently selected menu position
-  saveChronoArray(tchrono, NUMBER_OF_CHRONO); 
+  saveChronoArray(tchrono, NUMBER_OF_CHRONO);
 }
 
 void stopSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
@@ -287,7 +296,7 @@ void clearSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
 
 
 
-void setChronoGUI(Menu* menu, chronometer* tchrono) {
+void setChronoGUI(Menu* menu, chronometer* tchrono, int menuSelOnly) {
   long long int ms = 0;
   int type = CHRONO_TYPE_UP;
   MenuItem menuitems[10];
@@ -410,10 +419,12 @@ void setChronoGUI(Menu* menu, chronometer* tchrono) {
   }
   
   int hasPerformedAny = 0;
-  for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) {
-    if(menu->items[cur].value == MENUITEM_VALUE_CHECKED) {
-      setChrono(&tchrono[cur], ms, type);
-      hasPerformedAny=1;
+  if(!menuSelOnly) {
+    for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) {
+      if(menu->items[cur].value == MENUITEM_VALUE_CHECKED) {
+        setChrono(&tchrono[cur], ms, type);
+        hasPerformedAny=1;
+      }
     }
   }
   if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], ms, type); // if there was no selected chrono, do it for the currently selected menu position
@@ -507,4 +518,66 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
       }
     }
   }
+}
+
+void viewChrono(Menu* menu, chronometer* chrnarr) {
+  unsigned short key = 0; int keyCol, keyRow;
+  Bdisp_AllClr_VRAM();
+  int key_zeroed = 0;
+  chronometer* chrn = &chrnarr[menu->selection-1];
+  while(key != KEY_PRGM_EXIT) {
+    clearLine(1,1);
+    char tbuf[42];
+    strcpy(tbuf, "Chronometer ");
+    char b[5];
+    itoa(menu->selection, (unsigned char*)b);
+    strcat(tbuf, b);
+    strcat(tbuf, " (");
+    if(chrn->state == CHRONO_STATE_CLEARED) {
+      strcat(tbuf, "\xe6\xa6");
+      drawFkeyLabels(0, -1, -1, -1, -1, 0x0010); // SET
+    } else if (chrn->state == CHRONO_STATE_RUNNING) {
+      drawFkeyLabels(0x0031, -1, -1, -1, -1, 0x0149); // stop icon, CLEAR
+      // "hack" the stop icon, turning it into a pause icon
+      drawRectangle(30, 197, 4, 14, COLOR_WHITE);
+      if(chrn->type == CHRONO_TYPE_UP) strcat(tbuf, "\xe6\x9C");
+      else strcat(tbuf, "\xe6\x9D");
+    } else {
+      drawFkeyLabels(0x040A, -1, -1, -1, -1, 0x0149); // play icon, CLEAR
+      if(chrn->type == CHRONO_TYPE_UP) strcat(tbuf, "\xe6\xAC");
+      else strcat(tbuf, "\xe6\xAD"); 
+    }
+    strcat(tbuf, ")");
+    drawScreenTitle(tbuf);
+
+    formatChronoString(chrn, menu->selection, tbuf, 1); // also takes care of drawing analog chrono
+    printCentered(tbuf, 8*24-1, COLOR_BLACK, COLOR_WHITE);
+
+    DisplayStatusArea();
+    Bdisp_PutDisp_DD();
+    key = PRGM_GetKey();
+    if(!key) key_zeroed = 1;
+    else if(key_zeroed) {
+      key_zeroed = 0;
+      if(key == KEY_PRGM_MENU) GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); //this is here just to handle the Menu key
+      else if(key == KEY_PRGM_F1) {
+        GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); // deal with debouncing
+        if(chrn->state == CHRONO_STATE_RUNNING) stopChrono(chrn);
+        else if (chrn->state == CHRONO_STATE_STOPPED) startChrono(chrn);
+        saveChronoArray(chrnarr, NUMBER_OF_CHRONO);
+      } else if(key == KEY_PRGM_F6) {
+        GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); // deal with debouncing
+        if (chrn->state != CHRONO_STATE_CLEARED) {
+          clearChrono(chrn);
+          saveChronoArray(chrnarr, NUMBER_OF_CHRONO);
+        }
+        else {
+          setChronoGUI(menu, chrnarr, 1);
+          Bdisp_AllClr_VRAM();
+        }
+      }
+    }
+  }
+  // clear keybuffer:
+  GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key);
 }
