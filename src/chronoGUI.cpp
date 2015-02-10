@@ -574,6 +574,11 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
           saveChronoArray(chrnarr, NUMBER_OF_CHRONO);
         } else setChronoGUI(menu, chrnarr, 1);
         Bdisp_AllClr_VRAM();
+      } else if(key == KEY_PRGM_UP || key == KEY_PRGM_DOWN) {
+        if(key == KEY_PRGM_UP && menu->selection > 1) menu->selection--;
+        if(key == KEY_PRGM_DOWN && menu->selection < NUMBER_OF_CHRONO) menu->selection++;
+        chrn = &chrnarr[menu->selection-1];
+        Bdisp_AllClr_VRAM();
       }
     }
   }
