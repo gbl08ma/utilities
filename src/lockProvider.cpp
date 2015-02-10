@@ -23,11 +23,11 @@
 #include "sha2.h"
 
 void hashPassword(unsigned char* password, unsigned char* hash) {
-  char salt[16] = "";
+  char salt[16];
   getHardwareID(salt);
   strcat((char*)password, salt);
   int len = strlen((char*)password);
-  sha2( password, len, hash, 0 );
+  sha2(password, len, hash, 0);
 }
 
 int comparePasswordHash(unsigned char* inputPassword) {

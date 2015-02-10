@@ -32,8 +32,9 @@ void SetBacklightSubLevel_RAW(int level)
 // Get calculator's unique ID (as told by Simon Lothar): 8 bytes starting at 0x8001FFD0
 
 void getHardwareID(char* buffer) {
-  // NOTE buffer must be at least 8 bytes long!
+  // NOTE buffer must be at least 9 bytes long!
   memcpy(buffer, (void*)0x8001FFD0, 8);
+  buffer[8] = 0;
 }
 
 // Get calculator model. There is a syscall for this, but with this we know exactly what we are checking.

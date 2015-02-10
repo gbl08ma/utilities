@@ -250,9 +250,8 @@ void systemInfo() {
   memcpy(ABSdate, (void*)0x8001FFB0, 14);
   ABSdate[14] = '\0';
   
-  char devID[10] = "";
-  getHardwareID(devID);
-  devID[8] = '\0';  
+  char devID[10];
+  getHardwareID(devID);  
   
   long pvr = *(long *)0xFF000030;
   char pvrstr[9];
