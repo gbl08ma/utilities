@@ -144,7 +144,7 @@ void showHome(chronometer* chrono) {
         }
         break;
       case KEY_PRGM_RIGHT:
-        if(GetSetting(SETTING_HOME_PANES)) eventsPane(&pane_keycache);
+        //if(GetSetting(SETTING_HOME_PANES)) eventsPane(&pane_keycache);
         break;
       case 76: //x-0-theta key
         currentTimeToBasicVar();

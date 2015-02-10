@@ -15,7 +15,7 @@
 #include "settingsProvider.hpp"
 #include "constantsProvider.hpp"
 
-#define SETTINGSFILE_VERSION 12 // NOTE: update this when changing the amount or meaning of settings!
+#define SETTINGSFILE_VERSION 13 // NOTE: update this when changing the amount or meaning of settings!
 static int setting_self_fileversion = SETTINGSFILE_VERSION; // this is a special setting
 static int setting_timeformat = 0; // 0 = 24-hour HH:MM:SS ; 1 = 12-hour HH:MM:SS AM/PM
 static int setting_longdateformat = 0;
@@ -63,7 +63,6 @@ static int setting_clock_type = 0;
    11 = show nothing at all
 */
 static int setting_clock_seconds = 1; // whether to show seconds in clock
-static int setting_home_panes = 1; // whether to enable panes in home screen
 static int setting_default_calendar_view = 1; // default calendar view. 0 = week, 1 = month
 static int setting_week_start_day = 0; // 0 = sunday, 1 = monday
 static int setting_show_calendar_busy_map = 1;
@@ -71,6 +70,15 @@ static int setting_chrono_notification_type = 1; // notification for when a down
 static int setting_file_manager_sort = 1; // file list sort in file manager. 0: no sort (list as they appear), 1: A-Z, 2: Z-A, 3: size (ascending), 4: size (descending), 5: type A-Z, 6: type Z-A
 static int setting_file_manager_search = 1; // settings for search in the file manager; the value of this int is never used as a whole, but its bits are set individually for each search option.
 static int setting_timezone = 51; // clock offset from UTC in intervals of 15 min. Used in the TOTP authenticator. The value 0 represents UTC-12:45. 51 is UTC+00:00.
+
+/* home pane screens and shortcuts:
+   0 is disabled
+   1 is today events pane
+*/
+static int setting_home_pane_top = 0;
+static int setting_home_pane_right = 0;
+static int setting_home_pane_bottom = 0;
+static int setting_home_pane_left = 0;
 
 // Routines for accessing and setting settings
 // NOTE: directly accessing setting_* variables is now strictly forbidden!
@@ -113,8 +121,6 @@ int GetSetting(int setting) {
       return setting_clock_type;
     case SETTING_CLOCK_SECONDS:
       return setting_clock_seconds;
-    case SETTING_HOME_PANES:
-      return setting_home_panes;
     case SETTING_DEFAULT_CALENDAR_VIEW:
       return setting_default_calendar_view;
     case SETTING_WEEK_START_DAY:
@@ -129,6 +135,14 @@ int GetSetting(int setting) {
       return setting_file_manager_search;
     case SETTING_TIMEZONE:
       return setting_timezone;
+    case SETTING_HOME_PANE_TOP:
+      return setting_home_pane_top;
+    case SETTING_HOME_PANE_RIGHT:
+      return setting_home_pane_right;
+    case SETTING_HOME_PANE_BOTTOM:
+      return setting_home_pane_bottom;
+    case SETTING_HOME_PANE_LEFT:
+      return setting_home_pane_left;
     default:
       return 0;
   }
@@ -197,9 +211,6 @@ void SetSetting(int setting, int value, int autosave) {
     case SETTING_CLOCK_SECONDS:
       setting_clock_seconds = value;
       break;
-    case SETTING_HOME_PANES:
-      setting_home_panes = value;
-      break;
     case SETTING_DEFAULT_CALENDAR_VIEW:
       setting_default_calendar_view = value;
       break;
@@ -220,6 +231,18 @@ void SetSetting(int setting, int value, int autosave) {
       break;
     case SETTING_TIMEZONE:
       setting_timezone = value;
+      break;
+    case SETTING_HOME_PANE_TOP:
+      setting_home_pane_top = value;
+      break;
+    case SETTING_HOME_PANE_RIGHT:
+      setting_home_pane_right = value;
+      break;
+    case SETTING_HOME_PANE_BOTTOM:
+      setting_home_pane_bottom = value;
+      break;
+    case SETTING_HOME_PANE_LEFT:
+      setting_home_pane_left = value;
       break;
     default:
       break;

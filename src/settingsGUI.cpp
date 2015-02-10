@@ -264,31 +264,54 @@ inline static void lockSettingsMenu() {
   }
 }
 
+inline static int selectPaneType(int orig) {
+  mMsgBoxPush(4);
+  MenuItem smallmenuitems[3];
+  
+  Menu smallmenu;
+  smallmenu.items=smallmenuitems;
+  smallmenu.numitems=2;
+  smallmenu.width=17;
+  smallmenu.height=4;
+  smallmenu.startX=3;
+  smallmenu.startY=2;
+  smallmenu.scrollbar=0;
+  smallmenu.title = (char*)"Select Panel Type";
+  smallmenu.selection=orig + 1;
+  smallmenuitems[0].text = (char*)"Disabled";
+  smallmenuitems[1].text = (char*)"Today events";
+  int sres = doMenu(&smallmenu);
+  mMsgBoxPop();
+  if(sres == MENU_RETURN_SELECTION) return smallmenu.selection - 1;
+  else return -1;
+}
+
 inline static void clockSettingsMenu() {
-  MenuItem menuitems[5];
+  MenuItem menuitems[8];
   menuitems[0].text = (char*)"Set clock type";
   
   menuitems[1].text = (char*)"Show seconds";
   menuitems[1].type = MENUITEM_CHECKBOX;
   
-  menuitems[2].text = (char*)"Enable events pane";
+  menuitems[2].text = (char*)"Show F. keys labels";
   menuitems[2].type = MENUITEM_CHECKBOX;
   
-  menuitems[3].text = (char*)"Show F. keys labels";
+  menuitems[3].text = (char*)"Dark theme";
   menuitems[3].type = MENUITEM_CHECKBOX;
-  
-  menuitems[4].text = (char*)"Dark theme";
-  menuitems[4].type = MENUITEM_CHECKBOX;
+
+  menuitems[4].text = (char*)"Top home panel";
+  menuitems[5].text = (char*)"Right home panel";
+  menuitems[6].text = (char*)"Bottom home panel";
+  menuitems[7].text = (char*)"Left home panel";
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=5;
+  menu.numitems=8;
   menu.scrollout=1;
   while(1) {
     menuitems[1].value = GetSetting(SETTING_CLOCK_SECONDS);
-    menuitems[2].value = GetSetting(SETTING_HOME_PANES);
-    menuitems[3].value = GetSetting(SETTING_DISPLAY_FKEYS);
-    menuitems[4].value = GetSetting(SETTING_THEME);
+    menuitems[2].value = GetSetting(SETTING_DISPLAY_FKEYS);
+    menuitems[3].value = GetSetting(SETTING_THEME);
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
@@ -327,17 +350,23 @@ inline static void clockSettingsMenu() {
           SetSetting(SETTING_CLOCK_SECONDS, menuitems[1].value, 1);
           break;
         case 3:
-          menuitems[2].value = !menuitems[2].value;
-          SetSetting(SETTING_HOME_PANES, menuitems[2].value, 1);
-          break;
-        case 4:
           menuitems[3].value = !menuitems[3].value;
           SetSetting(SETTING_DISPLAY_FKEYS, menuitems[3].value, 1);
           break;
-        case 5:
+        case 4:
           menuitems[4].value = !menuitems[4].value;
           SetSetting(SETTING_THEME, menuitems[4].value, 1); 
           break;
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        {
+          int s = menu.selection-5+25;
+          int t = selectPaneType(GetSetting(s));
+          if(t >= 0) SetSetting(s, t, 1);
+          break;
+        }
       }
     }
   }
