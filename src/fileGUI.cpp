@@ -24,6 +24,7 @@
 #include "fileProvider.hpp" 
 #include "fileGUI.hpp"
 #include "textGUI.hpp"
+#include "sha1.h"
 #include "sha2.h"
 #include "editorGUI.hpp"
 #include "imageGUI.hpp"
@@ -820,31 +821,48 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
           int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
           if(hFile >= 0) // Check if it opened
           { //opened
-            unsigned char output[32] = "";
-            sha2_context ctx;
+            unsigned char output1[20] = "";
+            unsigned char output2[32] = "";
+            sha1_context ctx1;
+            sha2_context ctx2;
             unsigned char buf[4096];
             int readsize = 1; // not zero so we have the chance to enter the while loop
-            sha2_starts( &ctx, 0 );
+            sha1_starts(&ctx1);
+            sha2_starts(&ctx2, 0);
             while( readsize > 0) {
               readsize = Bfile_ReadFile_OS(hFile, buf, sizeof( buf ), -1);
-              sha2_update( &ctx, buf, readsize );
+              sha1_update(&ctx1, buf, readsize);
+              sha2_update(&ctx2, buf, readsize);
             }
             Bfile_CloseFile_OS(hFile);
-            sha2_finish( &ctx, output );
-            memset( &ctx, 0, sizeof( sha2_context ) );
+            sha1_finish(&ctx1, output1);
+            sha2_finish(&ctx2, output2);
+            memset(&ctx1, 0, sizeof(sha1_context));
+            memset(&ctx2, 0, sizeof(sha2_context));
             
-            mMsgBoxPush(4);
+            mMsgBoxPush(5);
             int textX=2*18, textY=24;
             PrintMini(&textX, &textY, (char*)"SHA-256 checksum:", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-            textY=textY+20;
+            textY += 20;
             textX=2*18;
             for(int i=0; i<32;i++) {
               unsigned char niceout[32] = "";
-              ByteToHex( output[i], niceout );
+              ByteToHex( output2[i], niceout );
               if((LCD_WIDTH_PX-2*18-textX) < 15) { textX=2*18; textY=textY+12; }
               PrintMiniMini( &textX, &textY, (char*)niceout, 0, TEXT_COLOR_BLACK, 0 );
             }
-            closeMsgBox();
+
+            textX=2*18; textY=24*3;
+            PrintMini(&textX, &textY, (char*)"SHA-1 checksum:", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+            textY += 20;
+            textX = 2*18;
+            for(int i=0; i<20;i++) {
+              unsigned char niceout[32] = "";
+              ByteToHex( output1[i], niceout );
+              if((LCD_WIDTH_PX-2*18-textX) < 15) { textX=2*18; textY=textY+12; }
+              PrintMiniMini( &textX, &textY, (char*)niceout, 0, TEXT_COLOR_BLACK, 0 );
+            }
+            closeMsgBox(0, 6);
           }
         }
         break;
