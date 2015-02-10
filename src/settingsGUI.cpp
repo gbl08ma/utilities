@@ -38,7 +38,7 @@ void settingsMenu() {
   
   menuitems[4].text = (char*)"Date format";
   
-  menuitems[5].text = (char*)"Home appearance";
+  menuitems[5].text = (char*)"Home settings";
   
   menuitems[6].text = (char*)"Display statusbar";
   menuitems[6].type = MENUITEM_CHECKBOX;
