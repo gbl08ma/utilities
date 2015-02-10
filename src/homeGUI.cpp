@@ -400,6 +400,8 @@ void handleHomePane(int key, int* pane_keycache) {
     case 0: return;
     case 1: eventsPane(retkey, pane_keycache); break;
     case 2: memoryUsagePane(retkey, pane_keycache); break;
+    case 3: openRunMat(); break;
+    case 4: fileManager(); break;
   }
 }
 
