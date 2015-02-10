@@ -563,12 +563,10 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
       key_zeroed = 0;
       if(key == KEY_PRGM_MENU) GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); //this is here just to handle the Menu key
       else if(key == KEY_PRGM_F1) {
-        GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); // deal with debouncing
         if(chrn->state == CHRONO_STATE_RUNNING) stopChrono(chrn);
         else if (chrn->state == CHRONO_STATE_STOPPED) startChrono(chrn);
         saveChronoArray(chrnarr, NUMBER_OF_CHRONO);
       } else if(key == KEY_PRGM_F6) {
-        GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); // deal with debouncing
         if (chrn->state != CHRONO_STATE_CLEARED) {
           clearChrono(chrn);
           saveChronoArray(chrnarr, NUMBER_OF_CHRONO);
@@ -582,6 +580,6 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
       }
     }
   }
-  // clear keybuffer:
+  // key debouncing:
   GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key);
 }
