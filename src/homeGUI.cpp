@@ -402,6 +402,8 @@ void handleHomePane(int key, int* pane_keycache) {
     case 2: memoryUsagePane(retkey, pane_keycache); break;
     case 3: openRunMat(); break;
     case 4: fileManager(); break;
+    case 5: viewCalendar(); break;
+    case 6: viewTasks(); break;
   }
 }
 

@@ -266,11 +266,11 @@ inline static void lockSettingsMenu() {
 
 inline static int selectPaneType(int orig) {
   mMsgBoxPush(5);
-  MenuItem smallmenuitems[5];
+  MenuItem smallmenuitems[10];
   
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
-  smallmenu.numitems=5;
+  smallmenu.numitems=7;
   smallmenu.width=17;
   smallmenu.height=5;
   smallmenu.startX=3;
@@ -283,6 +283,8 @@ inline static int selectPaneType(int orig) {
   smallmenuitems[2].text = (char*)"Memory usage";
   smallmenuitems[3].text = (char*)"Run-Mat shortcut";
   smallmenuitems[4].text = (char*)"File mgr.shortcut";
+  smallmenuitems[5].text = (char*)"Calendar shortcut";
+  smallmenuitems[6].text = (char*)"Tasks shortcut";
   int sres = doMenu(&smallmenu);
   mMsgBoxPop();
   if(sres == MENU_RETURN_SELECTION) return smallmenu.selection - 1;
