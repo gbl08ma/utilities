@@ -159,7 +159,7 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
   return;
 }
 
-inline static void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg, int hourmarks) {
+void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg, int hourmarks) {
   // may be extended in the future
   drawFilledCircle(cx, cy, radius, colorfg);
   drawFilledCircle(cx, cy, radius-2, colorbg);
@@ -176,16 +176,16 @@ inline static void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, 
 
   } while(i!=12); //LIMIT NUMERIC POINTS UPTO =12= Numbers.
 }
-inline static void drawAnalogClockSecondNeedle(int s, int cx, int cy, double radius, int colorfg) {
+void drawAnalogClockSecondNeedle(int s, int cx, int cy, double radius, int colorfg) {
   double angle=-90.0;
   double sx,sy;
   double length = radius - radius/8.0;
-  sx=cx+length*cosine((angle+s*6.0)*M_PI/180.0);
-  sy=cy+length*sine((angle+s*6.0)*M_PI/180.0);
+  sx=cx+length*cosine((angle+s*6)*M_PI/180.0);
+  sy=cy+length*sine((angle+s*6)*M_PI/180.0);
   drawLine(cx,cy,sx,sy,colorfg);
 }
 
-inline static void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, int colorfg) {
+void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, int colorfg) {
   double angle=-90;
   double sx,sy;
   double length = radius - radius/5.0;
@@ -194,12 +194,12 @@ inline static void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, dou
   drawLine(cx,cy,sx,sy, colorfg);
 }
 
-inline static void drawAnalogClockHourNeedle(int h, int m, int s, int cx, int cy, double radius, int colorfg) {
+void drawAnalogClockHourNeedle(int h, int m, int s, int cx, int cy, double radius, int colorfg, int ischrono) {
   double angle=-90;
   double sx,sy;
-  double length = radius - radius/2.5;
-  sx=cx+length*cosine((angle+h*30+(m*30/60))*M_PI/180);
-  sy=cy+length*sine((angle+h*30+(m*30/60))*M_PI/180);
+  double length = radius - radius/(ischrono? 5.0 : 2.5);
+  sx=cx+length*cosine((angle+h*(ischrono?15:30)+(m*(ischrono?15:30)/60))*M_PI/180);
+  sy=cy+length*sine((angle+h*(ischrono?15:30)+(m*(ischrono?15:30)/60))*M_PI/180);
   drawLine(cx,cy,sx,sy, colorfg);
 }
 
@@ -212,13 +212,33 @@ void drawAnalogClock(int cx, int cy, int radius, int colorbg, int colorfg) {
   drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 1);
   if(GetSetting(SETTING_CLOCK_SECONDS)) drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg);
   drawAnalogClockMinuteNeedle(m, s, cx, cy, radius, colorfg);
-  drawAnalogClockHourNeedle(h, m, s, cx, cy, radius, colorfg);
+  drawAnalogClockHourNeedle(h, m, s, cx, cy, radius, colorfg, 0);
 }
 
 void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg, int d, int h, int m, int s) {
+  // draw outer dial
   drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 0);
+  // draw inner top dial (minutes)
+  drawAnalogClockFace(cx, cy-radius/2, radius/3, colorbg, colorfg, 0);
+  // draw inner bottom dial (hours)
+  drawAnalogClockFace(cx, cy+radius/2, radius/3, colorbg, colorfg, 0);
+  // print days
+  if(d) {
+    int textX = cx; int textY = cy;
+    if(d < 100) textX += radius - radius / 3;
+    else if(d < 1000) textX += radius - radius / 2;
+    else if(d < 100000) textX += radius - radius / 1.5;
+    textY -= 4 + 24;
+    char buffer[10];
+    itoa(d, (unsigned char*)buffer);
+    PrintMiniMini( &textX, &textY, (char*)buffer, 0, TEXT_COLOR_BLACK, 0 );
+  }
+  // seconds needle on bigger dial
   drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg);
-  drawAnalogClockMinuteNeedle(m, s, cx, cy, radius, colorfg);
+  // minutes on top
+  drawAnalogClockMinuteNeedle(m, s, cx, cy-radius/2, radius/3, colorfg);
+  // hours on bottom
+  drawAnalogClockHourNeedle(h, m, s, cx, cy+radius/2, radius/3, colorfg, 1);
 }
 
 void setTimeGUI(int canExit) {

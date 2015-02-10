@@ -87,11 +87,13 @@ void formatChronoString(chronometer* tchrono, int num, char* string, int isChron
   itoa(minutes, (unsigned char*)buffer);
   if (minutes < 10) strcat(string, "0");
   strcat(string, buffer);
-  strcat(string, ":");
 
-  itoa((int)seconds, (unsigned char*)buffer);
-  if (seconds < 10) strcat(string, "0");
-  strcat(string, buffer);
+  if(!isChronoView || days < 100000) {
+    strcat(string, ":");
+    itoa((int)seconds, (unsigned char*)buffer);
+    if (seconds < 10) strcat(string, "0");
+    strcat(string, buffer);
+  }
   
   if(!isChronoView || !days) {
     strcat(string, ".");
@@ -573,8 +575,8 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
         }
         else {
           setChronoGUI(menu, chrnarr, 1);
-          Bdisp_AllClr_VRAM();
         }
+        Bdisp_AllClr_VRAM();
       }
     }
   }
