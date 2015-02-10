@@ -120,7 +120,7 @@ void colorLight() {
   if (res == MENU_RETURN_EXIT) return;
   
   SetBacklightSubLevel_RAW(249);
-  color_t color = COLOR_WHITE;
+  color_t color;
   switch (menu.selection) {
     case 1: color = COLOR_BLUE; break;
     case 2: color = COLOR_GREEN; break;
@@ -129,7 +129,8 @@ void colorLight() {
     case 5: color = COLOR_YELLOW; break;
     case 6: color = COLOR_CYAN; break;
     case 7: color = COLOR_BROWN; break;
-    case 8: color = COLOR_MAGENTA; break;
+    case 8:
+    default: color = COLOR_MAGENTA; break;
   }
   Bdisp_Fill_VRAM(color, 3 );
   DrawFrame(color);
