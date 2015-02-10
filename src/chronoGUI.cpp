@@ -572,10 +572,7 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
         if (chrn->state != CHRONO_STATE_CLEARED) {
           clearChrono(chrn);
           saveChronoArray(chrnarr, NUMBER_OF_CHRONO);
-        }
-        else {
-          setChronoGUI(menu, chrnarr, 1);
-        }
+        } else setChronoGUI(menu, chrnarr, 1);
         Bdisp_AllClr_VRAM();
       }
     }

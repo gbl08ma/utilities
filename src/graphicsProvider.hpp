@@ -45,6 +45,7 @@ void drawFkeyLabels(int f1=-1, int f2=-1, int f3=-1, int f4=-1, int f5=-1, int f
 // needed for analog clock and some other... circular things:
 int drawRGB24toRGB565(int r, int g, int b);
 double sine(double x);
-double cosine(double x);
+//double cosine(double x);
+#define cosine(x) sine((M_PI_2)+(x)) 
 
 #endif
