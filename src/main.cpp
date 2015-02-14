@@ -43,7 +43,7 @@ int main()
     // INSIGHT only remaps when running from RAM. Apparently the OS clears the key mapping when starting a new add-in, which makes sense
     // since the OS isn't here to help us, we must clear manually.
     // still, his comment about there being a "host" and an add-in being run from RAM doesn't seem to apply here.
-    const unsigned int default_fkeys[] = { 0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0 };
+    static const unsigned int default_fkeys[] = { 0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0 };
     Set_FKeys1( 0, (unsigned int*)default_fkeys );
     Set_FKeys2( 0 );
     Bdisp_EnableColor(1);

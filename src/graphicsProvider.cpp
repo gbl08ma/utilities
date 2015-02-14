@@ -17,12 +17,13 @@
 #include "debugGUI.hpp"
 
 void drawRectangle(int x, int y, int width, int height, unsigned short color) {
-  unsigned short*VRAM = (unsigned short*)0xA8000000;
-  for(int j = y; j < y+height; j++) {
-    for(int i = x; i < x+width; i++) {
-      *(j*LCD_WIDTH_PX+i+VRAM) = color;      
-    }
-  }
+	unsigned short*s=(unsigned short*)0xA8000000;
+	s+=(y*384)+x;
+	while(height--){
+		for(int w=width;w--;)
+			*s++=color;
+		s+=384-width;
+	}
 }
 
 // Algorithm found on:
@@ -120,7 +121,7 @@ void drawArrowDown(int bottomX, int bottomY, int color) {
   drawLine(bottomX+1,bottomY,bottomX+8,bottomY-7,color);
   drawLine(bottomX+1,bottomY+1,bottomX+9,bottomY-7,color); //double thickness of line
 }
-void drawFkeyPopup(int Fkey, char* title) {
+void drawFkeyPopup(int Fkey, const char* title) {
 //draws a big popup pointing to a Fkey (index zero based, F1 = 0, F6 = 5) with the selected color scheme.
 // PrintXY text inside the popup starts at X=2 and Y=2
   int fgcolor = COLOR_BLACK;
@@ -147,11 +148,11 @@ void drawFkeyPopup(int Fkey, char* title) {
 
   int textX = FKEY_C3X-111-4;
   int textY = FKEY_C3Y-14-20;
-  PrintMiniMini( &textX, &textY, (char*)"...or press: [EXIT]", (GetSetting(SETTING_THEME) == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
+  PrintMiniMini( &textX, &textY, "...or press: [EXIT]", (GetSetting(SETTING_THEME) == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
 
   mPrintXY(2, 2, title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
 }
-void CopySpriteMasked(unsigned short* data, int x, int y, int width, int height, unsigned short maskcolor) {
+void CopySpriteMasked(const unsigned short* data, int x, int y, int width, int height, unsigned short maskcolor) {
   unsigned short* VRAM = (unsigned short*)0xA8000000; 
   VRAM += (LCD_WIDTH_PX*y + x); 
   while(height--) {
@@ -243,12 +244,12 @@ int textColorToFullColor(int textcolor) {
   }
 }
 
-void progressMessage(char* message, int cur, int total) {
+void progressMessage(const char* message, int cur, int total) {
   // when you're done with this, close with closeProgressMessage!
   // otherwise, resources won't be freed.
   // always call with cur==0 and total > 0 first, so that the progressbar is initialized!
   // if message is empty, the default OS "please wait" message will be used.
-  if(!strlen(message)) {
+  if((!message)||(!message[0])) {
     ProgressBar( cur, total );
   } else {
     ProgressBar2( (unsigned char*)message, cur, total );
@@ -258,7 +259,7 @@ void closeProgressMessage() {
   MsgBoxPop(); //closes progressbar
 }
 
-void printCentered(char* text, int y, int FGC, int BGC) {
+void printCentered(const char* text, int y, int FGC, int BGC) {
   int len = MB_ElementCount(text);
   int x = LCD_WIDTH_PX/2-(len*18)/2;
   int cur = 0;
@@ -280,7 +281,7 @@ void clearLine(int x, int y, color_t color) {
   drawRectangle((x-1)*18, y*24, width, 24, color);
 }
 
-void mPrintXY(int x, int y, char*msg, int mode, int color) {
+void mPrintXY(int x, int y,const char*msg, int mode, int color) {
   char nmsg[50];
   nmsg[0] = 0x20;
   nmsg[1] = 0x20;
@@ -311,7 +312,7 @@ int getNumberOfMsgBoxPushed() {
   return numberOfMsgBoxPushed;
 }
 
-void drawScreenTitle(char* title, char* subtitle) {
+void drawScreenTitle(const char* title, const char* subtitle) {
   if(title != NULL) mPrintXY(1, 1, title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
   if(subtitle != NULL) mPrintXY(1, 2, subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
 }
@@ -356,12 +357,12 @@ double sine(double x) {
   const double B = 4/M_PI; 
   const double C = -4/(PISQUARED); 
 
-  double y = B * x + C * x * fabsf(x); 
+  double y = B * x + C * x * fabs(x); 
 
   //  const float Q = 0.7775; 
   const double P = 0.224008178776; 
 
-  y = P * (y * fabsf(y) - y) + y;   // Q * y + P * y * abs(y) 
+  y = P * (y * fabs(y) - y) + y;   // Q * y + P * y * abs(y) 
   
   return y; 
 } 

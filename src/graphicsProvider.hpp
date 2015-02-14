@@ -25,21 +25,21 @@ void VRAMInvertArea(short x, short y, short width, short height);
 void darkenStatusbar();
 void darkenFkeys(int numkeys);
 void drawArrowDown(int bottomX, int bottomY, int color);
-void drawFkeyPopup(int Fkey, char* title);
-void CopySpriteMasked(unsigned short* data, int x, int y, int width, int height, unsigned short maskcolor);
+void drawFkeyPopup(int Fkey, const char* title);
+void CopySpriteMasked(const unsigned short* data, int x, int y, int width, int height, unsigned short maskcolor);
 void CopySpriteNbitMasked(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, color_t maskColor, unsigned int bitwidth);
-void drawtnyimLogo( int x, int y);
+void drawtnyimLogo(int x, int y);
 int textColorToFullColor(int textcolor);
-void progressMessage(char* message, int cur, int total);
+void progressMessage(const char* message, int cur, int total);
 void closeProgressMessage();
-void printCentered(char* text, int y, int FGC, int BGG);
+void printCentered(const char* text, int y, int FGC, int BGG);
 void clearLine(int x, int y, color_t color=COLOR_WHITE);
-void mPrintXY(int x, int y, char*msg, int mode, int color);
+void mPrintXY(int x, int y, const char*msg, int mode, int color);
 void mMsgBoxPush(int lines);
 void mMsgBoxPop();
 void popAllMsgBoxes();
 int getNumberOfMsgBoxPushed();
-void drawScreenTitle(char* title, char* subtitle = NULL);
+void drawScreenTitle(const char* title, const char* subtitle = NULL);
 void drawFkeyLabels(int f1=-1, int f2=-1, int f3=-1, int f4=-1, int f5=-1, int f6=-1);
 
 // needed for analog clock and some other... circular things:

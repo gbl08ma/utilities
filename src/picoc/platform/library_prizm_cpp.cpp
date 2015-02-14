@@ -1450,7 +1450,7 @@ pcvoid(getDBneedsRepairFlag)(struct ParseState *Parser, struct Value *ReturnValu
 // chronoGUI
 
 pcvoid(formatChronoString)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    formatChronoString((chronometer*)Param[0]->Val->Pointer, Param[1]->Val->Integer, (unsigned char*)Param[2]->Val->Pointer, Param[3]->Val->Integer);
+    formatChronoString((chronometer*)Param[0]->Val->Pointer, Param[1]->Val->Integer, (char*)Param[2]->Val->Pointer, Param[3]->Val->Integer);
 }
 
 pcvoid(stopAndUninstallStubTimer)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
