@@ -18,7 +18,7 @@
 #include "chronoProvider.hpp"
 #include "menuGUI.hpp"
 
-void formatChronoString(chronometer* tchrono, int num, unsigned char* string, int includeBeginning);
+void formatChronoString(chronometer* tchrono, int num, char* string, int isChronoView);
 void stopAndUninstallStubTimer();
 void chronoScreen(chronometer* chrono);
 void startSelectedChronos(Menu* menu, chronometer* tchrono, int count);
