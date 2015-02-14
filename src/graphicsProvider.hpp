@@ -32,7 +32,7 @@ void drawtnyimLogo(int x, int y);
 int textColorToFullColor(int textcolor);
 void progressMessage(const char* message, int cur, int total);
 void closeProgressMessage();
-void printCentered(const char* text, int y, int FGC, int BGG);
+void printCentered(char* text, int y, int FGC, int BGG);
 void clearLine(int x, int y, color_t color=COLOR_WHITE);
 void mPrintXY(int x, int y, const char*msg, int mode, int color);
 void mMsgBoxPush(int lines);

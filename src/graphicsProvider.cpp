@@ -259,7 +259,7 @@ void closeProgressMessage() {
   MsgBoxPop(); //closes progressbar
 }
 
-void printCentered(const char* text, int y, int FGC, int BGC) {
+void printCentered(char* text, int y, int FGC, int BGC) {
   int len = MB_ElementCount(text);
   int x = LCD_WIDTH_PX/2-(len*18)/2;
   int cur = 0;
