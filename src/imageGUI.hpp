@@ -16,10 +16,12 @@
 #include <math.h>
 #include "tjpgd.h"
 
+typedef display_graph TDispGraph;
 typedef struct {
   int fp;        /* File pointer for input function */
   INT xoff;    /* Image cursor */
   INT yoff;    /* Image cursor */
+  TDispGraph Graph;
 } IODEV;
 void viewImage(char* filename);
 UINT in_func (JDEC* jd, BYTE* buff, UINT nbyte);

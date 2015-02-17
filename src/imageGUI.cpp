@@ -42,6 +42,24 @@ void viewImage(char* filename) {
 
   devid.xoff = 0;
   devid.yoff = 0;
+
+  // set constant parameters for struct to pass to Bdisp_WriteGraphVRAM
+  devid.Graph.xofs = 0;
+  devid.Graph.yofs = 0;
+  devid.Graph.colormode = 0x02;
+  devid.Graph.zero4 = 0x00;
+  devid.Graph.P20_1 = 0x20;
+  devid.Graph.P20_2 = 0x20;
+  devid.Graph.color_idx1 = 0x00;
+  devid.Graph.color_idx2 = 0x05;
+  devid.Graph.color_idx3 = 0x01;
+  devid.Graph.P20_3 = 0x01;
+  devid.Graph.writemodify = 0x01;
+  devid.Graph.writekind = 0x00;
+  devid.Graph.zero6 = 0x00;
+  devid.Graph.one1 = 0x00;
+  devid.Graph.transparency = 0;
+  
   int scale = 0;
   unsigned short filenameshort[0x10A];
   Bfile_StrToName_ncpy(filenameshort, filename, 0x10A);
@@ -199,35 +217,17 @@ UINT in_func (JDEC* jd, BYTE* buff, UINT nbyte)
   else return nbyte;
   }
 }
-
-typedef display_graph TDispGraph;
 UINT out_func (JDEC* jd, void* bitmap, JRECT* rect)
 {
   IODEV *dev = (IODEV*)jd->device;
-  TDispGraph Graph;
-  Graph.x = rect->left - dev->xoff;
-  Graph.y = rect->top - dev->yoff; //24 px for status bar...
-  if(Graph.x > LCD_WIDTH_PX) return 1; // out of bounds, no need to display
-  if(Graph.y > LCD_HEIGHT_PX) return 0; // no need to decode more, it's already out of vertical bound
-  Graph.xofs = 0;
-  Graph.yofs = 0;
-  Graph.width = rect->right - rect->left + 1;
-  Graph.height = rect->bottom - rect->top + 1;
-  Graph.colormode = 0x02;
-  Graph.zero4 = 0x00;
-  Graph.P20_1 = 0x20;
-  Graph.P20_2 = 0x20;
-  Graph.bitmap = (int)bitmap;
-  Graph.color_idx1 = 0x00;
-  Graph.color_idx2 = 0x05;
-  Graph.color_idx3 = 0x01;
-  Graph.P20_3 = 0x01;
-  Graph.writemodify = 0x01;
-  Graph.writekind = 0x00;
-  Graph.zero6 = 0x00;
-  Graph.one1 = 0x00;
-  Graph.transparency = 0;
-  Bdisp_WriteGraphVRAM( &Graph );
+  dev->Graph.x = rect->left - dev->xoff;
+  dev->Graph.y = rect->top - dev->yoff; //24 px for status bar...
+  if(dev->Graph.x > LCD_WIDTH_PX) return 1; // out of bounds, no need to display
+  if(dev->Graph.y > LCD_HEIGHT_PX) return 0; // no need to decode more, it's already out of vertical bound
+  dev->Graph.width = rect->right - rect->left + 1;
+  dev->Graph.height = rect->bottom - rect->top + 1;
+  dev->Graph.bitmap = (int)bitmap;
+  Bdisp_WriteGraphVRAM( &dev->Graph );
 
   return 1;  /* Continue to decompress */
 }
