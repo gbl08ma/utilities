@@ -55,39 +55,41 @@ void firstRunWizard() {
   elem[1].lineSpacing = 5;
   elem[1].text = (char*)"- Clock and chronometer";
   elem[2].newLine = 1;
-  elem[2].text = (char*)"- Calendar with agenda and tasklist";
+  elem[2].text = (char*)"- File manager with file search";
   elem[3].newLine = 1;
-  elem[3].text = (char*)"- Fine timeout&backlight adjustment";
+  elem[3].text = (char*)"- Text editor and JPEG viewer";
   elem[4].newLine = 1;
-  elem[4].text = (char*)"- File manager with file search";
+  elem[4].text = (char*)"- Calendar with agenda and tasklist";
   elem[5].newLine = 1;
-  elem[5].text = (char*)"- CPU clock adjustment";
+  elem[5].text = (char*)"- Balance manager";
   elem[6].newLine = 1;
-  elem[6].text = (char*)"...and more";
-  
+  elem[6].text = (char*)"- Fine timeout&backlight adjustment";
   elem[7].newLine = 1;
-  elem[7].lineSpacing = 8;
-  elem[7].color = COLOR_ORANGE;
-  elem[7].text = (char*)"Important notes:";
+  elem[7].text = (char*)"...and more";
   
   elem[8].newLine = 1;
-  elem[8].text = (char*)"To set time and date, as well as other settings, press Shift+Menu (Setup) at almost any point in the add-in.";
+  elem[8].lineSpacing = 8;
+  elem[8].color = COLOR_ORANGE;
+  elem[8].text = (char*)"Important notes:";
   
   elem[9].newLine = 1;
-  elem[9].lineSpacing = 5;
-  elem[9].text = (char*)"The CPU clock adjustment tool is hidden by default. To enable it, turn on the \"Show advanced tools\" setting.";
+  elem[9].text = (char*)"You can set the time, date and many settings from the Settings menu, accessible by pressing Shift+Menu (Set Up) at almost any point in the add-in.";
   
   elem[10].newLine = 1;
-  elem[10].lineSpacing = 8;
-  elem[10].text = (char*)"Thanks for reading these notes.";
+  elem[10].lineSpacing = 5;
+  elem[10].text = (char*)"Tools for more advanced users are hidden, unless the \"Show advanced tools\" setting is turned on.";
+  
   elem[11].newLine = 1;
-  elem[11].text = (char*)"After pressing EXIT or EXE, you may be guided to adjust your calculator's clock.";
-  
+  elem[11].lineSpacing = 8;
+  elem[11].text = (char*)"Thanks for reading these notes.";
   elem[12].newLine = 1;
-  elem[12].lineSpacing = 3;
-  elem[12].text = (char*)"In case you need help with this software, contact info is on the \"About\" screen, to which you can get from the Settings menu.";
+  elem[12].text = (char*)"After pressing EXIT or EXE, you may be guided to adjust your calculator's clock.";
   
-  text.numelements = 13;
+  elem[13].newLine = 1;
+  elem[13].lineSpacing = 3;
+  elem[13].text = (char*)"In case you need help with this software, contact info is on the \"About\" screen, to which you can get from the Settings menu.";
+  
+  text.numelements = 14;
   doTextArea(&text);
   SetSetting(SETTING_IS_FIRST_RUN, 0, 1);
   setmGetKeyMode(MGETKEY_MODE_NORMAL);
