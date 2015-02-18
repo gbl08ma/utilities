@@ -52,14 +52,12 @@ int getHardwareModel() {
 // uses the power source information to detect the emulator
 // obviously, if an emulator comes that emulates this info better, this function will be inaccurate
 int getIsEmulated() {
-  int k;
-  k = *(unsigned char*)P11DR;
-  if (k==0x0000) return 1;
-  else return 0;
+  int k = *(unsigned char*)P11DR;
+  return !k;
 }
 
 void setBrightnessToStartupSetting() {
-  if (GetSetting(SETTING_STARTUP_BRIGHTNESS) != 250 && 0 <= GetSetting(SETTING_STARTUP_BRIGHTNESS) && GetSetting(SETTING_STARTUP_BRIGHTNESS) <= 249) {
+  if (GetSetting(SETTING_STARTUP_BRIGHTNESS) <= 249) {
     SetBacklightSubLevel_RAW(GetSetting(SETTING_STARTUP_BRIGHTNESS));
   }
 }

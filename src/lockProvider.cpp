@@ -60,11 +60,10 @@ int savePassword(unsigned char* password) {
   //now that we hashed, save in the storage memory.
   //Save to SMEM
   //create a folder, if it doesn't exist already
-  unsigned short pFolder[MAX_FILENAME_SIZE];
-  Bfile_StrToName_ncpy(pFolder, CALENDARFOLDER, MAX_FILENAME_SIZE);
-  Bfile_CreateEntry_OS(pFolder, CREATEMODE_FOLDER, 0); //create a folder for the file
+  unsigned short pFile[MAX_FILENAME_SIZE];
+  Bfile_StrToName_ncpy(pFile, CALENDARFOLDER, MAX_FILENAME_SIZE);
+  Bfile_CreateEntry_OS(pFile, CREATEMODE_FOLDER, 0); //create a folder for the file
   // now the file
-  unsigned short pFile[MAX_FILENAME_SIZE]; // Make buffer
   Bfile_StrToName_ncpy(pFile, SMEMHASHFILE, MAX_FILENAME_SIZE); 
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   size_t size = 32;
