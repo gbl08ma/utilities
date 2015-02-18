@@ -31,10 +31,7 @@ void hashPassword(unsigned char* password, unsigned char* hash) {
 }
 
 int comparePasswordHash(unsigned char* inputPassword) {
-  //returns 0 if password's hash matches the hash stored in SMEM and MCS
-  //returns 1 if there's no hash stored in MCS, 2 if no hash in SMEM
-  //returns 3 if hashes stored don't match
-  //returns 4 if hashed password and stored hashes don't match
+  //returns values defined as RETURN_PASSWORD_*
   //Load hash from SMEM
   unsigned short pFile[MAX_FILENAME_SIZE]; // Make buffer
   int hFile;
@@ -44,35 +41,23 @@ int comparePasswordHash(unsigned char* inputPassword) {
   if(hFile < 0) // Check if it opened
   {
     //error, file doesn't exist.
-    return RETURN_PASSWORD_NOSMEM;
+    return RETURN_PASSWORD_NOHASH;
   } else {
     Bfile_ReadFile_OS(hFile, smemHash, 32, 0);
     Bfile_CloseFile_OS(hFile);
   }
-  //Load hash from MCS
-  int MCSsize;
-  unsigned char mcsHash[32] = "";
-  MCSGetDlen2(DIRNAME, HASHFILE, &MCSsize);
-  if (!MCSsize) { return RETURN_PASSWORD_NOMCS; }
-  MCSGetData1(0, 32, mcsHash);
-  if (!memcmp(mcsHash, smemHash, 32)) {
-    //hash stored in main mem matches with storage memory.
-    //now compare the hash with the hash of the inserted password
-    unsigned char inputHash[32];    
-    hashPassword(inputPassword, inputHash);
-    if (!memcmp(inputHash, smemHash, 32)) {
-      return RETURN_PASSWORD_MATCH;
-    } else {
-      return RETURN_PASSWORD_MISMATCH;
-    }
+  unsigned char inputHash[32] = "";    
+  hashPassword(inputPassword, inputHash);
+  if (!memcmp(inputHash, smemHash, 32)) {
+    return RETURN_PASSWORD_MATCH;
   } else {
-    return RETURN_PASSWORD_STORAGE_MISMATCH; 
+    return RETURN_PASSWORD_MISMATCH;
   }
 }
 int savePassword(unsigned char* password) {
-  unsigned char hash[32];
+  unsigned char hash[32] = "";
   hashPassword(password, hash);
-  //now that we hashed, save in the main memory and storage memory.
+  //now that we hashed, save in the storage memory.
   //Save to SMEM
   //create a folder, if it doesn't exist already
   unsigned short pFolder[MAX_FILENAME_SIZE];
@@ -95,31 +80,16 @@ int savePassword(unsigned char* password) {
   //file exists (even if it didn't exist before) and is open. overwrite its contents with the new hash.
   Bfile_WriteFile_OS(hFile, hash, size);
   Bfile_CloseFile_OS(hFile);
-  
-  //----------
-  //Now, the MCS.
-  int createResult = MCS_CreateDirectory(DIRNAME);
-  if(createResult != 0) // Check directory existence
-  { // directory already exists, so delete the existing file that may be there
-    MCSDelVar2(DIRNAME, HASHFILE);
-  }
-  //write the file
-  MCSPutVar2(DIRNAME, HASHFILE, size, hash);
   return 0;
 }
 
 int isPasswordSet(void) {
   //returns 1 if user has already set a code for locking the calc, 0 if not.
-  // check SMEM.
   unsigned short pFile[MAX_FILENAME_SIZE]; // Make buffer
   int hFile;
   Bfile_StrToName_ncpy(pFile, SMEMHASHFILE, MAX_FILENAME_SIZE); 
   hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hFile < 0) return 0;
   Bfile_CloseFile_OS(hFile);
-  
-  //check MCS
-  int size;
-  MCSGetDlen2(DIRNAME, HASHFILE, &size);
-  return (size != 0); //code exists in both SMEM and MCS
+  return 1;
 }

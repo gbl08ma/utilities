@@ -15,10 +15,8 @@
 #include <math.h>
 
 #define RETURN_PASSWORD_MATCH 0
-#define RETURN_PASSWORD_NOMCS 1
-#define RETURN_PASSWORD_NOSMEM 2
-#define RETURN_PASSWORD_STORAGE_MISMATCH 3
-#define RETURN_PASSWORD_MISMATCH 4
+#define RETURN_PASSWORD_NOHASH 1
+#define RETURN_PASSWORD_MISMATCH 2
 
 
 void hashPassword(unsigned char* password, unsigned char* hash);

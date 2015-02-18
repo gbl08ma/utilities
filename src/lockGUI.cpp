@@ -113,7 +113,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
 }
 
 int setPassword() {
-  unsigned char password[256];
+  unsigned char password[256+8]; // 8 bytes for hardware ID as salt
   Bdisp_AllClr_VRAM();
   drawScreenTitle((char*)"Calculator lock", (char*)"Set new code:");
   if (passwordInput(1, 3, password)) {
@@ -125,7 +125,7 @@ int setPassword() {
 
 int unlockCalc() {
   //returns 1 on unlocked and 0 on still locked
-  unsigned char password[256];
+  unsigned char password[256+8];  // 8 bytes for hardware ID as salt
   
   Bdisp_AllClr_VRAM();
   drawScreenTitle((char*)"Calculator lock", (char*)"Input code:");
@@ -135,11 +135,7 @@ int unlockCalc() {
     if(!res) return 1;
     else {
       mMsgBoxPush(3);
-      if(res == 4) mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      else {
-        mPrintXY(3, 3, (char*)"Data tampering", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-        mPrintXY(3, 4, (char*)"detected!", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      }
+      mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       closeMsgBox();
       return 0;
     }
