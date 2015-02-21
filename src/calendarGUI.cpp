@@ -1003,8 +1003,8 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       // where alpha-lock was enabled, not being disabled on F6.
       SetSetupSetting( (unsigned int)0x14, 0);
     }
-    // < (first label) and Next or Finish (last label)
-    drawFkeyLabels((curstep>0 ? 0x036F : -1), -1, -1, -1, -1, (curstep==6 ? 0x04A4 : 0x04A3));
+    // < (first label), SELECT if on end date step, and Next or Finish (last label)
+    drawFkeyLabels((curstep>0 ? 0x036F : -1), (curstep == 4 ? 0x000F : -1), -1, -1, -1, (curstep==6 ? 0x04A4 : 0x04A3));
     switch(curstep) {
       case 0:
         {
@@ -1150,8 +1150,24 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
               event->enddate.day = event->startdate.day;
               curstep=curstep+1; break; // next step
             } else invalidFieldMsg(0);
-          } 
-          else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
+          } else if (res==INPUT_RETURN_KEYCODE) {
+            if(input.key==KEY_CTRL_F1) {
+              curstep=curstep-1; break;
+            } else if(input.key==KEY_CTRL_F2) {
+              int ey=event->enddate.year, em=event->enddate.month, ed=event->enddate.day;
+              if(!chooseCalendarDate(&ey, &em, &ed,
+                                    (char*)"Select event end date:", NULL, 1)) {
+                long int datediff = DateToDays(ey, em, ed) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
+                if(datediff>=0) {
+                  event->enddate.year = ey;
+                  event->enddate.month = em;
+                  event->enddate.day = ed;
+                  curstep=curstep+1; break; // continue to next step
+                } else invalidFieldMsg(0);
+              }
+              break; //redraw
+            }
+          }
         }
         break;
       }
@@ -1478,7 +1494,7 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
 }
 
 int moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
-  int ey=0, em=0, ed=0;
+  int ey=events[pos].startdate.year, em=events[pos].startdate.month, ed=events[pos].startdate.day;
   if(!chooseCalendarDate(&ey, &em, &ed, (isCopy ? (char*)"Select date to copy event to:" : (char*)"Select date to move event to:"), NULL, 1)) {
     if(ey == (signed)events[pos].startdate.year && em == (signed)events[pos].startdate.month && ed == (signed)events[pos].startdate.day) {
       return EVENTEDITOR_RETURN_EXIT; //destination date is same as current event date
