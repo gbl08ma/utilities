@@ -340,7 +340,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono, int menuSelOnly) {
         Selector sel;
         sel.title =  (char*)"Set downwards chrono.";
         sel.subtitle = (char*)"Days";
-        sel.max = -1; // no limit. long long int is big enough to accomodate a chronometer with a duration of over 2 million days.
+        sel.max = 1000000; // some sort of overflow happens with very big values, even though in theory it would all be within the limits of int64
         sel.cycle = 0;
         sel.type = SELECTORTYPE_NORMAL;
         if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
