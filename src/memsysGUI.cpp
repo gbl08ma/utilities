@@ -45,7 +45,6 @@ void drawCapacityBar(int textY, long long int cur, long long int full) {
 
 void drawCapacityText(int* textY, const char* desc, int cur, int full) {
   char buffer[100];
-  //itoa(full-cur, (unsigned char*)buffer);
   *textY=*textY+22; int textX = 0;
   sprintf(buffer, "%s: %d bytes free", desc, full-cur);
   PrintMini(&textX, textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);

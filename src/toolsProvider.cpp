@@ -27,23 +27,16 @@ long long int llabs(long long int i) {
   return i;
 }
 void currencyToString(char* dest, Currency* orig) {
-  char buffer[12];
-  // not sure if Prizm's itoa supports negative numbers. TODO - must check if that's the case,
-  // and simplify the code if it supports
+  //char buffer[12];
   int units, cents;
   units = (int)(orig->val / 100LL);
-  if(orig->val >= 0) {
-    itoa(units, (unsigned char*)dest);
-  } else {
-    strcpy(dest, (char*)"-");
-    itoa(abs(units), (unsigned char*)buffer);
-    strcat(dest, buffer);
-  }
+  //itoa(units, (unsigned char*)dest);
   cents = (int)(llabs(orig->val) % 100LL);
-  itoa(cents, (unsigned char*)buffer);
+  /*itoa(cents, (unsigned char*)buffer);
   strcat(dest, (char*)".");
   if(cents < 10) strcat(dest, (char*)"0");
-  strcat(dest, buffer);
+  strcat(dest, buffer);*/
+  sprintf(dest, "%d.%s%d", units, cents < 10 ? "0" : "", cents);
 }
 
 int stringToCurrency(Currency* dest, char* orig) {
