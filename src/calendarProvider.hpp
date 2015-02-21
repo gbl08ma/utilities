@@ -65,7 +65,6 @@ typedef struct // a simplified calendar event, for use when the memory available
 void calEventToChar(CalendarEvent* calEvent, unsigned char* buf);
 void charToCalEvent(unsigned char* src, CalendarEvent* calEvent);
 void charToSimpleCalEvent(unsigned char* src, SimpleCalendarEvent* calEvent);
-void filenameFromDate(EventDate* date, char* filename);
 void smemFilenameFromDate(EventDate* date, unsigned short* filename, const char* folder);
 int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall=0);
 int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char* folder, int count);

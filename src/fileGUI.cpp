@@ -446,9 +446,7 @@ int makeg3pGUI(char* browserbasepath) {
       Bfile_CloseFile_OS(h);
 
       char newfilename[MAX_FILENAME_SIZE];
-      strcpy(newfilename, browserbasepath);
-      strcat(newfilename, newname);
-      strcat(newfilename, ".g3p");
+      sprintf(newfilename, "%s%s.g3p", browserbasepath, newname);
 
       compressFile((char*)TEMPFILE2, (char*)newfilename, 1, 1); // will also delete temp file
       return 1;
@@ -909,9 +907,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
     return;
   }
   char titlebuf[MAX_NAME_SIZE+20];
-  strcpy((char*)titlebuf, "Viewing ");
-  strcat((char*)titlebuf, (char*)name);
-  strcat((char*)titlebuf, " as text");
+  sprintf(titlebuf, "Viewing %s as text", name);
   DefineStatusMessage((char*)titlebuf, 1, 0, 0);
   textArea text;
   

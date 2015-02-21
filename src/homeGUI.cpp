@@ -51,12 +51,8 @@ void showHome(chronometer* chrono) {
       DrawFrame( 0xFFFFFF  );
     }
     if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 3 && getLastChronoComplete()) {
-      char buffer[10];
-      itoa(getLastChronoComplete(), (unsigned char*)buffer);
-      char message[50];
-      strcpy(message, "Chronometer ");
-      strcat(message, buffer);
-      strcat(message, " ended");
+      char message[30];
+      sprintf(message, "Chronometer %d ended", getLastChronoComplete());
       DefineStatusMessage(message, 1, 4, 0);
     } else if (isTodayDSTstartEndDate()) {
       char message[100];
@@ -432,12 +428,7 @@ void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int 
     if(numevents>maxevents) {
       textX = startx + 5;
       textY = textY + 20;
-      strcpy(itemtext, (char*)"  ...and ");
-      unsigned char buffer[10];
-      itoa(numevents-maxevents, buffer);
-      strcat(itemtext, (char*)buffer);
-      strcat(itemtext, (char*)" more event");
-      if(numevents-maxevents > 1) strcat(itemtext, (char*)"s");
+      sprintf(itemtext, "  ...and %d more event%s", numevents-maxevents, numevents-maxevents > 1 ? "s" : "");
       PrintMini(&textX, &textY, itemtext, 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
     }
   } else {

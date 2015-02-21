@@ -186,24 +186,9 @@ void charToSimpleCalEvent(unsigned char* src, SimpleCalendarEvent* calEvent) {
   }
 }
 
-void filenameFromDate(EventDate* date, char* filename) {
-  char smallbuf[8];
-  itoa(date->year, (unsigned char*)smallbuf); strcpy(filename, smallbuf);
-  itoa(date->month, (unsigned char*)smallbuf);
-  if (date->month < 10) strcat(filename, "0");  //if month below 10, add leading 0
-  strcat(filename, smallbuf);
-  itoa(date->day, (unsigned char*)smallbuf);
-  if (date->day < 10) strcat(filename, "0"); //if day below 10, add leading 0
-  strcat(filename, smallbuf);
-}
 void smemFilenameFromDate(EventDate* date, unsigned short* shortfn, const char* folder) {
   char filename[MAX_FILENAME_SIZE];
-  char buffer[10];
-  strcpy(filename, folder);
-  strcat(filename, "\\");
-  filenameFromDate(date, buffer);
-  strcat(filename, buffer);
-  strcat(filename, ".pce"); //filenameFromDate does not include file extension, so add it
+  sprintf(filename, "%s\\%d%s%d%s%d.pce", folder, date->year, date->month < 10 ? "0" : "", date->month, date->day < 10 ? "0" : "", date->day); //filenameFromDate does not include file extension, so add it
   Bfile_StrToName_ncpy(shortfn, filename, MAX_FILENAME_SIZE); 
 }
 
@@ -428,14 +413,7 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy(buffer, CALENDARFOLDER"\\");
-  char smallbuf[5];
-  itoa(year, (unsigned char*)smallbuf);
-  strcat(buffer, smallbuf);
-  itoa(month, (unsigned char*)smallbuf);
-  if (month < 10) strcat(buffer, "0");  //if month below 10, add leading 0
-  strcat(buffer, smallbuf);
-  strcat(buffer, "*.pce");
+  sprintf(buffer, CALENDARFOLDER"\\%d%s%d*.pce", year, month < 10 ? "0" : "", month);
   
   file_type_t fileinfo;
   int findhandle;
@@ -506,17 +484,9 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy(buffer, folder);
-  strcat(buffer, "\\");
-  char smallbuf[10];
-  itoa(y, (unsigned char*)smallbuf);
-  strcat(buffer, smallbuf);
-  if(m) {
-    itoa(m, (unsigned char*)smallbuf);
-    if (m < 10) strcat(buffer, "0");  //if month below 10, add leading 0
-    strcat(buffer, smallbuf);
-  }
-  strcat(buffer, "*.pce");
+  char mbuf[10]; mbuf[0] = 0;
+  if(m) sprintf(mbuf, "%s%d", m < 10 ? "0" : "", m);
+  sprintf(buffer, "%s\\%d%s*.pce", folder, y, mbuf);
   
   file_type_t fileinfo;
   int findhandle;

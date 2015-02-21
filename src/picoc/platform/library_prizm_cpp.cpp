@@ -1395,10 +1395,6 @@ pcvoid(charToSimpleCalEvent)(struct ParseState *Parser, struct Value *ReturnValu
     charToSimpleCalEvent((unsigned char*)Param[0]->Val->Pointer, (SimpleCalendarEvent*)Param[1]->Val->Pointer);
 }
 
-pcvoid(filenameFromDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    filenameFromDate((EventDate*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
-}
-
 pcvoid(smemFilenameFromDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     smemFilenameFromDate((EventDate*)Param[0]->Val->Pointer, (unsigned short*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer);
 }
@@ -2476,7 +2472,6 @@ const struct LibraryFunction UtilitiesCalendarProvider[] =
     { pcfunc(calEventToChar),        "void calEventToChar(void*, unsigned char*);" },
     { pcfunc(charToCalEvent),        "void charToCalEvent(unsigned char*, void*);" },
     { pcfunc(charToSimpleCalEvent),  "void charToSimpleCalEvent(unsigned char*, void*);" },
-    { pcfunc(filenameFromDate),      "void filenameFromDate(void*, char*);" },
     { pcfunc(smemFilenameFromDate),  "void smemFilenameFromDate(void*, unsigned short*, char*);" },
     { pcfunc(AddEvent),              "int AddEvent(void*, char*, int);" },
     { pcfunc(ReplaceEventFile),      "int ReplaceEventFile(void*, void*, char*, int);" },

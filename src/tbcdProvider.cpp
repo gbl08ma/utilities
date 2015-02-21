@@ -109,10 +109,10 @@ int TBCD::SetError(int error) {
 int TBCD::GetError() {
   int result = (FValue[0].exponent & 0xF00) >> 4;
   return result;
-};
+}
 
 void TBCD::Swap() {
   TBCDvalue work;
   FValue[0] = FValue[1];
   FValue[1] = work;
-}; 
+}

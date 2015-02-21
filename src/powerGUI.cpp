@@ -233,9 +233,7 @@ void updateCurrentFreq() {
   }
   int textX = 0; int textY = 147;
   char buffer[50];
-  strcpy(buffer, (char*)"Running at ");
-  strcat(buffer, cur);
-  strcat(buffer, (char*)" MHz");
+  sprintf(buffer, "Running at %s MHz", cur);
   PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   mPrintXY(1, 8, desc, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
 }

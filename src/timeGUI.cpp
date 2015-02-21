@@ -24,24 +24,21 @@
 
 #include "debugGUI.hpp"
 
-void appendDayEnding(int day, char* buffer) {
+const char* getDayEnding(int day) {
   //st,nd,rd,th code:
   switch(day) {
     case 1:
     case 21:
     case 31:
-      strcat(buffer, "st");
-      break;
+      return "st";
     case 2:
     case 22:
-      strcat(buffer, "nd");
-      break;
+      return "nd";
     case 3:
     case 23:
-      strcat(buffer, "rd");
-      break;
+      return "rd";
     default:
-      strcat(buffer, "th");
+      return "th";
       break;
   }
 }
@@ -56,88 +53,30 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
   int curDay = getCurrentDay();
 
   char buffer[50];
-  char buffer2[10];
-  itoa(curDay, (unsigned char*)buffer2);
-
-  switch(format)
-  {
+  switch(format) {
     case 0:
-      strcpy(buffer, getCurrentDOWAsString());
-      strcat(buffer, ", ");
-      strcat(buffer, getCurrentMonthAsString());
-      strcat(buffer, " ");
-      strcat(buffer, buffer2);
+      sprintf(buffer, "%s, %s %d", getCurrentDOWAsString(), getCurrentMonthAsString(), curDay);
       break;
     case 1:
-      strcpy(buffer, getCurrentDOWAsString());
-      strcat(buffer, ", ");
-      strcat(buffer, buffer2);
-      appendDayEnding(curDay, buffer);
-
-      strcat(buffer, " ");
-      strcat(buffer, getCurrentMonthAsString());
-      break;
-
-    case 2:
-      strcpy(buffer, getCurrentDOWAsString());
-      strcat(buffer, ", ");
-      strcat(buffer, buffer2);
-      appendDayEnding(curDay, buffer);
-
-      strcat(buffer, " ");
-      strcat(buffer, getCurrentMonthAsString());
-
-      strcat(buffer, " ");
-      itoa(curYear, (unsigned char*)buffer2);
-      strcat(buffer, buffer2);
-      break;
-
     case 3:
-      strcpy(buffer, getCurrentDOWAsString());
-      strcat(buffer, ", ");
-      strcat(buffer, buffer2);
-      appendDayEnding(curDay, buffer);
-
-      strcat(buffer, " ");
-      strcat(buffer, getCurrentMonthAsString());
+      sprintf(buffer, "%s, %d%s %s", getCurrentDOWAsString(), curDay, getDayEnding(curDay), getCurrentMonthAsString());
       break;
-
+    case 2:
+      sprintf(buffer, "%s, %d%s %s %d", getCurrentDOWAsString(), curDay, getDayEnding(curDay), getCurrentMonthAsString(), curYear);
+      break;
     case 4:
     case 6: //it's exactly the same except minimini is not used, but that's not handled here
-      strcpy(buffer, getCurrentMonthAsString());
-      strcat(buffer, " ");
-      strcat(buffer, buffer2);
+      sprintf(buffer, "%s %d", getCurrentMonthAsString(), curDay);
       break;
-
     case 5:
-      strcpy(buffer, getCurrentMonthAsString());
-      strcat(buffer, " ");
-      strcat(buffer, buffer2);
-
-      strcat(buffer, ", ");
-      itoa(curYear, (unsigned char*)buffer2);
-      strcat(buffer, buffer2);
+      sprintf(buffer, "%s %d, %d", getCurrentMonthAsString(), curDay, curYear);
       break;
-
     case 7:
     case 9: //exactly the same except minimini, not handled here
-      strcpy(buffer, buffer2);
-      appendDayEnding(curDay, buffer);
-
-      strcat(buffer, " ");
-      strcat(buffer, getCurrentMonthAsString());
+      sprintf(buffer, "%d%s %s", curDay, getDayEnding(curDay), getCurrentMonthAsString());
       break;
-
     case 8:
-      strcpy(buffer, buffer2);
-      appendDayEnding(curDay, buffer);
-
-      strcat(buffer, " ");
-      strcat(buffer, getCurrentMonthAsString());
-
-      strcat(buffer, " ");
-      itoa(curYear, (unsigned char*)buffer2);
-      strcat(buffer, buffer2);
+      sprintf(buffer, "%d%s %s %d", curDay, getDayEnding(curDay), getCurrentMonthAsString(), curYear);
       break;
   }
 
@@ -149,6 +88,7 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
   
   if (format == 0 || format == 1 || format == 4 || format == 7) {
     // draw year in minimini font
+    char buffer2[10];
     itoa(curYear, (unsigned char*)buffer2);
     int newTextX = 0;
     textY += 17;

@@ -90,8 +90,7 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
   char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy(buffer, basepath);
-  strcat(buffer, "*");
+  sprintf(buffer, "%s*", basepath);
   
   *count = 0;
   file_type_t fileinfo;
@@ -148,8 +147,7 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
   char foldersToSearchInTheEnd[MAX_ITEMS_PER_FOLDER_COPY][MAX_NAME_SIZE];
 
   // make the buffer
-  strcpy(buffer, basepath);
-  strcat(buffer, "*");
+  sprintf(buffer, "%s*", basepath);
   
   if(!isRecursiveCall) *count = 0;
   file_type_t fileinfo;
