@@ -120,13 +120,19 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
 
 int addTransactionGUI(char* wallet) {
   Transaction tx;
+  tx.date.year = getCurrentYear();
+  tx.date.month = getCurrentMonth();
+  tx.date.day = getCurrentDay();
+  tx.time.hour = getCurrentHour();
+  tx.time.minute = getCurrentMinute();
+  tx.time.second = getCurrentSecond();
   strcpy(tx.description, (char*)"");
   int curstep = 0;
   while(1) {
     SetBackGround(0x0A);
     drawScreenTitle((char*)"Add transaction");
-    // < (first label) and Next or Finish (last label)
-    drawFkeyLabels((curstep>0 ? 0x036F : -1), -1, -1, -1, -1, (curstep==4 ? 0x04A4 : 0x04A3));
+    // < (first label), SELECT of on date step, and Next or Finish (last label)
+    drawFkeyLabels((curstep>0 ? 0x036F : -1), (curstep == 2 ? 0x000F : -1), -1, -1, -1, (curstep==4 ? 0x04A4 : 0x04A3));
     if(curstep == 0) {
       MenuItem menuitems[5];
       menuitems[0].text = (char*)"Debit";
@@ -196,7 +202,7 @@ int addTransactionGUI(char* wallet) {
       input.acceptF6=1;
       input.type=INPUTTYPE_DATE;
       char datebuffer[15];
-      fillInputDate(getCurrentYear(), getCurrentMonth(), getCurrentDay(), datebuffer);
+      fillInputDate(tx.date.year, tx.date.month, tx.date.day, datebuffer);
       input.buffer = (char*)datebuffer;
       while(1) {
         input.key=0;
@@ -215,8 +221,21 @@ int addTransactionGUI(char* wallet) {
                 break; // continue to next step
             } else invalidFieldMsg(0);
           } else invalidFieldMsg(0);
+        } else if (res==INPUT_RETURN_KEYCODE) {
+          if(input.key==KEY_CTRL_F1) {
+            curstep=curstep-1; break;
+          } else if(input.key==KEY_CTRL_F2) {
+            int ey=0, em=0, ed=0;
+            if(!chooseCalendarDate(&ey, &em, &ed,
+                                  (char*)"Select transaction date:", NULL, 1)) {
+              tx.date.year = ey;
+              tx.date.month = em;
+              tx.date.day = ed;
+              curstep++; break; // continue to next step
+            }
+            break; //redraw
+          }
         }
-        else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep--; break; }
       }
     } else if(curstep == 3) {
       drawScreenTitle(NULL, (char*)"Time:");
@@ -229,7 +248,7 @@ int addTransactionGUI(char* wallet) {
       input.acceptF6=1;
       input.type=INPUTTYPE_TIME;
       char tbuffer[15];
-      fillInputTime(getCurrentHour(), getCurrentMinute(), getCurrentSecond(), tbuffer);
+      fillInputTime(tx.time.hour, tx.time.minute, tx.time.second, tbuffer);
       input.buffer = (char*)tbuffer;
       while(1) {
         input.key=0;
