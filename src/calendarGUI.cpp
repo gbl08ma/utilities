@@ -1479,7 +1479,7 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
 
 int moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
   int ey=0, em=0, ed=0;
-  if(!chooseCalendarDate(&ey, &em, &ed, (isCopy ? (char*)"Copy Event" : (char*)"Move Event"), (char*)"To following day:")) {
+  if(!chooseCalendarDate(&ey, &em, &ed, (isCopy ? (char*)"Select date to copy event to:" : (char*)"Select date to move event to:"), NULL, 1)) {
     if(ey == (signed)events[pos].startdate.year && em == (signed)events[pos].startdate.month && ed == (signed)events[pos].startdate.day) {
       return EVENTEDITOR_RETURN_EXIT; //destination date is same as current event date
     }
