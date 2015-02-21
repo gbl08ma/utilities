@@ -709,7 +709,6 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
   else elem[text.numelements].text = (char*)mresult;
   text.numelements++;
   char sizebuffer[50];
-  itoa(file->size, (unsigned char*)sizebuffer);
   
   elem[text.numelements].newLine=1;
   elem[text.numelements].lineSpacing=3;
@@ -718,27 +717,15 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
   elem[text.numelements].spaceAtEnd=1;
   text.numelements++;
   
+  sprintf(sizebuffer, "%d bytes", file->size);
   elem[text.numelements].text = (char*)sizebuffer;
   elem[text.numelements].spaceAtEnd=1;
   text.numelements++;
   
-  elem[text.numelements].text = (char*)"bytes";
-  elem[text.numelements].spaceAtEnd=1;
-  text.numelements++;
-
   char osizebuffer[50];
   if(compressed) {
-    elem[text.numelements].text = (char*)"(";
-    elem[text.numelements].minimini=1;
-    text.numelements++;
-
-    itoa(origfilesize, (unsigned char*)osizebuffer);
-    elem[text.numelements].text = (char*)osizebuffer;
-    elem[text.numelements].spaceAtEnd=1;
-    elem[text.numelements].minimini=1;
-    text.numelements++;
-
-    elem[text.numelements].text = (char*)"decompressed)";
+    sprintf(osizebuffer, "(%d decompressed)", origfilesize);
+    elem[text.numelements].text = osizebuffer;
     elem[text.numelements].minimini=1;
     text.numelements++;
   }
@@ -1049,12 +1036,8 @@ void folderStatistics(File* files, Menu* menu) {
   elem[text.numelements].spaceAtEnd=1;
   text.numelements++;
 
-  itoa(totalsize, (unsigned char*)tsibuffer);
+  sprintf(tsibuffer, "%d bytes", totalsize);
   elem[text.numelements].text = (char*)tsibuffer;
-  elem[text.numelements].spaceAtEnd=1;
-  text.numelements++;
-  
-  elem[text.numelements].text = (char*)"bytes";
   text.numelements++;
 
   char tssbuffer[20];
@@ -1071,12 +1054,8 @@ void folderStatistics(File* files, Menu* menu) {
     elem[text.numelements].spaceAtEnd=1;
     text.numelements++;
 
-    itoa(selsize, (unsigned char*)tssbuffer);
+    sprintf(tssbuffer, "%d bytes", selsize);
     elem[text.numelements].text = (char*)tssbuffer;
-    elem[text.numelements].spaceAtEnd=1;
-    text.numelements++;
-    
-    elem[text.numelements].text = (char*)"bytes";
     text.numelements++;
   }
   

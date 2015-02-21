@@ -27,15 +27,8 @@ long long int llabs(long long int i) {
   return i;
 }
 void currencyToString(char* dest, Currency* orig) {
-  //char buffer[12];
-  int units, cents;
-  units = (int)(orig->val / 100LL);
-  //itoa(units, (unsigned char*)dest);
-  cents = (int)(llabs(orig->val) % 100LL);
-  /*itoa(cents, (unsigned char*)buffer);
-  strcat(dest, (char*)".");
-  if(cents < 10) strcat(dest, (char*)"0");
-  strcat(dest, buffer);*/
+  int units = (int)(orig->val / 100LL);
+  int cents = (int)(llabs(orig->val) % 100LL);
   sprintf(dest, "%d.%s%d", units, cents < 10 ? "0" : "", cents);
 }
 
