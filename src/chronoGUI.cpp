@@ -103,7 +103,7 @@ void formatChronoString(chronometer* tchrono, int num, char* string, int isChron
     strcat(string, buffer);
   }
   if(isChronoView) {
-    drawAnalogChronometer(LCD_WIDTH_PX / 2, LCD_HEIGHT_PX / 2 + 10, 65, COLOR_WHITE, COLOR_BLACK, days, hours, minutes, seconds);
+    drawAnalogChronometer(LCD_WIDTH_PX / 2, LCD_HEIGHT_PX / 2 + 10, 65, COLOR_WHITE, COLOR_BLACK, days, hours, minutes, seconds*1000 + milliseconds);
   }
 }
 void doNothing() {}

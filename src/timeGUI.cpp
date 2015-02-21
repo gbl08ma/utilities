@@ -134,7 +134,7 @@ void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, in
   drawLine(cx,cy,sx,sy, colorfg);
 }
 
-void drawAnalogClockHourNeedle(int h, int m, int s, int cx, int cy, double radius, int colorfg, int ischrono) {
+void drawAnalogClockHourNeedle(int h, int m, int cx, int cy, double radius, int colorfg, int ischrono) {
   double angle=-90;
   double sx,sy;
   double length = radius - radius/(ischrono? 5.0 : 2.5);
@@ -152,10 +152,10 @@ void drawAnalogClock(int cx, int cy, int radius, int colorbg, int colorfg) {
   drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 1);
   if(GetSetting(SETTING_CLOCK_SECONDS)) drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg);
   drawAnalogClockMinuteNeedle(m, s, cx, cy, radius, colorfg);
-  drawAnalogClockHourNeedle(h, m, s, cx, cy, radius, colorfg, 0);
+  drawAnalogClockHourNeedle(h, m, cx, cy, radius, colorfg, 0);
 }
 
-void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg, int d, int h, int m, int s) {
+void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg, int d, int h, int m, int sPlusMs) {
   // draw outer dial
   drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 0);
   // draw inner top dial (minutes)
@@ -174,11 +174,17 @@ void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg,
     PrintMiniMini( &textX, &textY, (char*)buffer, 0, TEXT_COLOR_BLACK, 0 );
   }
   // seconds needle on bigger dial
-  drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg);
+  //drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg);
+  double angle=-90.0;
+  double length = radius - radius/8.0;
+  drawLine(cx,cy,
+    cx+length*cosine((angle+(double)sPlusMs*0.006)*M_PI/180.0),
+    cy+length*sine((angle+(double)sPlusMs*0.006)*M_PI/180.0),
+    colorfg);
   // minutes on top
-  drawAnalogClockMinuteNeedle(m, s, cx, cy-radius/2, radius/3, colorfg);
+  drawAnalogClockMinuteNeedle(m, sPlusMs/1000, cx, cy-radius/2, radius/3, colorfg);
   // hours on bottom
-  drawAnalogClockHourNeedle(h, m, s, cx, cy+radius/2, radius/3, colorfg, 1);
+  drawAnalogClockHourNeedle(h, m, cx, cy+radius/2, radius/3, colorfg, 1);
 }
 
 void setTimeGUI(int canExit) {
