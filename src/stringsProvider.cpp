@@ -106,7 +106,7 @@ void* memmem(char* haystack, int hlen, char* needle, int nlen, int matchCase) {
 }
 
 // strncpy_retlen works like strncpy, but returns the length copied to the string.
-int strncpy_retlen(unsigned char* dest, unsigned char* src, int n) {
+int strncpy_retlen(unsigned char* dest, const unsigned char* src, int n) {
   int i;
   for (i = 0; i < n; i++) {
     if(src[i]) dest[i] = src[i];
@@ -119,7 +119,7 @@ int strncpy_retlen(unsigned char* dest, unsigned char* src, int n) {
 
 // convert a normal text string into a multibyte one where letters become their mini variants (F5 screen of the OS's character select dialog)
 // dest must be at least double the size of orig.
-void stringToMini(char* dest, char* orig) {
+void stringToMini(char* dest, const char* orig) {
   int len = strlen(orig);
   int dlen = 0;
   for (int i = 0; i < len; i++) {
@@ -164,7 +164,7 @@ int base32_decode(const unsigned char *encoded, unsigned char *result, int size)
   return i;
 }
 
-int base32_validate(char* string) {
+int base32_validate(const char* string) {
   // returns 1 if the provided string is valid base32
   // returns 0 if not
   for(; *string; string++) {

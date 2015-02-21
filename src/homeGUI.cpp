@@ -56,8 +56,8 @@ void showHome(chronometer* chrono) {
       DefineStatusMessage(message, 1, 4, 0);
     } else if (isTodayDSTstartEndDate()) {
       char message[100];
-      stringToMini(message, (char*)"To adjust the clock: SHIFT then MENU");
-      DefineStatusMessage((char*)message, 1, 0, 0);
+      stringToMini(message, "To adjust the clock: SHIFT then MENU");
+      DefineStatusMessage(message, 1, 0, 0);
     } else DefineStatusMessage((char*)"", 1, 0, 0);
     DisplayStatusArea();
     if (GetSetting(SETTING_THEME)) darkenStatusbar();

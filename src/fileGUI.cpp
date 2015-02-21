@@ -69,14 +69,14 @@ void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager) {
     LocalizeMessage1( 340, titleBuffer ); //"bytes free"
     strncat((char*)title, (char*)titleBuffer, 65);
   } else {
-    strcpy((char*)title, "Clipboard: ");
+    strcpy(title, "Clipboard: ");
     itoa(itemsinclip, (unsigned char*)titleBuffer);
-    strcat((char*)title, titleBuffer);
-    strcat((char*)title, " item");
+    strcat(title, titleBuffer);
+    strcat(title, " item");
     if(itemsinclip != 1) strcat((char*)title, "s");
     if(!ismanager) {
       char message[50];
-      stringToMini(message, (char*)", SHIFT\xe6\x91""9=Paste");
+      stringToMini(message, ", SHIFT\xe6\x91""9=Paste");
       strcat((char*)title, message);
     }
   }

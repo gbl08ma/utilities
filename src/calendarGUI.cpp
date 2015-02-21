@@ -44,7 +44,7 @@ void viewCalendar(int dateselection) {
   while(1) {
     if(!dateselection) {
       char message[100];
-      stringToMini(message, (char*)"Press OPTN for more options");
+      stringToMini(message, "Press OPTN for more options");
       DefineStatusMessage((char*)message, 1, 0, 0);
     }
     if(type) res = viewMonthCalendar(dateselection);
