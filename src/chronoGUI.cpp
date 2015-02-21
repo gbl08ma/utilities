@@ -530,11 +530,7 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
   while(key != KEY_PRGM_EXIT) {
     clearLine(1,1);
     char tbuf[42];
-    strcpy(tbuf, "Chronometer ");
-    char b[5];
-    itoa(menu->selection, (unsigned char*)b);
-    strcat(tbuf, b);
-    strcat(tbuf, " (");
+    sprintf(tbuf, "Chronometer %d (", menu->selection);
     if(chrn->state == CHRONO_STATE_CLEARED) {
       strcat(tbuf, "\xe6\xa6");
       drawFkeyLabels(0, -1, -1, -1, -1, 0x0010); // SET

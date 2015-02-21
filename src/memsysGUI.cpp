@@ -43,23 +43,16 @@ void drawCapacityBar(int textY, long long int cur, long long int full) {
   VRAMReplaceColorInRect(0, textY+24, LCD_WIDTH_PX, 20, COLOR_CYAN, COLOR_WHITE);
 }
 
-void drawCapacityText(int* textY, const char* desc, long long int cur, long long int full) {
-  char buffer[50];
-  itoa(full-cur, (unsigned char*)buffer);
+void drawCapacityText(int* textY, const char* desc, int cur, int full) {
+  char buffer[100];
+  //itoa(full-cur, (unsigned char*)buffer);
   *textY=*textY+22; int textX = 0;
-  PrintMini(&textX, textY, desc, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  sprintf(buffer, "%s: %d bytes free", desc, full-cur);
   PrintMini(&textX, textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, textY, (char*)" bytes free", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
 
   *textY = *textY + 17; textX = 60;
-  PrintMiniMini( &textX, textY, (char*)"out of ", 0, TEXT_COLOR_BLACK, 0 );
-  itoa(full, (unsigned char*)buffer);
+  sprintf(buffer, "out of %d bytes (%d bytes used)", full, cur);
   PrintMiniMini( &textX, textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
-  PrintMiniMini( &textX, textY, (char*)" bytes (", 0, TEXT_COLOR_BLACK, 0 );
-  itoa(cur, (unsigned char*)buffer);
-  PrintMiniMini( &textX, textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
-  PrintMiniMini( &textX, textY, (char*)" bytes used)", 0, TEXT_COLOR_BLACK, 0 );
-
   *textY = *textY + 12;
 }
 
@@ -73,12 +66,12 @@ void memoryCapacityViewer(int isPaneOffset) {
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
 
   int textY = 8 + isPaneOffset;
-  drawCapacityText(&textY, "Storage: ", (long long int)TOTAL_SMEM-(long long int)smemfree, TOTAL_SMEM);
-  drawCapacityBar(textY, (long long int)TOTAL_SMEM-(long long int)smemfree, TOTAL_SMEM);
+  drawCapacityText(&textY, "Storage", TOTAL_SMEM-smemfree, TOTAL_SMEM);
+  drawCapacityBar(textY, TOTAL_SMEM-smemfree, TOTAL_SMEM);
   
   int MCSmaxspace; int MCScurrentload; int MCSfreespace;  
   MCS_GetState( &MCSmaxspace, &MCScurrentload, &MCSfreespace );
-  drawCapacityText(&textY, "Main: ", MCScurrentload, MCSmaxspace);
+  drawCapacityText(&textY, "Main", MCScurrentload, MCSmaxspace);
   drawCapacityBar(textY, MCScurrentload, MCSmaxspace);
 
   int PWmaxspace=0x1FFFF;
@@ -88,7 +81,7 @@ void memoryCapacityViewer(int isPaneOffset) {
     flagpointer = flagpointer + 0x40;
     PWcurrentload += 0x40;
   }
-  drawCapacityText(&textY, "Password: ", PWcurrentload, PWmaxspace);
+  drawCapacityText(&textY, "Password", PWcurrentload, PWmaxspace);
   drawCapacityBar(textY, PWcurrentload, PWmaxspace);
 
   while(!isPaneOffset) {
