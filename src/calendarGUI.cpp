@@ -1735,6 +1735,7 @@ void searchEventsGUI(int y, int m, int d) {
         return;
         break;
       case KEY_CTRL_F1:
+        if(!menu.numitems) break;
       case MENU_RETURN_SELECTION:
         viewNthEventOnDay(&events[menu.selection-1].startdate, events[menu.selection-1].origpos);
         break;
