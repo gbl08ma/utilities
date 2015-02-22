@@ -1296,6 +1296,14 @@ inline static void PrintMiniFix( int x, int y, const char*Msg, const int flags, 
     i++;
   }
 }
+
+int isWeekendCol(int x) {
+  if(GetSetting(SETTING_WEEK_START_DAY)) {
+    return x == 5 || x == 6;
+  } else {
+    return x == 0 || x == 6;
+  }
+}
 void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* busydays, int* bufmonth, int* bufyear) {
   Bdisp_AllClr_VRAM();
   int textX = 0;
@@ -1315,10 +1323,11 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   drawRectangle(LEFT+2,TOP+2,RIGHT-2-2-LEFT,THICKNESS,COLOR_BLACK);
   textX=LEFT+5; textY= TOP+2-TOPOFFSET;
   PrintMini(&textX, &textY, getMonthAsString(month), 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
-  int x,y = 0; int k = 1;
+  int x,y = 0;
   drawRectangle(LEFT+2,TOP+2+THICKNESS,RIGHT-2-2-LEFT,THICKNESS,COLOR_LIGHTGRAY);
   drawRectangle(RIGHT-2-WIDTH,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
-  drawRectangle(LEFT+2,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
+  if(GetSetting(SETTING_WEEK_START_DAY)) drawRectangle(RIGHT-2-WIDTH*2,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
+  else drawRectangle(LEFT+2,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
   drawLine(LEFT+2,TOP+2+THICKNESS,RIGHT-3,TOP+2+THICKNESS,COLOR_BLACK);
   for (x = LEFT + 2+WIDTH; x < RIGHT - WIDTH;x+=WIDTH)
   {
@@ -1328,37 +1337,31 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   {
       drawLine(LEFT+2,y,RIGHT-3,y,COLOR_BLACK);
   }
+
+  int k = GetSetting(SETTING_WEEK_START_DAY) + 1;
   for (x = LEFT+2; x < RIGHT - WIDTH; x+= WIDTH)
   {
     textX = x+2;
     textY = TOP+2+THICKNESS-TOPOFFSET;
     PrintMini(&textX, &textY, getDOWAsShortString(k++), 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_LIGHTGRAY, 1, 0);
+    if(k == 8) k = 1;
   }
 
-  int startingday = dow(year,month,1),day = 1;
-  int prevstart = getMonthDays((month == 1 ? 12 : month - 1)) - (startingday == 0 ? 7 : startingday) + ((month == 3 && isLeap(year)) ? 2 : 1);
+  int startingday = dow(year,month,1);
+  int startsOnFirstDayOfWeek = startingday == GetSetting(SETTING_WEEK_START_DAY);
+  int day = 1;
+  int startOnSunday = !GetSetting(SETTING_WEEK_START_DAY);
+  int monthStartCol = (startOnSunday ? startingday : (startingday ? startingday - 1 : 6));
+  int prevstart = getMonthDays((month == 1 ? 12 : month - 1)) - (startsOnFirstDayOfWeek ? 7 : monthStartCol) + ((month == 3 && isLeap(year)) ? 2 : 1);
   char buffer[10];
-/*
-  while (y != 8)
-  {
-      itoa(day++,(unsigned char*)buffer);
-      PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,((x == 0) | (x == 6)) ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY,(x == 0 || x == 6) ? COLOR_LIGHTBLUE : COLOR_WHITE);
-      x++;
-      if (x == 7)
-      {
-          x = 0;
-          y++;
-      }
-  }*/
-
   y = 2;
-  for (x = 0; x < (!startingday ? 7 : startingday); x++)
-  {
+  int endx = (startsOnFirstDayOfWeek ? 7 : monthStartCol);
+  for (x = 0; x < endx; x++) {
     itoa(prevstart++,(unsigned char*)buffer);
-    PrintMiniFix(LEFT+2+x*WIDTH+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,(x == 0 || x == 6 ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY),(x == 0 || x == 6 ? COLOR_LIGHTBLUE : COLOR_WHITE));
+    PrintMiniFix(LEFT+2+x*WIDTH+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,(isWeekendCol(x) ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY),(isWeekendCol(x) ? COLOR_LIGHTBLUE : COLOR_WHITE));
   }
-  if(!startingday) y++;
-  x = startingday;
+  if(startsOnFirstDayOfWeek) y++;
+  x = monthStartCol;
   while (day <= getMonthDaysWithLeap(month, year))
   {
       itoa(day,(unsigned char*)buffer);
@@ -1366,7 +1369,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
         drawRectangle(LEFT+2+WIDTH*x+1,TOP+1+2+y*THICKNESS,WIDTH-1,THICKNESS-1,COLOR_RED);
         if(x == 0) drawRectangle(LEFT+2+WIDTH*x,TOP+1+2+y*THICKNESS,WIDTH,THICKNESS-1,COLOR_RED); //make sure the little pixels row on sundays is filled
       }
-      PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,(day == d ? COLOR_WHITE : COLOR_BLACK),(day == d ? COLOR_RED : (x == 0 || x == 6) ? COLOR_LIGHTBLUE : COLOR_WHITE));
+      PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,(day == d ? COLOR_WHITE : COLOR_BLACK),(day == d ? COLOR_RED : isWeekendCol(x) ? COLOR_LIGHTBLUE : COLOR_WHITE));
       //events indicator:            
       if (show_event_count) {
         if (*bufmonth!=month || *bufyear!=year) { //events in buffer are not for this month, refresh.
@@ -1391,7 +1394,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
           }
         }
         if(busydays[day] > 0 && day != d) {
-          if(x == 0 || x == 6) {
+          if(isWeekendCol(x)) {
             VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+1+24, 8*2, 12, COLOR_WHITE, categoryBackColors[busydays[day]]);
             VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_LIGHTBLUE, categoryBackColors[busydays[day]]);
           } else {
@@ -1413,7 +1416,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   while (y != 8)
   {
       itoa(day++,(unsigned char*)buffer);
-      PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,((x == 0) | (x == 6)) ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY,(x == 0 || x == 6) ? COLOR_LIGHTBLUE : COLOR_WHITE);
+      PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0, isWeekendCol(x) ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY, isWeekendCol(x) ? COLOR_LIGHTBLUE : COLOR_WHITE);
       x++;
       if (x == 7)
       {
