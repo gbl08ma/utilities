@@ -19,6 +19,7 @@
 #include "fileProvider.hpp"
 
 #define TOTAL_SMEM 16801792 //as seen on the TEST MODE, on the emulator, OS 1.02, and on the TEST MODE of a real fx-CG 20, OS 1.04.
+#define TOTAL_PASSWORD 0x1FFFF
 #define DRAW_MEMUSAGE_GRAPHS
 
 typedef struct

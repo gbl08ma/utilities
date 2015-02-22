@@ -30,17 +30,18 @@ void drawCapacityBar(int textY, long long int cur, long long int full) {
   drawRectangle(0, textY+24, (int)barwidthcpl, 20, COLOR_BLUE);
   
   int newTextX = 0;
-  int newTextY = textY+5;
+  textY += 5;
   char buffer[50];
   itoa(100*cur/full, (unsigned char*)buffer);
   strcat(buffer, "% used");
-  PrintMiniMini( &newTextX, &newTextY, buffer, 0, TEXT_COLOR_CYAN, 1 ); //fake draw
+  PrintMiniMini( &newTextX, &textY, buffer, 0, TEXT_COLOR_CYAN, 1 ); //fake draw
   int textX = LCD_WIDTH_PX/2 - newTextX/2;
-  PrintMiniMini( &textX, &newTextY, buffer, 0, TEXT_COLOR_CYAN, 0 ); //draw  
+  PrintMiniMini( &textX, &textY, buffer, 0, TEXT_COLOR_CYAN, 0 ); //draw  
   
-  VRAMReplaceColorInRect(0, textY+24, LCD_WIDTH_PX, 20, COLOR_WHITE, COLOR_GRAY);  
-  VRAMReplaceColorInRect(0, textY+24, barwidthcpl, 20, COLOR_GRAY, COLOR_BLUE);
-  VRAMReplaceColorInRect(0, textY+24, LCD_WIDTH_PX, 20, COLOR_CYAN, COLOR_WHITE);
+  textY += 19;
+  VRAMReplaceColorInRect(0, textY, LCD_WIDTH_PX, 20, COLOR_WHITE, COLOR_GRAY);  
+  VRAMReplaceColorInRect(0, textY, barwidthcpl, 20, COLOR_GRAY, COLOR_BLUE);
+  VRAMReplaceColorInRect(0, textY, LCD_WIDTH_PX, 20, COLOR_CYAN, COLOR_WHITE);
 }
 
 void drawCapacityText(int* textY, const char* desc, int cur, int full) {
@@ -73,15 +74,14 @@ void memoryCapacityViewer(int isPaneOffset) {
   drawCapacityText(&textY, "Main", MCScurrentload, MCSmaxspace);
   drawCapacityBar(textY, MCScurrentload, MCSmaxspace);
 
-  int PWmaxspace=0x1FFFF;
   char* flagpointer = (char*)0x80BE0000;
   int PWcurrentload = 0;
   while(*flagpointer == 0x0F) {
     flagpointer = flagpointer + 0x40;
     PWcurrentload += 0x40;
   }
-  drawCapacityText(&textY, "Password", PWcurrentload, PWmaxspace);
-  drawCapacityBar(textY, PWcurrentload, PWmaxspace);
+  drawCapacityText(&textY, "Password", PWcurrentload, TOTAL_PASSWORD);
+  drawCapacityBar(textY, PWcurrentload, TOTAL_PASSWORD);
 
   while(!isPaneOffset) {
     int key;

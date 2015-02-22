@@ -16,36 +16,36 @@
 #include "constantsProvider.hpp"
 #include "settingsProvider.hpp"
 
-const char *dayofweek[] = {"Sunday",
-                           "Monday",
-                           "Tuesday",
-                           "Wednesday",
-                           "Thursday",
-                           "Friday",
-                           "Saturday"
-                          };
-const char *dayofweekshort[] = {"Sun",
-                                "Mon",
-                                "Tue",
-                                "Wed",
-                                "Thu",
-                                "Fri",
-                                "Sat"
-                               };
-const char *monthNames[] = {"January",
-                            "February",
-                            "March",
-                            "April",
-                            "May",
-                            "June",
-                            "July",
-                            "August",
-                            "September",
-                            "October",
-                            "November",
-                            "December"
-                           }; 
-const char monthDays[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+static const char *dayofweek[] = {"Sunday",
+                                  "Monday",
+                                  "Tuesday",
+                                  "Wednesday",
+                                  "Thursday",
+                                  "Friday",
+                                  "Saturday"
+                                 };
+static const char *dayofweekshort[] = {"Sun",
+                                       "Mon",
+                                       "Tue",
+                                       "Wed",
+                                       "Thu",
+                                       "Fri",
+                                       "Sat"
+                                      };
+static const char *monthNames[] = {"January",
+                                   "February",
+                                   "March",
+                                   "April",
+                                   "May",
+                                   "June",
+                                   "July",
+                                   "August",
+                                   "September",
+                                   "October",
+                                   "November",
+                                   "December"
+                                  }; 
+static const char monthDays[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 // RTC, CLOCK and CALENDAR CODE
 
@@ -88,7 +88,7 @@ bool isLeap(int y)
 // From wikipedia for the Keith and Craver method
 int dow(int y, int m, int d)
 {
-    static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+    const static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
     y -= m < 3;
     return (y + (y / 4) - (y / 100) + (y / 400) + t[m-1] + d) % 7;
 }
@@ -438,12 +438,11 @@ void stringToTime(char* string, int* h, int* m, int *s) {
   *m = sys_atoi(minute);
   *s = sys_atoi(second);
 }
-const char *dateSettingInput[] = {"DDMMYYYY",
-                                  "MMDDYYYY",
-                                  "YYYYMMDD"
-                                 };
+static const char *dateSettingInput[] = {"DDMMYYYY",
+                                         "MMDDYYYY",
+                                         "YYYYMMDD"
+                                        };
 const char* dateSettingToInputDisplay(int setting) {
-  if(setting < 0 || setting > 2) return NULL;
   return dateSettingInput[setting];
 }
 

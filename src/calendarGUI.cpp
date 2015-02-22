@@ -1304,6 +1304,8 @@ int isWeekendCol(int x) {
     return x == 0 || x == 6;
   }
 }
+
+static const color_t categoryBackColors[] = {0xffd8, 0xffd8, 0x7bff, 0x7fef, 0x7fff, 0xfbef, 0xfbff, 0xffef};
 void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* busydays, int* bufmonth, int* bufyear) {
   Bdisp_AllClr_VRAM();
   int textX = 0;
@@ -1315,7 +1317,6 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
 #define THICKNESS 20
 #define TOPOFFSET 22
 #define WIDTH 47
-  int categoryBackColors[10] = {0xffd8, 0xffd8, 0x7bff, 0x7fef, 0x7fff, 0xfbef, 0xfbff, 0xffef};
   drawLine(LEFT,TOP,RIGHT-1,TOP,COLOR_BLACK);
   drawLine(LEFT,TOP,LEFT,BOTTOM-1,COLOR_BLACK);
   drawLine(LEFT,BOTTOM-1,RIGHT-1,BOTTOM-1,COLOR_BLACK);
