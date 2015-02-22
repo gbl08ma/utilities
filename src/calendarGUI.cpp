@@ -1338,13 +1338,27 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   int startingday = dow(year,month,1),day = 1;
   int prevstart = getMonthDays((month == 1 ? 12 : month - 1)) - (startingday == 0 ? 7 : startingday) + ((month == 3 && isLeap(year)) ? 2 : 1);
   char buffer[10];
-  for (x = 0; x < startingday; x++)
+/*
+  while (y != 8)
   {
-      itoa(prevstart++,(unsigned char*)buffer);
-      PrintMiniFix(LEFT+2+x*WIDTH+2,TOP+2+2*THICKNESS-TOPOFFSET,buffer,0,(x == 0 ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY),(x == 0 ? COLOR_LIGHTBLUE : COLOR_WHITE));
-  }
-  x = startingday;
+      itoa(day++,(unsigned char*)buffer);
+      PrintMiniFix(LEFT+2+WIDTH*x+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,((x == 0) | (x == 6)) ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY,(x == 0 || x == 6) ? COLOR_LIGHTBLUE : COLOR_WHITE);
+      x++;
+      if (x == 7)
+      {
+          x = 0;
+          y++;
+      }
+  }*/
+
   y = 2;
+  for (x = 0; x < (!startingday ? 7 : startingday); x++)
+  {
+    itoa(prevstart++,(unsigned char*)buffer);
+    PrintMiniFix(LEFT+2+x*WIDTH+2,TOP+2+y*THICKNESS-TOPOFFSET,buffer,0,(x == 0 || x == 6 ? COLOR_LIGHTSLATEGRAY : COLOR_LIGHTGRAY),(x == 0 || x == 6 ? COLOR_LIGHTBLUE : COLOR_WHITE));
+  }
+  if(!startingday) y++;
+  x = startingday;
   while (day <= getMonthDaysWithLeap(month, year))
   {
       itoa(day,(unsigned char*)buffer);
