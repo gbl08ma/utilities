@@ -528,6 +528,7 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
   int key_zeroed = 0;
   chronometer* chrn = &chrnarr[menu->selection-1];
   while(key != KEY_PRGM_EXIT) {
+    checkChronoComplete();
     clearLine(1,1);
     char tbuf[42];
     sprintf(tbuf, "Chronometer %d (", menu->selection);
