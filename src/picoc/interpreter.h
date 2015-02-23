@@ -321,7 +321,7 @@ extern struct ValueType *CharArrayType;
 extern struct ValueType *VoidPtrType;
 extern char *StrEmpty;
 extern struct PointerValue NULLPointer;
-extern struct LibraryFunction CLibrary[];
+extern const struct LibraryFunction CLibrary[];
 extern struct LibraryFunction PlatformLibrary[];
 extern IOFILE *CStdOut;
 

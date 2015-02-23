@@ -424,7 +424,7 @@ void drawHomeClock(int format, int theme) {
   }
 }
 
-const char *tzMinutes[] = {"00", "15", "30", "45"};
+static const char *tzMinutes[] = {"00", "15", "30", "45"};
 
 void changeTimezone() {
   Bdisp_AllClr_VRAM();

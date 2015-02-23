@@ -622,7 +622,7 @@ void LibMemcmp(struct ParseState *Parser, struct Value *ReturnValue, struct Valu
 #endif
 
 /* list of all library functions and their prototypes */
-struct LibraryFunction CLibrary[] =
+const struct LibraryFunction CLibrary[] =
 {
     { LibPrintf,        "void printf(char *, ...);" },
     { LibSPrintf,       "char *sprintf(char *, char *, ...);" },
