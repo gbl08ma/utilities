@@ -73,34 +73,36 @@ void formatChronoString(chronometer* tchrono, int num, char* string, int isChron
   days = hours / 24;
   hours %= 24;
 
-  if (days) {
-    itoa(days, (unsigned char*)buffer);
+  if(tchrono->state != CHRONO_STATE_STOPPED || unixtime % 1000 < 500) {
+    if (days) {
+      itoa(days, (unsigned char*)buffer);
+      strcat(string, buffer);
+      strcat(string, (char*)"\xe7\x64"); // small "d"
+    }
+    
+    itoa(hours, (unsigned char*)buffer);
+    if (hours < 10) strcat(string, "0");
     strcat(string, buffer);
-    strcat(string, (char*)"\xe7\x64"); // small "d"
-  }
-  
-  itoa(hours, (unsigned char*)buffer);
-  if (hours < 10) strcat(string, "0");
-  strcat(string, buffer);
-  strcat(string, ":");
-
-  itoa(minutes, (unsigned char*)buffer);
-  if (minutes < 10) strcat(string, "0");
-  strcat(string, buffer);
-
-  if(!isChronoView || days < 100000) {
     strcat(string, ":");
-    itoa((int)seconds, (unsigned char*)buffer);
-    if (seconds < 10) strcat(string, "0");
+
+    itoa(minutes, (unsigned char*)buffer);
+    if (minutes < 10) strcat(string, "0");
     strcat(string, buffer);
-  }
-  
-  if(!isChronoView || !days) {
-    strcat(string, ".");
-    if (milliseconds < 10) strcat(string, "0");
-    if (milliseconds < 100) strcat(string, "0");
-    itoa((int)milliseconds, (unsigned char*)buffer);
-    strcat(string, buffer);
+
+    if(!isChronoView || days < 100000) {
+      strcat(string, ":");
+      itoa((int)seconds, (unsigned char*)buffer);
+      if (seconds < 10) strcat(string, "0");
+      strcat(string, buffer);
+    }
+    
+    if(!isChronoView || !days) {
+      strcat(string, ".");
+      if (milliseconds < 10) strcat(string, "0");
+      if (milliseconds < 100) strcat(string, "0");
+      itoa((int)milliseconds, (unsigned char*)buffer);
+      strcat(string, buffer);
+    }
   }
   if(isChronoView) {
     drawAnalogChronometer(LCD_WIDTH_PX / 2, LCD_HEIGHT_PX / 2 + 10, 65, COLOR_WHITE, COLOR_BLACK, days, hours, minutes, seconds*1000 + milliseconds);
@@ -531,7 +533,12 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
   while(key != KEY_PRGM_EXIT && key != KEY_PRGM_LEFT) {
     checkChronoComplete();
     clearLine(1,1);
+
     char tbuf[42];
+    formatChronoString(chrn, menu->selection, tbuf, 1); // also takes care of drawing analog chrono
+    if(strlen(tbuf)) printCentered(tbuf, 8*24-1, COLOR_BLACK, COLOR_WHITE);
+    else clearLine(1,8);
+
     sprintf(tbuf, "Chronometer %d (", menu->selection);
     if(chrn->state == CHRONO_STATE_CLEARED) {
       strcat(tbuf, "\xe6\xa6");
@@ -549,9 +556,6 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
     }
     strcat(tbuf, ")");
     drawScreenTitle(tbuf);
-
-    formatChronoString(chrn, menu->selection, tbuf, 1); // also takes care of drawing analog chrono
-    printCentered(tbuf, 8*24-1, COLOR_BLACK, COLOR_WHITE);
 
     DisplayStatusArea();
     Bdisp_PutDisp_DD();
