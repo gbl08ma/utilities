@@ -1568,7 +1568,7 @@ pcvoid(searchFilesGUI)(struct ParseState *Parser, struct Value *ReturnValue, str
 }
 
 pcvoid(fileInformation)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = fileInformation((File*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer);
+    ReturnValue->Val->Integer = fileInformation((File*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer);
 }
 
 pcvoid(fileViewAsText)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2533,7 +2533,7 @@ const struct LibraryFunction UtilitiesFileGUI[] =
     { pcfunc(makeg3pGUI),            "int makeg3pGUI(char*);" },
     { pcfunc(renameFileGUI),         "int renameFileGUI(void*, void*, char*);" },
     { pcfunc(searchFilesGUI),        "int searchFilesGUI(char*, int);" },
-    { pcfunc(fileInformation),       "int fileInformation(void*, int, int);" },
+    { pcfunc(fileInformation),       "int fileInformation(void*, int, int, int);" },
     { pcfunc(fileViewAsText),        "void fileViewAsText(char*);" },
     { pcfunc(viewFilesInClipboard),  "void viewFilesInClipboard(void*, int*);" },
     { pcfunc(folderStatistics),      "void folderStatistics(void*, void*);" },

@@ -181,20 +181,38 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
           }
           return 1; //reload at new folder
         } else {
-          int res = fileInformation(&files[menu.selection-1], 1, *itemsinclip);
-          if(1 == res) {
-            // user wants to edit the file
-            strcpy(filetoedit, files[menu.selection-1].filename);
-            return 1;
-          } else if(2 == res) return 1;
-          #ifdef ENABLE_PICOC_SUPPORT
-          else if(3 == res) {
-            // user wants to run the file in picoc
-            strcpy(filetoedit, files[menu.selection-1].filename);
-            *fileAction = 1;
-            return 1;
+          int ininfo = 1;
+          while(ininfo) {
+            int res = fileInformation(&files[menu.selection-1], 1, *itemsinclip, 1);
+            switch(res) {
+              case FILEINFORMATION_RETURN_EXIT:
+                ininfo = 0;
+                break;
+              case FILEINFORMATION_RETURN_EDIT:
+                strcpy(filetoedit, files[menu.selection-1].filename);
+                // deliberate fallthrough
+              case FILEINFORMATION_RETURN_RELOAD:
+                return 1;
+              #ifdef ENABLE_PICOC_SUPPORT
+              case FILEINFORMATION_RETURN_EXECUTE:
+                // user wants to run the file in picoc
+                strcpy(filetoedit, files[menu.selection-1].filename);
+                *fileAction = 1;
+                return 1;
+              #endif
+              case FILEINFORMATION_RETURN_UP:
+                do {
+                  menu.selection--;
+                  if(menu.selection < 1) menu.selection = menu.numitems;
+                } while(files[menu.selection-1].isfolder);
+                break;
+              case FILEINFORMATION_RETURN_DOWN:
+                do {
+                  menu.selection++;
+                  if(menu.selection > menu.numitems) menu.selection = 1;
+                } while(files[menu.selection-1].isfolder);
+            }
           }
-          #endif
         }
         break;
       case KEY_CTRL_F2:
@@ -651,7 +669,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   }
 }
 
-int fileInformation(File* file, int allowEdit, int itemsinclip) {
+int fileInformation(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
   // returns 0 if user exits.
   // returns 1 if user wants to edit the file
   // returns 2 if user compressed or decompressed the file
@@ -745,6 +763,11 @@ int fileInformation(File* file, int allowEdit, int itemsinclip) {
       case KEY_CTRL_EXIT:
       case KEY_CTRL_LEFT:
         return 0;
+      case KEY_CTRL_UP:
+        if(allowUpDown) return FILEINFORMATION_RETURN_UP;
+        break;
+      case KEY_CTRL_DOWN:
+        if(allowUpDown) return FILEINFORMATION_RETURN_DOWN;
         break;
       case KEY_CTRL_EXE:
         #ifdef ENABLE_PICOC_SUPPORT
