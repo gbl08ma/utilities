@@ -207,6 +207,7 @@ void chronoScreen(chronometer* chrono) {
         }
         break;
       case KEY_PRGM_RETURN:
+      case KEY_PRGM_RIGHT:
         viewChrono(&menu, chrono);
         break;
       case KEY_PRGM_F1:
@@ -527,7 +528,7 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
   Bdisp_AllClr_VRAM();
   int key_zeroed = 0;
   chronometer* chrn = &chrnarr[menu->selection-1];
-  while(key != KEY_PRGM_EXIT) {
+  while(key != KEY_PRGM_EXIT && key != KEY_PRGM_LEFT) {
     checkChronoComplete();
     clearLine(1,1);
     char tbuf[42];
@@ -570,8 +571,13 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
         } else setChronoGUI(menu, chrnarr, 1);
         Bdisp_AllClr_VRAM();
       } else if(key == KEY_PRGM_UP || key == KEY_PRGM_DOWN) {
-        if(key == KEY_PRGM_UP && menu->selection > 1) menu->selection--;
-        if(key == KEY_PRGM_DOWN && menu->selection < NUMBER_OF_CHRONO) menu->selection++;
+        if(key == KEY_PRGM_UP) {
+          menu->selection--;
+          if(menu->selection == 0) menu->selection = NUMBER_OF_CHRONO;
+        } else {
+          menu->selection++;
+          if(menu->selection > NUMBER_OF_CHRONO) menu->selection = 1;
+        }
         chrn = &chrnarr[menu->selection-1];
         Bdisp_AllClr_VRAM();
       }
