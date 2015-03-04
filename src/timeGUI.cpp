@@ -150,7 +150,7 @@ void drawAnalogClock(int cx, int cy, int radius, int colorbg, int colorfg) {
   int m = getCurrentMinute();
   int s = getCurrentSecond();
   drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 1);
-  if(GetSetting(SETTING_CLOCK_SECONDS)) drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg);
+  if(GetSetting(SETTING_CLOCK_SECONDS)) drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg ^ COLOR_INDIANRED);
   drawAnalogClockMinuteNeedle(m, s, cx, cy, radius, colorfg);
   drawAnalogClockHourNeedle(h, m, cx, cy, radius, colorfg, 0);
 }
