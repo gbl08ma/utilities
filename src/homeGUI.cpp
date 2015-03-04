@@ -392,6 +392,7 @@ void handleHomePane(int key, int* pane_keycache) {
     case KEY_PRGM_DOWN:  retkey = KEY_CTRL_UP; ptype = GetSetting(SETTING_HOME_PANE_BOTTOM); break;
     default:             retkey = KEY_CTRL_RIGHT; ptype = GetSetting(SETTING_HOME_PANE_LEFT); break;
   }
+  if(ptype > 2) DrawFrame(COLOR_WHITE);
   switch(ptype) {
     case 0: return;
     case 1: eventsPane(retkey, pane_keycache); break;

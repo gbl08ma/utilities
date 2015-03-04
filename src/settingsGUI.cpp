@@ -27,6 +27,8 @@ inline static void lockSettingsMenu();
 inline static void clockSettingsMenu();
 
 void settingsMenu() {
+  DrawFrame(COLOR_WHITE);
+  
   MenuItem menuitems[15];
   menuitems[0].text = (char*)"Set time";
   
