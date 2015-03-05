@@ -28,8 +28,8 @@ typedef struct {
   long long int starttime=0; //time stamp at which chronometer was put to run
   long long int duration=0; //duration, in seconds (increases when chronometer is paused and counting down; stays constant when chronometer is paused and counting up)
   long long int laststop=0; //time stamp at which the chronometer was last paused
-  long long int state=CHRONO_STATE_CLEARED; //0 if stopped, 1 if running, 2 if clear
-  long long int type=CHRONO_TYPE_DOWN; // whether it's counting up or down
+  short state=CHRONO_STATE_CLEARED; //0 if stopped, 1 if running, 2 if clear
+  short type=CHRONO_TYPE_DOWN; // whether it's counting up or down
 } chronometer;
 
 void saveChronoArray(chronometer* chronoarray, int count);
