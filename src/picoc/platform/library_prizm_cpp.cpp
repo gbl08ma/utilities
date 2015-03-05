@@ -1454,7 +1454,7 @@ pcvoid(stopAndUninstallStubTimer)(struct ParseState *Parser, struct Value *Retur
 }
 
 pcvoid(chronoScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    chronoScreen((chronometer*)Param[0]->Val->Pointer);
+    chronoScreen();
 }
 
 pcvoid(startSelectedChronos)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1511,6 +1511,10 @@ pcvoid(startChrono)(struct ParseState *Parser, struct Value *ReturnValue, struct
 
 pcvoid(clearChrono)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     clearChrono((chronometer*)Param[0]->Val->Pointer);
+}
+
+pcvoid(getChronoArrayPtr)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Pointer =  getChronoArrayPtr();
 }
 
 pcvoid(setChronoArrayPtr)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1802,7 +1806,7 @@ pcvoid(setBrightnessToStartupSetting)(struct ParseState *Parser, struct Value *R
 // homeGUI
 
 pcvoid(showHome)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    showHome((chronometer*)Param[0]->Val->Pointer);
+    showHome();
 }
 
 pcvoid(powerMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1814,7 +1818,7 @@ pcvoid(lightMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct V
 }
 
 pcvoid(timeMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    timeMenu((chronometer*)Param[0]->Val->Pointer, (int*)Param[0]->Val->Pointer);
+    timeMenu((int*)Param[0]->Val->Pointer);
 }
 
 pcvoid(memsysMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2491,7 +2495,7 @@ const struct LibraryFunction UtilitiesChronoGUI[] =
 {
     { pcfunc(formatChronoString),    "void formatChronoString(void*, int, unsigned char*, int);" },
     { pcfunc(stopAndUninstallStubTimer),"void stopAndUninstallStubTimer();" },
-    { pcfunc(chronoScreen),          "void chronoScreen(void*);" },
+    { pcfunc(chronoScreen),          "void chronoScreen();" },
     { pcfunc(startSelectedChronos),  "void startSelectedChronos(void*, void*, int);" },
     { pcfunc(stopSelectedChronos),   "void stopSelectedChronos(void*, void*, int);" },
     { pcfunc(clearSelectedChronos),  "void clearSelectedChronos(void*, void*, int);" },
@@ -2511,6 +2515,7 @@ const struct LibraryFunction UtilitiesChronoProvider[] =
     { pcfunc(stopChrono),            "void stopChrono(void*);" },
     { pcfunc(startChrono),           "void startChrono(void*);" },
     { pcfunc(clearChrono),           "void clearChrono(void*);" },
+    { pcfunc(getChronoArrayPtr),     "void* getChronoArrayPtr();" },
     { pcfunc(setChronoArrayPtr),     "void setChronoArrayPtr(void*);" },
     { pcfunc(checkChronoComplete),   "void checkChronoComplete(void);" },
     { pcfunc(setChronoExternal),     "int setChronoExternal(int, int, int, int, int);" },
@@ -2614,10 +2619,10 @@ const struct LibraryFunction UtilitiesHardwareProvider[] =
 
 const struct LibraryFunction UtilitiesHomeGUI[] =
 {
-    { pcfunc(showHome),              "void showHome(void*);" },
+    { pcfunc(showHome),              "void showHome();" },
     { pcfunc(powerMenu),             "void powerMenu(int*);" },
     { pcfunc(lightMenu),             "void lightMenu(int*);" },
-    { pcfunc(timeMenu),              "void timeMenu(void*, int*);" },
+    { pcfunc(timeMenu),              "void timeMenu(int*);" },
     { pcfunc(memsysMenu),            "void memsysMenu(int*);" },
     { pcfunc(toolsMenu),             "void toolsMenu(int*);" },
     { pcfunc(handleHomePane),        "void handleHomePane(int, int*)" },

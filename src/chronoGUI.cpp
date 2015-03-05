@@ -118,7 +118,8 @@ void stopAndUninstallStubTimer() {
     stubTimer=0;
   }
 }
-void chronoScreen(chronometer* chrono) {
+void chronoScreen() {
+  chronometer* chrono = getChronoArrayPtr();
   lastChronoComplete = 0; // clear possible notification on home screen
   // setting a timer is needed to change some aspects of GetKeyWait_OS
   stubTimer = Timer_Install(0, doNothing, 50);

@@ -20,7 +20,7 @@
 
 void formatChronoString(chronometer* tchrono, int num, char* string, int isChronoView);
 void stopAndUninstallStubTimer();
-void chronoScreen(chronometer* chrono);
+void chronoScreen();
 void startSelectedChronos(Menu* menu, chronometer* tchrono, int count);
 void stopSelectedChronos(Menu* menu, chronometer* tchrono, int count);
 void clearSelectedChronos(Menu* menu, chronometer* tchrono, int count);

@@ -37,7 +37,7 @@
 #include "fileGUI.hpp"
 #include "editorGUI.hpp"
 
-void showHome(chronometer* chrono) {
+void showHome() {
   unsigned short key = 0;
   int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
   int pane_keycache = 0;
@@ -74,7 +74,7 @@ void showHome(chronometer* chrono) {
     }
     if(!pane_keycache) {
       Bdisp_PutDisp_DD();
-      checkDownwardsChronoCompleteGUI(chrono, NUMBER_OF_CHRONO);
+      checkDownwardsChronoCompleteGUI(getChronoArrayPtr(), NUMBER_OF_CHRONO);
     }
     GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); //this is here just to handle the Menu key
     if(!pane_keycache) {
@@ -114,7 +114,7 @@ void showHome(chronometer* chrono) {
         lightMenu(&pane_keycache);
         break;
       case KEY_PRGM_F3:
-        timeMenu(chrono, &pane_keycache);
+        timeMenu(&pane_keycache);
         break;
       case KEY_PRGM_F4:
         toolsMenu(&pane_keycache);
@@ -247,7 +247,7 @@ void lightMenu(int* pane_keycache) {
   }
 }
 
-void timeMenu(chronometer* chrono, int* pane_keycache) {
+void timeMenu(int* pane_keycache) {
   drawFkeyPopup(2, (char*)"Time tools");
   
   MenuItem menuitems[5];
@@ -274,7 +274,7 @@ void timeMenu(chronometer* chrono, int* pane_keycache) {
         switch(menu.selection) {
           case 1: viewCalendar(); break;
           case 2: viewTasks(); break;
-          case 3: chronoScreen(chrono); break;
+          case 3: chronoScreen(); break;
         }
         return;
       case KEY_CTRL_F6:
@@ -401,6 +401,10 @@ void handleHomePane(int key, int* pane_keycache) {
     case 4: fileManager(); break;
     case 5: viewCalendar(); break;
     case 6: viewTasks(); break;
+    case 7: chronoScreen(); break;
+    case 8: balanceManager(); break;
+    case 9: passwordGenerator(); break;
+    case 10: totpClient(); break;
   }
 }
 

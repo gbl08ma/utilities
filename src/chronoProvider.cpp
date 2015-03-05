@@ -82,10 +82,9 @@ void clearChrono(chronometer* tchrono) {
 }
 
 chronometer* chrono;
-// not needed for now:
-/*void getChronoArrayPtr(chronometer* achrono) {
-  achrono = chrono;
-}*/
+chronometer* getChronoArrayPtr() {
+  return chrono;
+}
 
 void setChronoArrayPtr(chronometer* achrono) {
   chrono = achrono;
