@@ -600,6 +600,15 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   if(searchRecursively) newsetting |= (1U << 2);
   if(matchCase) newsetting |= (1U << 3);
   SetSetting(SETTING_FILE_MANAGER_SEARCH, newsetting, 1); // remember search preferences
+
+  SetBackGround(9);
+  drawScreenTitle("File Search", "Searching...");
+  mPrintXY(1, 3, (char*)"Please be patient.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(1, 5, (char*)"You can press AC/ON", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(1, 6, (char*)"to abort.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  clearLine(1, 8);
+  Bdisp_PutDisp_DD();
+
   int sres = SearchForFiles(NULL, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
   if(sres == GETFILES_USER_ABORTED) {
     int bkey; GetKey(&bkey); // key debouncing to avoid getting "Break" message closed because AC is still pressed
