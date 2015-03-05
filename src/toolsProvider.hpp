@@ -25,10 +25,10 @@ typedef struct
 typedef struct
 {
   Currency amount;
-  char credit; // 1 if the transaction increased the balance, 0 if decreased
-  char description[135];
   EventDate date;
   EventTime time;
+  char credit; // 1 if the transaction increased the balance, 0 if decreased
+  char description[134];
 } Transaction;
 
 #define MAX_WALLETS 50
@@ -54,10 +54,10 @@ void deleteWallet(char* wallet);
 void generateRandomString(char* dest, int length, int symbols, int numbers, int uppercase, int similar, int vowels, int* seed);
 
 typedef struct {
-  char name[25];         // human-friendly name for this token (email address, web site name, etc.)
-  unsigned char key[20]; // decoded secret key
   int keylen;            // key length when decoded
   int totpcode;          // TOTP computed code
+  char name[24];         // human-friendly name for this token (email address, web site name, etc.)
+  unsigned char key[20]; // decoded secret key
 } totp;
 
 unsigned int computeTOTP(totp* t);
