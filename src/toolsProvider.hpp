@@ -25,7 +25,7 @@ typedef struct
 typedef struct
 {
   Currency amount;
-  int credit; // 1 if the transaction increased the balance, 0 if decreased
+  char credit; // 1 if the transaction increased the balance, 0 if decreased
   char description[135];
   EventDate date;
   EventTime time;
