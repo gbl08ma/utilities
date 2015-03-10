@@ -295,9 +295,7 @@ int addTransactionGUI(char* wallet) {
 
 int deleteTransactionGUI(Transaction* txs, char* wallet, int count, int pos) {
   mMsgBoxPush(5);
-  mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(3, 3, (char*)"Selected", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(3, 4, (char*)"Transaction?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(3, 2, "Delete the\nSelected\nTransaction?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(closeMsgBox(1, 5)) {
     deleteTransaction(txs, wallet, count, pos);
     return 1;
@@ -512,8 +510,7 @@ int changeWalletGUI(char* currentWallet) {
 
 int deleteWalletGUI(char* wallet) {
   mMsgBoxPush(4);
-  mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(3, 3, (char*)"Selected Wallet?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(3, 2, "Delete the\nSelected Wallet?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(closeMsgBox(1, 4)) {
     deleteWallet(wallet);
     return 1;
@@ -646,11 +643,7 @@ void totpClient() {
   RTCunadjustedWizard(1);
   if(getRTCisUnadjusted()) {
     mMsgBoxPush(6);
-    mPrintXY(3, 2, (char*)"The OATH TOTP", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    mPrintXY(3, 3, (char*)"authenticator", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    mPrintXY(3, 4, (char*)"can't work with", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    mPrintXY(3, 5, (char*)"the clock", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    mPrintXY(3, 6, (char*)"unadjusted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    multiPrintXY(3, 2, "The OATH TOTP\nauthenticator\ncan't work with\nthe clock\nunadjusted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     closeMsgBox(0, 7);
     return;
   }
@@ -873,8 +866,7 @@ int renameTOTPGUI(int index, char* oldname) {
 
 int deleteTOTPGUI(int index) {
   mMsgBoxPush(5);
-  mPrintXY(3, 2, (char*)"Remove the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(3, 3, (char*)"Selected Token?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(3, 2, "Remove the\nSelected Token?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   int textX = 2*18; int textY = 3*24;
   PrintMiniMini(&textX, &textY, (char*)"Make sure you do not lock yourself out", 16, TEXT_COLOR_RED, 0);
   textX = 2*18; textY += 12;

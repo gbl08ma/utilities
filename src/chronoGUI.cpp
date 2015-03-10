@@ -376,8 +376,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono, int menuSelOnly) {
         if(chooseCalendarDate(&y, &m, &d, (char*)"Select chronometer end date", (char*)"", 1)) return;
         if(DateToDays(y, m, d) - DateToDays(getCurrentYear(), getCurrentMonth(), getCurrentDay()) < 0) {
           mMsgBoxPush(4);
-          mPrintXY(3, 2, (char*)"Date is in the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          mPrintXY(3, 3, (char*)"past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          multiPrintXY(3, 2, "Date is in the\npast.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           closeMsgBox();
           return;
         }
@@ -413,8 +412,7 @@ void setChronoGUI(Menu* menu, chronometer* tchrono, int menuSelOnly) {
         ms = DateTime2Unix(y, m, d, h, mi, s, 0) - currentUnixTime();
         if(ms < 0) {
           mMsgBoxPush(4);
-          mPrintXY(3, 2, (char*)"Time is in the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          mPrintXY(3, 3, (char*)"past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          multiPrintXY(3, 2, "Time is in the\npast.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           closeMsgBox();
           return;
         }
@@ -505,11 +503,9 @@ void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count) {
       if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) && GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) != 3) {
         // user wants notification with pop-up
         mMsgBoxPush(4);
-        char buffer1[10];
-        itoa(cur+1, (unsigned char*)buffer1);
-        mPrintXY(3,2,(char*)"Chronometer ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(15,2,(char*)buffer1, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3,3,(char*)"ended.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        char buffer[50];
+        sprintf(buffer, "Chronometer %d\nended.", cur+1);
+        multiPrintXY(3,2, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         
         if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 1) {
           // notification with screen flashing

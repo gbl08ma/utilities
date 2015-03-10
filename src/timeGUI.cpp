@@ -336,9 +336,7 @@ void currentTimeToBasicVar() {
   Src.Set( hourfraction );
   Alpha_SetData( 'T', &Src );
   mMsgBoxPush(4);
-  mPrintXY(3, 2, (char*)"Time fraction", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(3, 3, (char*)"saved to alpha", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(3, 4, (char*)"variable T.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(3, 2, "Time fraction\nsaved to alpha\nvariable T.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   closeMsgBox();
 }
 

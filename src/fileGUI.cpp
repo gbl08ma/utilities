@@ -49,9 +49,7 @@ void fileManager() {
         char resStr[10];
         itoa(res, (unsigned char*)resStr);
         mMsgBoxPush(4);
-        mPrintXY(3, 2, (char*)"PicoC execution", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 3, (char*)"finished with", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 4, (char*)"code:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        multiPrintXY(3, 2, "PicoC execution\nfinished with\ncode:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(9, 4, resStr, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         closeMsgBox();
         #endif
@@ -172,10 +170,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
           strcat(browserbasepath, "\\");
           if(!strcmp(browserbasepath, SMEM_PREFIX "@MainMem\\") && !*shownMainMemHelp) {
             mMsgBoxPush(5);
-            mPrintXY(3, 2, (char*)"Note: this is not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            mPrintXY(3, 3, (char*)"the Main Memory,", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            mPrintXY(3, 4, (char*)"just a special", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            mPrintXY(3, 5, (char*)"mirror of it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            multiPrintXY(3, 2, "Note: this is not\nthe Main Memory,\njust a special\nmirror of it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             closeMsgBox(0, 6);
             *shownMainMemHelp=1;
           }
@@ -250,9 +245,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
             }
           } else {
             mMsgBoxPush(4);
-            mPrintXY(3, 2, (char*)"The clipboard is", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            mPrintXY(3, 3, (char*)"full; can't add", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            mPrintXY(3, 4, (char*)"more items to it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            multiPrintXY(3, 2, (char*)"The clipboard is\nfull; can't add\nmore items to it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             closeMsgBox();
           }
         } else if (menu.numselitems == 0) {
@@ -391,8 +384,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
 
 int deleteFilesGUI(File* files, Menu* menu) {
   mMsgBoxPush(4);
-  mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(3, 3, (char*)"Selected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(3, 2, "Delete the\nSelected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(closeMsgBox(1, 4)) {
     deleteFiles(files, menu);
     return 1;
@@ -603,9 +595,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
 
   SetBackGround(9);
   drawScreenTitle("File Search", "Searching...");
-  mPrintXY(1, 3, (char*)"Please be patient.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(1, 5, (char*)"You can press AC/ON", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(1, 6, (char*)"to abort.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(1, 3, "Please be patient.\n\nYou can press AC/ON\nto abort.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   clearLine(1, 8);
   Bdisp_PutDisp_DD();
 
@@ -793,9 +783,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip, int allowUpDown)
         if(allowEdit && !compressed) {
           if(stringEndsInG3A(name)) {
             mMsgBoxPush(4);
-            mPrintXY(3, 2, (char*)"g3a files can't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            mPrintXY(3, 3, (char*)"be edited by", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            mPrintXY(3, 4, (char*)"an add-in.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            multiPrintXY(3, 2, "g3a files can't\nbe edited by\nan add-in.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             closeMsgBox();
           } else {
             return 1;
@@ -920,8 +908,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   } else {
     //Error opening file, abort
     mMsgBoxPush(4);
-    mPrintXY(3, 2, (char*)"Error opening", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    mPrintXY(3, 3, (char*)"file to read.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    multiPrintXY(3, 2, (char*)"Error opening\nfile to read.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     closeMsgBox();
     return;
   }

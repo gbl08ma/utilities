@@ -70,9 +70,7 @@ void viewImage(char* filename) {
     devid.fp = Bfile_OpenFile_OS(filenameshort, READWRITE, 0);
     if (devid.fp < 0) {
       mMsgBoxPush(4);
-      mPrintXY(3, 2, (char*)"An error occurred", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 3, (char*)"(failed to open", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 4, (char*)"file)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      multiPrintXY(3, 2, "An error occurred\n(failed to open\nfile)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       closeMsgBox();
       return;
     }
@@ -102,9 +100,7 @@ void viewImage(char* filename) {
       } else {
         Bfile_CloseFile_OS(devid.fp);
         mMsgBoxPush(4);
-        mPrintXY(3, 2, (char*)"An error occurred", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 3, (char*)"(failed to", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 4, (char*)"decompress)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        multiPrintXY(3, 2, "An error occurred\n(failed to\ndecompress)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         closeMsgBox();
         return;
       }
@@ -112,9 +108,7 @@ void viewImage(char* filename) {
     } else {
       Bfile_CloseFile_OS(devid.fp);
       mMsgBoxPush(4);
-      mPrintXY(3, 2, (char*)"An error occurred", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 3, (char*)"(failed to", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 4, (char*)"prepare)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      multiPrintXY(3, 2, "An error occurred\n(failed to\nprepare)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       closeMsgBox();
       return;
     }

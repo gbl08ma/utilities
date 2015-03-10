@@ -179,8 +179,7 @@ int addinManagerSub(Menu* menu) {
     case KEY_CTRL_DEL:
       if(menu->numitems > 0) {
         mMsgBoxPush(4);
-        mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 3, (char*)"Selected Add-In?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        multiPrintXY(3, 2, "Delete the\nSelected Add-In?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         if(closeMsgBox(1, 4)) {
           strcpy(buffer, SMEM_PREFIX);
           strcat(buffer, addins[menu->selection-1].filename);

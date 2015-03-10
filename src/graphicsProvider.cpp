@@ -14,6 +14,7 @@
 
 #include "graphicsProvider.hpp"
 #include "settingsProvider.hpp"
+#include "stringsProvider.hpp"
 #include "debugGUI.hpp"
 
 void drawRectangle(int x, int y, int width, int height, unsigned short color) {
@@ -287,6 +288,14 @@ void mPrintXY(int x, int y,const char*msg, int mode, int color) {
   nmsg[1] = 0x20;
   strncpy(nmsg+2, msg, 48);
   PrintXY(x, y, nmsg, mode, color );
+}
+
+void multiPrintXY(int x, int y, const char* msg, int mode, int color) {
+  char token[50];
+  while(*msg) {
+    msg = (char*)toksplit((unsigned char*)msg, '\n', (unsigned char*)token, 50);
+    mPrintXY(x, y++, token, mode, color);
+  }
 }
 
 static int numberOfMsgBoxPushed = 0;

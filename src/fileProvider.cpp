@@ -615,10 +615,7 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
       Bfile_CloseFile_OS(hOldFile);
       if(!silent) {
         mMsgBoxPush(5);
-        mPrintXY(3, 2, (char*)"Compressing this", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 3, (char*)"file doesn't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 4, (char*)"yield a smaller", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 5, (char*)"size; aborted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        multiPrintXY(3, 2, "Compressing this\nfile doesn't\nyield a smaller\nsize; aborted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         closeMsgBox(0, 6);
       }
       return;
@@ -714,9 +711,11 @@ cleanexit:
 
     if(!silent) {
       mMsgBoxPush(5);
-      mPrintXY(3, 2, (action? (char*)"Decompression" : (char*)"Compression"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 3, (char*)"successful.Delete", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 4, (action? (char*)"compressed file?" : (char*)"original file?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      if(action) {
+        multiPrintXY(3, 2, "Decompression\nsuccessful.Delete\ncompressed file?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      } else {
+        multiPrintXY(3, 2, "Compression\nsuccessful.Delete\noriginal file?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      }
     }
     if(silent || closeMsgBox(1)) {
       Bfile_DeleteEntry(oldfilenameshort);

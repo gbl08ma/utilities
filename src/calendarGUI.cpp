@@ -1449,10 +1449,9 @@ int deleteAllEventUI(int y, int m, int d, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
   mMsgBoxPush(4);
   if (istask) {
-    mPrintXY(3, 2, (char*)"Delete All Tasks?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 2, "Delete All Tasks?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   } else {
-    mPrintXY(3, 2, (char*)"Delete All Events", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    mPrintXY(3, 3, (char*)"on Selected Day?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    multiPrintXY(3, 2, "Delete All Events\non Selected Day?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   }
   if(closeMsgBox(1, 4)) {
     RemoveDay(&date, CALENDARFOLDER);
@@ -1590,19 +1589,16 @@ void setEventChrono(CalendarEvent* event) {
   mMsgBoxPush(4);
   if(duration < 0) {
     // event is in the past, abort
-    mPrintXY(3, 2, (char*)"Event starts in", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    mPrintXY(3, 3, (char*)"the past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    multiPrintXY(3, 2, "Event starts in\nthe past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   } else {
     // set downwards chrono with the calculated duration
     res = setChronoExternal(sel.value-1, duration, CHRONO_TYPE_DOWN);
     if(res) {
       // success setting a chrono
-      mPrintXY(3, 2, (char*)"Event reminder", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 3, (char*)"set successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      multiPrintXY(3, 2, "Event reminder\nset successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     } else {
       // timer is busy
-      mPrintXY(3, 2, (char*)"Selected chrono", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 3, (char*)"is not clear.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      multiPrintXY(3, 2, "Selected chrono\nis not clear.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     }
   }
   closeMsgBox();
@@ -2109,9 +2105,7 @@ void trimCalendarDatabase() {
   else if(res == MENU_RETURN_SELECTION) {
     if(menu.selection == 4) {
       mMsgBoxPush(5);
-      mPrintXY(3, 2, (char*)"DELETE / RESET", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 3, (char*)"ALL the calendar", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 4, (char*)"events?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      multiPrintXY(3, 2, "DELETE / RESET\nALL the calendar\nevents?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       if(!closeMsgBox(1)) return;
     }
     unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
@@ -2196,9 +2190,7 @@ void trimCalendarDatabase() {
     Bfile_FindClose(findhandle);
   }
   mMsgBoxPush(4);
-  mPrintXY(3, 2, (char*)"DB trimming", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(3, 3, (char*)"completed", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(3, 4, (char*)"successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(3, 2, "DB trimming\ncompleted\nsuccessfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   closeMsgBox();
   bufmonth = 0;
   searchValid = 0;

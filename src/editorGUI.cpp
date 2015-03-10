@@ -47,8 +47,7 @@ void fileTextEditor(char* filename, char* basefolder) {
     if(openerror) {
       //Error opening file, abort
       mMsgBoxPush(4);
-      mPrintXY(3, 2, (char*)"Error opening", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      mPrintXY(3, 3, (char*)"file to edit.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      multiPrintXY(3, 2, "Error opening\nfile to edit.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       closeMsgBox();
       return;
     }
@@ -87,9 +86,7 @@ void fileTextEditor(char* filename, char* basefolder) {
           } else if (nres==INPUT_RETURN_CONFIRM) {
             if(stringEndsInG3A(nfilename)) {
               mMsgBoxPush(4);
-              mPrintXY(3, 2, (char*)"g3a files can't", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              mPrintXY(3, 3, (char*)"be created by", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              mPrintXY(3, 4, (char*)"an add-in.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              multiPrintXY(3, 2, "g3a files can't\nbe created by\nan add-in.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
               closeMsgBox();
             } else {
               // create and save file

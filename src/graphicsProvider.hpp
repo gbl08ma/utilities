@@ -35,6 +35,7 @@ void closeProgressMessage();
 void printCentered(char* text, int y, int FGC, int BGG);
 void clearLine(int x, int y, color_t color=COLOR_WHITE);
 void mPrintXY(int x, int y, const char*msg, int mode, int color);
+void multiPrintXY(int x, int y, const char* msg, int mode, int color);
 void mMsgBoxPush(int lines);
 void mMsgBoxPop();
 void popAllMsgBoxes();
