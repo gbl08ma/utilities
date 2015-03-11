@@ -38,9 +38,9 @@ Published 2006-02-20. Attribution appreciated.
 Modified by gbl08ma not to skip blanks at the beginning.
 */
 
-unsigned char *toksplit(unsigned char *src, /* Source of tokens */
+char *toksplit(char *src, /* Source of tokens */
 char tokchar, /* token delimiting char */
-unsigned char *token, /* receiver of parsed token */
+char *token, /* receiver of parsed token */
 int lgh) /* length token can receive */
 /* not including final '\0' */
 {
@@ -106,7 +106,7 @@ void* memmem(char* haystack, int hlen, char* needle, int nlen, int matchCase) {
 }
 
 // strncpy_retlen works like strncpy, but returns the length copied to the string.
-int strncpy_retlen(unsigned char* dest, const unsigned char* src, int n) {
+int strncpy_retlen(char* dest, const char* src, int n) {
   int i;
   for (i = 0; i < n; i++) {
     if(src[i]) dest[i] = src[i];

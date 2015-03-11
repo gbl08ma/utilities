@@ -48,9 +48,9 @@ typedef struct // Defines what a calendar event contains
   unsigned int timed=1; //full-day = 0, timed = 1
   EventTime starttime;
   EventTime endtime;
-  unsigned char title[24]; //can't be 21, because otherwise somehow the location will replace the last chars of title
-  unsigned char location[134]; //can't be 128, because otherwise somehow the description may flow into the location.
-  unsigned char description[1030]; //orig 1024
+  char title[24]; //can't be 21, because otherwise somehow the location will replace the last chars of title
+  char location[134]; //can't be 128, because otherwise somehow the description may flow into the location.
+  char description[1030]; //orig 1024
 } CalendarEvent;
 
 typedef struct // a simplified calendar event, for use when the memory available is little and one needs to show many events
@@ -62,9 +62,9 @@ typedef struct // a simplified calendar event, for use when the memory available
 } SimpleCalendarEvent;
 // end of type definitions
 
-void calEventToChar(CalendarEvent* calEvent, unsigned char* buf);
-void charToCalEvent(unsigned char* src, CalendarEvent* calEvent);
-void charToSimpleCalEvent(unsigned char* src, SimpleCalendarEvent* calEvent);
+void calEventToChar(CalendarEvent* calEvent, char* buf);
+void charToCalEvent(char* src, CalendarEvent* calEvent);
+void charToSimpleCalEvent(char* src, SimpleCalendarEvent* calEvent);
 void smemFilenameFromDate(EventDate* date, unsigned short* filename, const char* folder);
 int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall=0);
 int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char* folder, int count);

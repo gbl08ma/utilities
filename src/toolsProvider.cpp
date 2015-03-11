@@ -390,7 +390,7 @@ int loadTOTPs(totp* ts) {
   date.day = 0; date.month = 0; date.year = 0;
   int tokencount = GetEventsForDate(&date, TOTPFOLDER, events);
   for(int i = 0; i<tokencount; i++) {
-    ts[i].keylen = base32_decode(events[i].description, ts[i].key, 32); // create key from secret string
+    ts[i].keylen = base32_decode((unsigned char*)events[i].description, ts[i].key, 32); // create key from secret string
     strcpy(ts[i].name, (char*)events[i].title);
   }
   return tokencount;

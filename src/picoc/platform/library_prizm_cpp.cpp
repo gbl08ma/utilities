@@ -1384,15 +1384,15 @@ pcvoid(importCalendarEvents)(struct ParseState *Parser, struct Value *ReturnValu
 // calendarProvider
 
 pcvoid(calEventToChar)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    calEventToChar((CalendarEvent*)Param[0]->Val->Pointer, (unsigned char*)Param[1]->Val->Pointer);
+    calEventToChar((CalendarEvent*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
 pcvoid(charToCalEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    charToCalEvent((unsigned char*)Param[0]->Val->Pointer, (CalendarEvent*)Param[1]->Val->Pointer);
+    charToCalEvent((char*)Param[0]->Val->Pointer, (CalendarEvent*)Param[1]->Val->Pointer);
 }
 
 pcvoid(charToSimpleCalEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    charToSimpleCalEvent((unsigned char*)Param[0]->Val->Pointer, (SimpleCalendarEvent*)Param[1]->Val->Pointer);
+    charToSimpleCalEvent((char*)Param[0]->Val->Pointer, (SimpleCalendarEvent*)Param[1]->Val->Pointer);
 }
 
 pcvoid(smemFilenameFromDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2051,7 +2051,7 @@ pcvoid(SaveSettings)(struct ParseState *Parser, struct Value *ReturnValue, struc
 // stringsProvider
 
 pcvoid(toksplit)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Pointer = (unsigned char*)toksplit((unsigned char*)Param[0]->Val->Pointer, Param[1]->Val->Character, (unsigned char*)Param[2]->Val->Pointer, Param[3]->Val->Integer);
+    ReturnValue->Val->Pointer = (char*)toksplit((char*)Param[0]->Val->Pointer, Param[1]->Val->Character, (char*)Param[2]->Val->Pointer, Param[3]->Val->Integer);
 }
 
 pcvoid(EndsIWith)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2063,7 +2063,7 @@ pcvoid(memmem)(struct ParseState *Parser, struct Value *ReturnValue, struct Valu
 }
 
 pcvoid(strncpy_retlen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = strncpy_retlen((unsigned char*)Param[0]->Val->Pointer, (unsigned char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
+    ReturnValue->Val->Integer = strncpy_retlen((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
 pcvoid(stringToMini)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2477,9 +2477,9 @@ const struct LibraryFunction UtilitiesCalendarGUI[] =
 
 const struct LibraryFunction UtilitiesCalendarProvider[] =
 {
-    { pcfunc(calEventToChar),        "void calEventToChar(void*, unsigned char*);" },
-    { pcfunc(charToCalEvent),        "void charToCalEvent(unsigned char*, void*);" },
-    { pcfunc(charToSimpleCalEvent),  "void charToSimpleCalEvent(unsigned char*, void*);" },
+    { pcfunc(calEventToChar),        "void calEventToChar(void*, char*);" },
+    { pcfunc(charToCalEvent),        "void charToCalEvent(char*, void*);" },
+    { pcfunc(charToSimpleCalEvent),  "void charToSimpleCalEvent(char*, void*);" },
     { pcfunc(smemFilenameFromDate),  "void smemFilenameFromDate(void*, unsigned short*, char*);" },
     { pcfunc(AddEvent),              "int AddEvent(void*, char*, int);" },
     { pcfunc(ReplaceEventFile),      "int ReplaceEventFile(void*, void*, char*, int);" },
@@ -2743,10 +2743,10 @@ const struct LibraryFunction UtilitiesSettingsProvider[] =
 
 const struct LibraryFunction UtilitiesStringsProvider[] =
 {
-    { pcfunc(toksplit),              "unsigned char *toksplit(unsigned char*, char, unsigned char*, int);" },
+    { pcfunc(toksplit),              "char *toksplit(char*, char, char*, int);" },
     { pcfunc(EndsIWith),             "int EndsIWith(char*, char*);" },
     { pcfunc(memmem),                "void* memmem(char*, int, char*, int, int);" },
-    { pcfunc(strncpy_retlen),        "int strncpy_retlen(unsigned char*, unsigned char*, int);" },
+    { pcfunc(strncpy_retlen),        "int strncpy_retlen(char*, char*, int);" },
     { pcfunc(stringToMini),          "void stringToMini(char*, char*);" },
     { pcfunc(base32_decode),         "int base32_decode(unsigned char*, unsigned char*, int);" },
     { pcfunc(base32_validate),       "int base32_validate(char*);" },

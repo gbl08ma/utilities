@@ -45,7 +45,7 @@ int doTextArea(textArea* text) {
       while(*src)
       {
         temptextX = 0;
-        src = (char*)toksplit((unsigned char*)src, ' ', (unsigned char*)singleword, tlen); //break into words; next word
+        src = toksplit(src, ' ', singleword, tlen); //break into words; next word
         //check if printing this word would go off the screen, with fake PrintMini drawing:
         if(text->elements[cur].minimini) {
           PrintMiniMini( &temptextX, &temptextY, singleword, 0, text->elements[cur].color, 1 );

@@ -15,10 +15,10 @@
 #include <stdlib.h>
 #include <math.h>
 
-unsigned char *toksplit(unsigned char *src, char tokchar, unsigned char *token, int lgh);
+char *toksplit(char *src, char tokchar, char *token, int lgh);
 int EndsIWith(const char *str, const char *suffix);
 void* memmem(char* haystack, int hlen, char* needle, int nlen, int matchCase=1);
-int strncpy_retlen(unsigned char* dest, const unsigned char* src, int n);
+int strncpy_retlen(char* dest, const char* src, int n);
 void stringToMini(char* dest, const char* orig);
 int base32_decode(const unsigned char *encoded, unsigned char *result, int size);
 int base32_validate(const char* string);

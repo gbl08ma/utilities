@@ -24,13 +24,13 @@
 #include "fileProvider.hpp" 
 #include "debugGUI.hpp" 
 
-void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
+void calEventToChar(CalendarEvent* calEvent, char* buf) {
   /* Parses a CalendarEvent struct and turns it into a string which can be written to a file.
      The resulting string is appended to the end of buf.
      The first field (category) begins with no separator.
      An event doesn't begin with any separators, and the last field ends with a field separator followed by an event separator.
      An event (as bytes) can take at most 1,3 KiB. The lengthy fields are obviously the title, the location and mainly the description.*/
-  unsigned char smallbuf[50]; 
+  char smallbuf[50]; 
   int zero = 0;
   buf += strlen((char*)buf); // so we append to the end of buf
   itoa(calEvent->category, (unsigned char*)smallbuf);
@@ -74,11 +74,11 @@ void calEventToChar(CalendarEvent* calEvent, unsigned char* buf) {
   *buf = 0; // null-terminate string
 }
 
-void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
+void charToCalEvent(char* src, CalendarEvent* calEvent) {
   /* Parses a string containing a single event and turns it into a CalendarEvent which the program can work with.
   */
   int curfield = 0; //field we are parsing currently. starts at the category, which is 0.
-  unsigned char token[1024+6];
+  char token[1024+6];
   src = toksplit(src, FIELD_SEPARATOR, token, 1024);
   while (curfield < 20) {
     switch (curfield) {
@@ -153,12 +153,12 @@ void charToCalEvent(unsigned char* src, CalendarEvent* calEvent) {
   }
 }
 
-void charToSimpleCalEvent(unsigned char* src, SimpleCalendarEvent* calEvent) {
+void charToSimpleCalEvent(char* src, SimpleCalendarEvent* calEvent) {
   /* Parses a string containing a single event and turns it into a SimpleCalendarEvent which the program can work with.
      Skips all the fields not necessary to a SimpleCalendarEvent
   */
   int curfield = 0; //field we are parsing currently. starts at the category, which is 0.
-  unsigned char token[1024];
+  char token[1024];
   src = toksplit(src, FIELD_SEPARATOR, token, 1024);
   while (curfield < 18) {
     switch (curfield) {
@@ -198,7 +198,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
   //Returns 0 on success, other values on error.
   char newevent[2048];
   newevent[0] = 0;
-  calEventToChar(calEvent, (unsigned char*)newevent);
+  calEventToChar(calEvent, newevent);
   size_t size = strlen(FILE_HEADER) + strlen(newevent);
   unsigned short pFile[MAX_FILENAME_SIZE];
   smemFilenameFromDate(&calEvent->startdate, pFile, folder);
@@ -262,8 +262,8 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   // count: number of events in newEvents (number of events in old file doesn't matter). starts at 1.
 
   //convert the calevents back to char. assuming each event, as string, doesn't take more than 1250 bytes
-  unsigned char newfilecontents [7+count*1250];
-  strcpy((char*)newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
+  char newfilecontents [7+count*1250];
+  strcpy(newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
   for(int j = 0; j < count; j++) {
     calEventToChar(&newEvents[j], newfilecontents); //calEventToChar only does strncat, so it can append directly.
   }
@@ -349,13 +349,13 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
       setDBneedsRepairFlag(1);
       return -1;
     }
-    unsigned char asrc[MAX_EVENT_FILESIZE] = "";
+    char asrc[MAX_EVENT_FILESIZE] = "";
     Bfile_ReadFile_OS(hFile, asrc, size, 0);
     Bfile_CloseFile_OS(hFile); //we got file contents, close it
     // Parse for events
     int curevent = 0; //current event number/array index (zero based)
-    unsigned char token[2048];
-    unsigned char* src = asrc;
+    char token[2048];
+    char* src = asrc;
     src = toksplit(src, EVENT_SEPARATOR , token, 2048);
     while (1) {
       //pass event to the parser and store it in the string event array
@@ -366,7 +366,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
         charToSimpleCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &simpleCalEvents[startArray+curevent]);
       }
       curevent++;
-      if (strlen((char*)src) < 5) { //5 bytes is not enough space to hold an event, so that means there are no more events to process... right?
+      if (strlen(src) < 5) { //5 bytes is not enough space to hold an event, so that means there are no more events to process... right?
         break; //stop now. strtok can't happen again, otherwise token will be null and a system error is approaching!
       }
       if (curevent >= MAX_DAY_EVENTS || (limit > 0 && curevent >= limit)) { //check if we aren't going over the limit

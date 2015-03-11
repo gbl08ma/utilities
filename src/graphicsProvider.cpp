@@ -293,7 +293,7 @@ void mPrintXY(int x, int y,const char*msg, int mode, int color) {
 void multiPrintXY(int x, int y, const char* msg, int mode, int color) {
   char token[50];
   while(*msg) {
-    msg = (char*)toksplit((unsigned char*)msg, '\n', (unsigned char*)token, 50);
+    msg = toksplit((char*)msg, '\n', token, 50);
     mPrintXY(x, y++, token, mode, color);
   }
 }
