@@ -28,13 +28,13 @@ typedef struct {
   int unknown;
   char mantissa[15];
 } TBCDInternal;
-class TBCD{
+class TBCD {
   public:
     TBCDvalue*PValue();
-    int Get(TBCDvalue&value);
-    int Set(TBCDvalue&value);
-    int Set(double&value);
-    int Get(double&value);
+    void Get(TBCDvalue &value);
+    void Set(TBCDvalue &value);
+    void Set(double &value);
+    void Get(double &value);
     int SetError(int error);
     int GetError();
     void Swap();

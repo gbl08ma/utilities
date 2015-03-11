@@ -22,24 +22,19 @@ double math_modf(double x, double *ipart) {
 
 ////////// TBCD //////////
 
-TBCDvalue*TBCD::PValue(){
+TBCDvalue* TBCD::PValue() {
   return FValue;
 }
 
-int TBCD::Get( TBCDvalue&value ) {
-int result = 0;
-  memcpy( &value, &FValue, sizeof( TBCDvalue ) );
-  return result;
+void TBCD::Get(TBCDvalue &value) {
+  memcpy(&value, &FValue, sizeof(TBCDvalue));
 }
 
-int TBCD::Set( TBCDvalue&value ) {
-int result = 0;
-  memcpy( &FValue, &value, sizeof( TBCDvalue ) );
-  return result;
+void TBCD::Set(TBCDvalue &value) {
+  memcpy(&FValue, &value, sizeof(TBCDvalue));
 }
 
-int TBCD::Set( double&value ) {
-  int result = 0;
+void TBCD::Set(double &value) {
   double dwork;
   double dwork2;
   int iexponent;
@@ -56,7 +51,7 @@ int TBCD::Set( double&value ) {
     dwork = dwork / 10;
   }
 
-  while (dwork < 1){
+  while (dwork < 1) {
     iexponent -= 1;
     dwork = dwork * 10;
   }
@@ -70,19 +65,16 @@ int TBCD::Set( double&value ) {
   FValue[0].exponent += iexponent;
  
   dwork = math_modf(dwork, &dwork2) * 10;
-  FValue[0].mantissa0 = math_floor( dwork2 );
-  for ( i = 0; i < 7;i++ ) {
+  FValue[0].mantissa0 = math_floor(dwork2);
+  for (i = 0; i < 7; i++) {
     dwork = math_modf(dwork, &dwork2) * 10;
     FValue[0].mantissa[i].hnibble = dwork2;
     dwork = math_modf(dwork, &dwork2) * 10;
     FValue[0].mantissa[i].lnibble = dwork2;
   }
-
-  return result;
 }
 
-int TBCD::Get(double&value){
-  int result = 0;
+void TBCD::Get(double &value) {
   int i;
   double factor = 1;
   TBCDInternal work;
@@ -96,8 +88,6 @@ int TBCD::Get(double&value){
   while (work.exponent++ < 0) value /= 10;
   while (--work.exponent > 0) value *= 10;
   value *= work.sign;
- 
-  return result;
 }
 
 int TBCD::SetError(int error) {
