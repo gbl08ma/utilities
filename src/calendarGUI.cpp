@@ -739,8 +739,6 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         }
       }
     }
-    if(menu->selection > menu->numitems) menu->selection = menu->numitems;
-    if(menu->selection < 1) menu->selection = 1;
     int res = doMenu(menu);
     switch(res) {
       case MENU_RETURN_EXIT:

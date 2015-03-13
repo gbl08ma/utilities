@@ -27,7 +27,8 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
     itemsStartY++;
     itemsHeight--;
   }
-
+  if(menu->selection < 1) menu->selection = 1;
+  else if(menu->selection > menu->numitems) menu->selection = menu->numitems;
   if(menu->selection > menu->scroll+(menu->numitems>itemsHeight ? itemsHeight : menu->numitems))
     menu->scroll = menu->selection -(menu->numitems>itemsHeight ? itemsHeight : menu->numitems);
   if(menu->selection-1 < menu->scroll)

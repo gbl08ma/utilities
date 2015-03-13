@@ -84,8 +84,6 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
     // VIEW, INSERT, EDIT, DELETE, empty, LOAD
     drawFkeyLabels(-1, 0x03B4, -1, -1, -1, 0x03B7);
     if(menu->numitems > 0) drawFkeyLabels(0x049F, -1, 0x0038);
-    if(menu->selection > menu->numitems) menu->selection = menu->numitems;
-    if(menu->selection < 1) menu->selection = 1;
     int res = doMenu(menu);
     switch(res) {
       case MENU_RETURN_EXIT:
@@ -445,8 +443,6 @@ int changeWalletGUI(char* currentWallet) {
     menu.numitems = i;
     Bfile_FindClose(findhandle);
     drawFkeyLabels(0x000F, 0x0186, 0x0188, 0x0038, 0, 0); // SELECT, NEW, RENAME, DELETE
-    if(menu.selection > menu.numitems) menu.selection = menu.numitems;
-    if(menu.selection < 1) menu.selection = 1;
     int res = doMenu(&menu);
     switch(res) {
       case MENU_RETURN_EXIT:

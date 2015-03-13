@@ -957,7 +957,6 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
   menu.scrollout = 1;
   menu.type=MENUTYPE_FKEYS;
   while(1) {
-    if(menu.selection > *itemsinclip) menu.selection = 1;
     MenuItem menuitems[MAX_ITEMS_IN_CLIPBOARD];
     menu.title = (char*)"Clipboard";
     menu.subtitle = (char*)"Black=cut, Red=copy";

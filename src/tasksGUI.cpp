@@ -66,8 +66,6 @@ int viewTasksSub(Menu* menu) {
     // VIEW, INSERT, EDIT, DELETE, DEL-ALL, Switch [white]
     drawFkeyLabels(-1, 0x03B4);
     if(menu->numitems>0) drawFkeyLabels(0x049F, -1, 0x0185, 0x0038, 0x0104, 0x049D);
-    if(menu->selection > menu->numitems) menu->selection = menu->numitems;
-    if(menu->selection < 1) menu->selection = 1;
     int res = doMenu(menu);
     switch(res) {
       case MENU_RETURN_EXIT:
