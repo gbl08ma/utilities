@@ -18,6 +18,7 @@
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "timeProvider.hpp"
+#include "stringsProvider.hpp"
 #include "timeGUI.hpp"
 #include "textGUI.hpp"
 #include "settingsProvider.hpp"
@@ -46,8 +47,9 @@ void formatChronoString(chronometer* tchrono, int num, char* string, int isChron
       if(tchrono->type == CHRONO_TYPE_UP) strcpy(string, "\xe6\xAC");
       else strcpy(string, "\xe6\xAD"); 
     }
-    strcat(string, buffer);
-    strcat(string, ":");
+    string += 2;
+    string += strncpy_retlen(string, buffer, 3);
+    *string = ':'; string++; *string = 0;
   } else strcpy(string, "");
   
   if(tchrono->state == CHRONO_STATE_CLEARED) { return; } //nothing else to add, chrono is clear
@@ -76,32 +78,17 @@ void formatChronoString(chronometer* tchrono, int num, char* string, int isChron
   if(tchrono->state != CHRONO_STATE_STOPPED || unixtime % 1000 < 500) {
     if (days) {
       itoa(days, (unsigned char*)buffer);
-      strcat(string, buffer);
-      strcat(string, (char*)"\xe7\x64"); // small "d"
+      string += strncpy_retlen(string, buffer, 11);
+      strcpy(string, (char*)"\xe7\x64"); // small "d"
+      string += 2;
     }
-    
-    itoa(hours, (unsigned char*)buffer);
-    if (hours < 10) strcat(string, "0");
-    strcat(string, buffer);
-    strcat(string, ":");
-
-    itoa(minutes, (unsigned char*)buffer);
-    if (minutes < 10) strcat(string, "0");
-    strcat(string, buffer);
-
-    if(!isChronoView || days < 100000) {
-      strcat(string, ":");
-      itoa((int)seconds, (unsigned char*)buffer);
-      if (seconds < 10) strcat(string, "0");
-      strcat(string, buffer);
-    }
+    timeToString(string, hours, minutes, (int)seconds, 0, !isChronoView || days < 100000);
     
     if(!isChronoView || !days) {
-      strcat(string, ".");
-      if (milliseconds < 10) strcat(string, "0");
-      if (milliseconds < 100) strcat(string, "0");
-      itoa((int)milliseconds, (unsigned char*)buffer);
-      strcat(string, buffer);
+      string += 5;
+      if(!isChronoView || days < 100000) string += 3;
+      *string = '.'; string++;
+      itoa_zeropad((int)milliseconds, string, 3);
     }
   }
   if(isChronoView) {

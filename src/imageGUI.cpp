@@ -21,17 +21,6 @@
 #include "inputGUI.hpp"
 #include "tjpgd.h"
 
-int ipow(int base, int exp)
-{
-  int result = 1;
-  while (exp) {
-    if (exp & 1) result *= base;
-    exp >>= 1;
-    base *= base;
-  }
-  return result;
-}
-
 void viewImage(char* filename) {
   void *work;     /* Pointer to the decompressor work area */
   JDEC jdec;    /* Decompression object */

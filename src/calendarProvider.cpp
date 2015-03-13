@@ -485,7 +485,7 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
 
   // make the buffer
   char mbuf[10]; mbuf[0] = 0;
-  if(m) sprintf(mbuf, "%s%d", m < 10 ? "0" : "", m);
+  if(m) itoa_zeropad(m, mbuf, 2);
   sprintf(buffer, "%s\\%d%s*.pce", folder, y, mbuf);
   
   file_type_t fileinfo;

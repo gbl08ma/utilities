@@ -14,6 +14,7 @@
 #include <ctype.h>
 
 #include "stringsProvider.hpp"
+#include "graphicsProvider.hpp"
 
 
 /* copy over the next token from an input string, WITHOUT
@@ -171,4 +172,20 @@ int base32_validate(const char* string) {
     if(!(isupper(*string) || (*string > '1' && *string < '8'))) return 0;
   }
   return 1;
+}
+
+void itoa_zeropad(int n, char* buffer, int digits) {
+  char buffer2[11];
+  itoa(n, (unsigned char*)buffer2);
+  // pad with zeros:
+  char* ptr = buffer;
+  int tens = ipow(10,--digits);
+  for(; digits; digits--) {
+    if(n < tens) {
+      *ptr = '0';
+      ptr++;
+    }
+    tens /= 10;
+  }
+  strcpy(ptr, buffer2);
 }

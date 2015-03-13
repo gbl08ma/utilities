@@ -254,6 +254,8 @@ void currentTimeToString(char *buffer, int format)
 {
   timeToString(buffer, getCurrentHour(), getCurrentMinute(), getCurrentSecond(), format, GetSetting(SETTING_CLOCK_SECONDS));
 }
+
+// concatenates (not copies) time to buffer
 void timeToString(char *buffer, int h, int min, int sec, int format, int showSeconds)
 {
   char hour[2];

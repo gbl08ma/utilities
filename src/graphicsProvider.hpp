@@ -47,6 +47,8 @@ int drawRGB24toRGB565(int r, int g, int b);
 // needed for analog clock and some other... circular things:
 double sine(double x);
 //double cosine(double x);
-#define cosine(x) sine((M_PI_2)+(x)) 
+#define cosine(x) sine((M_PI_2)+(x))
+// for other graphics-related things:
+int ipow(int base, int exp);
 
 #endif

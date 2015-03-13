@@ -22,5 +22,6 @@ int strncpy_retlen(char* dest, const char* src, int n);
 void stringToMini(char* dest, const char* orig);
 int base32_decode(const unsigned char *encoded, unsigned char *result, int size);
 int base32_validate(const char* string);
+void itoa_zeropad(int n, char* buffer, int digits);
 
 #endif

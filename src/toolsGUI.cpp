@@ -705,18 +705,8 @@ void viewTOTPcodeGUI(totp* tkn) {
   int shown_since_beginning = 0;
   while(key != KEY_PRGM_EXIT) {
     int ThirtySecCode = computeTOTP(tkn);
-    char buffer[10] = "";
-    char buffer2[10];
-    itoa(tkn->totpcode, (unsigned char*)buffer2);
-    // pad with zeros:
-    char* ptr = buffer;
-    for(int i = 100000; i != 1; i /= 10) {
-      if(tkn->totpcode < i) {
-        *ptr = '0';
-        ptr++;
-      }
-    }
-    strcpy(ptr, buffer2);
+    char buffer[10];
+    itoa_zeropad(tkn->totpcode, buffer, 6);
     long long int ms_spent_ll = currentUTCUnixTime() - (long long int)ThirtySecCode * 30LL * 1000LL;
     int ms_spent = (int)(ms_spent_ll);
 

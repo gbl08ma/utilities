@@ -842,16 +842,14 @@ void viewEvent(CalendarEvent* event, int istask) {
     elem[text.numelements].color=COLOR_LIGHTGRAY;
     text.numelements++;
     
-    unsigned char startson[50];
-    dateToString((char*)startson, event->startdate.year, event->startdate.month, event->startdate.day);
-    strcat((char*)startson, (char*)" ");
+    char startson[50];
+    dateToString(startson, event->startdate.year, event->startdate.month, event->startdate.day);
     
     if(event->timed) {
-      char buffer[15]="";
-      timeToString((char*)buffer, event->starttime.hour, event->starttime.minute, event->starttime.second);
-      strcat((char*)startson, (char*)buffer);
+      strcat(startson, " ");
+      timeToString(startson, event->starttime.hour, event->starttime.minute, event->starttime.second);
     } else {
-      strcat((char*)startson, (char*)"(all day)");
+      strcat(startson, " (all day)");
     }
     
     elem[text.numelements].text = (char*)startson;
@@ -867,10 +865,8 @@ void viewEvent(CalendarEvent* event, int istask) {
     dateToString((char*)endson, event->enddate.year, event->enddate.month, event->enddate.day);
     
     if(event->timed) {
-      char buffer[15]="";
-      timeToString((char*)buffer, event->endtime.hour, event->endtime.minute, event->endtime.second);
       strcat((char*)endson, (char*)" ");
-      strcat((char*)endson, (char*)buffer);
+      timeToString((char*)endson, event->endtime.hour, event->endtime.minute, event->endtime.second);
     }
     
     elem[text.numelements].text = (char*)endson;
@@ -904,23 +900,10 @@ void viewEvent(CalendarEvent* event, int istask) {
 void fillInputDate(int yr, int m, int d, char* buffer) {
   buffer[0] = '\0';
   if(yr || m || d) {
-    char buffer2[8];
-    char day[5] = "";
-    char month[5] = "";
-    char year[5] = "";
-    if (d < 10) { strcat(day, "0"); }
-    itoa(d, (unsigned char*) buffer2);
-    strcat(day, buffer2);
-    
-    if (m < 10) { strcat(month, "0"); }
-    itoa(m, (unsigned char*) buffer2);
-    strcat(month, buffer2);
-    
-    if (yr < 1000) { strcat(year, "0"); }
-    if (yr < 100) { strcat(year, "0"); }
-    if (yr < 10) { strcat(year, "0"); }
-    itoa(yr, (unsigned char*) buffer2);
-    strcat(year, buffer2);
+    char day[5], month[5], year[5];
+    itoa_zeropad(d, day, 2);
+    itoa_zeropad(m, month, 2);
+    itoa_zeropad(yr, year, 4);
 
     switch(GetSetting(SETTING_DATEFORMAT)) {
       case 0:
@@ -945,18 +928,9 @@ void fillInputDate(int yr, int m, int d, char* buffer) {
 void fillInputTime(int h, int m, int s, char* buffer) {
   buffer[0] = '\0';
   if(h || m || s) {
-    char buffer2[8];
-    if (h < 10) { strcat(buffer, "0"); }
-    itoa(h, (unsigned char*) buffer2);
-    strcat(buffer, buffer2);
-
-    if (m < 10) { strcat(buffer, "0"); }
-    itoa(m, (unsigned char*) buffer2);
-    strcat(buffer, buffer2);
-    
-    if (s < 10) { strcat(buffer, "0"); }
-    itoa(s, (unsigned char*) buffer2);
-    strcat(buffer, buffer2);
+    itoa_zeropad(h, buffer, 2);
+    itoa_zeropad(m, buffer+2, 2);
+    itoa_zeropad(s, buffer+4, 2);
   }
 }
 int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask) {
@@ -997,14 +971,13 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       SetBackGround(12);
       drawScreenTitle(istask ? (char*)"Edit Task" : (char*)"Edit Event");
     }
-    clearLine(1,8); // SetBackGround already took care of filling the lines 1 through 7, and DisplayStatusArea will fill line 0
     if(curstep >= 3) {
       // disable keyboard modifiers, as user may have come from a text input field
       // where alpha-lock was enabled, not being disabled on F6.
       SetSetupSetting( (unsigned int)0x14, 0);
     }
     // < (first label), SELECT if on end date step, and Next or Finish (last label)
-    drawFkeyLabels((curstep>0 ? 0x036F : -1), (curstep == 4 ? 0x000F : -1), -1, -1, -1, (curstep==6 ? 0x04A4 : 0x04A3));
+    drawFkeyLabels((curstep>0 ? 0x036F : 0), (curstep == 4 ? 0x000F : 0), 0, 0, 0, (curstep==6 ? 0x04A4 : 0x04A3));
     switch(curstep) {
       case 0:
         {
