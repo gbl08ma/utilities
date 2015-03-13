@@ -16,6 +16,7 @@
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "settingsProvider.hpp"
+#include "stringsProvider.hpp"
 
 typedef scrollbar TScrollbar;
 
@@ -39,50 +40,55 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
     // Clear the area of the screen we are going to draw on
     if(0 == menu->pBaRtR) drawRectangle(18*(menu->startX-1), 24*(menu->miniMiniTitle ? itemsStartY:menu->startY), 18*menu->width+(menu->scrollbar && menu->scrollout?6:0), 24*menu->height-(menu->miniMiniTitle ? 24:0), COLOR_WHITE);
     if (menu->numitems>0) {
-      for(int curitem=0; curitem < menu->numitems; curitem++) {
-        // print the menu item only when appropriate
-        if(menu->scroll < curitem+1 && menu->scroll > curitem-itemsHeight) {
-          char menuitem[70] = "";
-          if(menu->type == MENUTYPE_MULTISELECT) strcpy(menuitem, "  "); //allow for the folder and selection icons on MULTISELECT menus (e.g. file browser)
-          strncat(menuitem, menu->items[curitem].text, 68);
-          if(menu->items[curitem].type != MENUITEM_SEPARATOR) {
-            //make sure we have a string big enough to have background when item is selected:          
-            // MB_ElementCount is used instead of strlen because multibyte chars count as two with strlen, while graphically they are just one char, making fillerRequired become wrong
-            int fillerRequired = menu->width - MB_ElementCount(menu->items[curitem].text) - (menu->type == MENUTYPE_MULTISELECT ? 2 : 0);
-            for(int i = 0; i < fillerRequired; i++) strcat(menuitem, " ");
-            mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)menuitem, (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), menu->items[curitem].color);
-          } else {
-            int textX = (menu->startX-1) * 18;
-            int textY = curitem*24+itemsStartY*24-menu->scroll*24-24+6;
-            clearLine(menu->startX, curitem+itemsStartY-menu->scroll, (menu->selection == curitem+1 ? textColorToFullColor(menu->items[curitem].color) : COLOR_WHITE));
-            drawLine(textX, textY+24-4, LCD_WIDTH_PX-2, textY+24-4, COLOR_GRAY);
-            PrintMini(&textX, &textY, menuitem, 0, 0xFFFFFFFF, 0, 0, (menu->selection == curitem+1 ? COLOR_WHITE : textColorToFullColor(menu->items[curitem].color)), (menu->selection == curitem+1 ? textColorToFullColor(menu->items[curitem].color) : COLOR_WHITE), 1, 0);
+      for(int curitem=menu->scroll; menu->scroll > curitem-itemsHeight && curitem < menu->numitems; curitem++) { // print the menu item only when appropriate
+        char menuitemarr[70];
+        char* menuitem = menuitemarr;
+        if(menu->type == MENUTYPE_MULTISELECT) {
+          strcpy(menuitem, "  "); //allow for the folder and selection icons on MULTISELECT menus (e.g. file browser)
+          menuitem += 2;
+        }
+        menuitem += strncpy_retlen(menuitem, menu->items[curitem].text, 68);
+        if(menu->items[curitem].type != MENUITEM_SEPARATOR) {
+          //make sure we have a string big enough to have background when item is selected:          
+          // MB_ElementCount is used instead of strlen because multibyte chars count as two with strlen, while graphically they are just one char, making fillerRequired become wrong
+          int fillerRequired = menu->width - MB_ElementCount(menu->items[curitem].text) - (menu->type == MENUTYPE_MULTISELECT ? 2 : 0);
+          for(int i = 0; i < fillerRequired; i++) {
+            *menuitem = ' ';
+            menuitem++;
           }
-          // deal with menu items of type MENUITEM_CHECKBOX
-          if(menu->items[curitem].type == MENUITEM_CHECKBOX) {
-            mPrintXY(menu->startX+menu->width-1,curitem+itemsStartY-menu->scroll,
-              (menu->items[curitem].value == MENUITEM_VALUE_CHECKED ? (char*)"\xe6\xa9" : (char*)"\xe6\xa5"),
-              (menu->selection == curitem+1 ? TEXT_MODE_INVERT : (menu->pBaRtR == 1? TEXT_MODE_TRANSPARENT_BACKGROUND : TEXT_MODE_NORMAL)), menu->items[curitem].color);
-          }
-          // deal with multiselect menus
-          if(menu->type == MENUTYPE_MULTISELECT) {
-            if((curitem+itemsStartY-menu->scroll)>=itemsStartY &&
-              (curitem+itemsStartY-menu->scroll)<=(itemsStartY+itemsHeight) &&
-              icontable != NULL
-            ) {
-              if (menu->items[curitem].isfolder == 1) {
-                // assumes first icon in icontable is the folder icon
-                CopySpriteMasked(icontable[0].data, (menu->startX)*18, (curitem+itemsStartY-menu->scroll)*24, 0x12, 0x18, 0xf81f  );
-              } else {
-                if(menu->items[curitem].icon >= 0) CopySpriteMasked(icontable[menu->items[curitem].icon].data, (menu->startX)*18, (curitem+itemsStartY-menu->scroll)*24, 0x12, 0x18, 0xf81f  );
-              }
+          *menuitem = 0;
+          mPrintXY(menu->startX, curitem+itemsStartY-menu->scroll, menuitemarr, (menu->selection == curitem+1 ? TEXT_MODE_INVERT : TEXT_MODE_TRANSPARENT_BACKGROUND), menu->items[curitem].color);
+        } else {
+          int textX = (menu->startX-1) * 18;
+          int textY = curitem*24+itemsStartY*24-menu->scroll*24-24+6;
+          clearLine(menu->startX, curitem+itemsStartY-menu->scroll, (menu->selection == curitem+1 ? textColorToFullColor(menu->items[curitem].color) : COLOR_WHITE));
+          drawLine(textX, textY+24-4, LCD_WIDTH_PX-2, textY+24-4, COLOR_GRAY);
+          PrintMini(&textX, &textY, menuitemarr, 0, 0xFFFFFFFF, 0, 0, (menu->selection == curitem+1 ? COLOR_WHITE : textColorToFullColor(menu->items[curitem].color)), (menu->selection == curitem+1 ? textColorToFullColor(menu->items[curitem].color) : COLOR_WHITE), 1, 0);
+        }
+        // deal with menu items of type MENUITEM_CHECKBOX
+        if(menu->items[curitem].type == MENUITEM_CHECKBOX) {
+          mPrintXY(menu->startX+menu->width-1,curitem+itemsStartY-menu->scroll,
+            (menu->items[curitem].value == MENUITEM_VALUE_CHECKED ? (char*)"\xe6\xa9" : (char*)"\xe6\xa5"),
+            (menu->selection == curitem+1 ? TEXT_MODE_INVERT : (menu->pBaRtR == 1? TEXT_MODE_TRANSPARENT_BACKGROUND : TEXT_MODE_NORMAL)), menu->items[curitem].color);
+        }
+        // deal with multiselect menus
+        if(menu->type == MENUTYPE_MULTISELECT) {
+          if((curitem+itemsStartY-menu->scroll)>=itemsStartY &&
+            (curitem+itemsStartY-menu->scroll)<=(itemsStartY+itemsHeight) &&
+            icontable != NULL
+          ) {
+            if (menu->items[curitem].isfolder == 1) {
+              // assumes first icon in icontable is the folder icon
+              CopySpriteMasked(icontable[0].data, (menu->startX)*18, (curitem+itemsStartY-menu->scroll)*24, 0x12, 0x18, 0xf81f  );
+            } else {
+              if(menu->items[curitem].icon >= 0) CopySpriteMasked(icontable[menu->items[curitem].icon].data, (menu->startX)*18, (curitem+itemsStartY-menu->scroll)*24, 0x12, 0x18, 0xf81f  );
             }
-            if (menu->items[curitem].isselected) {
-              if (menu->selection == curitem+1) {
-                mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"\xe6\x9b", TEXT_MODE_TRANSPARENT_BACKGROUND, (menu->items[curitem].color ==  TEXT_COLOR_GREEN ? TEXT_COLOR_BLUE : TEXT_COLOR_GREEN));
-              } else {
-                mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"\xe6\x9b", TEXT_MODE_NORMAL, TEXT_COLOR_PURPLE);
-              }
+          }
+          if (menu->items[curitem].isselected) {
+            if (menu->selection == curitem+1) {
+              mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"\xe6\x9b", TEXT_MODE_TRANSPARENT_BACKGROUND, (menu->items[curitem].color ==  TEXT_COLOR_GREEN ? TEXT_COLOR_BLUE : TEXT_COLOR_GREEN));
+            } else {
+              mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"\xe6\x9b", TEXT_MODE_NORMAL, TEXT_COLOR_PURPLE);
             }
           }
         }
