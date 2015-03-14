@@ -816,7 +816,6 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
 
 void viewEvent(CalendarEvent* event, int istask) {
   DefineStatusMessage((char*)"", 1, 0, 0); // clear "press OPTN for more options" message
-  char catbuffer[10]="";
   textArea text;
   text.title = (char*)event->title;
   
@@ -832,6 +831,8 @@ void viewEvent(CalendarEvent* event, int istask) {
   elem[text.numelements].text = (char*)event->location;
   text.numelements++;
   
+  char startson[50];
+  char endson[50];
   if(!istask) {
     elem[text.numelements].text = (char*)"Starts on";
     elem[text.numelements].newLine = 1;
@@ -840,7 +841,6 @@ void viewEvent(CalendarEvent* event, int istask) {
     elem[text.numelements].color=COLOR_LIGHTGRAY;
     text.numelements++;
     
-    char startson[50];
     dateToString(startson, event->startdate.year, event->startdate.month, event->startdate.day);
     
     if(event->timed) {
@@ -859,12 +859,11 @@ void viewEvent(CalendarEvent* event, int istask) {
     elem[text.numelements].color=COLOR_LIGHTGRAY; 
     text.numelements++;
     
-    unsigned char endson[50];
-    dateToString((char*)endson, event->enddate.year, event->enddate.month, event->enddate.day);
+    dateToString(endson, event->enddate.year, event->enddate.month, event->enddate.day);
     
     if(event->timed) {
-      strcat((char*)endson, (char*)" ");
-      timeToString((char*)endson, event->endtime.hour, event->endtime.minute, event->endtime.second);
+      strcat(endson, " ");
+      timeToString(endson, event->endtime.hour, event->endtime.minute, event->endtime.second);
     }
     
     elem[text.numelements].text = (char*)endson;
@@ -877,6 +876,7 @@ void viewEvent(CalendarEvent* event, int istask) {
   elem[text.numelements].spaceAtEnd=1;
   text.numelements++;
   
+  char catbuffer[10];
   itoa(event->category, (unsigned char*)catbuffer);
   elem[text.numelements].text = (char*)catbuffer;
   elem[text.numelements].color = textColorToFullColor((event->category == 0 ? 7 : event->category-1));

@@ -90,10 +90,8 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
   if(res == GETFILES_MAX_FILES_REACHED) {
     // show "folder has over 200 items, some will be skipped" message
     mMsgBoxPush(5);
-    PrintXY_2(TEXT_MODE_NORMAL, 1, 2, 1833, TEXT_COLOR_BLACK); // folder has over
-    PrintXY_2(TEXT_MODE_NORMAL, 1, 3, 1834, TEXT_COLOR_BLACK); // 200 files
-    PrintXY_2(TEXT_MODE_NORMAL, 1, 4, 1835, TEXT_COLOR_BLACK); // some will
-    PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 1836, TEXT_COLOR_BLACK); // be skipped
+    for(int i = 0; i < 4; i++) // folder has over / 200 files / some will / be skipped
+      PrintXY_2(TEXT_MODE_NORMAL, 1, 2+i, 1833+i, TEXT_COLOR_BLACK);
     closeMsgBox(0, 6);
   }
   MenuItem* menuitems = NULL;
@@ -226,12 +224,9 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
                   }
                 }
                 if(!inclip) {
-                  strcpy(clipboard[*itemsinclip].filename, files[ifile].filename);
-                  strcpy(clipboard[*itemsinclip].visname, files[ifile].visname);
+                  clipboard[*itemsinclip] = files[ifile];
                   //0=cut file; 1=copy file:
                   clipboard[*itemsinclip].action = (res == KEY_CTRL_F2 ? 0 : 1);
-                  clipboard[*itemsinclip].isfolder = files[ifile].isfolder;
-                  clipboard[*itemsinclip].size = files[ifile].size;
                   *itemsinclip = *itemsinclip + 1;
                 } else {
                   // file is already in the clipboard
@@ -1148,7 +1143,7 @@ void buildIconTable(MenuItemIcon* icontable) {
   unsigned int msgno;
   unsigned short folder[7]={'\\','\\','f','l','s','0',0};
 
-  const char *bogusFiles[] = {"t", // for folder
+  static const char *bogusFiles[] = {"t", // for folder
                               "t.g3m",
                               "t.g3e",
                               "t.g3a",

@@ -15,6 +15,7 @@
 #include "timeProvider.hpp"
 #include "constantsProvider.hpp"
 #include "settingsProvider.hpp"
+#include "stringsProvider.hpp"
 
 static const char *dayofweek[] = {"Sunday",
                                   "Monday",
@@ -208,44 +209,22 @@ void currentDateToString(char *buffer, int format) {
 }
 void dateToString(char *buffer, int y, int m, int d, int format)
 {
-  char day[2];
-  char month[2];
+  char day[3];
+  char month[3];
   char year[6];
   itoa(y, (unsigned char*)year);
-  itoa(m, (unsigned char*)month);
-  itoa(d, (unsigned char*)day);
-  strcpy(buffer, (char*)"");
+  itoa_zeropad(m, month, 2);
+  itoa_zeropad(d, day, 2);
   switch(format)
   {
     case 0: // DD/MM/YYYY
-    
-      if (d < 10) { strcat(buffer, "0"); }
-      strcat(buffer, day);
-      strcat(buffer, "/");
-      
-      if (m < 10) { strcat(buffer, "0"); }
-      strcat(buffer, month);
-      strcat(buffer, "/");
-      
-      strcat(buffer, year);
+      sprintf(buffer, "%s/%s/%s", day, month, year);
       break;
     case 1: // MM/DD/YYYY
-      if (m < 10) { strcat(buffer, "0"); }
-      strcat(buffer, month);
-      strcat(buffer, "/");
-      if (d < 10) { strcat(buffer, "0"); }
-      strcat(buffer, day);
-      strcat(buffer, "/");
-      strcat(buffer, year);
+      sprintf(buffer, "%s/%s/%s", month, day, year);
       break;
     case 2: // YYYY/MM/DD
-      strcat(buffer, year);
-      strcat(buffer, "/");
-      if (m < 10) { strcat(buffer, "0"); }
-      strcat(buffer, month);
-      strcat(buffer, "/");
-      if (d < 10) { strcat(buffer, "0"); }
-      strcat(buffer, day);
+      sprintf(buffer, "%s/%s/%s", year, month, day);
       break;
   }
 }
@@ -258,30 +237,23 @@ void currentTimeToString(char *buffer, int format)
 // concatenates (not copies) time to buffer
 void timeToString(char *buffer, int h, int min, int sec, int format, int showSeconds)
 {
-  char hour[2];
-  char minute[2];
-  char second[2];
-  itoa(min, (unsigned char*)minute);
-  itoa(sec, (unsigned char*)second);
-
+  char b[3];
   int pm = 0;
   if(format && h >= 12) { 
     pm = 1;
     h = h - 12;
     if (h == 0) h = 12;
   }
-  itoa(h, (unsigned char*)hour);
-  if (h < 10) { strcat(buffer, "0"); }
-  strcat(buffer, hour);
+  itoa_zeropad(h, b, 2);
+  strcat(buffer, b);
   strcat(buffer, ":");
   
-  if (min < 10) { strcat(buffer, "0"); }
-  strcat(buffer, minute);
+  itoa_zeropad(min, b, 2);
+  strcat(buffer, b);
   if(showSeconds) {
     strcat(buffer, ":");
-    
-    if (sec < 10) { strcat(buffer, "0"); }
-    strcat(buffer, second);
+    itoa_zeropad(sec, b, 2);
+    strcat(buffer, b);
   }
 
   if(format) {
