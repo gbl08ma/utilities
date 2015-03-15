@@ -1126,6 +1126,11 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
               curstep=curstep-1; break;
             } else if(input.key==KEY_CTRL_F2) {
               int ey=event->enddate.year, em=event->enddate.month, ed=event->enddate.day;
+              if(!ed) {
+                ey = event->startdate.year;
+                em = event->startdate.month;
+                ed = event->startdate.day;
+              }
               if(!chooseCalendarDate(&ey, &em, &ed,
                                     (char*)"Select event end date:", NULL, 1)) {
                 long int datediff = DateToDays(ey, em, ed) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
