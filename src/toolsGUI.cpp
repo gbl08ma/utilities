@@ -774,10 +774,9 @@ int addTOTPGUI() {
   int curstep = 0;
   while(1) {
     SetBackGround(0x0A);
-    clearLine(1,8);
     drawScreenTitle((char*)"Add TOTP token");
     // < (first label) and Next or Finish (last label)
-    drawFkeyLabels((curstep>0 ? 0x036F : -1), -1, -1, -1, -1, (curstep==1 ? 0x04A4 : 0x04A3));
+    drawFkeyLabels((curstep>0 ? 0x036F : 0), 0, 0, 0, 0, (curstep==1 ? 0x04A4 : 0x04A3));
     if(curstep == 0) {
       drawScreenTitle(NULL, (char*)"Friendly name:");
       textInput input;
