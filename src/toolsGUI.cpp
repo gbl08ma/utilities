@@ -62,17 +62,34 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
   strcpy(subtitle, (char*)"Balance: ");
   strcat(subtitle, balanceStr);
   Transaction txs[MAX_DAY_EVENTS];
-  char menulabels[MAX_DAY_EVENTS][22];
+  char menulabels[MAX_DAY_EVENTS][44];
   menu->numitems = getWalletTransactions(currentWallet, txs);
   MenuItem items[menu->numitems];
   for(int i = 0; i < menu->numitems; i++) {
-    memset(menulabels[i], ' ', 21);
-    int len = strlen(txs[i].description);
-    memcpy(menulabels[i], txs[i].description, (len > 14 ? 14 : len));
     char amount[15];
     currencyToString(amount, &txs[i].amount);
-    strncpy(menulabels[i]+15, amount, 6);
-    menulabels[i][21] = 0;
+
+    // build menu item so that the text is cut and the values aligned on the right column
+    // independently of the description containing multibyte chars and their location
+    char* s = txs[i].description;
+    int len = 0, glen = 0;
+    while(*s) {
+      len++;
+      glen++;
+      if(MB_IsLead(*s)) glen--;
+      if(glen >= 14) { // this way we only care about the section that is to be displayed
+        break;
+      }
+      s++;
+    }
+    memset(menulabels[i], ' ', 43); // blank parts that would not be touched
+    int offset = len-glen;
+    memcpy(menulabels[i], txs[i].description, (glen > 14 ? 14+offset : len));
+    if(MB_IsLead(menulabels[i][14+offset]))
+      menulabels[i][14+offset] = ' '; // eliminate half-MB char
+    strncpy(menulabels[i]+15+offset, amount, 6);
+    menulabels[i][21+offset] = 0;
+
     if(txs[i].credit) items[i].color = TEXT_COLOR_GREEN;
     else items[i].color = TEXT_COLOR_RED;
     items[i].text = menulabels[i];
