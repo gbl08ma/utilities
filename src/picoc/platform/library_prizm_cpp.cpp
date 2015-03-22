@@ -1416,7 +1416,7 @@ pcvoid(RemoveDay)(struct ParseState *Parser, struct Value *ReturnValue, struct V
 }
 
 pcvoid(GetEventsForDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = GetEventsForDate((EventDate*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, (CalendarEvent*)Param[2]->Val->Pointer, Param[3]->Val->Integer, (SimpleCalendarEvent*)Param[4]->Val->Pointer, Param[5]->Val->Integer);
+    ReturnValue->Val->Integer = GetEventsForDate((EventDate*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, (CalendarEvent*)Param[2]->Val->Pointer, Param[3]->Val->Integer, (SimpleCalendarEvent*)Param[4]->Val->Pointer);
 }
 
 pcvoid(GetEventCountsForMonth)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1428,7 +1428,7 @@ pcvoid(SearchEventsOnDay)(struct ParseState *Parser, struct Value *ReturnValue, 
 }
 
 pcvoid(SearchEventsOnYearOrMonth)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = SearchEventsOnYearOrMonth(Param[0]->Val->Integer, Param[1]->Val->Integer, (char*)Param[2]->Val->Pointer, (SimpleCalendarEvent*)Param[3]->Val->Pointer, (char*)Param[4]->Val->Pointer, Param[5]->Val->Integer, Param[6]->Val->Integer);
+    ReturnValue->Val->Integer = SearchEventsOnYearOrMonth(Param[0]->Val->Integer, Param[1]->Val->Integer, (char*)Param[2]->Val->Pointer, (SimpleCalendarEvent*)Param[3]->Val->Pointer, (char*)Param[4]->Val->Pointer, Param[5]->Val->Integer);
 }
 
 pcvoid(repairEventsFile)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2485,10 +2485,10 @@ const struct LibraryFunction UtilitiesCalendarProvider[] =
     { pcfunc(ReplaceEventFile),      "int ReplaceEventFile(void*, void*, char*, int);" },
     { pcfunc(RemoveEvent),           "void RemoveEvent(void*, void*, char*, int, int);" },
     { pcfunc(RemoveDay),             "void RemoveDay(void*, char*);" },
-    { pcfunc(GetEventsForDate),      "int GetEventsForDate(void*, char*, void*, int, void*, int);" },
+    { pcfunc(GetEventsForDate),      "int GetEventsForDate(void*, char*, void*, int, void*);" },
     { pcfunc(GetEventCountsForMonth),"void GetEventCountsForMonth(int, int, int*, int*);" },
     { pcfunc(SearchEventsOnDay),     "int SearchEventsOnDay(void*, char*, void*, char*, int);" },
-    { pcfunc(SearchEventsOnYearOrMonth),"int SearchEventsOnYearOrMonth(int, int, char*, void*, char*, int, int);" },
+    { pcfunc(SearchEventsOnYearOrMonth),"int SearchEventsOnYearOrMonth(int, int, char*, void*, char*, int);" },
     { pcfunc(repairEventsFile),      "void repairEventsFile(char*, char*, int*, int*);" },
     { pcfunc(setDBneedsRepairFlag),  "void setDBneedsRepairFlag(int);" },
     { pcfunc(getDBneedsRepairFlag),  "int getDBneedsRepairFlag(void);" },

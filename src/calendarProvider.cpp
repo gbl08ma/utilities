@@ -374,7 +374,7 @@ void RemoveDay(EventDate* date, const char* folder) {
   Bfile_DeleteEntry(pFile);
 }
 
-int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit, SimpleCalendarEvent* simpleCalEvents, int startArray) {
+int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit, SimpleCalendarEvent* simpleCalEvents) {
 /*reads the storage memory searching for events starting on specified date.
   folder is where events will be searched for (useful for multiple calendar support)
   if calEvents is not NULL:
@@ -413,10 +413,10 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
     src = toksplit(src, EVENT_SEPARATOR , token, 2048);
     while (1) {
       //pass event to the parser and store it in the string event array
-      if(calEvents != NULL) charToCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &calEvents[startArray+curevent]); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
+      if(calEvents != NULL) charToCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &calEvents[curevent]); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
       // we don't want full CalendarEvents, but do we want SimpleCalendarEvents?
       else if(simpleCalEvents != NULL) {
-        charToSimpleCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &simpleCalEvents[startArray+curevent]);
+        charToSimpleCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &simpleCalEvents[curevent]);
       }
       curevent++;
       if (strlen(src) < 5) { //5 bytes is not enough space to hold an event, so that means there are no more events to process... right?
@@ -429,8 +429,8 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
       src = toksplit(src, EVENT_SEPARATOR , token, 2048);
     }
     if(curevent > 1 && startdate->month) { // only sort if there's more than one element and only if this is not a "special" file (tasks, wallet, TOTP, event import...)
-      if(calEvents != NULL) sortCalendarEvents(calEvents+startArray, curevent);
-      else if(simpleCalEvents != NULL) sortSimpleCalendarEvents(simpleCalEvents+startArray, curevent); // also sets origpos
+      if(calEvents != NULL) sortCalendarEvents(calEvents, curevent);
+      else if(simpleCalEvents != NULL) sortSimpleCalendarEvents(simpleCalEvents, curevent); // also sets origpos
     }
     return curevent; //return the number of events
   } else {
@@ -497,9 +497,9 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   Bfile_FindClose(findhandle);
 }
 
-void SearchHelper(EventDate* date, SimpleCalendarEvent* calEvents, int daynumevents, const char* folder, char* needle, int limit, int* index) {
-  // limit is the maximum index, not maximum number of results
-  // (if you want five events at most, and *index is 5, you need to put 10 in limit)
+int SearchHelper(EventDate* date, SimpleCalendarEvent* calEvents, int daynumevents, const char* folder, char* needle, int limit) {
+  // limit is the maximum number of results
+  int index = 0;
   CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
   daynumevents = GetEventsForDate(date, folder, dayEvents);
   for(int curitem = 0; curitem < daynumevents; curitem++) {
@@ -507,18 +507,19 @@ void SearchHelper(EventDate* date, SimpleCalendarEvent* calEvents, int daynumeve
       NULL != strcasestr((char*)dayEvents[curitem].location, needle) || \
       NULL != strcasestr((char*)dayEvents[curitem].description, needle)) {
       if(calEvents != NULL) {
-        strncpy((char*)calEvents[*index].title, (char*)dayEvents[curitem].title, 24);
-        calEvents[*index].title[24] = '\0';
-        calEvents[*index].startdate.day = dayEvents[curitem].startdate.day;
-        calEvents[*index].startdate.month = dayEvents[curitem].startdate.month;
-        calEvents[*index].startdate.year = dayEvents[curitem].startdate.year;
-        calEvents[*index].category = dayEvents[curitem].category;
-        calEvents[*index].origpos = curitem;
+        strncpy((char*)calEvents[index].title, (char*)dayEvents[curitem].title, 24);
+        calEvents[index].title[24] = '\0';
+        calEvents[index].startdate.day = dayEvents[curitem].startdate.day;
+        calEvents[index].startdate.month = dayEvents[curitem].startdate.month;
+        calEvents[index].startdate.year = dayEvents[curitem].startdate.year;
+        calEvents[index].category = dayEvents[curitem].category;
+        calEvents[index].origpos = curitem;
       }
-      *index = *index + 1;
-      if(*index >= limit) return;
+      index++;
+      if(index >= limit) return index;
     }
   }
+  return index;
 }
 
 int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
@@ -526,17 +527,15 @@ int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* 
    * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)
    * if calEvents is NULL simply returns the number of results
    * returns the search results count */
-  int index = 0;
   int daynumevents = GetEventsForDate(date, folder, NULL); //get event count only so we know how much to alloc
   if(daynumevents==0) return 0;
-  SearchHelper(date, calEvents, daynumevents, folder, needle, limit, &index);
-  return index;
+  return SearchHelper(date, calEvents, daynumevents, folder, needle, limit);
 }
 
-int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit, int index) {
+int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
   // if m is zero, will search on year y
-  // limit is the maximum index, not maximum number of results
-
+  // limit is the maximum number of results
+  int index = 0;
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
 
@@ -586,7 +585,7 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
         if(isDateValid(thisday.year,thisday.month,thisday.day)) {
           int daynumevents = GetEventsForDate(&thisday, folder, NULL); //get event count only so we know how much to alloc
           if(daynumevents > 0) {
-            SearchHelper(&thisday, calEvents, daynumevents, folder, needle, limit, &index);
+            index += SearchHelper(&thisday, calEvents+index, daynumevents, folder, needle, limit);
             if(index >= limit) {
               Bfile_FindClose(findhandle);
               return index;

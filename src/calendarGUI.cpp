@@ -375,7 +375,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
       EventDate date;
       date.year=ny; date.month=nm; date.day=nd;
       // read directly into SimpleCalendarEvents
-      GetEventsForDate(&date, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW, events, cursce);
+      GetEventsForDate(&date, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW, events+cursce);
       for(unsigned int k = 0; k < fevcount[curday]; k++) {
         // build menuitem
         menuitems[curmenu].text = (char*)events[cursce].title;
@@ -1700,7 +1700,7 @@ void searchEventsGUI(int y, int m, int d) {
       progressMessage((char*)" Searching...", 0, yearCount);
       for(int i = 0; i < yearCount; i++) {
         int prev = eventsCount;
-        eventsCount = SearchEventsOnYearOrMonth(userStartYear+i, 0, CALENDARFOLDER, NULL, needle, eventsCount + maxEventsPerYear, eventsCount);
+        eventsCount += SearchEventsOnYearOrMonth(userStartYear+i, 0, CALENDARFOLDER, NULL, needle, maxEventsPerYear);
         if(eventsCount > prev) { // if there are events on this year...
           searchTop = userStartYear+i;
           if(!searchBottom) searchBottom = userStartYear+i;
@@ -1715,7 +1715,7 @@ void searchEventsGUI(int y, int m, int d) {
 
       progressMessage((char*)" Searching...", 0, yearWithEventsCount);
       for(int i = 0; i < yearWithEventsCount; i++) {
-        eventsCount = SearchEventsOnYearOrMonth(searchBottom+i, 0, CALENDARFOLDER, events, needle, eventsCount + maxEventsPerYear, eventsCount);
+        eventsCount += SearchEventsOnYearOrMonth(searchBottom+i, 0, CALENDARFOLDER, events+eventsCount, needle, maxEventsPerYear);
         progressMessage((char*)" Searching...", i+1, yearWithEventsCount);
       }
       closeProgressMessage();
