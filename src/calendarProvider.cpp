@@ -174,6 +174,15 @@ void charToSimpleCalEvent(char* src, SimpleCalendarEvent* calEvent) {
       case 4: //startdate.year
         calEvent->startdate.year = atoi((const char*)token);
         break;
+      case 11: //starttime.hour
+        calEvent->starttime.hour = atoi((const char*)token);
+        break;
+      case 12: //starttime.minute
+        calEvent->starttime.minute = atoi((const char*)token);
+        break;
+      case 13: //starttime.second
+        calEvent->starttime.second = atoi((const char*)token);
+        break;
       case 17: //title
         strncpy((char*)calEvent->title, (char*)token, 21);
         calEvent->title[22] = '\0';
@@ -190,6 +199,51 @@ void smemFilenameFromDate(EventDate* date, unsigned short* shortfn, const char* 
   char filename[MAX_FILENAME_SIZE];
   sprintf(filename, "%s\\%d%s%d%s%d.pce", folder, date->year, date->month < 10 ? "0" : "", date->month, date->day < 10 ? "0" : "", date->day); //filenameFromDate does not include file extension, so add it
   Bfile_StrToName_ncpy(shortfn, filename, MAX_FILENAME_SIZE); 
+}
+
+int compareEventDateTimes(EventDate* date1, EventTime* time1, EventDate* date2, EventTime* time2) {
+  if     (date1->year   <  date2->year)   return -1;
+  else if(date1->year   >  date2->year)   return 1;
+  else if(date1->month  <  date2->month)  return -1;
+  else if(date1->month  >  date2->month)  return 1;
+  else if(date1->day    <  date2->day)    return -1;
+  else if(date1->day    >  date2->day)    return 1;
+  else if(time1->hour   <  time2->hour)   return -1;
+  else if(time1->hour   >  time2->hour)   return 1;
+  else if(time1->minute <  time2->minute) return -1;
+  else if(time1->minute >  time2->minute) return 1;
+  else if(time1->second <  time2->second) return -1;
+  else if(time1->second >  time2->second) return 1;
+  else return 0;
+}
+
+void sortCalendarEvents(CalendarEvent events[], int count) {
+  int i, j;
+  CalendarEvent temp;
+
+  for(i = 1; i < count; i++) {
+    temp = events[i];
+    for (j = i - 1; j >= 0 && compareEventDateTimes(&events[j].startdate, &events[j].starttime, &temp.startdate, &temp.starttime) > 0; j--) {
+      events[j + 1] = events[j];
+    }
+    events[j + 1] = temp;
+  }
+}
+
+void sortSimpleCalendarEvents(SimpleCalendarEvent events[], int count) {
+  int i, j;
+  SimpleCalendarEvent temp;
+  for(i = 1; i < count; i++) {
+    temp = events[i];
+    for (j = i - 1; j >= 0 && compareEventDateTimes(&events[j].startdate, &events[j].starttime, &temp.startdate, &temp.starttime) > 0; j--) {
+      events[j + 1] = events[j];
+    }
+    events[j + 1] = temp;
+  }
+  // sets origpos (assumes sortCalendarEvents sorts the same way)
+  for(i = 0; i < count; i++) {
+    events[i].origpos = i;
+  }
 }
 
 int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
@@ -362,7 +416,6 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
       if(calEvents != NULL) charToCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &calEvents[startArray+curevent]); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
       // we don't want full CalendarEvents, but do we want SimpleCalendarEvents?
       else if(simpleCalEvents != NULL) {
-        simpleCalEvents[startArray+curevent].origpos = curevent;
         charToSimpleCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &simpleCalEvents[startArray+curevent]);
       }
       curevent++;
@@ -374,6 +427,10 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
         return curevent;
       }
       src = toksplit(src, EVENT_SEPARATOR , token, 2048);
+    }
+    if(curevent > 1 && startdate->month) { // only sort if there's more than one element and only if this is not a "special" file (tasks, wallet, TOTP, event import...)
+      if(calEvents != NULL) sortCalendarEvents(calEvents+startArray, curevent);
+      else if(simpleCalEvents != NULL) sortSimpleCalendarEvents(simpleCalEvents+startArray, curevent); // also sets origpos
     }
     return curevent; //return the number of events
   } else {

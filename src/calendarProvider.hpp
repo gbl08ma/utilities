@@ -57,6 +57,7 @@ typedef struct // a simplified calendar event, for use when the memory available
 {
   unsigned int category=0;
   EventDate startdate;
+  EventTime starttime;
   unsigned int origpos=0; //position in original file (useful for search results). zero based.
   unsigned char title[24];
 } SimpleCalendarEvent;
