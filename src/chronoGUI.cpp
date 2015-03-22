@@ -287,8 +287,6 @@ void clearSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
   saveChronoArray(tchrono, NUMBER_OF_CHRONO); 
 }
 
-
-
 void setChronoGUI(Menu* menu, chronometer* tchrono, int menuSelOnly) {
   long long int ms = 0;
   int type = CHRONO_TYPE_UP;

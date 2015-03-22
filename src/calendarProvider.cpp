@@ -135,15 +135,15 @@ void charToCalEvent(char* src, CalendarEvent* calEvent) {
         break;
       case 17: //title
         strncpy((char*)calEvent->title, (char*)token, 21);
-        calEvent->title[22] = '\0';
+        calEvent->title[21] = '\0';
         break;
       case 18: //location
         strncpy((char*)calEvent->location, (char*)token, 128);
-        calEvent->location[129] = '\0';
+        calEvent->location[128] = '\0';
         break;
       case 19: //description
         strncpy((char*)calEvent->description, (char*)token, 1024);
-        calEvent->description[1025] = '\0';
+        calEvent->description[1024] = '\0';
         break;
       default: //unknown field. may add special handling later.
         break;
@@ -185,7 +185,7 @@ void charToSimpleCalEvent(char* src, SimpleCalendarEvent* calEvent) {
         break;
       case 17: //title
         strncpy((char*)calEvent->title, (char*)token, 21);
-        calEvent->title[22] = '\0';
+        calEvent->title[21] = '\0';
         break;
       default: //some field that doesn't matter to us
         break;
@@ -614,10 +614,9 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   // still taken as valid by this function after making changes to the file/storage format, and change the
   // code if necessary.
   // name should only contain the latest part of the name, e.g. 20130415.pce
-  // folder does not include \\fls0\ or anything, just the user friendly name for the folder
   
   // before anything, build a complete filename for the file
-  char filename[128];
+  char filename[MAX_FILENAME_SIZE];
   strcpy(filename, folder);
   strcat(filename, "\\");
   strcat(filename, name);
@@ -820,9 +819,7 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
       }
       
       // check if end datetime is past start datetime. if not, modify end datetime to be the same as start datetime.
-      long int timediff = (events[curitem].endtime.hour*60*60+events[curitem].endtime.minute*60+events[curitem].endtime.second) - (events[curitem].starttime.hour*60*60+events[curitem].starttime.minute*60+events[curitem].starttime.second);
-      long int datediff = DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
-      if(datediff < 0 || (datediff==0 && timediff<0)) {
+      if(compareEventDateTimes(&events[curitem].enddate, &events[curitem].endtime, &events[curitem].startdate, &events[curitem].starttime) < 0) {
         doneEdits=1;
         events[curitem].enddate.year = events[curitem].startdate.year;
         events[curitem].enddate.month = events[curitem].startdate.month;

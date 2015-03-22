@@ -1170,13 +1170,17 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
                 int h, m, s;
                 stringToTime(etbuffer, &h, &m, &s);
                 if(isTimeValid(h, m, s)) {
-                  long int timediff = (h*60*60+m*60+s) - (event->starttime.hour*60*60+event->starttime.minute*60+event->starttime.second);
+                  /*long int timediff = (h*60*60+m*60+s) - (event->starttime.hour*60*60+event->starttime.minute*60+event->starttime.second);
                   long int datediff = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
-                  if(datediff > 0 || timediff >= 0) {
-                    event->endtime.hour = h;
+                  if(datediff > 0 || timediff >= 0) {*/
+                  EventTime possibleEnd;
+                  possibleEnd.hour = h; possibleEnd.minute = m; possibleEnd.second = s;
+                  if(compareEventDateTimes(&event->enddate, &possibleEnd, &event->startdate, &event->starttime) >= 0) {
+                    /*event->endtime.hour = h;
                     event->endtime.minute = m;
-                    event->endtime.second = s;
-                    curstep=curstep+1; break; // continue to next step
+                    event->endtime.second = s;*/
+                    event->endtime = possibleEnd;
+                    curstep++; break; // continue to next step
                   } else invalidFieldMsg(1);
                 } else invalidFieldMsg(1);
               } else invalidFieldMsg(1);
@@ -1463,7 +1467,6 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
     input.x=6;
     input.width=8;
     input.charlimit=8;
-    input.acceptF6=0;
     input.type=INPUTTYPE_DATE;
     char buffer[15];
     fillInputDate(*yr, *m, *d, buffer);

@@ -67,6 +67,7 @@ void calEventToChar(CalendarEvent* calEvent, char* buf);
 void charToCalEvent(char* src, CalendarEvent* calEvent);
 void charToSimpleCalEvent(char* src, SimpleCalendarEvent* calEvent);
 void smemFilenameFromDate(EventDate* date, unsigned short* filename, const char* folder);
+int compareEventDateTimes(EventDate* date1, EventTime* time1, EventDate* date2, EventTime* time2);
 int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall=0);
 int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char* folder, int count);
 void RemoveEvent(EventDate *startdate, CalendarEvent* events, const char* folder, int count, int calEventPos);
