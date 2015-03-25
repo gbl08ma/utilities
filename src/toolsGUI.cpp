@@ -565,7 +565,6 @@ int renameWalletGUI(char* wallet, char* newWallet) {
 // Password generator:
 
 void passwordGenerator() {
-  Bdisp_AllClr_VRAM();
   Menu menu;
   menu.type = MENUTYPE_FKEYS;
   menu.scrollbar = 0;
@@ -591,7 +590,8 @@ void passwordGenerator() {
   menu.numitems = 6;
   menu.items = items;
   while(1) {
-    drawFkeyLabels(0, 0, 0, 0, 0, 0x0184);
+    Bdisp_AllClr_VRAM();
+    drawFkeyLabels(0x03B3, 0, 0, 0, 0, 0x0184); // FILE, EXE (white)
     itoa(length, (unsigned char*)lstr);
     char t[20] = "Length: ";
     strcat(t, lstr);
@@ -614,6 +614,57 @@ void passwordGenerator() {
           }
         }
         break;
+      case KEY_CTRL_F1:
+      {
+        Selector sel;
+        sel.min = 1;
+        sel.value = 10;
+        sel.max = 1000;
+        sel.cycle = 1;
+        sel.title = (char*)"Generate to file";
+        sel.subtitle = (char*)"Number of passwords";
+        if(doSelector(&sel) != SELECTOR_RETURN_SELECTION) break;
+
+        SetBackGround(10);
+        drawScreenTitle((char*)"Generate to file", (char*)"Filename:");
+        char newname[MAX_NAME_SIZE];
+        newname[0] = 0;
+        textInput input;
+        input.forcetext=1;
+        input.charlimit=MAX_NAME_SIZE;
+        input.buffer = (char*)newname;
+        int inscreen = 1;
+        while(inscreen) {
+          input.key=0;
+          int res = doTextInput(&input);
+          if (res==INPUT_RETURN_EXIT) break; // user aborted
+          else if (res==INPUT_RETURN_CONFIRM) {
+            inscreen = 0;
+          }
+        }
+        if(inscreen) break;
+        char newfilename[MAX_FILENAME_SIZE];
+        strcpy(newfilename, SMEM_PREFIX);
+        strcat(newfilename, newname);
+        unsigned short pFile[0x10A];
+        Bfile_StrToName_ncpy(pFile, newfilename, 0x10A);
+        unsigned int size = 1;
+        int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
+        if(BCEres >= 0) {
+          int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+          if(hFile >= 0) {
+            char password[35];
+            char line[37];
+            for(int i = 0; i < sel.value; i++) {
+              generateRandomString(password, length, items[1].value, items[2].value, items[3].value, items[4].value, items[5].value, &seed);
+              sprintf(line, "%s\r\n", password);
+              Bfile_WriteFile_OS(hFile, line, length+2);
+            }
+            Bfile_CloseFile_OS(hFile);
+          } else AUX_DisplayErrorMessage(0x2B);
+        } else AUX_DisplayErrorMessage(0x2B);
+        break;
+      }
       case KEY_CTRL_F6:
         int inscreen = 1;
         while(inscreen) {
