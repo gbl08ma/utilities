@@ -108,6 +108,7 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
         break;
       case KEY_CTRL_F1:
       case MENU_RETURN_SELECTION:
+      case MENU_RETURN_SELECTION_RIGHT:
         if(menu->numitems) viewTransaction(&txs[menu->selection-1]);
         break;
       case KEY_CTRL_F2:
@@ -325,6 +326,7 @@ void viewTransaction(Transaction* tx) {
   } else {
     text.title = (char*)"Debit information";
   }
+  text.allowLeft = 1;
   
   textElement elem[15];
   text.elements = elem;
@@ -738,6 +740,7 @@ void totpClient() {
       case KEY_CTRL_F1:
         if(!menu.numitems) break;
       case MENU_RETURN_SELECTION:
+      case MENU_RETURN_SELECTION_RIGHT:
         viewTOTPcodeGUI(&ts[menu.selection-1]);
         break;
       case KEY_CTRL_F2:
@@ -767,7 +770,7 @@ void viewTOTPcodeGUI(totp* tkn) {
   Bdisp_AllClr_VRAM();
   drawScreenTitle(tkn->name);
   int shown_since_beginning = 0;
-  while(key != KEY_PRGM_EXIT) {
+  while(key != KEY_PRGM_EXIT && key != KEY_PRGM_LEFT) {
     int ThirtySecCode = computeTOTP(tkn);
     char buffer[10];
     itoa_zeropad(tkn->totpcode, buffer, 6);

@@ -133,7 +133,8 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
   menu.subtitle = friendlypath;
   menu.type = MENUTYPE_MULTISELECT;
   menu.height = 7;
-  menu.scrollout=1;
+  menu.scrollout = 1;
+  menu.returnOnLeft = 1;
   menu.nodatamsg = (char*)"No Data";
   menu.title = (char*)"Files";
   char statusbuffer[120];
@@ -163,6 +164,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
         }
         break;
       case MENU_RETURN_SELECTION:
+      case MENU_RETURN_SELECTION_RIGHT:
         if(menuitems[menu.selection-1].isfolder) {
           strcpy(browserbasepath, files[menu.selection-1].filename); //switch to selected folder
           strcat(browserbasepath, "\\");
@@ -764,6 +766,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip, int allowUpDown)
         if(allowUpDown) return FILEINFORMATION_RETURN_DOWN;
         break;
       case KEY_CTRL_EXE:
+      case KEY_CTRL_RIGHT:
         #ifdef ENABLE_PICOC_SUPPORT
         if(allowEdit && EndsIWith(file->filename, (char*)".c")) return 3;
         #endif
@@ -911,6 +914,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   sprintf(titlebuf, "Viewing %s as text", name);
   DefineStatusMessage((char*)titlebuf, 1, 0, 0);
   textArea text;
+  text.allowLeft = 1;
   
   // get number of lines so we know how much textElement to allocate
   text.numelements = 1; // at least one line it will have
@@ -973,6 +977,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     int res = doMenu(&menu);
     switch(res) {
       case MENU_RETURN_SELECTION:
+      case MENU_RETURN_SELECTION_RIGHT:
         if(!clipboard[menu.selection-1].isfolder) fileInformation(&clipboard[menu.selection-1], 0, *itemsinclip);
         break;
       case MENU_RETURN_EXIT:

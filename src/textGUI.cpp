@@ -134,6 +134,8 @@ int doTextArea(textArea* text) {
       case KEY_CTRL_F1:
         if(text->allowF1) return TEXTAREA_RETURN_F1;
         break;
+      case KEY_CTRL_LEFT:
+        if(!text->allowLeft) break;
       case KEY_CTRL_EXIT: return TEXTAREA_RETURN_EXIT; break;
     }
   }

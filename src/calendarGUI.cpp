@@ -438,6 +438,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
         else menu->fkeypage = 0;
         break;
       case MENU_RETURN_SELECTION:
+      case MENU_RETURN_SELECTION_RIGHT:
         if(msel>0) viewNthEventOnDay(&events[msel-1].startdate, events[msel-1].origpos);
         else if(ssel>0) {
           long int dd = DateToDays(*y, *m, *d) + ssel-1;
@@ -672,6 +673,7 @@ void viewEvents(int y, int m, int d) {
   menu.scrollout=1;
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
+  menu.returnOnLeft = 1;
   menu.nodatamsg = (char*)"No events - press F2";
   char buffer[15];
   dateToString(buffer, y, m, d);
@@ -754,6 +756,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         }
         break;
       case MENU_RETURN_SELECTION:
+      case MENU_RETURN_SELECTION_RIGHT:
         viewEvent(&events[menu->selection-1]);
         break;
       case KEY_CTRL_F2:
@@ -818,6 +821,7 @@ void viewEvent(CalendarEvent* event, int istask) {
   DefineStatusMessage((char*)"", 1, 0, 0); // clear "press OPTN for more options" message
   textArea text;
   text.title = (char*)event->title;
+  text.allowLeft = 1;
   
   textElement elem[15];
   text.elements = elem;
@@ -1746,6 +1750,7 @@ void searchEventsGUI(int y, int m, int d) {
       case KEY_CTRL_F1:
         if(!menu.numitems) break;
       case MENU_RETURN_SELECTION:
+      case MENU_RETURN_SELECTION_RIGHT:
         viewNthEventOnDay(&events[menu.selection-1].startdate, events[menu.selection-1].origpos);
         break;
       case KEY_CTRL_F2:

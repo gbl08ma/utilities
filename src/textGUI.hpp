@@ -37,6 +37,7 @@ typedef struct
   char* title = NULL;
   int scrollbar=1;
   int allowEXE=0; //whether to allow EXE to exit the screen
+  int allowLeft=0; //whether pressing Left exits the screen like EXIT
   int allowF1=0; //whether to allow F1 to exit the screen
   int type=TEXTAREATYPE_NORMAL;
 } textArea;
