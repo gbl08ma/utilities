@@ -21,6 +21,7 @@
 #define MAX_ITEMS_IN_DIR 200
 #define MAX_ITEMS_IN_CLIPBOARD 51
 #define MAX_TEXTVIEWER_FILESIZE 64*1024
+#define MAX_TEXTVIEWER_LINES 2000
 #define MAX_ITEMS_PER_FOLDER_COPY 100 // also applies to folders in recursive search
 typedef struct
 {

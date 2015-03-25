@@ -17,11 +17,11 @@
 typedef struct
 {
   char* text;
-  int newLine=0; // if 1, new line will be drawn before the text
   color_t color=COLOR_BLACK;
-  int spaceAtEnd=0;
-  int lineSpacing=0;
-  int minimini=0;
+  char newLine=0; // if 1, new line will be drawn before the text
+  char spaceAtEnd=0;
+  char lineSpacing=0;
+  char minimini=0;
 } textElement;
 
 #define TEXTAREATYPE_NORMAL 0

@@ -924,6 +924,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
     } else if(*(asrc+bcur) == '\r' || *(asrc+bcur) == '\n') text.numelements++;
     bcur += jump;
   }
+  if(text.numelements > MAX_TEXTVIEWER_LINES) text.numelements = MAX_TEXTVIEWER_LINES;
 
   textElement elem[text.numelements];
   text.elements = elem;
