@@ -240,10 +240,6 @@ void sortSimpleCalendarEvents(SimpleCalendarEvent events[], int count) {
     }
     events[j + 1] = temp;
   }
-  // sets origpos (assumes sortCalendarEvents sorts the same way)
-  for(i = 0; i < count; i++) {
-    events[i].origpos = i;
-  }
 }
 
 int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
@@ -431,6 +427,10 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
     if(curevent > 1 && startdate->month) { // only sort if there's more than one element and only if this is not a "special" file (tasks, wallet, TOTP, event import...)
       if(calEvents != NULL) sortCalendarEvents(calEvents, curevent);
       else if(simpleCalEvents != NULL) sortSimpleCalendarEvents(simpleCalEvents, curevent); // also sets origpos
+    }
+    if(simpleCalEvents != NULL) {
+      // sets origpos (assumes sortCalendarEvents and sortSimpleCalendarEvents give equivalent results for equivalent arrays)
+      for(int i = 0; i < curevent; i++) simpleCalEvents[i].origpos = i;
     }
     return curevent; //return the number of events
   } else {
