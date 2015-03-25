@@ -2052,6 +2052,25 @@ void repairCalendarDatabase() {
   searchValid = 0; // invalidate week view results
 }
 
+int trimCalendarCategoryHelper(EventDate* date, const int delcat) {
+  // returns 1 if whole file is to be deleted, 0 otherwise
+  int ne = GetEventsForDate(date, CALENDARFOLDER, NULL);
+  int didChanges = 0;
+  // we can use alloca here, as we're going to return right after
+  CalendarEvent* ce = (CalendarEvent*)alloca(ne*sizeof(CalendarEvent));
+  GetEventsForDate(date, CALENDARFOLDER, ce);
+  for(int i = 0; i < ne; i++) {
+    if(ce[i].category == (unsigned int)delcat) {
+      if(ne == 1) return 1; // there was only one event remaining, delete file
+      didChanges = 1;
+      for (int k = i; k < ne - 1; k++)
+          ce[k] = ce[k+1];
+      ne--; //this "deletes" the event
+    }
+  }
+  if(didChanges) ReplaceEventFile(date, ce, CALENDARFOLDER, ne);
+  return 0;
+}
 void trimCalendarDatabase() {
   textArea text;
   text.title = (char*)"Trim database";
@@ -2072,25 +2091,51 @@ void trimCalendarDatabase() {
   doTextArea(&text);
   
   MenuItem menuitems[4];
-  menuitems[0].text = (char*)"Older than 6 months";
-  menuitems[1].text = (char*)"Older than 1 month";
-  menuitems[2].text = (char*)"Events in the past";
-  menuitems[3].text = (char*)"All calendar events";
+  menuitems[0].text = (char*)"Before specific date";
+  menuitems[1].text = (char*)"Of specific category";
+  menuitems[2].text = (char*)"All calendar events";
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=4;
-  menu.scrollout=1;
+  menu.numitems=3;
   menu.startY = 6;
   menu.height = 3;
+  menu.scrollbar = 0;
   
   int res = doMenu(&menu);
   if(res == MENU_RETURN_EXIT) return;
   else if(res == MENU_RETURN_SELECTION) {
-    if(menu.selection == 4) {
-      mMsgBoxPush(5);
-      multiPrintXY(3, 2, "DELETE / RESET\nALL the calendar\nevents?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      if(!closeMsgBox(1)) return;
+    EventDate edgedate;
+    edgedate.day = getCurrentDay();
+    edgedate.month = getCurrentMonth();
+    edgedate.year = getCurrentYear();
+    EventTime nulltime; nulltime.hour = 0; nulltime.minute = 0; nulltime.second = 0;
+    int delcat = 20; // non-existent category so no harm is done if for some reason this is used without initializing
+    switch(menu.selection) {
+      case 1:
+      {
+        int y = edgedate.year, m = edgedate.month, d = edgedate.day;
+        if(chooseCalendarDate(&y, &m, &d, (char*)"Trim all events before:", NULL, 1)) return;
+        edgedate.year = y; edgedate.month = m; edgedate.day = d;
+        break;
+      }
+      case 2:
+      {
+        unsigned char selcolor = (unsigned char) 0xFF; //just so it isn't uninitialized
+        int initcolor = 0;
+        selcolor = ColorIndexDialog1( initcolor, 0 );
+        if(selcolor != (unsigned char)0xFF) {
+          //user didn't press EXIT, QUIT or AC/ON. input is validated.
+          selcolor != 7 ? delcat = selcolor+1 : delcat = 0;
+          break;
+        } else return;
+        break;
+      }
+      case 3:
+        mMsgBoxPush(5);
+        multiPrintXY(3, 2, "DELETE / RESET\nALL the calendar\nevents?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        if(!closeMsgBox(1)) return;
+        break;
     }
     unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
     char buffer[MAX_FILENAME_SIZE+1];
@@ -2108,7 +2153,7 @@ void trimCalendarDatabase() {
       if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 || strcmp((char*)buffer, "00000.pce") == 0) && fileinfo.fsize != 0) {
         // select what to do depending on menu selection
         int deleteThisFile = 0;
-        if(menu.selection == 4) {
+        if(menu.selection == 3) {
           // user wants to delete all events
           deleteThisFile = 1;
         } else {
@@ -2146,16 +2191,12 @@ void trimCalendarDatabase() {
             }
           }
           if(!deleteThisFile) {
-            long int datediff = DateToDays(getCurrentYear(), getCurrentMonth(), getCurrentDay()) - DateToDays(thisday.year, thisday.month, thisday.day);
             switch(menu.selection) {
               case 1:
-                if(datediff > 30+31+30+31+30+31) deleteThisFile=1;
+                deleteThisFile = (compareEventDateTimes(&thisday, &nulltime, &edgedate, &nulltime) < 0);
                 break;
               case 2:
-                if(datediff > 30) deleteThisFile=1;
-                break;
-              case 3:
-                if(datediff > 0) deleteThisFile=1;
+                deleteThisFile = trimCalendarCategoryHelper(&thisday, delcat);
                 break;
             }
           }
