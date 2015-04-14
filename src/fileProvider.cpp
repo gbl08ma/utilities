@@ -311,9 +311,8 @@ void copyFile(char* oldfilename, char* newfilename) {
   }
   
   // at this point we know that:
-  // source file exists
   // destination file doesn't exist
-  // source file is closed so CreateEntry can proceed.
+  // source file is closed.
   // create a temp file in root because copying into subdirectories directly fails with sys error
   // so we create a temp file in root, and rename in the end
   int BCEres;
@@ -330,10 +329,10 @@ void copyFile(char* oldfilename, char* newfilename) {
     
     // open old file again
     hOldFile = Bfile_OpenFile_OS(oldfilenameshort, READWRITE, 0);
-    if(hOldFile < 0) // Opening origin file didn't fail before, but is failing now?!
-    {
-      //skip this copy.
-      Bfile_CloseFile_OS(hNewFile); // close the new file we had opened
+    if(hOldFile < 0) { // Opening origin file didn't fail before, but is failing now?!
+      //skip this copy, after closing and deleting the temp file
+      Bfile_CloseFile_OS(hNewFile);
+      Bfile_DeleteEntry(tempfilenameshort);
       return;
     }
     
