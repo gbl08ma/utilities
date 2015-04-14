@@ -40,5 +40,6 @@ void compressSelectedFiles(File* files, Menu* menu);
 void decompressSelectedFiles(File* files, Menu* menu);
 void shortenDisplayPath(char* longpath, char* shortpath, int jump=1);
 void buildIconTable(MenuItemIcon* icontable);
+int overwriteFileGUI(char* filename);
 
 #endif

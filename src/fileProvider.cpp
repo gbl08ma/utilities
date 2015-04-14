@@ -21,7 +21,7 @@
 #include "menuGUI.hpp"
 #include "fileProvider.hpp"
 #include "keyboardProvider.hpp"
-#include "debugGUI.hpp"
+#include "fileGUI.hpp"
 extern "C" {
 #include "heatshrink_encoder.h"
 #include "heatshrink_decoder.h"
@@ -267,7 +267,10 @@ void renameFile(char* old, char* newf) {
   unsigned short dest[MAX_FILENAME_SIZE+1];
   Bfile_StrToName_ncpy(orig, old, MAX_FILENAME_SIZE+1);
   Bfile_StrToName_ncpy(dest, newf, MAX_FILENAME_SIZE+1);
-  Bfile_RenameEntry(orig, dest);
+  if(Bfile_RenameEntry(orig, dest) < 0 && overwriteFileGUI(newf)) {
+    Bfile_DeleteEntry(dest);
+    Bfile_RenameEntry(orig, dest);
+  }
 }
 
 void nameFromFilename(char* filename, char* name, int max) {
@@ -298,11 +301,13 @@ void copyFile(char* oldfilename, char* newfilename) {
   size_t copySize = Bfile_GetFileSize_OS(hOldFile);
   Bfile_CloseFile_OS(hOldFile); // close for now
 
-  int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
+  int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0); // Get handle for the destination file, just to check for its presence
   if(hNewFile >= 0) {
-    // dest file exists (which is bad) and is open.
     Bfile_CloseFile_OS(hNewFile);
-    return; //skip this file
+    // destination exists, show overwrite confirmation
+    if(overwriteFileGUI(newfilename))
+      Bfile_DeleteEntry(newfilenameshort);
+    else return; // skip this file
   }
   
   // at this point we know that:

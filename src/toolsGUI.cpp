@@ -29,6 +29,7 @@
 #include "calendarGUI.hpp"
 #include "selectorGUI.hpp"
 #include "timeGUI.hpp"
+#include "fileGUI.hpp"
 
 // Balance manager:
 
@@ -648,23 +649,35 @@ void passwordGenerator() {
         char newfilename[MAX_FILENAME_SIZE];
         strcpy(newfilename, SMEM_PREFIX);
         strcat(newfilename, newname);
+        strcat(newfilename, ".txt");
         unsigned short pFile[0x10A];
         Bfile_StrToName_ncpy(pFile, newfilename, 0x10A);
         unsigned int size = 1;
-        int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
-        if(BCEres >= 0) {
-          int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-          if(hFile >= 0) {
-            char password[35];
-            char line[37];
-            for(int i = 0; i < sel.value; i++) {
-              generateRandomString(password, length, items[1].value, items[2].value, items[3].value, items[4].value, items[5].value, &seed);
-              sprintf(line, "%s\r\n", password);
-              Bfile_WriteFile_OS(hFile, line, length+2);
-            }
-            Bfile_CloseFile_OS(hFile);
+        int ntry = 0;
+        while(ntry < 2) {
+          ntry++;
+          int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
+          if(BCEres >= 0) {
+            int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+            if(hFile >= 0) {
+              char password[35];
+              char line[37];
+              for(int i = 0; i < sel.value; i++) {
+                generateRandomString(password, length, items[1].value, items[2].value, items[3].value, items[4].value, items[5].value, &seed);
+                sprintf(line, "%s\r\n", password);
+                Bfile_WriteFile_OS(hFile, line, length+2);
+              }
+              Bfile_CloseFile_OS(hFile);
+            } else AUX_DisplayErrorMessage(0x2B);
+            break;
+          } else if(ntry < 2) {
+            // File creation probably failed due to the presence of a file with the same name in SMEM
+            if(overwriteFileGUI(newfilename))
+              Bfile_DeleteEntry(pFile);
+            else
+              break;
           } else AUX_DisplayErrorMessage(0x2B);
-        } else AUX_DisplayErrorMessage(0x2B);
+        }
         break;
       }
       case KEY_CTRL_F6:

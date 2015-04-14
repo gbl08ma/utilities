@@ -22,6 +22,7 @@
 #include "graphicsProvider.hpp"
 #include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
+#include "fileGUI.hpp"
 
 void fileTextEditor(char* filename, char* basefolder) {
   int newfile = (filename == NULL);
@@ -65,6 +66,7 @@ void fileTextEditor(char* filename, char* basefolder) {
     if (res==INPUT_RETURN_EXIT) return; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
       int backToEditor = 0;
+      char newfilename[MAX_FILENAME_SIZE];
       unsigned short newfilenameshort[0x10A];
       if(newfile) {
         SetBackGround(13);
@@ -90,7 +92,6 @@ void fileTextEditor(char* filename, char* basefolder) {
               closeMsgBox();
             } else {
               // create and save file
-              char newfilename[MAX_FILENAME_SIZE];
               strcpy(newfilename, basefolder);
               strcat(newfilename, nfilename);
               Bfile_StrToName_ncpy(newfilenameshort, newfilename, 0x10A);
@@ -105,7 +106,14 @@ void fileTextEditor(char* filename, char* basefolder) {
         Bfile_DeleteEntry(newfilenameshort);
       }
       size_t size = strlen(sText);
-      Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size); //create the file
+      if(Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size) < 0) { //create the file
+        // it appears file exists, overwrite?
+        if(overwriteFileGUI(newfilename)) {
+          Bfile_DeleteEntry(newfilenameshort);
+          Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size);
+        }
+        else continue; // abort file save so user can discard the file, or type another filename.
+      }
       
       int h = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
       if(h >= 0) { // Still failing?

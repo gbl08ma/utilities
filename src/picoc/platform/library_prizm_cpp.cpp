@@ -1603,6 +1603,10 @@ pcvoid(buildIconTable)(struct ParseState *Parser, struct Value *ReturnValue, str
     buildIconTable((MenuItemIcon*)Param[0]->Val->Pointer);
 }
 
+pcvoid(overwriteFileGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = overwriteFileGUI((char*)Param[0]->Val->Pointer);
+}
+
 // fileProvider
 
 pcvoid(insertSortFileMenuArray)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2550,6 +2554,7 @@ const struct LibraryFunction UtilitiesFileGUI[] =
     { pcfunc(decompressSelectedFiles),"void decompressSelectedFiles(void*, void*);" },
     { pcfunc(shortenDisplayPath),    "void shortenDisplayPath(char*, char*, int);" },
     { pcfunc(buildIconTable),        "void buildIconTable(void*);" },
+    { pcfunc(overwriteFileGUI),      "int overwriteFileGUI(char*);" },
     { NULL,         NULL }
 };
 

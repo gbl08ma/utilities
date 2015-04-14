@@ -1164,3 +1164,10 @@ void buildIconTable(MenuItemIcon* icontable) {
   for(int i = 0; i < 10; i++)
     SMEM_MapIconToExt( (unsigned char*)bogusFiles[i], (i==0 ? folder : (unsigned short*)"\x000\x000"), &msgno, icontable[i].data );
 }
+
+int overwriteFileGUI(char* filename) {
+  char cut[MAX_NAME_SIZE];
+  nameFromFilename(filename, cut, 17);
+  cut[17] = 0;
+  return (0x7539 == OverwriteConfirmation(cut, 0));
+}
