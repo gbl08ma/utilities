@@ -315,9 +315,7 @@ void copyFile(char* oldfilename, char* newfilename) {
   // source file is closed.
   // create a temp file in root because copying into subdirectories directly fails with sys error
   // so we create a temp file in root, and rename in the end
-  int BCEres;
-  BCEres = Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &copySize);
-  if(BCEres >= 0) // Did it create?
+  if(Bfile_CreateEntry_OS(tempfilenameshort, CREATEMODE_FILE, &copySize) >= 0) // Did it create?
   {
     //created. open newly-created destination file
     hNewFile = Bfile_OpenFile_OS(tempfilenameshort, READWRITE, 0);
@@ -337,16 +335,13 @@ void copyFile(char* oldfilename, char* newfilename) {
     }
     
     //File to copy is open, destination file is created and open.
-    while(1) {
 #define FILE_COPYBUFFER 24576
+    int rwsize;
+    do {
       unsigned char copybuffer[FILE_COPYBUFFER+5] = "";
-      int rwsize = Bfile_ReadFile_OS( hOldFile, copybuffer, FILE_COPYBUFFER, -1 );
-      if(rwsize > 0) {
-        Bfile_WriteFile_OS(hNewFile, copybuffer, rwsize);
-      } else {
-        break;
-      }
-    }
+      rwsize = Bfile_ReadFile_OS( hOldFile, copybuffer, FILE_COPYBUFFER, -1 );
+      if(rwsize > 0) Bfile_WriteFile_OS(hNewFile, copybuffer, rwsize);
+    } while(rwsize > 0);
     //done copying, close files.
     Bfile_CloseFile_OS(hOldFile);
     Bfile_CloseFile_OS(hNewFile);

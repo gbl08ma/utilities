@@ -39,12 +39,14 @@ void fileManager() {
   File clipboard[MAX_ITEMS_IN_CLIPBOARD+1];
   while(res) {
     char filetoedit[MAX_FILENAME_SIZE+1];
-    filetoedit[0] = 0;
     int fileAction = 0;
     res = fileManagerChild(browserbasepath, &itemsinclip, &fileAction, &shownMainMemHelp, clipboard, filetoedit);
-    if(strlen(filetoedit)) {
-      if(fileAction) {
-        #ifdef ENABLE_PICOC_SUPPORT
+    switch(fileAction) {
+      case 1:
+        textfileEditor(filetoedit);
+      break;
+      #ifdef ENABLE_PICOC_SUPPORT
+      case 2:
         int res = picoc(filetoedit);
         char resStr[10];
         itoa(res, (unsigned char*)resStr);
@@ -52,10 +54,8 @@ void fileManager() {
         multiPrintXY(3, 2, "PicoC execution\nfinished with\ncode:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         mPrintXY(9, 4, resStr, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         closeMsgBox();
-        #endif
-      } else {
-        textfileEditor(filetoedit);
-      }
+        break;
+      #endif
     }
   }
 }
@@ -185,6 +185,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
                 break;
               case VIEWFILEINFO_RETURN_EDIT:
                 strcpy(filetoedit, files[menu.selection-1].filename);
+                *fileAction = 1;
                 // deliberate fallthrough
               case VIEWFILEINFO_RETURN_RELOAD:
                 return 1;
@@ -192,7 +193,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
               case VIEWFILEINFO_RETURN_EXECUTE:
                 // user wants to run the file in picoc
                 strcpy(filetoedit, files[menu.selection-1].filename);
-                *fileAction = 1;
+                *fileAction = 2;
                 return 1;
               #endif
               case VIEWFILEINFO_RETURN_UP:
