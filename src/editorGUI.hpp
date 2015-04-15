@@ -17,6 +17,6 @@
 
 #define TEXT_BUFFER_SIZE 32*1024
 
-void fileTextEditor(char* filename=NULL, char* basefolder=NULL);
+void textfileEditor(char* filename=NULL, char* basefolder=NULL);
 
 #endif 

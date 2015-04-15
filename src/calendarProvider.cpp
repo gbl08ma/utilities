@@ -24,7 +24,7 @@
 #include "fileProvider.hpp" 
 #include "debugGUI.hpp" 
 
-void calEventToChar(CalendarEvent* calEvent, char* buf) {
+void eventToString(CalendarEvent* calEvent, char* buf) {
   /* Parses a CalendarEvent struct and turns it into a string which can be written to a file.
      The resulting string is appended to the end of buf.
      The first field (category) begins with no separator.
@@ -74,7 +74,7 @@ void calEventToChar(CalendarEvent* calEvent, char* buf) {
   *buf = 0; // null-terminate string
 }
 
-void charToCalEvent(char* src, CalendarEvent* calEvent) {
+void stringToEvent(char* src, CalendarEvent* calEvent) {
   /* Parses a string containing a single event and turns it into a CalendarEvent which the program can work with.
   */
   int curfield = 0; //field we are parsing currently. starts at the category, which is 0.
@@ -153,7 +153,7 @@ void charToCalEvent(char* src, CalendarEvent* calEvent) {
   }
 }
 
-void charToSimpleCalEvent(char* src, SimpleCalendarEvent* calEvent) {
+void stringToSimpleEvent(char* src, SimpleCalendarEvent* calEvent) {
   /* Parses a string containing a single event and turns it into a SimpleCalendarEvent which the program can work with.
      Skips all the fields not necessary to a SimpleCalendarEvent
   */
@@ -195,7 +195,7 @@ void charToSimpleCalEvent(char* src, SimpleCalendarEvent* calEvent) {
   }
 }
 
-void smemFilenameFromDate(EventDate* date, unsigned short* shortfn, const char* folder) {
+void eventDateToFilename(EventDate* date, unsigned short* shortfn, const char* folder) {
   char filename[MAX_FILENAME_SIZE];
   sprintf(filename, "%s\\%d%s%d%s%d.pce", folder, date->year, date->month < 10 ? "0" : "", date->month, date->day < 10 ? "0" : "", date->day); //filenameFromDate does not include file extension, so add it
   Bfile_StrToName_ncpy(shortfn, filename, MAX_FILENAME_SIZE); 
@@ -242,16 +242,16 @@ void sortSimpleCalendarEvents(SimpleCalendarEvent events[], int count) {
   }
 }
 
-int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
+int addEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
   //Saves a calendar event on an existing calendar with specified file name.
   //If the specified file doesn't exist, it is created and the event is added to it.
   //Returns 0 on success, other values on error.
   char newevent[2048];
   newevent[0] = 0;
-  calEventToChar(calEvent, newevent);
+  eventToString(calEvent, newevent);
   size_t size = strlen(FILE_HEADER) + strlen(newevent);
   unsigned short pFile[MAX_FILENAME_SIZE];
-  smemFilenameFromDate(&calEvent->startdate, pFile, folder);
+  eventDateToFilename(&calEvent->startdate, pFile, folder);
   int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hAddFile < 0) // Check if it opened
   {
@@ -263,7 +263,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
       hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // always open, since file did not exist so it must be closed
       if(hAddFile < 0) // Still failing?
       {
-        setDBneedsRepairFlag(1);
+        setDBcorruptFlag(1);
         return 1;
       }
       char finalcontents[2060];
@@ -277,15 +277,15 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
       // file doesn't exist, but can't be created?
       // if we're calling ourselves for the second time, return:
       if(secondCall) {
-        setDBneedsRepairFlag(1);
+        setDBcorruptFlag(1);
         return 2;
       }
       // it's probably because the DB has never been used and is not initialized (i.e. we haven't created the calendar folder).
       // create the folder:
       createFolderRecursive(folder);
       // now let's call ourselves again, then according to the return value of our second instance, decide if there was an error or not.
-      if(AddEvent(calEvent, folder,1)) {
-        setDBneedsRepairFlag(1);
+      if(addEvent(calEvent, folder,1)) {
+        setDBcorruptFlag(1);
         return 2; // another error ocurred
       } else return 0; //event was added without error, now that we created the folder
     }
@@ -296,7 +296,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
     int eventsize = strlen(newevent);
     if (oldsize > MAX_EVENT_FILESIZE || oldsize+eventsize > MAX_EVENT_FILESIZE) { //file bigger than we can handle
       Bfile_CloseFile_OS(hAddFile);
-      if(oldsize > MAX_EVENT_FILESIZE) setDBneedsRepairFlag(1);
+      if(oldsize > MAX_EVENT_FILESIZE) setDBcorruptFlag(1);
       return 4;
     }
     Bfile_SeekFile_OS(hAddFile, oldsize); //move cursor to end
@@ -306,7 +306,7 @@ int AddEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
   return 0;
 }
 
-int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char* folder, int count) {
+int replaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char* folder, int count) {
   // This basically deletes the events of startdate and replaces them with newEvents.
   // Allows for a way to edit an event on a day, when all the events for that day are in memory (including the edited one).
   // count: number of events in newEvents (number of events in old file doesn't matter). starts at 1.
@@ -315,15 +315,15 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   char newfilecontents [7+count*1250];
   strcpy(newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
   for(int j = 0; j < count; j++) {
-    calEventToChar(&newEvents[j], newfilecontents); //calEventToChar only does strncat, so it can append directly.
+    eventToString(&newEvents[j], newfilecontents); //eventToString only does strncat, so it can append directly.
   }
   size_t newsize = strlen((char*)newfilecontents);
 
   unsigned short pFile[MAX_FILENAME_SIZE];
-  smemFilenameFromDate(startdate, pFile, folder);
+  eventDateToFilename(startdate, pFile, folder);
   int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hAddFile < 0) {
-    setDBneedsRepairFlag(1);
+    setDBcorruptFlag(1);
     return 1;
   }
   size_t oldsize = Bfile_GetFileSize_OS(hAddFile);
@@ -334,7 +334,7 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
     if(Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &newsize) < 0) return 2;
     hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle again
     if(hAddFile < 0) {
-      setDBneedsRepairFlag(1);
+      setDBcorruptFlag(1);
       return 3;
     }
   }
@@ -345,32 +345,32 @@ int ReplaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   return 0;
 }
 
-void RemoveEvent(EventDate *startdate, CalendarEvent* events, const char* folder, int count, int calEventPos) {
+void removeEvent(EventDate *startdate, CalendarEvent* events, const char* folder, int count, int calEventPos) {
   // removes SMEM event starting on startdate.
   // events: array from where to remove the event
   // count: current number of events in file (before deletion)
   // calEventPos: index (zero based) of the event to delete.
-  // after the event is removed from the array, the file for the startdate is replaced with ReplaceEventFile
+  // after the event is removed from the array, the file for the startdate is replaced with replaceEventFile
   if (count == 1) {
-    RemoveDay(startdate, folder);
+    removeDay(startdate, folder);
     return;
   }
   if (calEventPos < count) {
     for (int k = calEventPos; k < count - 1; k++)
             events[k] = events[k+1];
     count = count - 1; //this "deletes" the event
-    ReplaceEventFile(startdate, events, folder, count);
+    replaceEventFile(startdate, events, folder, count);
   }
 }
 
-void RemoveDay(EventDate* date, const char* folder) {
+void removeDay(EventDate* date, const char* folder) {
   //remove all SMEM events for the day
   unsigned short pFile[MAX_FILENAME_SIZE];
-  smemFilenameFromDate(date, pFile, folder);
+  eventDateToFilename(date, pFile, folder);
   Bfile_DeleteEntry(pFile);
 }
 
-int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit, SimpleCalendarEvent* simpleCalEvents) {
+int getEvents(EventDate* startdate, const char* folder, CalendarEvent* calEvents, int limit, SimpleCalendarEvent* simpleCalEvents) {
 /*reads the storage memory searching for events starting on specified date.
   folder is where events will be searched for (useful for multiple calendar support)
   if calEvents is not NULL:
@@ -383,7 +383,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
 
   // Generate filename from given date
   unsigned short pFile[MAX_FILENAME_SIZE];
-  smemFilenameFromDate(startdate, pFile, folder);
+  eventDateToFilename(startdate, pFile, folder);
   int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   // Check for file existence
   if(hFile >= 0) // Check if it opened
@@ -396,7 +396,7 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
     if ((unsigned int)size > MAX_EVENT_FILESIZE) {
       //file too big, set repair flag and return error.
       Bfile_CloseFile_OS(hFile);
-      setDBneedsRepairFlag(1);
+      setDBcorruptFlag(1);
       return -1;
     }
     char asrc[MAX_EVENT_FILESIZE] = "";
@@ -409,10 +409,10 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
     src = toksplit(src, EVENT_SEPARATOR , token, 2048);
     while (1) {
       //pass event to the parser and store it in the string event array
-      if(calEvents != NULL) charToCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &calEvents[curevent]); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
+      if(calEvents != NULL) stringToEvent(curevent==0? token+strlen(FILE_HEADER) : token, &calEvents[curevent]); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
       // we don't want full CalendarEvents, but do we want SimpleCalendarEvents?
       else if(simpleCalEvents != NULL) {
-        charToSimpleCalEvent(curevent==0? token+strlen(FILE_HEADER) : token, &simpleCalEvents[curevent]);
+        stringToSimpleEvent(curevent==0? token+strlen(FILE_HEADER) : token, &simpleCalEvents[curevent]);
       }
       curevent++;
       if (strlen(src) < 5) { //5 bytes is not enough space to hold an event, so that means there are no more events to process... right?
@@ -439,11 +439,11 @@ int GetEventsForDate(EventDate* startdate, const char* folder, CalendarEvent* ca
   }
 }
 
-void GetEventCountsForMonthHelper(EventDate* date, int count, int* busydays) {
+void getEventCountsForMonthHelper(EventDate* date, int count, int* busydays) {
   CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
-  count = GetEventsForDate(date, CALENDARFOLDER, events);
+  count = getEvents(date, CALENDARFOLDER, events);
   for(int curitem = 0; curitem < count; curitem++) {
-    long int datediff = DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
+    long int datediff = dateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - dateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
     if(datediff == 0) {
       busydays[date->day] = events[curitem].category;
     } else if(datediff > 0) {
@@ -456,10 +456,10 @@ void GetEventCountsForMonthHelper(EventDate* date, int count, int* busydays) {
       for(unsigned int k = date->day; k<=endday; k++) {
         if(!busydays[k]) busydays[k] = events[curitem].category;
       }
-    } else setDBneedsRepairFlag(1); //end date is before start date, which is invalid. user should repair DB...
+    } else setDBcorruptFlag(1); //end date is before start date, which is invalid. user should repair DB...
   }
 }
-void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
+void getEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   for(unsigned int k = 0; k<=31; k++) {
     //clean arrays
     busydays[k] = 0;
@@ -487,8 +487,8 @@ void GetEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
         if(fd >= 1 && fd <= 31) {
           EventDate thisday;
           thisday.year=year; thisday.month=month; thisday.day=fd;
-          dbuffer[fd] = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //NULL means it will only count and not parse
-          if(dbuffer[fd] > 0) GetEventCountsForMonthHelper(&thisday, dbuffer[fd], busydays);
+          dbuffer[fd] = getEvents(&thisday, CALENDARFOLDER, NULL); //NULL means it will only count and not parse
+          if(dbuffer[fd] > 0) getEventCountsForMonthHelper(&thisday, dbuffer[fd], busydays);
         }
       }
     }
@@ -501,7 +501,7 @@ int SearchHelper(EventDate* date, SimpleCalendarEvent* calEvents, int daynumeven
   // limit is the maximum number of results
   int index = 0;
   CalendarEvent* dayEvents = (CalendarEvent*)alloca(daynumevents*sizeof(CalendarEvent));
-  daynumevents = GetEventsForDate(date, folder, dayEvents);
+  daynumevents = getEvents(date, folder, dayEvents);
   for(int curitem = 0; curitem < daynumevents; curitem++) {
     if(NULL != strcasestr((char*)dayEvents[curitem].title, needle) || \
       NULL != strcasestr((char*)dayEvents[curitem].location, needle) || \
@@ -522,17 +522,17 @@ int SearchHelper(EventDate* date, SimpleCalendarEvent* calEvents, int daynumeven
   return index;
 }
 
-int SearchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
+int searchEventsOnDay(EventDate* date, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
   /* reads the events on storage memory for a certain day
    * returns in calEvents the ones that contain needle (calEvents is a simplified events array, only contains event title and start date)
    * if calEvents is NULL simply returns the number of results
    * returns the search results count */
-  int daynumevents = GetEventsForDate(date, folder, NULL); //get event count only so we know how much to alloc
+  int daynumevents = getEvents(date, folder, NULL); //get event count only so we know how much to alloc
   if(daynumevents==0) return 0;
   return SearchHelper(date, calEvents, daynumevents, folder, needle, limit);
 }
 
-int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
+int searchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEvent* calEvents, char* needle, int limit) {
   // if m is zero, will search on year y
   // limit is the maximum number of results
   int index = 0;
@@ -583,7 +583,7 @@ int SearchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
         
         // see if the date in the filename is valid
         if(isDateValid(thisday.year,thisday.month,thisday.day)) {
-          int daynumevents = GetEventsForDate(&thisday, folder, NULL); //get event count only so we know how much to alloc
+          int daynumevents = getEvents(&thisday, folder, NULL); //get event count only so we know how much to alloc
           if(daynumevents > 0) {
             index += SearchHelper(&thisday, calEvents+index, daynumevents, folder, needle, limit);
             if(index >= limit) {
@@ -608,7 +608,7 @@ void fixEventString(unsigned char* asrc, int field_length, int max, int* len, in
   asrc[*len] = '\0';
 }
 
-void repairEventsFile(char* name, const char* folder, int* checkedevents, int* problemsfound) {
+void repairEventFile(char* name, const char* folder, int* checkedevents, int* problemsfound) {
   // Repairs an event file when possible, or deletes it straight away if it has major problems.
   // Makes A LOT of assumptions about the format of files and their names, so one must check that files are
   // still taken as valid by this function after making changes to the file/storage format, and change the
@@ -655,7 +655,7 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
     *problemsfound = *problemsfound + 1;
     return;
   }
-  // before we give the file to GetEventsForDate, let's check if it has the right amount of field separators
+  // before we give the file to getEvents, let's check if it has the right amount of field separators
   // in relation to the amount of event separators, and check that the length of certain fields is within bounds.
   int fieldsep = 0;
   int eventsep = 0;
@@ -718,8 +718,8 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   
   // if we got to this point, one could assume that the file doesn't suffer from corruption and has a valid format
   // but this is not the case, as we still need to check one thing, see:
-  // apparently, we can now pass the file to GetEventsForDate, to check for "nicer" problems
-  // but before we can pass the file to GetEventsForDate, we must figure out what start date it belongs to.
+  // apparently, we can now pass the file to getEvents, to check for "nicer" problems
+  // but before we can pass the file to getEvents, we must figure out what start date it belongs to.
   // we must figure this out from the filename... problem: we haven't checked yet that the filename is valid!
   
   // following figures will exclude the file extension (".pce") - the file extension has already been checked by the GUI when listing files.
@@ -771,10 +771,10 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
     return;
   }
   
-  int numitems = GetEventsForDate(&thisday, folder, NULL); //get event count only so we know how much to alloc
+  int numitems = getEvents(&thisday, folder, NULL); //get event count only so we know how much to alloc
   *checkedevents = *checkedevents + numitems;
   CalendarEvent* events = (CalendarEvent*)alloca(numitems*sizeof(CalendarEvent));
-  numitems = GetEventsForDate(&thisday, folder, events);
+  numitems = getEvents(&thisday, folder, events);
   int curitem = 0;
   int doneEdits = 0;
   while(curitem < numitems) {
@@ -840,14 +840,14 @@ void repairEventsFile(char* name, const char* folder, int* checkedevents, int* p
   }
   if(doneEdits) {
     // replace event file...
-    ReplaceEventFile(&thisday, events, folder, numitems);
+    replaceEventFile(&thisday, events, folder, numitems);
   }
 }
 int dbRepairFlag = 0; // 1 when needs repairing
-void setDBneedsRepairFlag(int value) {
+void setDBcorruptFlag(int value) {
   dbRepairFlag=value;
 }
 
-int getDBneedsRepairFlag() {
+int getDBcorruptFlag() {
   return dbRepairFlag;
 }

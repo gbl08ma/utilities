@@ -20,7 +20,7 @@
 #include "keyboardProvider.hpp"
 #include "settingsProvider.hpp"
 
-void showAbout() {
+void aboutScreen() {
   int key;
   DefineStatusMessage((char*)"About " ADDIN_FRIENDLYNAME, 1, 0, 0);
   
@@ -142,8 +142,8 @@ void showAbout() {
   doTextArea(&text);
 }
 
-void buildExpiredMessage() {
-  if(GetSetting(SETTING_IS_FIRST_RUN) == 2) return;
+void buildExpiredScreen() {
+  if(getSetting(SETTING_IS_FIRST_RUN) == 2) return;
   textArea text;
   text.title = (char*)"Check for updates";
   
@@ -165,6 +165,6 @@ void buildExpiredMessage() {
   
   text.numelements = 4;
   if(doTextArea(&text) == TEXTAREA_RETURN_F1) {
-    SetSetting(SETTING_IS_FIRST_RUN, 2, 1);
+    setSetting(SETTING_IS_FIRST_RUN, 2, 1);
   }
 }

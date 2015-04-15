@@ -16,7 +16,7 @@ const char* getTimestamp() {
   return __GIT_TIMESTAMP;
 }
 
-int getBuildIsExpired() {
+int isBuildExpired() {
   // returns true if build is expired
-  return ((long long int)BUILD_EXPIRE_TIMESTAMP < currentUnixTime());
+  return ((long long int)BUILD_EXPIRE_TIMESTAMP < currentUEBT());
 }

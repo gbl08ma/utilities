@@ -55,7 +55,7 @@ void loadChronoArray(chronometer* chronoarray, int count) { // count is the amou
 void setChrono(chronometer* tchrono, long long int duration, long long int type) {
   //timer starts when it is set
   if(tchrono->state == CHRONO_STATE_CLEARED) {
-    tchrono->starttime = currentUnixTime();
+    tchrono->starttime = currentUEBT();
     tchrono->laststop = 0;
     tchrono->duration = (type == CHRONO_TYPE_UP ? 0 : duration);
     tchrono->state = CHRONO_STATE_RUNNING;
@@ -65,15 +65,15 @@ void setChrono(chronometer* tchrono, long long int duration, long long int type)
 
 void stopChrono(chronometer* tchrono) {
   if(tchrono->state == CHRONO_STATE_RUNNING) {
-    tchrono->laststop = currentUnixTime();
+    tchrono->laststop = currentUEBT();
     tchrono->state = CHRONO_STATE_STOPPED;
   }
 }
 
 void startChrono(chronometer* tchrono) {
   if(tchrono->state == CHRONO_STATE_STOPPED) {
-    if(tchrono->type == CHRONO_TYPE_UP) tchrono->starttime = tchrono->starttime+currentUnixTime()-tchrono->laststop;
-    else tchrono->duration = tchrono->duration+currentUnixTime()-tchrono->laststop;
+    if(tchrono->type == CHRONO_TYPE_UP) tchrono->starttime = tchrono->starttime+currentUEBT()-tchrono->laststop;
+    else tchrono->duration = tchrono->duration+currentUEBT()-tchrono->laststop;
     tchrono->state = CHRONO_STATE_RUNNING;
   }
 }
@@ -88,22 +88,4 @@ chronometer* getChronoArrayPtr() {
 
 void setChronoArrayPtr(chronometer* achrono) {
   chrono = achrono;
-}
-void checkChronoComplete() {
-  checkDownwardsChronoCompleteGUI(chrono, NUMBER_OF_CHRONO);
-}
-int setChronoExternal(int index, long long int duration, long long int type) {
-  //function for setting a chrono without access to the main chrono array (as of beta 9, the only one)
-  //chronometer* chrono is used (this is the main one used in the chrono screen)
-  //the chrono that is set is the one specified in index (zero based).
-  //returns 1 on success (timer was cleared) and 0 on error (timer is in use)
-  if(chrono[index].state == CHRONO_STATE_CLEARED) {
-    setChrono(&chrono[index], duration, type);
-    // since this is "external", most likely the calling function doesn't have access to chrono or a way to save that array to storage
-    // so lets save ourselves
-    saveChronoArray(chrono, NUMBER_OF_CHRONO);
-    return 1;
-  } else {
-    return 0;
-  }
 }

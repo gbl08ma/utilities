@@ -20,11 +20,11 @@ static unsigned char settings[NUMBER_OF_SETTINGS+1];
 // Routines for accessing and setting settings
 // NOTE: directly accessing the settings array is strictly forbidden!
 
-int GetSetting(int setting) {
+int getSetting(int setting) {
   return settings[setting];
 }
 
-void SetSetting(int setting, int value, int autosave) {
+void setSetting(int setting, int value, int autosave) {
   settings[setting] = value;
   if(setting == SETTING_DISPLAY_STATUSBAR) {
     if(settings[setting]) {
@@ -34,11 +34,11 @@ void SetSetting(int setting, int value, int autosave) {
       EnableStatusArea(3);
     }
   }
-  if (autosave) SaveSettings();
+  if (autosave) saveSettings();
 }
 
 // Routines for saving and loading settings
-int LoadSettings() { // returns 0 on success, 1 if settings were reset (first run / incompatibility)
+int loadSettings() { // returns 0 on success, 1 if settings were reset (first run / incompatibility)
   int size;
   MCSGetDlen2(DIRNAME, SETTINGSFILE, &size);
   if (size <= 16) goto resetSettings; // no settings file or incompatible, reset settings.
@@ -71,7 +71,7 @@ int LoadSettings() { // returns 0 on success, 1 if settings were reset (first ru
   return 1;
 }
 
-void SaveSettings() {
+void saveSettings() {
   if(MCS_CreateDirectory(DIRNAME)) // Check if directory exists
   { // directory already exists, so delete the exiting file that may be there
     MCSDelVar2(DIRNAME, SETTINGSFILE);

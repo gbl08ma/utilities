@@ -22,15 +22,15 @@
  
 void lantern() {
   int key;  
-  unsigned int prevlevel = GetBacklightSubLevel_RAW();
-  SetBacklightSubLevel_RAW(249);
+  unsigned int prevlevel = getRawBacklightSubLevel();
+  setRawBacklightSubLevel(249);
   Bdisp_AllClr_VRAM();
   SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return so that we always have a chance to set the brightness correctly
   while(1) {
     GetKey(&key);
     if(key==KEY_CTRL_EXIT || key==KEY_CTRL_MENU) break;
   }
-  SetBacklightSubLevel_RAW(prevlevel);
+  setRawBacklightSubLevel(prevlevel);
   SetGetkeyToMainFunctionReturnFlag(1); //Enable menu return
   return;
 }
@@ -40,7 +40,7 @@ void pushBogusKey() {
 }
 
 void flashLight(int noDraw) { // if noDraw is true, this function will just change the backlight levels without changing VRAM contents
-  unsigned int initlevel = GetBacklightSubLevel_RAW();
+  unsigned int initlevel = getRawBacklightSubLevel();
   unsigned int prevlevel = 0;
   int timer = Timer_Install(0, pushBogusKey, 500);
   SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return. This way, we always have a chance to set the brightness correctly
@@ -50,14 +50,14 @@ void flashLight(int noDraw) { // if noDraw is true, this function will just chan
     // attempt to fix a bug which will hang calc if flashLight is called right after turning on.
     if(key == KEY_CHAR_STORE) {
       if (prevlevel == 249) {
-        SetBacklightSubLevel_RAW(0);
+        setRawBacklightSubLevel(0);
         prevlevel = 0;
         if(!noDraw) {
           Bdisp_Fill_VRAM( COLOR_BLACK, 3 );
           DrawFrame( COLOR_BLACK );
         }
       } else {
-        SetBacklightSubLevel_RAW(249);
+        setRawBacklightSubLevel(249);
         prevlevel = 249; 
         if(!noDraw) {
           Bdisp_Fill_VRAM( COLOR_WHITE, 3 ); 
@@ -67,7 +67,7 @@ void flashLight(int noDraw) { // if noDraw is true, this function will just chan
     }
     GetKey(&key);
     if(key == KEY_CTRL_EXIT) {
-      SetBacklightSubLevel_RAW(initlevel);
+      setRawBacklightSubLevel(initlevel);
       if(!noDraw) DrawFrame( COLOR_WHITE );
       if(timer>0) {
         Timer_Stop(timer);
@@ -82,15 +82,15 @@ void flashLight(int noDraw) { // if noDraw is true, this function will just chan
 void morseLight() {
   unsigned short key; 
   int keyCol, keyRow; 
-  unsigned int initlevel = GetBacklightSubLevel_RAW();
+  unsigned int initlevel = getRawBacklightSubLevel();
   while (1) {
     //the following getkeywait does not process MENU so we always have a chance to set the brightness correctly
     if (0 != GetKeyWait_OS(&keyCol,&keyRow,KEYWAIT_HALTOFF_TIMEROFF,0,1, &key) ) {
-      if (keyCol == 4 && keyRow == 8) { SetBacklightSubLevel_RAW(initlevel); return; }
+      if (keyCol == 4 && keyRow == 8) { setRawBacklightSubLevel(initlevel); return; }
       Bdisp_Fill_VRAM( COLOR_WHITE, 3 ); DrawFrame( COLOR_WHITE );
-      SetBacklightSubLevel_RAW(249);
+      setRawBacklightSubLevel(249);
     } else {
-      SetBacklightSubLevel_RAW(0);
+      setRawBacklightSubLevel(0);
       Bdisp_Fill_VRAM( COLOR_BLACK, 3 ); DrawFrame( COLOR_BLACK );
     }
     Bdisp_PutDisp_DD();
@@ -99,7 +99,7 @@ void morseLight() {
 
 void colorLight() {
   int gkey;
-  unsigned int initlevel = GetBacklightSubLevel_RAW();
+  unsigned int initlevel = getRawBacklightSubLevel();
   
   MenuItem menuitems[10];
   menuitems[0].text = (char*)"Blue";  
@@ -119,7 +119,7 @@ void colorLight() {
   int res = doMenu(&menu);
   if (res == MENU_RETURN_EXIT) return;
   
-  SetBacklightSubLevel_RAW(249);
+  setRawBacklightSubLevel(249);
   color_t color;
   switch (menu.selection) {
     case 1: color = COLOR_BLUE; break;
@@ -140,5 +140,5 @@ void colorLight() {
     if(gkey==KEY_CTRL_EXIT) break;
   }
   SetGetkeyToMainFunctionReturnFlag(1); //Enable menu return
-  SetBacklightSubLevel_RAW(initlevel);
+  setRawBacklightSubLevel(initlevel);
 }

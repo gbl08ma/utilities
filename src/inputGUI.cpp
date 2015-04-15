@@ -55,7 +55,7 @@ int doTextInput(textInput* input) {
     }
     if(input->type==INPUTTYPE_DATE) {
       //vertical lines: dd, mm and yyyy separators
-      switch(GetSetting(SETTING_DATEFORMAT)) {
+      switch(getSetting(SETTING_DATEFORMAT)) {
         case 0:
         case 1:
           drawLine((input->x*18-18)+18*2, input->y*24-1, (input->x*18-18)+18*2, input->y*24+22, COLOR_GRAY);

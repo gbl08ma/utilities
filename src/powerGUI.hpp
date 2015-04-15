@@ -15,9 +15,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-void changePoweroffTimeout();
-void changeBacklightTimeout();
-void changeBacklightLevel();
+void setPoweroffTimeout();
+void setBacklightTimeout();
+void setBacklightLevel();
 void powerInformation();
 int getPLLinfo(unsigned int PLL, char** freqstr, char** statusstr, int* color);
 void updateCurrentFreq();

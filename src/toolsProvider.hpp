@@ -38,7 +38,7 @@ void currencyToString(char* dest, Currency* orig);
 int stringToCurrency(Currency* dest, char* orig);
 void addCurrency(Currency* dest, Currency* operand);
 void subtractCurrency(Currency* dest, Currency* operand);
-void niceNameToWallet(char* dest, char* orig);
+void walletNameToPath(char* dest, char* orig);
 void getWalletBalance(Currency* balance, const char* wallet);
 int getCurrentWallet(char* wallet);
 void setCurrentWallet(char* wallet);

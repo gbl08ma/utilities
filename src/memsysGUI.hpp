@@ -29,10 +29,10 @@ typedef struct
   char name[MAX_NAME_SIZE]; //friendly name
 } AddIn;
 
-void memoryCapacityViewer(int isPaneOffset=0);
-int GetAddins(AddIn addins[]);
+void memoryCapacityScreen(int isPaneOffset=0);
+int getAddins(AddIn addins[]);
 void addinManager();
-int addinManagerSub(Menu* menu);
+int addinManagerChild(Menu* menu);
 void changeFKeyColor();
 void systemInfo();
 void userInfo();

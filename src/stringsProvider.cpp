@@ -60,7 +60,7 @@ int lgh) /* length token can receive */
 } /* toksplit */
 
 
-int EndsIWith(const char *str, const char *suffix)
+int strEndsWith(const char *str, const char *suffix)
 {
     if (!str || !suffix)
         return 0;

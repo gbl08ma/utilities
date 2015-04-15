@@ -91,7 +91,7 @@ void firstRunWizard() {
   
   text.numelements = 14;
   doTextArea(&text);
-  SetSetting(SETTING_IS_FIRST_RUN, 0, 1);
+  setSetting(SETTING_IS_FIRST_RUN, 0, 1);
   setmGetKeyMode(MGETKEY_MODE_NORMAL);
 }
  

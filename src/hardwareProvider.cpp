@@ -17,12 +17,12 @@
 
 // START OF POWER MANAGEMENT CODE
 #define LCDC *(unsigned int*)(0xB4000000)
-int GetBacklightSubLevel_RAW()
+int getRawBacklightSubLevel()
 {
   Bdisp_DDRegisterSelect(0x5a1);
   return (LCDC & 0xFF) - 6;
 }
-void SetBacklightSubLevel_RAW(int level)
+void setRawBacklightSubLevel(int level)
 {
   Bdisp_DDRegisterSelect(0x5a1);
   LCDC = (level & 0xFF) + 6;
@@ -57,8 +57,8 @@ int getIsEmulated() {
 }
 
 void setBrightnessToStartupSetting() {
-  if (GetSetting(SETTING_STARTUP_BRIGHTNESS) <= 249) {
-    SetBacklightSubLevel_RAW(GetSetting(SETTING_STARTUP_BRIGHTNESS));
+  if (getSetting(SETTING_STARTUP_BRIGHTNESS) <= 249) {
+    setRawBacklightSubLevel(getSetting(SETTING_STARTUP_BRIGHTNESS));
   }
 }
 

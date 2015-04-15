@@ -9,6 +9,6 @@ const char* getTimestamp();
 # ifdef __cplusplus
 }
 # endif
-int getBuildIsExpired();
+int isBuildExpired();
 
 #endif

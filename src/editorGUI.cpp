@@ -24,7 +24,7 @@
 #include "fileProvider.hpp"
 #include "fileGUI.hpp"
 
-void fileTextEditor(char* filename, char* basefolder) {
+void textfileEditor(char* filename, char* basefolder) {
   int newfile = (filename == NULL);
   char sText[TEXT_BUFFER_SIZE] = "";
   if(!newfile) {
@@ -108,7 +108,7 @@ void fileTextEditor(char* filename, char* basefolder) {
       size_t size = strlen(sText);
       if(Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size) < 0) { //create the file
         // it appears file exists, overwrite?
-        if(overwriteFileGUI(newfilename)) {
+        if(overwriteFilePrompt(newfilename)) {
           Bfile_DeleteEntry(newfilenameshort);
           Bfile_CreateEntry_OS(newfilenameshort, CREATEMODE_FILE, &size);
         }

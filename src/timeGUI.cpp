@@ -44,7 +44,7 @@ const char* getDayEnding(int day) {
 }
 
 void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminiinvert) {
-  if (format==NULL) format = GetSetting(SETTING_LONGDATEFORMAT);
+  if (format==NULL) format = getSetting(SETTING_LONGDATEFORMAT);
   // Draw long date as seen on the home screen, according to format.
   // textY is the y coordinate at which the date should start to be drawn.
   // x coordinate is set automatically (text is always centered on screen)
@@ -150,7 +150,7 @@ void drawAnalogClock(int cx, int cy, int radius, int colorbg, int colorfg) {
   int m = getCurrentMinute();
   int s = getCurrentSecond();
   drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 1);
-  if(GetSetting(SETTING_CLOCK_SECONDS)) drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg ^ COLOR_INDIANRED);
+  if(getSetting(SETTING_CLOCK_SECONDS)) drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg ^ COLOR_INDIANRED);
   drawAnalogClockMinuteNeedle(m, s, cx, cy, radius, colorfg);
   drawAnalogClockHourNeedle(h, m, cx, cy, radius, colorfg, 0);
 }
@@ -187,7 +187,7 @@ void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg,
   drawAnalogClockHourNeedle(h, m, cx, cy+radius/2, radius/3, colorfg, 1);
 }
 
-void setTimeGUI(int canExit) {
+void setTimeScreen(int canExit) {
   Selector hour;
   Selector minute;
   Selector second;
@@ -224,7 +224,7 @@ void setTimeGUI(int canExit) {
   setTime(hour.value, minute.value, second.value);
 }
 
-void setDateGUI(int canExit) {
+void setDateScreen(int canExit) {
   Selector year;
   Selector month;
   Selector day;
@@ -266,7 +266,7 @@ void setDateGUI(int canExit) {
 
 void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
   //first check if RTC is unadjusted. if not, return.
-  if(!ignoreAdjusted && !getRTCisUnadjusted()) return;
+  if(!ignoreAdjusted && !isRTCunadjusted()) return;
   if(helpMessage) {
     textArea text;
     text.title = (char*)"Clock unadjusted";
@@ -304,7 +304,7 @@ void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
   text.numelements = 2;
   doTextArea(&text);
   
-  setTimeGUI(0);
+  setTimeScreen(0);
   
   elem[0].text = (char*)"Now let's set the date.";
   elem[1].newLine = 1;
@@ -314,7 +314,7 @@ void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
   text.numelements = 2;
   doTextArea(&text);
   
-  setDateGUI(0);
+  setDateScreen(0);
   
   elem[0].text = (char*)"We're done!";
   elem[1].newLine = 1;
@@ -424,7 +424,7 @@ void drawHomeClock(int format, int theme) {
 
 static const char *tzMinutes[] = {"00", "15", "30", "45"};
 
-void changeTimezone() {
+void setTimezone() {
   Bdisp_AllClr_VRAM();
   textArea text;
   text.y = 5*24+2;
@@ -473,9 +473,9 @@ void changeTimezone() {
     }
   }
   menu.numitems = 108;
-  menu.selection = GetSetting(SETTING_TIMEZONE)+1;
+  menu.selection = getSetting(SETTING_TIMEZONE)+1;
   while(1) {
-    long long int currentUTC = currentUnixTime() - (long long int)(menu.selection - 52) * 15LL*60LL*1000LL;
+    long long int currentUTC = currentUEBT() - (long long int)(menu.selection - 52) * 15LL*60LL*1000LL;
     int hours, minutes;
     long long int seconds;
     seconds = currentUTC / 1000;
@@ -487,7 +487,7 @@ void changeTimezone() {
     hours %= 24;
     char buffer[50];
     strcpy(buffer, (char*)"UTC time: ");
-    timeToString(buffer, hours, minutes, seconds, GetSetting(SETTING_TIMEFORMAT), 0);
+    timeToString(buffer, hours, minutes, seconds, getSetting(SETTING_TIMEFORMAT), 0);
     DefineStatusMessage(buffer, 1, 0, 0);
     int r = doMenu(&menu);
     if(r == MENU_RETURN_EXIT) {
@@ -496,6 +496,6 @@ void changeTimezone() {
     }
     else if(r == MENU_RETURN_SELECTION) break;
   }
-  SetSetting(SETTING_TIMEZONE, menu.selection-1, 1);
+  setSetting(SETTING_TIMEZONE, menu.selection-1, 1);
   DefineStatusMessage((char*)"", 1, 0, 0);
 }

@@ -44,7 +44,7 @@ void debugMessage(char* text1, char* text2, int value) {
 void showRAMused() {
   int ramused = 0x881E0000 - (int)GetStackPtr();
   debugMessage((char*)"  RAM", (char*)"  b:", ramused);
-  debugMessage((char*)"  MB", (char*)"  c:", getNumberOfMsgBoxPushed());
+  debugMessage((char*)"  MB", (char*)"  c:", getMsgBoxCount());
 }
 
 #endif
@@ -101,11 +101,11 @@ void masterControl() {
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
       switch(menu.selection) {
-        case 1: SaveSettings(); break;
-        case 2: LoadSettings(); break;
+        case 1: saveSettings(); break;
+        case 2: loadSettings(); break;
         case 3: 
         case 4:
-          SetSetting(SETTING_ENABLE_LOCK, menu.selection-3, 0); // do not autosave, to allow full control of the operator
+          setSetting(SETTING_ENABLE_LOCK, menu.selection-3, 0); // do not autosave, to allow full control of the operator
           break;
 #ifdef ENABLE_DEBUG          
         case 5:
@@ -114,7 +114,7 @@ void masterControl() {
           break;
         case 7:
         case 8:
-          SetSetting(SETTING_IS_FIRST_RUN, menu.selection-7, 0); // do not autosave, to allow full control of the operator
+          setSetting(SETTING_IS_FIRST_RUN, menu.selection-7, 0); // do not autosave, to allow full control of the operator
           break;
         case 9:
           //CallbackAtQuitMainFunction( mycallback );

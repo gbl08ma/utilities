@@ -55,7 +55,7 @@ int main()
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:
   Bkey_SetAllFlags(0x80);
   //Load settings
-  LoadSettings();
+  loadSettings();
   
   // Adjust UI and HW values according to settings
   // Set brightness if setting is set
@@ -63,12 +63,12 @@ int main()
   Bdisp_EnableColor(1);
   DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
   
-  if(GetSetting(SETTING_IS_FIRST_RUN) == 1) { // must include "== 1", see setting description
+  if(getSetting(SETTING_IS_FIRST_RUN) == 1) { // must include "== 1", see setting description
     firstRunWizard();
     RTCunadjustedWizard(0);
   } else {
     RTCunadjustedWizard(1);
-    if(getBuildIsExpired()) buildExpiredMessage();
+    if(isBuildExpired()) buildExpiredScreen();
   }
   // load chronos
   chronometer* chrono;
@@ -104,7 +104,7 @@ int main()
   }
   //file exists (even if it didn't exist before) and is open. write new contents
   char newentry[50];
-  itoa(currentUnixTime()/1000, (unsigned char*)newentry);
+  itoa(currentUEBT()/1000, (unsigned char*)newentry);
   strcat(newentry, (char*)",");
   unsigned char voltbuffer[20] = "";
   itoa(GetMainBatteryVoltage(1), voltbuffer);
@@ -118,8 +118,8 @@ int main()
 #endif
   
   while(1) {
-    showHome();
-    masterControl(); //only accessible when showHome returns, and it shouldn't return unless we want to access masterControl.
+    homeScreen();
+    masterControl(); //only accessible when homeScreen returns, and it shouldn't return unless we want to access masterControl.
   }
 }
 

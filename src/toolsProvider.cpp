@@ -76,7 +76,7 @@ void subtractCurrency(Currency* dest, Currency* operand) {
   dest->val -= operand->val;
 }
 
-void niceNameToWallet(char* dest, char* orig) {
+void walletNameToPath(char* dest, char* orig) {
   strcpy(dest, BALANCEFOLDER"\\");
   strcat(dest, orig);
 }
@@ -179,7 +179,7 @@ int getWalletTransactions(char* wallet, Transaction* tx, int limit) {
   CalendarEvent events[MAX_DAY_EVENTS];
   EventDate date;
   date.day = 0; date.month = 0; date.year = 0;
-  int txcount = GetEventsForDate(&date, wallet, events, limit);
+  int txcount = getEvents(&date, wallet, events, limit);
   if(!txcount) return 0;
   for(int i = 0; i<txcount; i++) {
     calendarEventToTransaction(&tx[i], &events[i]);
@@ -206,7 +206,7 @@ void addTransaction(Transaction* tx, char* wallet) {
   transactionToCalendarEvent(&event, tx);
   if(!txcount) {
     // no transactions, must create file
-    AddEvent(&event, wallet);
+    addEvent(&event, wallet);
   } else {
     // transactions are stored ordered with the most recent first.
     // if there is the maximum number of transactions in the file, delete the oldest one.
@@ -215,10 +215,10 @@ void addTransaction(Transaction* tx, char* wallet) {
     // one in the free space.
     if(txcount == MAX_DAY_EVENTS) {
       // must delete the oldest one
-      long long int oldestTimestamp = DateTime2Unix(txs[0].date.year, txs[0].date.month, txs[0].date.day, txs[0].time.hour, txs[0].time.minute, txs[0].time.second, 0);
+      long long int oldestTimestamp = dateTimeToUEBT(txs[0].date.year, txs[0].date.month, txs[0].date.day, txs[0].time.hour, txs[0].time.minute, txs[0].time.second, 0);
       int oldestIndex = 0;
       for(int i = 1; i < txcount; i++) {
-        long long int thisTxTimestamp = DateTime2Unix(txs[i].date.year, txs[i].date.month, txs[i].date.day, txs[i].time.hour, txs[i].time.minute, txs[i].time.second, 0);
+        long long int thisTxTimestamp = dateTimeToUEBT(txs[i].date.year, txs[i].date.month, txs[i].date.day, txs[i].time.hour, txs[i].time.minute, txs[i].time.second, 0);
         if(thisTxTimestamp < oldestTimestamp) {
           oldestTimestamp = thisTxTimestamp;
           oldestIndex = i;
@@ -228,10 +228,10 @@ void addTransaction(Transaction* tx, char* wallet) {
             txs[k] = txs[k+1];
       txcount--;
     }
-    long long int newTxTimestamp = DateTime2Unix(tx->date.year, tx->date.month, tx->date.day, tx->time.hour, tx->time.minute, tx->time.second, 0);
+    long long int newTxTimestamp = dateTimeToUEBT(tx->date.year, tx->date.month, tx->date.day, tx->time.hour, tx->time.minute, tx->time.second, 0);
     int i = 0;
     for(; i < txcount; i++) {
-      long long int thisTxTimestamp = DateTime2Unix(txs[i].date.year, txs[i].date.month, txs[i].date.day, txs[i].time.hour, txs[i].time.minute, txs[i].time.second, 0);
+      long long int thisTxTimestamp = dateTimeToUEBT(txs[i].date.year, txs[i].date.month, txs[i].date.day, txs[i].time.hour, txs[i].time.minute, txs[i].time.second, 0);
       if(thisTxTimestamp <= newTxTimestamp) break;
     }
     int newFreeIndex = i;
@@ -250,7 +250,7 @@ void replaceWalletTransactions(Transaction* txs, char* wallet, int count) {
   }
   EventDate date;
   date.day = 0; date.month = 0; date.year = 0;
-  ReplaceEventFile(&date, events, wallet, count);
+  replaceEventFile(&date, events, wallet, count);
 }
 
 void deleteTransaction(Transaction* txs, char* wallet, int count, int pos) {
@@ -270,7 +270,7 @@ void deleteTransaction(Transaction* txs, char* wallet, int count, int pos) {
   }
   EventDate date;
   date.day = 0; date.month = 0; date.year = 0;
-  RemoveEvent(&date, events, wallet, count, pos);
+  removeEvent(&date, events, wallet, count, pos);
 }
 
 void createWallet(char* name, Currency* balance) {
@@ -278,7 +278,7 @@ void createWallet(char* name, Currency* balance) {
   // balance is the initial balance in internal (memory) format
   char folder[MAX_FILENAME_SIZE];
   unsigned short ufolder[MAX_FILENAME_SIZE];
-  niceNameToWallet(folder, name);
+  walletNameToPath(folder, name);
   Bfile_StrToName_ncpy(ufolder, folder, MAX_FILENAME_SIZE);
   if(Bfile_CreateEntry_OS(ufolder, CREATEMODE_FOLDER, 0) < 0) {
     // error creating wallet folder, probably balance system isn't initialized yet
@@ -355,7 +355,7 @@ void generateRandomString(char* dest, int length, int symbols, int numbers, int 
 }
 
 unsigned int computeTOTP(totp* t) {
-  long long int curtime = currentUTCUnixTime() / 1000LL; // seconds since 1 Jan 1970
+  long long int curtime = currentUTCUEBT() / 1000LL; // seconds since 1 Jan 1970
   curtime /= 30LL; // 30 second intervals since 1970 like TOTP wants
   unsigned int code = (unsigned int)curtime;
 
@@ -388,7 +388,7 @@ int loadTOTPs(totp* ts) {
   CalendarEvent events[MAX_DAY_EVENTS];
   EventDate date;
   date.day = 0; date.month = 0; date.year = 0;
-  int tokencount = GetEventsForDate(&date, TOTPFOLDER, events);
+  int tokencount = getEvents(&date, TOTPFOLDER, events);
   for(int i = 0; i<tokencount; i++) {
     ts[i].keylen = base32_decode((unsigned char*)events[i].description, ts[i].key, 32); // create key from secret string
     strcpy(ts[i].name, (char*)events[i].title);
@@ -405,22 +405,22 @@ void addTOTP(char* name, char* key) {
   EventDate date;
   date.day = 0; date.month = 0; date.year = 0;
   event.startdate = date;
-  AddEvent(&event, TOTPFOLDER);
+  addEvent(&event, TOTPFOLDER);
 }
 
 void removeTOTP(int index) {
   EventDate date;
   date.day = 0; date.month = 0; date.year = 0;
   CalendarEvent events[MAX_DAY_EVENTS];
-  int c = GetEventsForDate(&date, TOTPFOLDER, events);
-  RemoveEvent(&date, events, TOTPFOLDER, c, index);
+  int c = getEvents(&date, TOTPFOLDER, events);
+  removeEvent(&date, events, TOTPFOLDER, c, index);
 }
 
 void renameTOTP(int index, char* newname) {
   EventDate date;
   date.day = 0; date.month = 0; date.year = 0;
   CalendarEvent events[MAX_DAY_EVENTS];
-  int c = GetEventsForDate(&date, TOTPFOLDER, events);
+  int c = getEvents(&date, TOTPFOLDER, events);
   strcpy((char*)events[index].title, newname);
-  ReplaceEventFile(&date, events, TOTPFOLDER, c);
+  replaceEventFile(&date, events, TOTPFOLDER, c);
 }

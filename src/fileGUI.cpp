@@ -41,7 +41,7 @@ void fileManager() {
     char filetoedit[MAX_FILENAME_SIZE+1];
     filetoedit[0] = 0;
     int fileAction = 0;
-    res = fileManagerSub(browserbasepath, &itemsinclip, &fileAction, &shownMainMemHelp, clipboard, filetoedit);
+    res = fileManagerChild(browserbasepath, &itemsinclip, &fileAction, &shownMainMemHelp, clipboard, filetoedit);
     if(strlen(filetoedit)) {
       if(fileAction) {
         #ifdef ENABLE_PICOC_SUPPORT
@@ -54,13 +54,13 @@ void fileManager() {
         closeMsgBox();
         #endif
       } else {
-        fileTextEditor(filetoedit);
+        textfileEditor(filetoedit);
       }
     }
   }
 }
 int smemfree = 0;
-void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager) {
+void getFileManagerStatus(char* title, int itemsinclip, int ismanager) {
   char titleBuffer[120];
   if(!itemsinclip) {
     itoa(smemfree, (unsigned char*)title);
@@ -80,13 +80,13 @@ void fillMenuStatusWithClip(char* title, int itemsinclip, int ismanager) {
   }
 }
 
-int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int* shownMainMemHelp, File* clipboard, char* filetoedit) {
+int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, int* shownMainMemHelp, File* clipboard, char* filetoedit) {
   Menu menu;
   MenuItemIcon icontable[12];
   buildIconTable(icontable);
   
   // first get file count so we know how much to alloc
-  int res = GetAnyFiles(NULL, NULL, browserbasepath, &menu.numitems);
+  int res = getFiles(NULL, NULL, browserbasepath, &menu.numitems);
   if(res == GETFILES_MAX_FILES_REACHED) {
     // show "folder has over 200 items, some will be skipped" message
     mMsgBoxPush(5);
@@ -100,7 +100,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
     menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
     files = (File*)alloca(menu.numitems*sizeof(File));
     // populate arrays
-    GetAnyFiles(files, menuitems, browserbasepath, &menu.numitems);
+    getFiles(files, menuitems, browserbasepath, &menu.numitems);
     menu.items = menuitems;
   }
   
@@ -139,7 +139,7 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
   menu.title = (char*)"Files";
   char statusbuffer[120];
   while(1) {
-    fillMenuStatusWithClip((char*)statusbuffer, *itemsinclip, 0);
+    getFileManagerStatus((char*)statusbuffer, *itemsinclip, 0);
     menu.statusText = statusbuffer;
     if(menu.fkeypage == 0) {
       drawFkeyLabels(0, // set by menu as SELECT [empty], otherwise make it white (we're not using Bdisp_AllClr_VRAM)
@@ -178,30 +178,30 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
         } else {
           int ininfo = 1;
           while(ininfo) {
-            int res = fileInformation(&files[menu.selection-1], 1, *itemsinclip, 1);
+            int res = viewFileInfo(&files[menu.selection-1], 1, *itemsinclip, 1);
             switch(res) {
-              case FILEINFORMATION_RETURN_EXIT:
+              case VIEWFILEINFO_RETURN_EXIT:
                 ininfo = 0;
                 break;
-              case FILEINFORMATION_RETURN_EDIT:
+              case VIEWFILEINFO_RETURN_EDIT:
                 strcpy(filetoedit, files[menu.selection-1].filename);
                 // deliberate fallthrough
-              case FILEINFORMATION_RETURN_RELOAD:
+              case VIEWFILEINFO_RETURN_RELOAD:
                 return 1;
               #ifdef ENABLE_PICOC_SUPPORT
-              case FILEINFORMATION_RETURN_EXECUTE:
+              case VIEWFILEINFO_RETURN_EXECUTE:
                 // user wants to run the file in picoc
                 strcpy(filetoedit, files[menu.selection-1].filename);
                 *fileAction = 1;
                 return 1;
               #endif
-              case FILEINFORMATION_RETURN_UP:
+              case VIEWFILEINFO_RETURN_UP:
                 do {
                   menu.selection--;
                   if(menu.selection < 1) menu.selection = menu.numitems;
                 } while(files[menu.selection-1].isfolder);
                 break;
-              case FILEINFORMATION_RETURN_DOWN:
+              case VIEWFILEINFO_RETURN_DOWN:
                 do {
                   menu.selection++;
                   if(menu.selection > menu.numitems) menu.selection = 1;
@@ -266,19 +266,19 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
             smallmenu.startY=2;
             smallmenu.scrollbar=1;
             smallmenu.scrollout=1;
-            smallmenu.selection = GetSetting(SETTING_FILE_MANAGER_SORT)+1;
+            smallmenu.selection = getSetting(SETTING_FILE_MANAGER_SORT)+1;
             smallmenu.title = (char*)"Sort items by:";
             int sres = doMenu(&smallmenu);
             mMsgBoxPop();
             
             if(sres == MENU_RETURN_SELECTION) {
-              SetSetting(SETTING_FILE_MANAGER_SORT, smallmenu.selection-1, 1);
+              setSetting(SETTING_FILE_MANAGER_SORT, smallmenu.selection-1, 1);
               if(menu.numitems > 1) {
                 HourGlass(); //sorting can introduce a noticeable delay when there are many items
-                insertSortFileMenuArray(files, menuitems, menu.numitems);
+                sortFilesMenu(files, menuitems, menu.numitems);
               }
             }
-          } else if(menu.numitems && searchFilesGUI(browserbasepath, *itemsinclip)) return 1;
+          } else if(menu.numitems && searchFilesScreen(browserbasepath, *itemsinclip)) return 1;
         }
         break;
       case KEY_CTRL_F4: {
@@ -302,28 +302,28 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
         
         if(sres == MENU_RETURN_SELECTION) {
           if(smallmenu.selection == 1) {
-            if(makeFolderGUI(browserbasepath)) return 1; // if user said yes and a folder was created, reload file list
+            if(newFolderScreen(browserbasepath)) return 1; // if user said yes and a folder was created, reload file list
           } else if(smallmenu.selection == 2) {
-            fileTextEditor(NULL, browserbasepath); return 1;
+            textfileEditor(NULL, browserbasepath); return 1;
           } else if(smallmenu.selection == 3) {
-            if(makeg3pGUI(browserbasepath)) return 1;
+            if(newG3Pscreen(browserbasepath)) return 1;
           }
         }
         break;
       }
       case KEY_CTRL_F5:
-        if(menu.numitems>0 && renameFileGUI(files, &menu, browserbasepath)) return 1;
+        if(menu.numitems>0 && renameFileScreen(files, &menu, browserbasepath)) return 1;
         break;
       case KEY_CTRL_F6:
       case KEY_CTRL_DEL:
-        if(menu.numselitems>0 && deleteFilesGUI(files, &menu)) return 1; // if user said yes and files were deleted, reload file list
+        if(menu.numselitems>0 && deleteFilesPrompt(files, &menu)) return 1; // if user said yes and files were deleted, reload file list
         break;
       case KEY_CTRL_PASTE:
         // clear shift icon and "Shift->9=Paste" part from status bar before pasting
-        fillMenuStatusWithClip((char*)statusbuffer, *itemsinclip, 1);
+        getFileManagerStatus((char*)statusbuffer, *itemsinclip, 1);
         DefineStatusMessage(statusbuffer, 1, 0, 0);
         DisplayStatusArea();
-        filePasteClipboardItems(clipboard, browserbasepath, *itemsinclip);
+        pasteClipboard(clipboard, browserbasepath, *itemsinclip);
         *itemsinclip = 0;
         return 1;
         break;
@@ -360,9 +360,9 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
         
         if(sres == MENU_RETURN_SELECTION) {
           if(smallmenu.selection == 1) {
-            folderStatistics(files, &menu);
+            folderStatsScreen(files, &menu);
           } else if(smallmenu.selection == 2) {
-            viewFilesInClipboard(clipboard, itemsinclip);
+            viewClipboard(clipboard, itemsinclip);
           } else if(smallmenu.selection == 3) {
             if(allcompressed) decompressSelectedFiles(files, &menu);
             else compressSelectedFiles(files, &menu);
@@ -372,14 +372,14 @@ int fileManagerSub(char* browserbasepath, int* itemsinclip, int* fileAction, int
         break;
       }
       case KEY_CTRL_CLIP:
-        viewFilesInClipboard(clipboard, itemsinclip);
+        viewClipboard(clipboard, itemsinclip);
         break;
     }
   }
   return 1;
 }
 
-int deleteFilesGUI(File* files, Menu* menu) {
+int deleteFilesPrompt(File* files, Menu* menu) {
   mMsgBoxPush(4);
   multiPrintXY(3, 2, "Delete the\nSelected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(closeMsgBox(1, 4)) {
@@ -389,7 +389,7 @@ int deleteFilesGUI(File* files, Menu* menu) {
   return 0;
 }
 
-int makeFolderGUI(char* browserbasepath) {
+int newFolderScreen(char* browserbasepath) {
   //browserbasepath: folder we're working at
   //reload the files array after using this function!
   //returns 1 if user creates folder, 0 if aborts.
@@ -420,7 +420,7 @@ int makeFolderGUI(char* browserbasepath) {
   return 0;
 }
 
-int makeg3pGUI(char* browserbasepath) {
+int newG3Pscreen(char* browserbasepath) {
   //browserbasepath: folder we're working at
   //reload the files array after using this function!
   //returns 1 if user creates file, 0 if aborts.
@@ -462,7 +462,7 @@ int makeg3pGUI(char* browserbasepath) {
   return 0;
 }
 
-int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
+int renameFileScreen(File* files, Menu* menu, char* browserbasepath) {
   //reload the files array after using this function!
   //returns 0 if user aborts, 1 if renames.
   SetBackGround(6);
@@ -492,17 +492,17 @@ int renameFileGUI(File* files, Menu* menu, char* browserbasepath) {
   return 0;
 }
 
-int searchFilesGUI(char* browserbasepath, int itemsinclip) {
+int searchFilesScreen(char* browserbasepath, int itemsinclip) {
   // returns 1 when it wants the caller to jump to browserbasepath
   // returns 0 otherwise.
   char statusText[120];
-  fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
+  getFileManagerStatus((char*)statusText, itemsinclip, 1);
   DefineStatusMessage((char*)statusText, 1, 0, 0);
   
-  int searchOnFilename = !!(GetSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 0));
-  int searchOnContents = !!(GetSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 1));
-  int searchRecursively = !!(GetSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 2));
-  int matchCase = !!(GetSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 3));
+  int searchOnFilename = !!(getSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 0));
+  int searchOnContents = !!(getSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 1));
+  int searchRecursively = !!(getSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 2));
+  int matchCase = !!(getSetting(SETTING_FILE_MANAGER_SEARCH) & (1U << 3));
   
   char needle[55] = "";
   textInput input;
@@ -588,7 +588,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   if(searchOnContents) newsetting |= (1U << 1);
   if(searchRecursively) newsetting |= (1U << 2);
   if(matchCase) newsetting |= (1U << 3);
-  SetSetting(SETTING_FILE_MANAGER_SEARCH, newsetting, 1); // remember search preferences
+  setSetting(SETTING_FILE_MANAGER_SEARCH, newsetting, 1); // remember search preferences
 
   SetBackGround(9);
   drawScreenTitle("File Search", "Searching...");
@@ -596,7 +596,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   clearLine(1, 8);
   Bdisp_PutDisp_DD();
 
-  int sres = SearchForFiles(NULL, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
+  int sres = searchForFiles(NULL, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
   if(sres == GETFILES_USER_ABORTED) {
     int bkey; GetKey(&bkey); // key debouncing to avoid getting "Break" message closed because AC is still pressed
     AUX_DisplayErrorMessage( 0x01 );
@@ -605,7 +605,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   MenuItem* resitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
   File* files = (File*)alloca(menu.numitems*sizeof(File));
   if(menu.numitems) {
-    sres = SearchForFiles(files, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
+    sres = searchForFiles(files, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
     if(sres == GETFILES_USER_ABORTED) {
       int bkey; GetKey(&bkey);
       AUX_DisplayErrorMessage( 0x01 );
@@ -643,7 +643,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
             strcpy(browserbasepath, files[menu.selection-1].filename);
             strcat(browserbasepath, "\\");
             return 1;
-          } else fileInformation(&files[menu.selection-1], 0, itemsinclip);
+          } else viewFileInfo(&files[menu.selection-1], 0, itemsinclip);
         }
         break;
       case KEY_CTRL_F2:
@@ -665,7 +665,7 @@ int searchFilesGUI(char* browserbasepath, int itemsinclip) {
   }
 }
 
-int fileInformation(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
+int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
   // returns 0 if user exits.
   // returns 1 if user wants to edit the file
   // returns 2 if user compressed or decompressed the file
@@ -688,7 +688,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip, int allowUpDown)
   
   elem[text.numelements].newLine=1;
   char name[MAX_NAME_SIZE];
-  nameFromFilename(file->filename, name);
+  filenameToName(file->filename, name);
   elem[text.numelements].text = name;
   text.numelements++;
   
@@ -746,12 +746,12 @@ int fileInformation(File* file, int allowEdit, int itemsinclip, int allowUpDown)
   
   while (1) {
     char statusText[120];
-    fillMenuStatusWithClip((char*)statusText, itemsinclip, 1);
+    getFileManagerStatus((char*)statusText, itemsinclip, 1);
     DefineStatusMessage((char*)statusText, 1, 0, 0);
     doTextArea(&text);
     drawFkeyLabels((compressed? -1 : 0x03B1), (allowEdit && !compressed? 0x0185: -1), (allowEdit? (compressed ? 0x161 : 0x160) : -1), -1, -1, (file->size>0 ? 0x0371 : -1)); //OPEN, EDIT, Comp (white) or Dec (white), CALC (white)
     #ifdef ENABLE_PICOC_SUPPORT
-    if(allowEdit && EndsIWith(file->filename, (char*)".c")) drawFkeyLabels(-1, -1, -1, 0x0184); // EXE (white)
+    if(allowEdit && strEndsWith(file->filename, (char*)".c")) drawFkeyLabels(-1, -1, -1, 0x0184); // EXE (white)
     #endif
     int key;
     mGetKey(&key);
@@ -760,21 +760,21 @@ int fileInformation(File* file, int allowEdit, int itemsinclip, int allowUpDown)
       case KEY_CTRL_LEFT:
         return 0;
       case KEY_CTRL_UP:
-        if(allowUpDown) return FILEINFORMATION_RETURN_UP;
+        if(allowUpDown) return VIEWFILEINFO_RETURN_UP;
         break;
       case KEY_CTRL_DOWN:
-        if(allowUpDown) return FILEINFORMATION_RETURN_DOWN;
+        if(allowUpDown) return VIEWFILEINFO_RETURN_DOWN;
         break;
       case KEY_CTRL_EXE:
       case KEY_CTRL_RIGHT:
         #ifdef ENABLE_PICOC_SUPPORT
-        if(allowEdit && EndsIWith(file->filename, (char*)".c")) return 3;
+        if(allowEdit && strEndsWith(file->filename, (char*)".c")) return 3;
         #endif
         // else deliberate fallthrough
       case KEY_CTRL_F1:
         if(!compressed) {
           if(stringEndsInJPG(file->filename)) viewImage(file->filename);
-          else fileViewAsText(file->filename);
+          else viewFileAsText(file->filename);
         }
         break;
       case KEY_CTRL_F2:
@@ -812,7 +812,7 @@ int fileInformation(File* file, int allowEdit, int itemsinclip, int allowUpDown)
       #else
       # ifdef ENABLE_PICOC_SUPPORT
       case KEY_CTRL_F4:
-        if(allowEdit && EndsIWith(file->filename, (char*)".c"))
+        if(allowEdit && strEndsWith(file->filename, (char*)".c"))
           return 3;
         break;
       # endif
@@ -873,9 +873,9 @@ int fileInformation(File* file, int allowEdit, int itemsinclip, int allowUpDown)
   }
 }
 
-void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e. not full path
+void viewFileAsText(char* filename) { //name is the "nice" name of the file, i.e. not full path
   char name[MAX_NAME_SIZE];
-  nameFromFilename(filename, name);
+  filenameToName(filename, name);
   
   unsigned char* asrc = NULL;
   //Get file contents
@@ -951,7 +951,7 @@ void fileViewAsText(char* filename) { //name is the "nice" name of the file, i.e
   doTextArea(&text);
 }
 
-void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
+void viewClipboard(File* clipboard, int* itemsinclip) {
   Menu menu;
   menu.height = 7;
   menu.scrollout = 1;
@@ -962,7 +962,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     menu.subtitle = (char*)"Black=cut, Red=copy";
     menu.nodatamsg = (char*)"No items in clipboard";
     char statusbuffer[120];
-    fillMenuStatusWithClip(statusbuffer, *itemsinclip, 1);
+    getFileManagerStatus(statusbuffer, *itemsinclip, 1);
     menu.statusText = statusbuffer;
     menu.items = menuitems;
     int curitem = 0;
@@ -978,7 +978,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
     switch(res) {
       case MENU_RETURN_SELECTION:
       case MENU_RETURN_SELECTION_RIGHT:
-        if(!clipboard[menu.selection-1].isfolder) fileInformation(&clipboard[menu.selection-1], 0, *itemsinclip);
+        if(!clipboard[menu.selection-1].isfolder) viewFileInfo(&clipboard[menu.selection-1], 0, *itemsinclip);
         break;
       case MENU_RETURN_EXIT:
         return;
@@ -1006,7 +1006,7 @@ void viewFilesInClipboard(File* clipboard, int* itemsinclip) {
   }
 }
 
-void folderStatistics(File* files, Menu* menu) {
+void folderStatsScreen(File* files, Menu* menu) {
   textArea text;
   text.type = TEXTAREATYPE_NORMAL;
   text.scrollbar=0;
@@ -1165,9 +1165,9 @@ void buildIconTable(MenuItemIcon* icontable) {
     SMEM_MapIconToExt( (unsigned char*)bogusFiles[i], (i==0 ? folder : (unsigned short*)"\x000\x000"), &msgno, icontable[i].data );
 }
 
-int overwriteFileGUI(char* filename) {
+int overwriteFilePrompt(char* filename) {
   char cut[MAX_NAME_SIZE];
-  nameFromFilename(filename, cut, 17);
+  filenameToName(filename, cut, 17);
   cut[17] = 0;
   return (0x7539 == OverwriteConfirmation(cut, 0));
 }

@@ -24,10 +24,10 @@ void chronoScreen();
 void startSelectedChronos(Menu* menu, chronometer* tchrono, int count);
 void stopSelectedChronos(Menu* menu, chronometer* tchrono, int count);
 void clearSelectedChronos(Menu* menu, chronometer* tchrono, int count);
-void setChronoGUI(Menu* menu, chronometer* tchrono, int menuSelOnly);
-void setBuiltinChrono(Menu* menu, chronometer* tchrono);
-int getLastChronoComplete();
-void checkDownwardsChronoCompleteGUI(chronometer* chronoarray, int count);
+void setChronoScreen(Menu* menu, chronometer* tchrono, int menuSelOnly);
+void setPresetChrono(Menu* menu, chronometer* tchrono);
+int getLastCompleteChrono();
+void checkChronoComplete(chronometer* chronoarray);
 void viewChrono(Menu* menu, chronometer* chrnarr);
 
 #endif

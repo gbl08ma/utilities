@@ -20,20 +20,20 @@
 #include "toolsProvider.hpp"
 
 void balanceManager();
-int balanceManagerSub(Menu* menu, char* currentWallet);
-int addTransactionGUI(char* wallet);
-int deleteTransactionGUI(Transaction* txs, char* wallet, int count, int pos);
+int balanceManagerChild(Menu* menu, char* currentWallet);
+int addTransactionWizard(char* wallet);
+int deleteTransactionPrompt(Transaction* txs, char* wallet, int count, int pos);
 void viewTransaction(Transaction* tx);
-int createWalletGUI(int isFirstUse);
-int changeWalletGUI(char* currentWallet);
-int deleteWalletGUI(char* wallet);
-int renameWalletGUI(char* wallet, char* newWallet);
+int createWalletWizard(int isFirstUse);
+int changeWalletScreen(char* currentWallet);
+int deleteWalletPrompt(char* wallet);
+int renameWalletScreen(char* wallet, char* newWallet);
 
 void passwordGenerator();
 void totpClient();
-void viewTOTPcodeGUI(totp* tkn);
-int addTOTPGUI();
-int renameTOTPGUI(int index, char* oldname);
-int deleteTOTPGUI(int index);
+void viewTOTPcode(totp* tkn);
+int addTOTPwizard();
+int renameTOTPscreen(int index, char* oldname);
+int deleteTOTPprompt(int index);
 
 #endif 

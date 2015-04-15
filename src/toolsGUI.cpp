@@ -46,14 +46,14 @@ void balanceManager() {
     char currentWallet[MAX_FILENAME_SIZE] = "";
     if(!getCurrentWallet(currentWallet)) {
       // there is no wallet yet, prompt user to create one
-      if(createWalletGUI(1) < 0) return; // user aborted first wallet creation, can't continue
+      if(createWalletWizard(1) < 0) return; // user aborted first wallet creation, can't continue
       if(!getCurrentWallet(currentWallet)) return; // error: won't get current wallet not even after creating one and setting it
     }
-    res = balanceManagerSub(&menu, currentWallet);
+    res = balanceManagerChild(&menu, currentWallet);
   }
 }
 
-int balanceManagerSub(Menu* menu, char* currentWallet) {
+int balanceManagerChild(Menu* menu, char* currentWallet) {
   Bdisp_AllClr_VRAM();
   Currency balance;
   getWalletBalance(&balance, currentWallet);
@@ -113,18 +113,18 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
         if(menu->numitems) viewTransaction(&txs[menu->selection-1]);
         break;
       case KEY_CTRL_F2:
-        if(addTransactionGUI(currentWallet)) {
+        if(addTransactionWizard(currentWallet)) {
           return 1;
         }
         break;
       case KEY_CTRL_F3:
       case KEY_CTRL_DEL:
-        if(menu->numitems && deleteTransactionGUI(txs, currentWallet, menu->numitems, menu->selection-1)) {
+        if(menu->numitems && deleteTransactionPrompt(txs, currentWallet, menu->numitems, menu->selection-1)) {
           return 1;
         }
         break;
       case KEY_CTRL_F6:
-        if(changeWalletGUI(currentWallet)) {
+        if(changeWalletScreen(currentWallet)) {
           menu->selection = 0;
           menu->scroll = 0;
           return 1;
@@ -135,7 +135,7 @@ int balanceManagerSub(Menu* menu, char* currentWallet) {
   return 0;
 }
 
-int addTransactionGUI(char* wallet) {
+int addTransactionWizard(char* wallet) {
   Transaction tx;
   tx.date.year = getCurrentYear();
   tx.date.month = getCurrentMonth();
@@ -211,7 +211,7 @@ int addTransactionGUI(char* wallet) {
       }
     } else if(curstep == 2) {
       drawScreenTitle(NULL, (char*)"Date:");
-      mPrintXY(7, 4, (char*)dateSettingToInputDisplay(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      mPrintXY(7, 4, (char*)getInputDateFormatHint(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       textInput input;
       input.x=7;
       input.width=8;
@@ -243,7 +243,7 @@ int addTransactionGUI(char* wallet) {
             curstep=curstep-1; break;
           } else if(input.key==KEY_CTRL_F2) {
             int ey=0, em=0, ed=0;
-            if(!chooseCalendarDate(&ey, &em, &ed,
+            if(!selectDateScreen(&ey, &em, &ed,
                                   (char*)"Select transaction date:", NULL, 1)) {
               tx.date.year = ey;
               tx.date.month = em;
@@ -310,7 +310,7 @@ int addTransactionGUI(char* wallet) {
   return 1;
 }
 
-int deleteTransactionGUI(Transaction* txs, char* wallet, int count, int pos) {
+int deleteTransactionPrompt(Transaction* txs, char* wallet, int count, int pos) {
   mMsgBoxPush(5);
   multiPrintXY(3, 2, "Delete the\nSelected\nTransaction?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(closeMsgBox(1, 5)) {
@@ -373,7 +373,7 @@ void viewTransaction(Transaction* tx) {
   doTextArea(&text);
 }
 
-int createWalletGUI(int isFirstUse) {
+int createWalletWizard(int isFirstUse) {
   SetBackGround(0x0A);
   drawScreenTitle((char*)"Create wallet", (char*)"Name:");
   drawFkeyLabels(-1, -1, -1, -1, -1, 0x04A3);
@@ -414,16 +414,16 @@ int createWalletGUI(int isFirstUse) {
   createWallet(wallet, &initialBalance);
   if(isFirstUse) {
     char fname[MAX_FILENAME_SIZE];
-    niceNameToWallet(fname, wallet);
+    walletNameToPath(fname, wallet);
     setCurrentWallet(fname);
   }
   return 0;
 }
 
-int changeWalletGUI(char* currentWallet) {
+int changeWalletScreen(char* currentWallet) {
   // returns 1 if user changes to another wallet
   char currentWalletNice[MAX_WALLETNAME_SIZE];
-  nameFromFilename(currentWallet, currentWalletNice, MAX_WALLETNAME_SIZE);
+  filenameToName(currentWallet, currentWalletNice, MAX_WALLETNAME_SIZE);
   Menu menu;
   menu.title = (char*)"Wallet List";
   menu.scrollout=1;
@@ -471,7 +471,7 @@ int changeWalletGUI(char* currentWallet) {
       case KEY_CTRL_F1:
       case MENU_RETURN_SELECTION:
         if(strcmp(currentWalletNice, wallets[menu.selection-1])) {
-          niceNameToWallet(buffer, wallets[menu.selection-1]);
+          walletNameToPath(buffer, wallets[menu.selection-1]);
           setCurrentWallet(buffer);
           return 1;
         } return mustRefresh;
@@ -480,13 +480,13 @@ int changeWalletGUI(char* currentWallet) {
         if(menu.numitems >= MAX_WALLETS) {
           AUX_DisplayErrorMessage( 0x2E );
         } else {
-          createWalletGUI(0);
+          createWalletWizard(0);
         }
         break;
       case KEY_CTRL_F3:
         char newWallet[MAX_FILENAME_SIZE];
-        if(renameWalletGUI(wallets[menu.selection-1], newWallet)) {
-          niceNameToWallet(buffer, wallets[menu.selection-1]);
+        if(renameWalletScreen(wallets[menu.selection-1], newWallet)) {
+          walletNameToPath(buffer, wallets[menu.selection-1]);
           if(!strcmp(currentWallet, buffer)) {
             // if the renamed wallet was the current one, we must set the current wallet to the
             // new name.
@@ -497,8 +497,8 @@ int changeWalletGUI(char* currentWallet) {
         break;
       case KEY_CTRL_F4:
       case KEY_CTRL_DEL:
-        niceNameToWallet(buffer, wallets[menu.selection-1]);
-        if(deleteWalletGUI(buffer)) {
+        walletNameToPath(buffer, wallets[menu.selection-1]);
+        if(deleteWalletPrompt(buffer)) {
           if(menu.numitems <= 1) {
             // this was the only wallet: delete pointer file too, so that user is prompted to create a new wallet.
             unsigned short path[MAX_FILENAME_SIZE+1];
@@ -512,7 +512,7 @@ int changeWalletGUI(char* currentWallet) {
             // first one on the list that is not the deleted one.
             // (by now we know there is more than one wallet in the list)
             for(int i = 0; i < menu.numitems; i++) {
-              niceNameToWallet(buffer, wallets[i]);
+              walletNameToPath(buffer, wallets[i]);
               if(strcmp(currentWallet, buffer)) break;
             }
             setCurrentWallet(buffer);
@@ -524,7 +524,7 @@ int changeWalletGUI(char* currentWallet) {
   }
 }
 
-int deleteWalletGUI(char* wallet) {
+int deleteWalletPrompt(char* wallet) {
   mMsgBoxPush(4);
   multiPrintXY(3, 2, "Delete the\nSelected Wallet?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(closeMsgBox(1, 4)) {
@@ -534,7 +534,7 @@ int deleteWalletGUI(char* wallet) {
   return 0;
 }
 
-int renameWalletGUI(char* wallet, char* newWallet) {
+int renameWalletScreen(char* wallet, char* newWallet) {
   // reload the wallets array after using this function!
   // newWallet will receive the new file name (complete, not friendly)
   // returns 0 if user aborts, 1 if renames.
@@ -556,8 +556,8 @@ int renameWalletGUI(char* wallet, char* newWallet) {
     if (res==INPUT_RETURN_EXIT) return 0; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
       char fwallet[MAX_FILENAME_SIZE];
-      niceNameToWallet(newWallet, newname);
-      niceNameToWallet(fwallet, wallet);
+      walletNameToPath(newWallet, newname);
+      walletNameToPath(fwallet, wallet);
       renameFile(fwallet, newWallet);
       return 1;
     }
@@ -672,7 +672,7 @@ void passwordGenerator() {
             break;
           } else if(ntry < 2) {
             // File creation probably failed due to the presence of a file with the same name in SMEM
-            if(overwriteFileGUI(newfilename))
+            if(overwriteFilePrompt(newfilename))
               Bfile_DeleteEntry(pFile);
             else
               break;
@@ -720,7 +720,7 @@ void passwordGenerator() {
 
 void totpClient() {
   RTCunadjustedWizard(1);
-  if(getRTCisUnadjusted()) {
+  if(isRTCunadjusted()) {
     mMsgBoxPush(6);
     multiPrintXY(3, 2, "The OATH TOTP\nauthenticator\ncan't work with\nthe clock\nunadjusted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     closeMsgBox(0, 7);
@@ -754,31 +754,31 @@ void totpClient() {
         if(!menu.numitems) break;
       case MENU_RETURN_SELECTION:
       case MENU_RETURN_SELECTION_RIGHT:
-        viewTOTPcodeGUI(&ts[menu.selection-1]);
+        viewTOTPcode(&ts[menu.selection-1]);
         break;
       case KEY_CTRL_F2:
         if(menu.numitems >= MAX_DAY_EVENTS) {
           AUX_DisplayErrorMessage(0x2E);
         } else {
-          if(addTOTPGUI()) goto reload;
+          if(addTOTPwizard()) goto reload;
         }
         break;
       case KEY_CTRL_F3:
-        if(menu.numitems && renameTOTPGUI(menu.selection-1, ts[menu.selection-1].name))
+        if(menu.numitems && renameTOTPscreen(menu.selection-1, ts[menu.selection-1].name))
           goto reload;
         break;
       case KEY_CTRL_F4:
       case KEY_CTRL_DEL:
-        if(menu.numitems && deleteTOTPGUI(menu.selection-1)) goto reload;
+        if(menu.numitems && deleteTOTPprompt(menu.selection-1)) goto reload;
         break;
       case KEY_CTRL_F6:
-        changeTimezone();
+        setTimezone();
         break;
     }
   }
 }
 
-void viewTOTPcodeGUI(totp* tkn) {
+void viewTOTPcode(totp* tkn) {
   unsigned short key = 0; int keyCol, keyRow;
   Bdisp_AllClr_VRAM();
   drawScreenTitle(tkn->name);
@@ -787,7 +787,7 @@ void viewTOTPcodeGUI(totp* tkn) {
     int ThirtySecCode = computeTOTP(tkn);
     char buffer[10];
     itoa_zeropad(tkn->totpcode, buffer, 6);
-    long long int ms_spent_ll = currentUTCUnixTime() - (long long int)ThirtySecCode * 30LL * 1000LL;
+    long long int ms_spent_ll = currentUTCUEBT() - (long long int)ThirtySecCode * 30LL * 1000LL;
     int ms_spent = (int)(ms_spent_ll);
 
     drawCircularCountdownIndicator(LCD_WIDTH_PX/2, 104, 44, COLOR_BLACK, COLOR_WHITE, (ms_spent*43)/30000, getCurrentSecond() < 30 ? 0 : 1);
@@ -824,7 +824,7 @@ void viewTOTPcodeGUI(totp* tkn) {
       DefineStatusMessage((char*)"", 1, 0, 0);
       GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); // clear keybuffer
       RTCunadjustedWizard(0, 1);
-      changeTimezone();
+      setTimezone();
       return; // so we don't have to redraw etc.
       // Also, this way the Shift+Menu instruction shown in the adjustment wizard becomes valid immediately,
       // which is great if the user wants to repeat the adjustment immediately.
@@ -835,7 +835,7 @@ void viewTOTPcodeGUI(totp* tkn) {
   GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key);
 }
 
-int addTOTPGUI() {
+int addTOTPwizard() {
   char friendlyname[25] = "";
   char key[32] = "";
   int curstep = 0;
@@ -909,7 +909,7 @@ int addTOTPGUI() {
   return 1;
 }
 
-int renameTOTPGUI(int index, char* oldname) {
+int renameTOTPscreen(int index, char* oldname) {
   //reload the files array after using this function!
   //returns 0 if user aborts, 1 if renames.
   SetBackGround(6);
@@ -933,7 +933,7 @@ int renameTOTPGUI(int index, char* oldname) {
   return 0;
 }
 
-int deleteTOTPGUI(int index) {
+int deleteTOTPprompt(int index) {
   mMsgBoxPush(5);
   multiPrintXY(3, 2, "Remove the\nSelected Token?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   int textX = 2*18; int textY = 3*24;

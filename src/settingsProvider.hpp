@@ -87,9 +87,9 @@
 #define NUMBER_OF_SETTINGS 28 // NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
 /*End of settings*/ 
 
-int GetSetting(int setting);
-void SetSetting(int setting, int value, int autosave);
-int LoadSettings();
-void SaveSettings();
+int getSetting(int setting);
+void setSetting(int setting, int value, int autosave);
+int loadSettings();
+void saveSettings();
 
 #endif

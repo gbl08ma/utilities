@@ -16,7 +16,7 @@
 
 #include "chronoProvider.hpp"
 
-void showHome();
+void homeScreen();
 void powerMenu(int* pane_keycache);
 void lightMenu(int* pane_keycache);
 void timeMenu(int* pane_keycache);

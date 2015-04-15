@@ -41,7 +41,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
       for (int k = 0; k < numchars-1; k++) {
         strcat((char*)dispbuffer, "*");
       }
-      if(GetSetting(SETTING_PASSWORD_PRIVACY) && key<30000 && cursor==numchars) {
+      if(getSetting(SETTING_PASSWORD_PRIVACY) && key<30000 && cursor==numchars) {
         //show last character for easier typing
         //only show last char if last key was a CHAR key and cursor is at the end
         strcat((char*)dispbuffer, " ");
@@ -182,7 +182,7 @@ int lockCalc() {
     doTextArea(&text);
     return 1;
   }
-  if(GetSetting(SETTING_LOCK_AUTOOFF)) PowerOff(1);
+  if(getSetting(SETTING_LOCK_AUTOOFF)) PowerOff(1);
   SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return
   while(1) {
     int textX = 212, textY = LCD_HEIGHT_PX - 17 - 24;
@@ -230,14 +230,14 @@ void openRunMat() {
   APP_RUNMAT(0,0);
 }
 void lockApp() {
-  if (GetSetting(SETTING_ENABLE_LOCK)) {
+  if (getSetting(SETTING_ENABLE_LOCK)) {
     setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS_RESTART);
     int lockres = lockCalc();
     setmGetKeyMode(MGETKEY_MODE_NORMAL);
     if(lockres == 0) {
-      if (GetSetting(SETTING_UNLOCK_RUNMAT) == 1) {
+      if (getSetting(SETTING_UNLOCK_RUNMAT) == 1) {
         openRunMat();
-      } else if (GetSetting(SETTING_UNLOCK_RUNMAT) == 2) {
+      } else if (getSetting(SETTING_UNLOCK_RUNMAT) == 2) {
         mMsgBoxPush(4);
         multiPrintXY(3, 2, "Open Run-Mat?\n\n   Yes:[F1]/[1]\n   No :Other key", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int key,inscreen=1;

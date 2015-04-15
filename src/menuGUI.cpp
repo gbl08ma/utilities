@@ -122,7 +122,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
     }
     if(menu->darken) {
       DrawFrame(COLOR_BLACK);
-      VRAMInvertArea(menu->startX*18-18, menu->startY*24, menu->width*18-(menu->scrollout || !menu->scrollbar ? 0 : 5), menu->height*24);
+      invertArea(menu->startX*18-18, menu->startY*24, menu->width*18-(menu->scrollout || !menu->scrollbar ? 0 : 5), menu->height*24);
     }
     if(menu->type == MENUTYPE_NO_KEY_HANDLING) return MENU_RETURN_INSTANT; // we don't want to handle keys
     int key;

@@ -60,8 +60,8 @@ int compareFileStructs(File* f1, File* f2, int type) {
   return retval;
 }
 
-void insertSortFileMenuArray(File* data, MenuItem* mdata, int size) {
-  int sort = GetSetting(SETTING_FILE_MANAGER_SORT);
+void sortFilesMenu(File* data, MenuItem* mdata, int size) {
+  int sort = getSetting(SETTING_FILE_MANAGER_SORT);
   if(!sort) return;
   int i, j;
   File temp;
@@ -81,7 +81,7 @@ void insertSortFileMenuArray(File* data, MenuItem* mdata, int size) {
   for(i = 0; i < size; i++) mdata[i].text = data[i].visname;
 }
 
-int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
+int getFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
   // searches storage memory for folders and files, puts their count in int* count
   // if File* files is NULL, function will only count files. If it is not null, MenuItem* menuitems will also be updated
   // this function always returns status codes defined on fileProvider.hpp
@@ -110,7 +110,7 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
         files[*count].size = fileinfo.fsize;
         files[*count].isfolder = menuitems[*count].isfolder = !fileinfo.fsize;
         if(fileinfo.fsize == 0) menuitems[*count].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
-        else menuitems[*count].icon = fileIconFromName((char*)buffer);
+        else menuitems[*count].icon = filenameToIcon((char*)buffer);
         menuitems[*count].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
         // because usually alloca is used to declare space for MenuItem*, the space is not cleared. which means we need to explicitly set each field:
         menuitems[*count].text = files[*count].visname;
@@ -122,12 +122,12 @@ int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
     }
     if (*count==MAX_ITEMS_IN_DIR) {
       Bfile_FindClose(findhandle);
-      if(files != NULL && menuitems != NULL) insertSortFileMenuArray(files, menuitems, *count);
+      if(files != NULL && menuitems != NULL) sortFilesMenu(files, menuitems, *count);
       return GETFILES_MAX_FILES_REACHED; // Don't find more files, the array is full. 
     } else ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
   Bfile_FindClose(findhandle);
-  if(*count > 1 && files != NULL && menuitems != NULL) insertSortFileMenuArray(files, menuitems, *count);
+  if(*count > 1 && files != NULL && menuitems != NULL) sortFilesMenu(files, menuitems, *count);
   return GETFILES_SUCCESS;
 }
 
@@ -135,7 +135,7 @@ char* SearchStringMatch(char* s1, char* s2, int matchCase) {
   if(matchCase) return strstr(s1, s2);
   else return strcasestr(s1, s2);
 }
-int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall) {
+int searchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall) {
   // searches storage memory for folders and files containing needle in the filename or contents, puts their count in int* count
   // if File* files is NULL, function will only count search results.
   // this function always returns status codes defined on fileProvider.hpp
@@ -228,7 +228,7 @@ int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
       strcpy(newfolder, basepath);
       strcat(newfolder, foldersToSearchInTheEnd[i]);
       strcat(newfolder, "\\");
-      int sres = SearchForFiles(files, newfolder, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, count, 1);
+      int sres = searchForFiles(files, newfolder, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, count, 1);
       if(GETFILES_MAX_FILES_REACHED == sres)
         return GETFILES_MAX_FILES_REACHED; // if the files array is full, there's no point in searching again
       else if(GETFILES_USER_ABORTED == sres)
@@ -267,13 +267,13 @@ void renameFile(char* old, char* newf) {
   unsigned short dest[MAX_FILENAME_SIZE+1];
   Bfile_StrToName_ncpy(orig, old, MAX_FILENAME_SIZE+1);
   Bfile_StrToName_ncpy(dest, newf, MAX_FILENAME_SIZE+1);
-  if(Bfile_RenameEntry(orig, dest) < 0 && overwriteFileGUI(newf)) {
+  if(Bfile_RenameEntry(orig, dest) < 0 && overwriteFilePrompt(newf)) {
     Bfile_DeleteEntry(dest);
     Bfile_RenameEntry(orig, dest);
   }
 }
 
-void nameFromFilename(char* filename, char* name, int max) {
+void filenameToName(char* filename, char* name, int max) {
   //this function takes a full filename like \\fls0\Folder\file.123
   //and puts file.123 in name.
   int i=strlen(filename)-1;
@@ -305,7 +305,7 @@ void copyFile(char* oldfilename, char* newfilename) {
   if(hNewFile >= 0) {
     Bfile_CloseFile_OS(hNewFile);
     // destination exists, show overwrite confirmation
-    if(overwriteFileGUI(newfilename))
+    if(overwriteFilePrompt(newfilename))
       Bfile_DeleteEntry(newfilenameshort);
     else return; // skip this file
   }
@@ -421,7 +421,7 @@ void copyFolder(char* oldfilename, char* newfilename) {
   }
 }
 
-void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard) {
+void pasteClipboard(File* clipboard, char* browserbasepath, int itemsInClipboard) {
   //this copies or moves to browserbasepath the items in the clipboard.
   //when the action field of a clipboard item is 0, the item will be moved.
   //when the action field is 1, the item will be copied.
@@ -431,7 +431,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
     progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
     while(curfile < itemsInClipboard) {
       char name[MAX_NAME_SIZE];
-      nameFromFilename(clipboard[curfile].filename, name);
+      filenameToName(clipboard[curfile].filename, name);
       if(curfile > 0) progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
       char newfilename[MAX_FILENAME_SIZE];
       strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
@@ -451,32 +451,32 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
   }
 }
 
-int fileIconFromName(char* name) {
-  if(EndsIWith(name, (char*)".g1m") || EndsIWith(name, (char*)".g2m") || EndsIWith(name, (char*)".g3m"))
+int filenameToIcon(char* name) {
+  if(strEndsWith(name, (char*)".g1m") || strEndsWith(name, (char*)".g2m") || strEndsWith(name, (char*)".g3m"))
     return FILE_ICON_G3M;
-  else if (EndsIWith(name, (char*)".g1e") || EndsIWith(name, (char*)".g2e") || EndsIWith(name, (char*)".g3e"))
+  else if (strEndsWith(name, (char*)".g1e") || strEndsWith(name, (char*)".g2e") || strEndsWith(name, (char*)".g3e"))
     return FILE_ICON_G3E;
-  else if (EndsIWith(name, (char*)".g3a") || EndsIWith(name, (char*)".g3l"))
+  else if (strEndsWith(name, (char*)".g3a") || strEndsWith(name, (char*)".g3l"))
     return FILE_ICON_G3A;
-  else if (EndsIWith(name, (char*)".g3p"))
+  else if (strEndsWith(name, (char*)".g3p"))
     return FILE_ICON_G3P;
-  else if (EndsIWith(name, (char*)".g3b"))
+  else if (strEndsWith(name, (char*)".g3b"))
     return FILE_ICON_G3B;
-  else if (EndsIWith(name, (char*)".bmp") || EndsIWith(name, (char*)".jpg"))
+  else if (strEndsWith(name, (char*)".bmp") || strEndsWith(name, (char*)".jpg"))
     return FILE_ICON_BMP;
-  else if (EndsIWith(name, (char*)".txt"))
+  else if (strEndsWith(name, (char*)".txt"))
     return FILE_ICON_TXT;
-  else if (EndsIWith(name, (char*)".csv"))
+  else if (strEndsWith(name, (char*)".csv"))
     return FILE_ICON_CSV;
   else return FILE_ICON_OTHER;
 }
 
 int stringEndsInG3A(char* string) {
-  return EndsIWith(string, (char*)".g3a");
+  return strEndsWith(string, (char*)".g3a");
 }
 
 int stringEndsInJPG(char* string) {
-  return EndsIWith(string, (char*)".jpg") || EndsIWith(string, (char*)".jpeg");
+  return strEndsWith(string, (char*)".jpg") || strEndsWith(string, (char*)".jpeg");
 }
 
 void createFolderRecursive(const char* folder) {
@@ -729,7 +729,7 @@ cleanexit:
 }
 
 int isFileCompressed(char* filename, int* origfilesize) {
-  if(!EndsIWith(filename, (char*)COMPRESSED_FILE_EXTENSION)) return 0;
+  if(!strEndsWith(filename, (char*)COMPRESSED_FILE_EXTENSION)) return 0;
   unsigned short filenameshort[MAX_FILENAME_SIZE];
   Bfile_StrToName_ncpy(filenameshort, filename, MAX_FILENAME_SIZE);
   int hFile = Bfile_OpenFile_OS(filenameshort, READWRITE, 0); // Get handle for the old file

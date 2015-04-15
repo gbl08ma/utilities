@@ -18,6 +18,6 @@
 #include "menuGUI.hpp"
 
 void viewTasks();
-int viewTasksSub(Menu* menu);
+int viewTasksChild(Menu* menu);
 
 #endif

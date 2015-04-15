@@ -26,7 +26,7 @@
 typedef struct
 {
   char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
-  char visname[42]; //visible name, only for menus. use nameFromFilename to get the proper name.
+  char visname[42]; //visible name, only for menus. use filenameToName to get the proper name.
   short action; // mostly for clipboard, can be used to tag something to do with the file
   short isfolder; // because menuitem shouldn't be the only struct holding this info
   int size; // file size
@@ -44,14 +44,14 @@ typedef struct
 #define GETFILES_MAX_FILES_REACHED 1
 #define GETFILES_USER_ABORTED 2
 
-void insertSortFileMenuArray(File* data, MenuItem* mdata, int size);
-int GetAnyFiles(File* files, MenuItem* menuitems, char* basepath, int* count);
-int SearchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall=0);
+void sortFilesMenu(File* data, MenuItem* mdata, int size);
+int getFiles(File* files, MenuItem* menuitems, char* basepath, int* count);
+int searchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall=0);
 void deleteFiles(File* files, Menu* menu);
 void renameFile(char* old, char* newf);
-void nameFromFilename(char* filename, char* name, int max=MAX_NAME_SIZE);
+void filenameToName(char* filename, char* name, int max=MAX_NAME_SIZE);
 void copyFile(char* oldfilename, char* newfilename);
-void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsInClipboard);
+void pasteClipboard(File* clipboard, char* browserbasepath, int itemsInClipboard);
 
 #define FILE_ICON_FOLDER 0
 #define FILE_ICON_G3M 1
@@ -63,7 +63,7 @@ void filePasteClipboardItems(File* clipboard, char* browserbasepath, int itemsIn
 #define FILE_ICON_TXT 7
 #define FILE_ICON_CSV 8
 #define FILE_ICON_OTHER 9
-int fileIconFromName(char* name);
+int filenameToIcon(char* name);
 int stringEndsInG3A(char* string);
 int stringEndsInJPG(char* string);
 void createFolderRecursive(const char* folder);

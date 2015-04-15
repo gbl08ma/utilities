@@ -65,8 +65,8 @@ void settingsMenu() {
   menu.statusText = (char*)"";
   setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
   while(1) {
-    menuitems[6].value = GetSetting(SETTING_DISPLAY_STATUSBAR);
-    menuitems[7].value = GetSetting(SETTING_SHOW_ADVANCED);
+    menuitems[6].value = getSetting(SETTING_DISPLAY_STATUSBAR);
+    menuitems[7].value = getSetting(SETTING_SHOW_ADVANCED);
     
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) {
@@ -76,10 +76,10 @@ void settingsMenu() {
     else if(res == MENU_RETURN_SELECTION) {
       switch(menu.selection) {
         case 1:
-          setTimeGUI();
+          setTimeScreen();
           break;
         case 2:
-          setDateGUI();
+          setDateScreen();
           break;
         case 3: // set time format
         { MenuItem menuitems[5];
@@ -97,22 +97,22 @@ void settingsMenu() {
           menu.numitems=2;
           menu.scrollbar=0;
           menu.width=22;
-          menu.selection=GetSetting(SETTING_TIMEFORMAT)+1;
+          menu.selection=getSetting(SETTING_TIMEFORMAT)+1;
           menu.title = (char*)"Set time format";
           int res = doMenu(&menu);
-          if(res==MENU_RETURN_SELECTION) SetSetting(SETTING_TIMEFORMAT, menu.selection-1, 1);
+          if(res==MENU_RETURN_SELECTION) setSetting(SETTING_TIMEFORMAT, menu.selection-1, 1);
           break;
         }
         case 4: // set long date format
         { Selector format;
           format.title = (char*)"Set long date format";
-          format.value = GetSetting(SETTING_LONGDATEFORMAT);
+          format.value = getSetting(SETTING_LONGDATEFORMAT);
           format.min = 0;
           format.max = 9;
           format.type = SELECTORTYPE_LONGDATEFORMAT;
           int res = doSelector(&format);
           if (res == SELECTOR_RETURN_EXIT) continue;
-          SetSetting(SETTING_LONGDATEFORMAT, format.value, 1);
+          setSetting(SETTING_LONGDATEFORMAT, format.value, 1);
           break;
         }
         case 5: // set date format
@@ -128,10 +128,10 @@ void settingsMenu() {
           menu.numitems=3;
           menu.scrollbar=0;
           menu.width=22;
-          menu.selection=GetSetting(SETTING_DATEFORMAT)+1;
+          menu.selection=getSetting(SETTING_DATEFORMAT)+1;
           menu.title = (char*)"Set date format";
           int res = doMenu(&menu);
-          if(res==MENU_RETURN_SELECTION) SetSetting(SETTING_DATEFORMAT, menu.selection-1, 1);
+          if(res==MENU_RETURN_SELECTION) setSetting(SETTING_DATEFORMAT, menu.selection-1, 1);
           break;
         }
         case 6:
@@ -139,22 +139,22 @@ void settingsMenu() {
           break;
         case 7:
           menuitems[6].value = !menuitems[6].value;
-          SetSetting(SETTING_DISPLAY_STATUSBAR, menuitems[6].value, 1);
+          setSetting(SETTING_DISPLAY_STATUSBAR, menuitems[6].value, 1);
           break;
         case 8:
           menuitems[7].value = !menuitems[7].value;
-          SetSetting(SETTING_SHOW_ADVANCED, menuitems[7].value, 1); 
+          setSetting(SETTING_SHOW_ADVANCED, menuitems[7].value, 1); 
           break;
         case 9: // set startup brightness
         { Selector sel;
           sel.title = (char*)"Set start brightness";
-          sel.value = GetSetting(SETTING_STARTUP_BRIGHTNESS);
+          sel.value = getSetting(SETTING_STARTUP_BRIGHTNESS);
           sel.min = 1;
           sel.max = 250;
           sel.type = SELECTORTYPE_STARTUP_BRIGHTNESS;
           int res = doSelector(&sel);
           if (res == SELECTOR_RETURN_EXIT) continue;
-          SetSetting(SETTING_STARTUP_BRIGHTNESS, sel.value, 1);
+          setSetting(SETTING_STARTUP_BRIGHTNESS, sel.value, 1);
           break;
         }
         case 10:
@@ -179,16 +179,16 @@ void settingsMenu() {
           smallmenu.startX=3;
           smallmenu.startY=2;
           smallmenu.scrollbar=0;
-          smallmenu.selection=GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE)+1;
+          smallmenu.selection=getSetting(SETTING_CHRONO_NOTIFICATION_TYPE)+1;
           smallmenu.title = (char*)"Chrono. notif.";
 
           int sres = doMenu(&smallmenu);
-          if(sres == MENU_RETURN_SELECTION) SetSetting(SETTING_CHRONO_NOTIFICATION_TYPE, smallmenu.selection-1, 1);
+          if(sres == MENU_RETURN_SELECTION) setSetting(SETTING_CHRONO_NOTIFICATION_TYPE, smallmenu.selection-1, 1);
           mMsgBoxPop();
           break;
         }
         case 13:
-          showAbout();
+          aboutScreen();
           break;
       }
     }
@@ -215,9 +215,9 @@ inline static void lockSettingsMenu() {
   menu.numitems=5;
   menu.scrollout=1;
   while(1) {
-    menuitems[1].value = GetSetting(SETTING_PASSWORD_PRIVACY);
-    menuitems[2].value = GetSetting(SETTING_LOCK_AUTOOFF);
-    menuitems[3].value = GetSetting(SETTING_LOCK_ON_EXE);
+    menuitems[1].value = getSetting(SETTING_PASSWORD_PRIVACY);
+    menuitems[2].value = getSetting(SETTING_LOCK_AUTOOFF);
+    menuitems[3].value = getSetting(SETTING_LOCK_ON_EXE);
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
@@ -227,15 +227,15 @@ inline static void lockSettingsMenu() {
           break;
         case 2:
           menuitems[1].value = !menuitems[1].value;
-          SetSetting(SETTING_PASSWORD_PRIVACY, menuitems[1].value, 1); 
+          setSetting(SETTING_PASSWORD_PRIVACY, menuitems[1].value, 1); 
           break;
         case 3:
           menuitems[2].value = !menuitems[2].value;
-          SetSetting(SETTING_LOCK_AUTOOFF, menuitems[2].value, 1);
+          setSetting(SETTING_LOCK_AUTOOFF, menuitems[2].value, 1);
           break;
         case 4:
           menuitems[3].value = !menuitems[3].value;
-          SetSetting(SETTING_LOCK_ON_EXE, menuitems[3].value, 1);
+          setSetting(SETTING_LOCK_ON_EXE, menuitems[3].value, 1);
           break;
         case 5: {
           mMsgBoxPush(4);
@@ -252,11 +252,11 @@ inline static void lockSettingsMenu() {
           smallmenu.startX=3;
           smallmenu.startY=2;
           smallmenu.scrollbar=0;
-          smallmenu.selection=GetSetting(SETTING_UNLOCK_RUNMAT)+1;
+          smallmenu.selection=getSetting(SETTING_UNLOCK_RUNMAT)+1;
           smallmenu.title = (char*)"Run-Mat on unlock";
           int sres = doMenu(&smallmenu);
           if(sres == MENU_RETURN_SELECTION) {
-            SetSetting(SETTING_UNLOCK_RUNMAT, smallmenu.selection-1, 1);
+            setSetting(SETTING_UNLOCK_RUNMAT, smallmenu.selection-1, 1);
           }
           mMsgBoxPop();
           break;
@@ -320,16 +320,16 @@ inline static void clockSettingsMenu() {
   menu.numitems=8;
   menu.scrollout=1;
   while(1) {
-    menuitems[1].value = GetSetting(SETTING_CLOCK_SECONDS);
-    menuitems[2].value = GetSetting(SETTING_DISPLAY_FKEYS);
-    menuitems[3].value = GetSetting(SETTING_THEME);
+    menuitems[1].value = getSetting(SETTING_CLOCK_SECONDS);
+    menuitems[2].value = getSetting(SETTING_DISPLAY_FKEYS);
+    menuitems[3].value = getSetting(SETTING_THEME);
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
       switch(menu.selection) {
         case 1: {
           int inscreen = 1;
-          int cur = GetSetting(SETTING_CLOCK_TYPE);
+          int cur = getSetting(SETTING_CLOCK_TYPE);
           while(inscreen) {
             Bdisp_AllClr_VRAM();
             int key;
@@ -347,7 +347,7 @@ inline static void clockSettingsMenu() {
                 if(cur<0) cur = 11;
                 break;
               case KEY_CTRL_EXE:
-                SetSetting(SETTING_CLOCK_TYPE, cur, 1); 
+                setSetting(SETTING_CLOCK_TYPE, cur, 1); 
                 //deliberate fallthrough
               case KEY_CTRL_EXIT:
                 inscreen = 0;
@@ -358,15 +358,15 @@ inline static void clockSettingsMenu() {
         }
         case 2:
           menuitems[1].value = !menuitems[1].value;
-          SetSetting(SETTING_CLOCK_SECONDS, menuitems[1].value, 1);
+          setSetting(SETTING_CLOCK_SECONDS, menuitems[1].value, 1);
           break;
         case 3:
           menuitems[2].value = !menuitems[2].value;
-          SetSetting(SETTING_DISPLAY_FKEYS, menuitems[2].value, 1);
+          setSetting(SETTING_DISPLAY_FKEYS, menuitems[2].value, 1);
           break;
         case 4:
           menuitems[3].value = !menuitems[3].value;
-          SetSetting(SETTING_THEME, menuitems[3].value, 1); 
+          setSetting(SETTING_THEME, menuitems[3].value, 1); 
           break;
         case 5:
         case 6:
@@ -374,8 +374,8 @@ inline static void clockSettingsMenu() {
         case 8:
         {
           int s = menu.selection-5+25;
-          int t = selectPaneType(GetSetting(s));
-          if(t >= 0) SetSetting(s, t, 1);
+          int t = selectPaneType(getSetting(s));
+          if(t >= 0) setSetting(s, t, 1);
           break;
         }
       }
@@ -400,15 +400,15 @@ void calendarSettingsMenu() {
   menu.numitems=4;
   menu.scrollout=1;
   while(1) {
-    menuitems[0].value = GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT);
-    menuitems[3].value = GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP);
+    menuitems[0].value = getSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT);
+    menuitems[3].value = getSetting(SETTING_SHOW_CALENDAR_BUSY_MAP);
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
       switch(menu.selection) {
         case 1:
           menuitems[0].value = !menuitems[0].value;
-          SetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT, menuitems[0].value, 1);
+          setSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT, menuitems[0].value, 1);
           break;
         case 2:
         case 3: {
@@ -425,24 +425,24 @@ void calendarSettingsMenu() {
           smallmenu.scrollbar=0;
           if(menu.selection == 2) {
             smallmenu.title = (char*)"Default Calendar";
-            smallmenu.selection=GetSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;
+            smallmenu.selection=getSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;
             smallmenuitems[0].text = (char*)"Week";
             smallmenuitems[1].text = (char*)"Month";
           } else {
             smallmenu.title = (char*)"Week starts on";
-            smallmenu.selection=GetSetting(SETTING_WEEK_START_DAY)+1;
+            smallmenu.selection=getSetting(SETTING_WEEK_START_DAY)+1;
             smallmenuitems[0].text = (char*)getDOWAsString(1); // Sunday
             smallmenuitems[1].text = (char*)getDOWAsString(2); // Monday
           }
           int sres = doMenu(&smallmenu);
           if(sres == MENU_RETURN_SELECTION)
-            SetSetting((menu.selection == 2 ? SETTING_DEFAULT_CALENDAR_VIEW : SETTING_WEEK_START_DAY), smallmenu.selection-1, 1);
+            setSetting((menu.selection == 2 ? SETTING_DEFAULT_CALENDAR_VIEW : SETTING_WEEK_START_DAY), smallmenu.selection-1, 1);
           mMsgBoxPop();
           break;
         }
         case 4:
           menuitems[3].value = !menuitems[3].value;
-          SetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP, menuitems[3].value, 1);
+          setSetting(SETTING_SHOW_CALENDAR_BUSY_MAP, menuitems[3].value, 1);
           break;
       }
     }

@@ -25,7 +25,7 @@
 #include "textGUI.hpp"
 #include "sprites.h"
 
-void changePoweroffTimeout() {
+void setPoweroffTimeout() {
   Selector sel;
   sel.title = (char*)"Poweroff Timeout";
   sel.value = GetAutoPowerOffTime();
@@ -38,7 +38,7 @@ void changePoweroffTimeout() {
   SetAutoPowerOffTime(sel.value);
 }
 
-void changeBacklightTimeout() {
+void setBacklightTimeout() {
   Selector sel;
   sel.title = (char*)"Backlight Duration";
   sel.value = GetBacklightDuration();
@@ -50,8 +50,8 @@ void changeBacklightTimeout() {
   SetBacklightDuration(sel.value);
 }
 
-void changeBacklightLevel() {
-  int initValue = GetBacklightSubLevel_RAW();
+void setBacklightLevel() {
+  int initValue = getRawBacklightSubLevel();
   Selector sel;
   sel.title = (char*)"Backlight Level";
   sel.value = initValue;
@@ -75,19 +75,19 @@ void changeBacklightLevel() {
   while(1) {
     switch(doSelector(&sel)) {
       case SELECTOR_RETURN_EXIT:
-        SetBacklightSubLevel_RAW(initValue);
+        setRawBacklightSubLevel(initValue);
         //deliberate fallthrough: bl level was already set with the instant return, so if user is confirming, just return.
       case SELECTOR_RETURN_SELECTION:
         return;
       case SELECTOR_RETURN_INSTANT:
-        SetBacklightSubLevel_RAW(sel.value);
+        setRawBacklightSubLevel(sel.value);
         break;
     }
   }
 }
 
 void powerInformation() {
-  unsigned int backlightlevel = GetBacklightSubLevel_RAW();
+  unsigned int backlightlevel = getRawBacklightSubLevel();
   volatile unsigned int*FRQCR = (unsigned int*) 0xA4150000;
   unsigned char voltbuffer[20];
   itoa(GetMainBatteryVoltage(1), voltbuffer);

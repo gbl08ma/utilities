@@ -37,44 +37,44 @@
 #include "fileGUI.hpp"
 #include "editorGUI.hpp"
 
-void showHome() {
+void homeScreen() {
   unsigned short key = 0;
   int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
   int pane_keycache = 0;
   while (1) {
     //black theme, or not?
-    if (GetSetting(SETTING_THEME) == 1) {
+    if (getSetting(SETTING_THEME) == 1) {
       Bdisp_Fill_VRAM( COLOR_BLACK, 3 );
       DrawFrame( 0x000000  );
     } else {
       Bdisp_AllClr_VRAM();
       DrawFrame( 0xFFFFFF  );
     }
-    if(GetSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 3 && getLastChronoComplete()) {
+    if(getSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 3 && getLastCompleteChrono()) {
       char message[30];
-      sprintf(message, "Chronometer %d ended", getLastChronoComplete());
+      sprintf(message, "Chronometer %d ended", getLastCompleteChrono());
       DefineStatusMessage(message, 1, 4, 0);
-    } else if (isTodayDSTstartEndDate()) {
+    } else if (isDSTchangeToday()) {
       char message[100];
       stringToMini(message, "To adjust the clock: SHIFT then MENU");
       DefineStatusMessage(message, 1, 0, 0);
     } else DefineStatusMessage((char*)"", 1, 0, 0);
     DisplayStatusArea();
-    if (GetSetting(SETTING_THEME)) darkenStatusbar();
+    if (getSetting(SETTING_THEME)) darkenStatusbar();
     
     // Print time
-    drawHomeClock(GetSetting(SETTING_CLOCK_TYPE));
+    drawHomeClock(getSetting(SETTING_CLOCK_TYPE));
 
     //Show FKeys
-    if (GetSetting(SETTING_DISPLAY_FKEYS)) {
-      drawFkeyLabels(0x043A, 0x043E, 0x012A, 0x011C, 0x03E7, (GetSetting(SETTING_ENABLE_LOCK) ? 0x04D3 : -1)); //POWER, LIGHT, TIME, TOOL, M&S, key icon (lock)
-      if (GetSetting(SETTING_THEME)) {
-        darkenFkeys((GetSetting(SETTING_ENABLE_LOCK) == 1 ? 6 : 5));
+    if (getSetting(SETTING_DISPLAY_FKEYS)) {
+      drawFkeyLabels(0x043A, 0x043E, 0x012A, 0x011C, 0x03E7, (getSetting(SETTING_ENABLE_LOCK) ? 0x04D3 : -1)); //POWER, LIGHT, TIME, TOOL, M&S, key icon (lock)
+      if (getSetting(SETTING_THEME)) {
+        darkenFkeys((getSetting(SETTING_ENABLE_LOCK) == 1 ? 6 : 5));
       }
     }
     if(!pane_keycache) {
       Bdisp_PutDisp_DD();
-      checkDownwardsChronoCompleteGUI(getChronoArrayPtr(), NUMBER_OF_CHRONO);
+      checkChronoComplete(getChronoArrayPtr());
     }
     GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); //this is here just to handle the Menu key
     if(!pane_keycache) {
@@ -123,7 +123,7 @@ void showHome() {
         memsysMenu(&pane_keycache);
         break;
       case KEY_PRGM_RETURN:
-        if(!GetSetting(SETTING_LOCK_ON_EXE)) break;
+        if(!getSetting(SETTING_LOCK_ON_EXE)) break;
         // else fallthrough
       case KEY_PRGM_F6:
         lockApp();
@@ -170,28 +170,28 @@ void powerMenu(int* pane_keycache) {
   menu.startX=2;
   menu.startY=3;
   menu.type=MENUTYPE_FKEYS;
-  if(GetSetting(SETTING_SHOW_ADVANCED)) {
+  if(getSetting(SETTING_SHOW_ADVANCED)) {
     menu.numitems=5;
   } else {
     menu.numitems=4;
     menu.scrollbar=0;
   }
-  menu.darken=GetSetting(SETTING_THEME);
+  menu.darken=getSetting(SETTING_THEME);
   while(1) {
     int res = doMenu(&menu);
     switch(res) {
       case MENU_RETURN_SELECTION:
         DrawFrame(COLOR_WHITE);
         switch(menu.selection) {
-          case 1: changePoweroffTimeout(); break;
-          case 2: changeBacklightTimeout(); break;
-          case 3: changeBacklightLevel(); break;
+          case 1: setPoweroffTimeout(); break;
+          case 2: setBacklightTimeout(); break;
+          case 3: setBacklightLevel(); break;
           case 4: powerInformation(); break;
           case 5: setCPUclock(); break;
         }
         return;
       case KEY_CTRL_F6:
-        if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
+        if(!getSetting(SETTING_ENABLE_LOCK)) break; // else keep on
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
       case KEY_CTRL_F4:
@@ -221,7 +221,7 @@ void lightMenu(int* pane_keycache) {
   menu.startY=3;
   menu.scrollbar=0;
   menu.type=MENUTYPE_FKEYS;
-  menu.darken=GetSetting(SETTING_THEME);
+  menu.darken=getSetting(SETTING_THEME);
   while(1) {
     int res = doMenu(&menu);
     switch(res) {
@@ -235,7 +235,7 @@ void lightMenu(int* pane_keycache) {
         }
         return;
       case KEY_CTRL_F6:
-        if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
+        if(!getSetting(SETTING_ENABLE_LOCK)) break; // else keep on
       case KEY_CTRL_F1:
       case KEY_CTRL_F3:
       case KEY_CTRL_F4:
@@ -264,7 +264,7 @@ void timeMenu(int* pane_keycache) {
   menu.startY=3;
   menu.scrollbar=0;
   menu.type=MENUTYPE_FKEYS;
-  menu.darken=GetSetting(SETTING_THEME);
+  menu.darken=getSetting(SETTING_THEME);
   
   while(1) {
     int res = doMenu(&menu);
@@ -278,7 +278,7 @@ void timeMenu(int* pane_keycache) {
         }
         return;
       case KEY_CTRL_F6:
-        if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
+        if(!getSetting(SETTING_ENABLE_LOCK)) break; // else keep on
       case KEY_CTRL_F1:
       case KEY_CTRL_F2:
       case KEY_CTRL_F4:
@@ -307,7 +307,7 @@ void toolsMenu(int* pane_keycache) {
   menu.startX=2;
   menu.startY=3;
   menu.type=MENUTYPE_FKEYS;
-  menu.darken=GetSetting(SETTING_THEME);
+  menu.darken=getSetting(SETTING_THEME);
 
   while(1) {
     int res = doMenu(&menu);
@@ -321,7 +321,7 @@ void toolsMenu(int* pane_keycache) {
         }
         return;
       case KEY_CTRL_F6:
-        if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
+        if(!getSetting(SETTING_ENABLE_LOCK)) break; // else keep on
       case KEY_CTRL_F1:
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
@@ -345,7 +345,7 @@ void memsysMenu(int* pane_keycache) {
   
   Menu menu;
   menu.items=menuitems;
-  if(GetSetting(SETTING_SHOW_ADVANCED)) {
+  if(getSetting(SETTING_SHOW_ADVANCED)) {
     menu.numitems=5;
   } else {
     menu.numitems=4;
@@ -356,7 +356,7 @@ void memsysMenu(int* pane_keycache) {
   menu.startX=2;
   menu.startY=3;
   menu.type=MENUTYPE_FKEYS;
-  menu.darken=GetSetting(SETTING_THEME);
+  menu.darken=getSetting(SETTING_THEME);
 
   while(1) {
     int res = doMenu(&menu);
@@ -365,14 +365,14 @@ void memsysMenu(int* pane_keycache) {
         DrawFrame(COLOR_WHITE);
         switch(menu.selection) {
           case 1: fileManager(); break;
-          case 2: memoryCapacityViewer(); break;
+          case 2: memoryCapacityScreen(); break;
           case 3: changeFKeyColor(); break;
           case 4: systemInfo(); break;
           case 5: addinManager(); break;
         }
         return;
       case KEY_CTRL_F6:
-        if(!GetSetting(SETTING_ENABLE_LOCK)) break; // else keep on
+        if(!getSetting(SETTING_ENABLE_LOCK)) break; // else keep on
       case KEY_CTRL_F1:
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
@@ -387,10 +387,10 @@ void memsysMenu(int* pane_keycache) {
 void handleHomePane(int key, int* pane_keycache) {
   int ptype, retkey;
   switch(key) {
-    case KEY_PRGM_UP:    retkey = KEY_CTRL_DOWN; ptype = GetSetting(SETTING_HOME_PANE_TOP); break;
-    case KEY_PRGM_RIGHT: retkey = KEY_CTRL_LEFT; ptype = GetSetting(SETTING_HOME_PANE_RIGHT); break;
-    case KEY_PRGM_DOWN:  retkey = KEY_CTRL_UP; ptype = GetSetting(SETTING_HOME_PANE_BOTTOM); break;
-    default:             retkey = KEY_CTRL_RIGHT; ptype = GetSetting(SETTING_HOME_PANE_LEFT); break;
+    case KEY_PRGM_UP:    retkey = KEY_CTRL_DOWN; ptype = getSetting(SETTING_HOME_PANE_TOP); break;
+    case KEY_PRGM_RIGHT: retkey = KEY_CTRL_LEFT; ptype = getSetting(SETTING_HOME_PANE_RIGHT); break;
+    case KEY_PRGM_DOWN:  retkey = KEY_CTRL_UP; ptype = getSetting(SETTING_HOME_PANE_BOTTOM); break;
+    default:             retkey = KEY_CTRL_RIGHT; ptype = getSetting(SETTING_HOME_PANE_LEFT); break;
   }
   if(ptype > 2) DrawFrame(COLOR_WHITE);
   switch(ptype) {
@@ -410,7 +410,7 @@ void handleHomePane(int key, int* pane_keycache) {
 
 void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
   color_t color_fg, color_bg, color_title;
-  if (GetSetting(SETTING_THEME)) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; color_title = COLOR_ORANGE; } else
+  if (getSetting(SETTING_THEME)) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; color_title = COLOR_ORANGE; } else
   { color_fg = COLOR_BLACK; color_bg = COLOR_WHITE; color_title = COLOR_BLUE; }
   
   int textX = startx;
@@ -425,7 +425,7 @@ void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int 
       strcpy(itemtext, "- ");
       strcat(itemtext, (char*)calevents[curevent].title);
       int tcolor = calevents[curevent].category-1;
-      if (GetSetting(SETTING_THEME) && tcolor == TEXT_COLOR_BLACK) tcolor = TEXT_COLOR_WHITE;
+      if (getSetting(SETTING_THEME) && tcolor == TEXT_COLOR_BLACK) tcolor = TEXT_COLOR_WHITE;
       color_t tfcolor = textColorToFullColor(tcolor);
       PrintMini(&textX, &textY, itemtext, 0, 0xFFFFFFFF, 0, 0, tfcolor, color_bg, 1, 0); //draw
       curevent++;
@@ -445,15 +445,15 @@ void eventsPane(int retkey, int* pane_keycache) {
   int key;
   EventDate thisday;
   thisday.day = getCurrentDay(); thisday.month = getCurrentMonth(); thisday.year = getCurrentYear();
-  int numevents = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+  int numevents = getEvents(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
   CalendarEvent* calevents = NULL;
   if (numevents > 0) {
     int getnum = (numevents>HOME_EVENTS_DISPLAY_FULL?HOME_EVENTS_DISPLAY_FULL:numevents); // number of events to parse.
     calevents = (CalendarEvent*)alloca(getnum*sizeof(CalendarEvent)); // we don't want to allocate more than what we need for the few events we want to display in full.
-    GetEventsForDate(&thisday, CALENDARFOLDER, calevents, HOME_EVENTS_DISPLAY_FULL);
+    getEvents(&thisday, CALENDARFOLDER, calevents, HOME_EVENTS_DISPLAY_FULL);
   }
   int inscreen = 1;
-  if (GetSetting(SETTING_THEME)) {
+  if (getSetting(SETTING_THEME)) {
     Bdisp_Fill_VRAM( COLOR_BLACK, 2 ); //fill between the status area and f-key area
     DrawFrame( 0x000000  );
   } else {
@@ -461,10 +461,10 @@ void eventsPane(int retkey, int* pane_keycache) {
     DrawFrame( 0xfffff  );
   }
   pane_drawTodayEvents(calevents, 0, 0, numevents, HOME_EVENTS_DISPLAY_FULL);
-  if(GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) drawDayBusyMap(&thisday, 0, LCD_HEIGHT_PX-44, LCD_WIDTH_PX, 15, 1,0,0);
+  if(getSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) drawBusymapDay(&thisday, 0, LCD_HEIGHT_PX-44, LCD_WIDTH_PX, 15, 1,0,0);
   while (inscreen) {
-    if (GetSetting(SETTING_THEME)) DrawFrame( 0x000000  );
-    mGetKey(&key, GetSetting(SETTING_THEME));
+    if (getSetting(SETTING_THEME)) DrawFrame( 0x000000  );
+    mGetKey(&key, getSetting(SETTING_THEME));
     switch(key) {
       case KEY_CTRL_F1:
       case KEY_CTRL_F2:
@@ -480,19 +480,19 @@ void eventsPane(int retkey, int* pane_keycache) {
 }
 
 void memoryUsagePane(int retkey, int* pane_keycache) {
-  if (GetSetting(SETTING_THEME)) DrawFrame(0x000000);
+  if (getSetting(SETTING_THEME)) DrawFrame(0x000000);
   else DrawFrame(0xfffff);
   Bdisp_Fill_VRAM( COLOR_WHITE, 2 ); //fill between the status area and f-key area
-  memoryCapacityViewer(-24);
-  if(GetSetting(SETTING_THEME)) {
-    VRAMReplaceColorInRect(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24*2-1, COLOR_BLACK, COLOR_CYAN);
-    VRAMReplaceColorInRect(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24*2-1, COLOR_WHITE, COLOR_BLACK);
-    VRAMReplaceColorInRect(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24*2-1, COLOR_CYAN, COLOR_WHITE);
+  memoryCapacityScreen(-24);
+  if(getSetting(SETTING_THEME)) {
+    replaceColorInArea(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24*2-1, COLOR_BLACK, COLOR_CYAN);
+    replaceColorInArea(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24*2-1, COLOR_WHITE, COLOR_BLACK);
+    replaceColorInArea(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24*2-1, COLOR_CYAN, COLOR_WHITE);
   }
   while (1) {
     int key;
-    if (GetSetting(SETTING_THEME)) DrawFrame(0x000000);
-    mGetKey(&key, GetSetting(SETTING_THEME));
+    if (getSetting(SETTING_THEME)) DrawFrame(0x000000);
+    mGetKey(&key, getSetting(SETTING_THEME));
     switch(key) {
       case KEY_CTRL_F1:
       case KEY_CTRL_F2:

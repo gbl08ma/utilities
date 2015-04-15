@@ -49,34 +49,35 @@ int getCurrentMinute();
 int getCurrentSecond();
 int getCurrentMillisecond();
 
-long long int DateTime2Unix(int year, int month, int day, int hour, int minute, int second, int millisecond);
+// UEBT - Utilities Epoch-Based Time. Like Unix time but in milliseconds. Epoch is the same.
+long long int dateTimeToUEBT(int year, int month, int day, int hour, int minute, int second, int millisecond);
 
-int getRTCisUnadjusted();
+int isRTCunadjusted();
 
-void currentDateToString(char *buffer, int format=GetSetting(SETTING_DATEFORMAT));
-void dateToString(char *buffer, int y, int m, int d, int format=GetSetting(SETTING_DATEFORMAT));
-void currentTimeToString(char *buffer, int format=GetSetting(SETTING_TIMEFORMAT));
-void timeToString(char *buffer, int h, int min, int sec, int format=GetSetting(SETTING_TIMEFORMAT), int showSeconds=1);
+void currentDateToString(char *buffer, int format=getSetting(SETTING_DATEFORMAT));
+void dateToString(char *buffer, int y, int m, int d, int format=getSetting(SETTING_DATEFORMAT));
+void currentTimeToString(char *buffer, int format=getSetting(SETTING_TIMEFORMAT));
+void timeToString(char *buffer, int h, int min, int sec, int format=getSetting(SETTING_TIMEFORMAT), int showSeconds=1);
 
-long long int currentUnixTime(); // please note, this is milliseconds from epoch and not seconds
-long long int currentUTCUnixTime(); // same as above but adjusted for the offset the user specified for TOTP
+long long int currentUEBT(); // please note, this is milliseconds from epoch and not seconds
+long long int currentUTCUEBT(); // same as above but adjusted for the offset the user specified for TOTP
 
 void setTime(int hour, int minute, int second);
 void setDate(int year, int month, int day);
 
 void blockForTicks(int ticks);
 void blockForMilliseconds(int ms);
-int getMSdiff(int prevticks, int newticks);
+int tickDifferenceToMilliseconds(int prevticks, int newticks);
 
 int isTimeValid(int h, int m, int s);
 int isDateValid(int y, int m, int d);
 
-void DaysToDate(long int d, long int* eyear, long int* emonth, long int* eday);
-long int DateToDays(int y, int m, int d);
+void daysToDate(long int d, long int* eyear, long int* emonth, long int* eday);
+long int dateToDays(int y, int m, int d);
 
-void stringToDate(char* string, int* yr, int* m, int *d, int format = GetSetting(SETTING_DATEFORMAT));
+void stringToDate(char* string, int* yr, int* m, int *d, int format = getSetting(SETTING_DATEFORMAT));
 void stringToTime(char* string, int* h, int* m, int *s);
 
-const char* dateSettingToInputDisplay(int setting = GetSetting(SETTING_DATEFORMAT));
-int isTodayDSTstartEndDate();
+const char* getInputDateFormatHint(int setting = getSetting(SETTING_DATEFORMAT));
+int isDSTchangeToday();
 #endif

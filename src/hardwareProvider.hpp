@@ -38,8 +38,8 @@ void CPU_change_freq(int mult);
 #define P11CR (P10CR+2)
 #define P11DR (P11CR+0x20)
 
-int GetBacklightSubLevel_RAW();
-void SetBacklightSubLevel_RAW(int level);
+int getRawBacklightSubLevel();
+void setRawBacklightSubLevel(int level);
 void getHardwareID(char* buffer);
 int getHardwareModel();
 int getIsEmulated();

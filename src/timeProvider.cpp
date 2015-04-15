@@ -103,7 +103,7 @@ int getDayOfYear(int y, int m, int d) {
 int getWeekNumber(int y, int m, int d) {
   int julian = getDayOfYear(y,m,d);
   // since this is only for display purposes, we can mix settings here:
-  if(GetSetting(SETTING_WEEK_START_DAY)==1) {
+  if(getSetting(SETTING_WEEK_START_DAY)==1) {
     if(julian>1) julian--;
     else { y--; julian = getDayOfYear(y,m,d); }
   }
@@ -151,7 +151,9 @@ int getCurrentMillisecond() {
 #define SECONDS_PER_DAY 86400LL
 #define SECONDS_PER_HOUR 3600LL
 #define SECONDS_PER_MINUTE 60LL
-long long int DateTime2Unix(int year, int month, int day, int hour, int minute, int second, int millisecond)
+
+// UEBT - Utilities Epoch-Based Time. Like Unix time but in milliseconds. Epoch is the same.
+long long int dateTimeToUEBT(int year, int month, int day, int hour, int minute, int second, int millisecond)
 {
   long long int time = 0;
   int yr = 1970;
@@ -196,13 +198,13 @@ long long int DateTime2Unix(int year, int month, int day, int hour, int minute, 
   return time;
 }
 
-int getRTCisUnadjusted() {
+int isRTCunadjusted() {
   //returns 1 if the RTC is unadjusted.
   //this function finds out if the clock is unadjusted if its date/time is set to a previous date/time than 1st Jan 2013 00:00:00.000
   //   (because that date has passed on all timezones and of course no adjusted clock will have it).
   //this function is only meant to be useful for detecting if the RTC performed a reset, e.g. after taking out the batteries.
   //in that case, the RTC usually resets to some date around 2010. So this function will serve its purpose.
-  return ((long long int)KNOWN_PAST_TIMESTAMP > currentUnixTime());
+  return ((long long int)KNOWN_PAST_TIMESTAMP > currentUEBT());
 }
 void currentDateToString(char *buffer, int format) {
   dateToString(buffer, getCurrentYear(), getCurrentMonth(), getCurrentDay(), format);
@@ -231,7 +233,7 @@ void dateToString(char *buffer, int y, int m, int d, int format)
 
 void currentTimeToString(char *buffer, int format)
 {
-  timeToString(buffer, getCurrentHour(), getCurrentMinute(), getCurrentSecond(), format, GetSetting(SETTING_CLOCK_SECONDS));
+  timeToString(buffer, getCurrentHour(), getCurrentMinute(), getCurrentSecond(), format, getSetting(SETTING_CLOCK_SECONDS));
 }
 
 // concatenates (not copies) time to buffer
@@ -263,14 +265,14 @@ void timeToString(char *buffer, int h, int min, int sec, int format, int showSec
 }
 
 
-long long int currentUnixTime() { // please note, this is milliseconds from epoch and not seconds
+long long int currentUEBT() { // please note, this is milliseconds from epoch and not seconds
   unsigned int fhour=0,fminute=0,fsecond=0,millisecond=0;
   RTC_GetTime( &fhour, &fminute, &fsecond, &millisecond );
-  return DateTime2Unix(getCurrentYear(), getCurrentMonth(), getCurrentDay(), getCurrentHour(), getCurrentMinute(), getCurrentSecond(), millisecond);
+  return dateTimeToUEBT(getCurrentYear(), getCurrentMonth(), getCurrentDay(), getCurrentHour(), getCurrentMinute(), getCurrentSecond(), millisecond);
 }
 
-long long int currentUTCUnixTime() {
-  return currentUnixTime() - (long long int)(GetSetting(SETTING_TIMEZONE) - 51) * 15LL*60LL*1000LL;
+long long int currentUTCUEBT() {
+  return currentUEBT() - (long long int)(getSetting(SETTING_TIMEZONE) - 51) * 15LL*60LL*1000LL;
 } 
 
 void setTime(int hour, int minute, int second) {
@@ -323,7 +325,7 @@ void blockForMilliseconds(int ms) { //stop program execution for n milliseconds
   blockForTicks(ticks);
 }
 
-int getMSdiff(int prevticks, int newticks) { // get difference in milliseconds between two amounts of ticks
+int tickDifferenceToMilliseconds(int prevticks, int newticks) { // get difference in milliseconds between two amounts of ticks
   int tickdiff = newticks - prevticks;
   return (tickdiff*1000)/128;
 }
@@ -345,7 +347,7 @@ int isDateValid(int y, int m, int d) {
 // result goes in the three last parameters
 // converts an amount of days to a date
 // result goes in the three last parameters
-void DaysToDate(long day_number, long* year, long* month, long* day) {
+void daysToDate(long day_number, long* year, long* month, long* day) {
   *year = ((long long)10000 * day_number + 14780) / (long long)3652425;
   long ddd = day_number - (365L * *year + *year / 4L - *year / 100 + *year / 400L);
   if (ddd < 0) {
@@ -360,7 +362,7 @@ void DaysToDate(long day_number, long* year, long* month, long* day) {
 
 // converts a date to an amount of days.
 // returns result. parameters stay untouched
-long int DateToDays(int y, int m, int d)
+long int dateToDays(int y, int m, int d)
 {
   long int ly,lm;
   lm = ((long int)m + 9LL) % 12LL;
@@ -416,13 +418,13 @@ static const char *dateSettingInput[] = {"DDMMYYYY",
                                          "MMDDYYYY",
                                          "YYYYMMDD"
                                         };
-const char* dateSettingToInputDisplay(int setting) {
+const char* getInputDateFormatHint(int setting) {
   return dateSettingInput[setting];
 }
 
 // returns true when current day is a DST start or end day in some of the major locations in the world
 // currently returns true for start/end dates for the US and EU
-int isTodayDSTstartEndDate() {
+int isDSTchangeToday() {
   int y = getCurrentYear();
   int d = getCurrentDay();
   return (  d == 14 - (1+y*5/4) % 7 // US start

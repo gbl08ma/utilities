@@ -50,8 +50,8 @@ void mGetKey(int* key, int darkenStatus) {
   //managed GetKey. allows for entering the settings menu from most points in the add-in.
   while (1) {
     DisplayStatusArea(); // it still won't show if it is disabled
-    if(GetSetting(SETTING_DISPLAY_STATUSBAR) && darkenStatus) darkenStatusbar();
-    checkChronoComplete();
+    if(getSetting(SETTING_DISPLAY_STATUSBAR) && darkenStatus) darkenStatusbar();
+    checkChronoComplete(getChronoArrayPtr());
     GetKey(key);
     if (*key == KEY_CTRL_SETUP && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {
       Cursor_SetFlashOff(); // in case we were in an input

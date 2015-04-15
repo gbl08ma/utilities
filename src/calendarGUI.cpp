@@ -39,7 +39,7 @@ int sm, sd = 0;
 int dateselRes = 0; //whether user aborted date selection (0) or not (1)
 void viewCalendar(int dateselection) {
   int res = 0;
-  int type = GetSetting(SETTING_DEFAULT_CALENDAR_VIEW);
+  int type = getSetting(SETTING_DEFAULT_CALENDAR_VIEW);
   if(dateselection) type = 1; // week view can't act as date selector for now
   while(1) {
     if(!dateselection) {
@@ -71,19 +71,19 @@ int viewMonthCalendar(int dateselection) {
   int busydays[32];
   int bufyear = LOWEST_SUPPORTED_YEAR-1;
   while (1) {
-    if(getDBneedsRepairFlag()) repairCalendarDatabase();
+    if(getDBcorruptFlag()) databaseRepairScreen();
     if(y > HIGHEST_SUPPORTED_YEAR || y < LOWEST_SUPPORTED_YEAR) {
       // protection: reset to today's date if somehow we're trying to access the calendar for an unsupported year
       y=getCurrentYear(); m=getCurrentMonth(); d=getCurrentDay();
     }
-    drawCalendar(y,m,d, GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT), eventcount, busydays, &bufmonth, &bufyear);
+    drawCalendar(y,m,d, getSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT), eventcount, busydays, &bufmonth, &bufyear);
     switch (menu) {
     case 1:
       // JUMP, VIEW, INSERT, DEL-ALL, SEARCH, SWAP [white]
       drawFkeyLabels(0x01FC);
       if(!dateselection) {
         drawFkeyLabels(-1, -1, 0x03B4, -1, 0x0187, 0x0102);
-        if(!GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0) {
+        if(!getSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0) {
           drawFkeyLabels(-1, 0x049F, -1, 0x0104);
         }
       }
@@ -108,7 +108,7 @@ int viewMonthCalendar(int dateselection) {
               m = 12;
               y--;
           }
-        } else if (menu == 1 && !dateselection && (!GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0)) {
+        } else if (menu == 1 && !dateselection && (!getSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0)) {
           viewEvents(y, m, d);
         }
         break;
@@ -121,11 +121,11 @@ int viewMonthCalendar(int dateselection) {
           }
         } else if (menu == 1 && !dateselection) {
           int eventsOnDay = 0;
-          if(GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT)) eventsOnDay = eventcount[d];
+          if(getSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT)) eventsOnDay = eventcount[d];
           else {
             EventDate thisday;
             thisday.day = d; thisday.month = m; thisday.year = y;
-            eventsOnDay = GetEventsForDate(&thisday, CALENDARFOLDER, NULL);
+            eventsOnDay = getEvents(&thisday, CALENDARFOLDER, NULL);
           }
           if(eventsOnDay >= MAX_DAY_EVENTS) {
             AUX_DisplayErrorMessage( 0x2E );
@@ -139,8 +139,8 @@ int viewMonthCalendar(int dateselection) {
       case KEY_CTRL_F4:
         if (menu == 2) {
           if (y != HIGHEST_SUPPORTED_YEAR) y++;
-        } else if (menu == 1 && !dateselection && (!GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0)) {
-          if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventUI(y, m, d)) {
+        } else if (menu == 1 && !dateselection && (!getSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) || eventcount[d]>0)) {
+          if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventsPrompt(y, m, d)) {
             bufmonth=0;//force calendar events to reload
           }
         }
@@ -151,7 +151,7 @@ int viewMonthCalendar(int dateselection) {
           m = getCurrentMonth();
           d = getCurrentDay();
         } else if (menu == 1 && !dateselection) {
-          searchEventsGUI(y, m, d);
+          searchEventsScreen(y, m, d);
           if(sy == LOWEST_SUPPORTED_YEAR-1 || !sm || !sd) {} else {
             y = sy;
             m = sm;
@@ -164,7 +164,7 @@ int viewMonthCalendar(int dateselection) {
         if (menu == 2) {
           DefineStatusMessage((char*)"", 1, 0, 0);
           //only update calendar if selection is clean
-          if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"Jump to specific date", (char*)"")) { y=ny;m=nm;d=nd; }
+          if (0 == selectDateScreen(&ny, &nm, &nd, (char*)"Jump to specific date", (char*)"")) { y=ny;m=nm;d=nd; }
         }
         else if (menu == 1 && !dateselection) {
           sy = y;
@@ -174,7 +174,7 @@ int viewMonthCalendar(int dateselection) {
         }
         break;
       case KEY_CTRL_OPTN:
-        if(!dateselection) calendarTools(y, m, d);
+        if(!dateselection) calendarToolsMenu(y, m, d);
       break;
       case KEY_CTRL_UP:
         d-=7;
@@ -265,7 +265,7 @@ int viewWeekCalendar() {
 
   int keepMenuSel=0;
   while(res) {
-    if(getDBneedsRepairFlag()) repairCalendarDatabase();
+    if(getDBcorruptFlag()) databaseRepairScreen();
     if(sy == LOWEST_SUPPORTED_YEAR-1 || !sm || !sd) {
       if(y == LOWEST_SUPPORTED_YEAR-1 || !m || !d) {
         y = getCurrentYear();
@@ -280,23 +280,23 @@ int viewWeekCalendar() {
       sy = LOWEST_SUPPORTED_YEAR-1; sm=0; sd=0;
       jumpToSel=1;
     }
-    res = viewWeekCalendarSub(&menu, &y, &m, &d, &jumpToSel, &keepMenuSel);
+    res = viewWeekCalendarChild(&menu, &y, &m, &d, &jumpToSel, &keepMenuSel);
     if(res==2) return 1;
   }
   return 0;
 }
 
-int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int* keepMenuSel) {
+int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int* keepMenuSel) {
   //returns 1 when it wants to be restarted (refresh tasks)
   //returns 0 if the idea really is to exit the screen
   //returns 2 to switch to month view
   int oy=*y,om=*m,od=*d; //backup originally requested date before modifying it
   // get first date of the week
-  long int ddays=DateToDays(*y, *m, *d);
-  while(dow(*y,*m,*d) != GetSetting(SETTING_WEEK_START_DAY)) { //find sunday/monday before provided date
-    ddays = DateToDays(*y, *m, *d) - 1; //decrease day by 1
+  long int ddays=dateToDays(*y, *m, *d);
+  while(dow(*y,*m,*d) != getSetting(SETTING_WEEK_START_DAY)) { //find sunday/monday before provided date
+    ddays = dateToDays(*y, *m, *d) - 1; //decrease day by 1
     long int ny, nm, nd;
-    DaysToDate(ddays, &ny, &nm, &nd);
+    daysToDate(ddays, &ny, &nm, &nd);
     *y=ny; *m=nm; *d=nd;
   }
   // y,m,d now has first Sunday/Monday of the week, depending on user setting
@@ -318,14 +318,14 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   // get event count only, so we know how many SimpleCalendarEvents to alloc
   while(curday < 7) {
     long int ny, nm, nd;
-    DaysToDate(ddays, &ny, &nm, &nd);
+    daysToDate(ddays, &ny, &nm, &nd);
     EventDate date;
     date.year=ny; date.month=nm; date.day=nd;
     if(!isDateValid(ny,nm,nd)) {
       *y = LOWEST_SUPPORTED_YEAR-1; // one of the dates we're trying to view is not valid (probably because the year is not valid, i.e. below 0 or above 9999).
       return 1; // reload with *y == LOWEST_SUPPORTED_YEAR - 1, this makes it go to today's date.
     }
-    fevcount[curday] = GetEventsForDate(&date, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW);
+    fevcount[curday] = getEvents(&date, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW);
     numevents += fevcount[curday];
     ddays++;
     curday++;
@@ -338,12 +338,12 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   // read events this time, populating menu at the same time
   unsigned int curmenu = 0;
   unsigned int cursce = 0; // current SimpleCalendarEvent, in the end it will have the SimpleCalendarEvent count
-  ddays=DateToDays(*y, *m, *d);
+  ddays=dateToDays(*y, *m, *d);
   char menuitemtext[7][42];
   for(curday=0; curday < 7; curday++) {
     // one menuitem for day header
     long int ny, nm, nd;
-    DaysToDate(ddays, &ny, &nm, &nd);
+    daysToDate(ddays, &ny, &nm, &nd);
     char buffer[15];
     dateToString(buffer, ny, nm, nd);
     // the following string only fits in the menuitemtext because:
@@ -351,7 +351,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
     //  2 - the text variable has a size of 42 bytes, to account for the possibility that all the items are multibyte characters.
     //  (in this case there are no MB chars, so the full 42 bytes can be used)
     if(fevcount[curday]) {
-      if(GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT)) {
+      if(getSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT)) {
         char buffer[10];
         itoa(fevcount[curday], (unsigned char*)buffer);
         strcpy(menuitemtext[curday], buffer);
@@ -375,7 +375,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
       EventDate date;
       date.year=ny; date.month=nm; date.day=nd;
       // read directly into SimpleCalendarEvents
-      GetEventsForDate(&date, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW, events+cursce);
+      getEvents(&date, CALENDARFOLDER, NULL, MAX_DAY_EVENTS_WEEKVIEW, events+cursce);
       for(unsigned int k = 0; k < fevcount[curday]; k++) {
         // build menuitem
         menuitems[curmenu].text = (char*)events[cursce].title;
@@ -386,7 +386,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
     }
     ddays++;
   }
-  if(GetSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) && GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) {
+  if(getSetting(SETTING_SHOW_CALENDAR_EVENTS_COUNT) && getSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) {
     // SETTING_SHOW_CALENDAR_BUSY_MAP is checked because the title only becomes minimini if the busy map is shown
     // if the title is not minimini, there's not enough space for the events count
     strcat(menutitle, " (");
@@ -409,10 +409,10 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
   }
   int hasBusyMap = 0;
   unsigned short busyMapBuffer[LCD_WIDTH_PX*12];
-  if(GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) {
+  if(getSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) {
     menu->miniMiniTitle = 1;
     clearLine(1, 1); //clear background for the map
-    drawWeekBusyMap(*y, *m, *d, 0, 24+14, LCD_WIDTH_PX, 10);
+    drawBusymapWeek(*y, *m, *d, 0, 24+14, LCD_WIDTH_PX, 10);
     // backup busy map so we don't need to redraw it again every time its VRAM location gets overwritten.
     MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 1);
     hasBusyMap=1;
@@ -439,11 +439,11 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
         break;
       case MENU_RETURN_SELECTION:
       case MENU_RETURN_SELECTION_RIGHT:
-        if(msel>0) viewNthEventOnDay(&events[msel-1].startdate, events[msel-1].origpos);
+        if(msel>0) viewEventAtPos(&events[msel-1].startdate, events[msel-1].origpos);
         else if(ssel>0) {
-          long int dd = DateToDays(*y, *m, *d) + ssel-1;
+          long int dd = dateToDays(*y, *m, *d) + ssel-1;
           long int ny, nm, nd;
-          DaysToDate(dd, &ny, &nm, &nd);
+          daysToDate(dd, &ny, &nm, &nd);
           EventDate date;
           date.year = ny; date.month = nm; date.day = nd;
           searchValid = 1;
@@ -457,15 +457,15 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
         break;
       case MENU_RETURN_SCROLLING:
         if(menu->selection == 1) {
-          ddays = DateToDays(*y, *m, *d) - 1; // decrease by one day (go to another week and jump to menu bottom)
+          ddays = dateToDays(*y, *m, *d) - 1; // decrease by one day (go to another week and jump to menu bottom)
           long int ny, nm, nd;
-          DaysToDate(ddays, &ny, &nm, &nd);
+          daysToDate(ddays, &ny, &nm, &nd);
           *y=ny; *m=nm; *d=nd; *jumpToSel=2; // make menu jump to the bottom of the previous week
           return 1;
         } else {
-          ddays = DateToDays(*y, *m, *d) + 7; // increase by one week
+          ddays = dateToDays(*y, *m, *d) + 7; // increase by one week
           long int ny, nm, nd;
-          DaysToDate(ddays, &ny, &nm, &nd);
+          daysToDate(ddays, &ny, &nm, &nd);
           *y=ny; *m=nm; *d=nd; *jumpToSel=1;
           return 1;
         }
@@ -474,11 +474,11 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
         if(menu->fkeypage == 0) {
           menu->fkeypage = 1;
         } else if (menu->fkeypage == 1) {
-          ddays = DateToDays(*y, *m, *d) - 23; // decrease by three weeks
+          ddays = dateToDays(*y, *m, *d) - 23; // decrease by three weeks
           // do not decrease by one month as we will end up going back 5 weeks instead of four
           // (the algorithm looks for the latest Sunday/Monday before the selected date...)
           long int ny, nm, nd;
-          DaysToDate(ddays, &ny, &nm, &nd);
+          daysToDate(ddays, &ny, &nm, &nd);
           *y=ny; *m=nm; *d=nd; *jumpToSel=0;
           return 1;
         }
@@ -486,11 +486,11 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
       case KEY_CTRL_F2:
         if(menu->fkeypage == 0) {
           if(menu->numitems > 0) {
-            if(msel>0) viewNthEventOnDay(&events[msel-1].startdate, events[msel-1].origpos);
+            if(msel>0) viewEventAtPos(&events[msel-1].startdate, events[msel-1].origpos);
             else if(ssel>0) {
-              long int dd = DateToDays(*y, *m, *d) + ssel-1;
+              long int dd = dateToDays(*y, *m, *d) + ssel-1;
               long int ny, nm, nd;
-              DaysToDate(dd, &ny, &nm, &nd);
+              daysToDate(dd, &ny, &nm, &nd);
               EventDate date;
               date.year = ny; date.month = nm; date.day = nd;
               searchValid = 1;
@@ -503,9 +503,9 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
             }
           } 
         } else if (menu->fkeypage == 1) {
-          ddays = DateToDays(*y, *m, *d) - 7; // decrease by one week
+          ddays = dateToDays(*y, *m, *d) - 7; // decrease by one week
           long int ny, nm, nd;
-          DaysToDate(ddays, &ny, &nm, &nd);
+          daysToDate(ddays, &ny, &nm, &nd);
           *y=ny; *m=nm; *d=nd; *jumpToSel=0;
           return 1;
         }
@@ -521,9 +521,9 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
               return 1;
             }
           } else if(ssel>0) {
-            long int dd = DateToDays(*y, *m, *d) + ssel-1;
+            long int dd = dateToDays(*y, *m, *d) + ssel-1;
             long int ny, nm, nd;
-            DaysToDate(dd, &ny, &nm, &nd);
+            daysToDate(dd, &ny, &nm, &nd);
             EventDate date;
             date.year = ny; date.month = nm; date.day = nd;
             searchValid = 1;
@@ -535,9 +535,9 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
             }
           }
         } else if (menu->fkeypage == 1) {
-          ddays = DateToDays(*y, *m, *d) + 7; // increase by one week
+          ddays = dateToDays(*y, *m, *d) + 7; // increase by one week
           long int ny, nm, nd;
-          DaysToDate(ddays, &ny, &nm, &nd);
+          daysToDate(ddays, &ny, &nm, &nd);
           *y=ny; *m=nm; *d=nd;
           return 1;
         }
@@ -548,13 +548,13 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
           EventDate rdate;
           if(msel>0) date = &events[msel-1].startdate;
           else if(ssel>0) {
-            long int dd = DateToDays(*y, *m, *d) + ssel-1;
+            long int dd = dateToDays(*y, *m, *d) + ssel-1;
             long int ny, nm, nd;
-            DaysToDate(dd, &ny, &nm, &nd);
+            daysToDate(dd, &ny, &nm, &nd);
             rdate.year = ny; rdate.month = nm; rdate.day = nd;
             date = &rdate;
           }
-          int existcount = GetEventsForDate(date, CALENDARFOLDER, NULL);
+          int existcount = getEvents(date, CALENDARFOLDER, NULL);
           if(existcount >= MAX_DAY_EVENTS) {
             AUX_DisplayErrorMessage( 0x2E );
           } else {
@@ -565,9 +565,9 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
             }
           }
         } else if (menu->fkeypage == 1) {
-          ddays = DateToDays(*y, *m, *d) + 30; // increase by one month.
+          ddays = dateToDays(*y, *m, *d) + 30; // increase by one month.
           long int ny, nm, nd;
-          DaysToDate(ddays, &ny, &nm, &nd);
+          daysToDate(ddays, &ny, &nm, &nd);
           *y=ny; *m=nm; *d=nd; *jumpToSel=0;
           return 1;
         }
@@ -580,15 +580,15 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
             sem=events[msel-1].startdate.month;
             sed=events[msel-1].startdate.day;
           } else if(ssel>0) {
-            long int dd = DateToDays(*y, *m, *d) + ssel-1;
+            long int dd = dateToDays(*y, *m, *d) + ssel-1;
             long int ny, nm, nd;
-            DaysToDate(dd, &ny, &nm, &nd);
+            daysToDate(dd, &ny, &nm, &nd);
             sey=ny;
             sem=nm;
             sed=nd;
           } else return 1; //this should never happen
           searchValid=1;
-          searchEventsGUI(sey, sem, sed);
+          searchEventsScreen(sey, sem, sed);
           if(sy == LOWEST_SUPPORTED_YEAR-1 || !sm || !sd) {
             if(!searchValid) return 1;
           } else {
@@ -608,9 +608,9 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
             sd = events[msel-1].startdate.day;
           } else {
             if(ssel>0) {
-              long int dd = DateToDays(*y, *m, *d) + ssel-1;
+              long int dd = dateToDays(*y, *m, *d) + ssel-1;
               long int ny, nm, nd;
-              DaysToDate(dd, &ny, &nm, &nd);
+              daysToDate(dd, &ny, &nm, &nd);
               sy = ny;
               sm = nm;
               sd = nd;
@@ -620,7 +620,7 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
         } else if (menu->fkeypage == 1) {
           int ny=0,nm=0,nd=0;
           DefineStatusMessage((char*)"", 1, 0, 0);
-          if (0 == chooseCalendarDate(&ny, &nm, &nd, (char*)"Jump to specific date", (char*)"")) {
+          if (0 == selectDateScreen(&ny, &nm, &nd, (char*)"Jump to specific date", (char*)"")) {
             *y=ny;*m=nm;*d=nd;
             *jumpToSel=1; //if user inserted a specific day, it makes sense to display that day without scrolling.
             return 1;
@@ -629,12 +629,12 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
         break;
       case KEY_CTRL_FORMAT:
         if(menu->numitems > 0 && msel>0) {
-          int ne = GetEventsForDate(&events[msel-1].startdate, CALENDARFOLDER, NULL);
+          int ne = getEvents(&events[msel-1].startdate, CALENDARFOLDER, NULL);
           // we can use alloca here, as we're going to return right after
           CalendarEvent* ce = (CalendarEvent*)alloca(ne*sizeof(CalendarEvent));
-          GetEventsForDate(&events[msel-1].startdate, CALENDARFOLDER, ce);
-          if(EVENTEDITOR_RETURN_CONFIRM == changeEventCategory(&ce[events[msel-1].origpos])) {
-            ReplaceEventFile(&events[msel-1].startdate, ce, CALENDARFOLDER, ne);
+          getEvents(&events[msel-1].startdate, CALENDARFOLDER, ce);
+          if(EVENTEDITOR_RETURN_CONFIRM == setCategoryPrompt(&ce[events[msel-1].origpos])) {
+            replaceEventFile(&events[msel-1].startdate, ce, CALENDARFOLDER, ne);
           }
           *jumpToSel=0;
           *keepMenuSel=1;
@@ -649,12 +649,12 @@ int viewWeekCalendarSub(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int*
           nd = events[msel-1].startdate.day;
         } else {
           if(ssel>0) {
-            long int dd = DateToDays(*y, *m, *d) + ssel-1;
-            DaysToDate(dd, &ny, &nm, &nd);
+            long int dd = dateToDays(*y, *m, *d) + ssel-1;
+            daysToDate(dd, &ny, &nm, &nd);
           }
         }
         searchValid = 1;
-        calendarTools(ny, nm, nd);
+        calendarToolsMenu(ny, nm, nd);
         if(!searchValid) {
           *y=ny; *m=nm; *d=nd;
           *jumpToSel=1;
@@ -682,20 +682,20 @@ void viewEvents(int y, int m, int d) {
   sprintf(menutitle, "Events for %s (%s)", buffer, getDOWAsString(dow(y,m,d)+1));
   menu.title = menutitle;
   while(res) {
-    res = viewEventsSub(&menu, y, m, d);
+    res = viewEventsChild(&menu, y, m, d);
   }
 }
 
-int viewEventsSub(Menu* menu, int y, int m, int d) {
+int viewEventsChild(Menu* menu, int y, int m, int d) {
   //returns 1 when it wants to be restarted (refresh tasks)
   //returns 0 if the idea really is to exit the screen
   EventDate thisday;
   thisday.day = d; thisday.month = m; thisday.year = y;  
   
-  menu->numitems = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+  menu->numitems = getEvents(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
   CalendarEvent* events = (CalendarEvent*)alloca(menu->numitems*sizeof(CalendarEvent));
   MenuItem* menuitems = (MenuItem*)alloca(menu->numitems*sizeof(MenuItem));
-  menu->numitems = GetEventsForDate(&thisday, CALENDARFOLDER, events);
+  menu->numitems = getEvents(&thisday, CALENDARFOLDER, events);
   int curitem = 0;
   while(curitem < menu->numitems) {
     menuitems[curitem].text = (char*)events[curitem].title;
@@ -706,10 +706,10 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
   menu->items=menuitems;
   int hasBusyMap = 0;
   unsigned short busyMapBuffer[LCD_WIDTH_PX*12];
-  if(GetSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) {
+  if(getSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) {
     menu->miniMiniTitle = 1;
     clearLine(1, 1); //clear background for the map
-    drawDayBusyMap(&thisday, 0, 24+14, LCD_WIDTH_PX, 10, 2,0,0);
+    drawBusymapDay(&thisday, 0, 24+14, LCD_WIDTH_PX, 10, 2,0,0);
     // backup busy map so we don't need to redraw it again every time its VRAM location gets overwritten.
     MsgBoxMoveWB(busyMapBuffer, 0, 12, LCD_WIDTH_PX-1, 23, 1);
     hasBusyMap=1;
@@ -733,9 +733,9 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         drawFkeyLabels(0x038D, 0x04D2, 0x0470, -1, -1, 0x0006);
         // "hack" the MOVE label
         unsigned short fgc = Bdisp_GetPoint_VRAM(66, 195); // get color in which function keys are drawn
-        VRAMReplaceColorInRect(67, 195, 58, 18, COLOR_WHITE, COLOR_GREEN);
-        VRAMReplaceColorInRect(67, 195, 58, 18, fgc, COLOR_WHITE);
-        VRAMReplaceColorInRect(67, 195, 58, 18, COLOR_GREEN, fgc);
+        replaceColorInArea(67, 195, 58, 18, COLOR_WHITE, COLOR_GREEN);
+        replaceColorInArea(67, 195, 58, 18, fgc, COLOR_WHITE);
+        replaceColorInArea(67, 195, 58, 18, COLOR_GREEN, fgc);
         for(int x = 0; x < 5; x++) {
           drawLine(125-x, 214, 126, 213-x, COLOR_WHITE);
         }
@@ -749,7 +749,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
       case KEY_CTRL_F1:
         if(menu->fkeypage == 0) { if(menu->numitems > 0) viewEvent(&events[menu->selection-1]); }
         else if (menu->fkeypage == 1) {
-          if(moveEvent(events, menu->numitems, menu->selection-1, 1) == EVENTEDITOR_RETURN_CONFIRM) {
+          if(moveEventScreen(events, menu->numitems, menu->selection-1, 1) == EVENTEDITOR_RETURN_CONFIRM) {
             bufmonth = 0; searchValid = 0;
             return 1;
           }
@@ -769,7 +769,7 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
             }
           }
         } else if (menu->fkeypage == 1) {
-          if(moveEvent(events, menu->numitems, menu->selection-1) == EVENTEDITOR_RETURN_CONFIRM) {
+          if(moveEventScreen(events, menu->numitems, menu->selection-1) == EVENTEDITOR_RETURN_CONFIRM) {
             bufmonth=0; searchValid = 0;
             return 1;
           }
@@ -779,26 +779,26 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
         if(menu->fkeypage == 0) {
           if(menu->numitems > 0) {
             if(eventEditor(y, m, d, EVENTEDITORTYPE_EDIT, &events[menu->selection-1]) == EVENTEDITOR_RETURN_CONFIRM) {
-              ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
+              replaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
               searchValid = 0; bufmonth = 0;
             }
             return 1; //even if the user didn't confirm the changes, we have them in our event list. so we need to reload it to its unmodified state.
           }
         } else if (menu->fkeypage == 1) {
-          setEventChrono(&events[menu->selection-1]);
+          setReminderScreen(&events[menu->selection-1]);
         }
         break;
       case KEY_CTRL_F4:
       case KEY_CTRL_F5:
         if(menu->fkeypage == 0 && menu->numitems > 0) {
           if(EVENTDELETE_RETURN_CONFIRM == \
-            (res == KEY_CTRL_F4 ? deleteEventUI(y, m, d, events, menu->numitems, menu->selection-1) : deleteAllEventUI(y, m, d, 0))) {
+            (res == KEY_CTRL_F4 ? deleteEventPrompt(y, m, d, events, menu->numitems, menu->selection-1) : deleteAllEventsPrompt(y, m, d, 0))) {
             bufmonth = 0; searchValid = 0; return 1;
           }
         }
         break;
       case KEY_CTRL_DEL:
-        if(menu->numitems > 0 && EVENTDELETE_RETURN_CONFIRM == deleteEventUI(y, m, d, events, menu->numitems, menu->selection-1)) {
+        if(menu->numitems > 0 && EVENTDELETE_RETURN_CONFIRM == deleteEventPrompt(y, m, d, events, menu->numitems, menu->selection-1)) {
           bufmonth = 0; searchValid = 0; return 1;
         }
       case KEY_CTRL_F6:
@@ -807,8 +807,8 @@ int viewEventsSub(Menu* menu, int y, int m, int d) {
       case KEY_CTRL_FORMAT:
         //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
         //so on this add-in it is used to change the category (color) of a task/calendar event.
-        if(menu->numitems > 0 && EVENTEDITOR_RETURN_CONFIRM == changeEventCategory(&events[menu->selection-1])) {
-          ReplaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
+        if(menu->numitems > 0 && EVENTEDITOR_RETURN_CONFIRM == setCategoryPrompt(&events[menu->selection-1])) {
+          replaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
           searchValid = 0; return 1;
         }
         break;
@@ -907,7 +907,7 @@ void fillInputDate(int yr, int m, int d, char* buffer) {
     itoa_zeropad(m, month, 2);
     itoa_zeropad(yr, year, 4);
 
-    switch(GetSetting(SETTING_DATEFORMAT)) {
+    switch(getSetting(SETTING_DATEFORMAT)) {
       case 0:
         strcpy(buffer, day);
         strcat(buffer, month);
@@ -1084,7 +1084,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       }
       case 4: {
         drawScreenTitle(NULL, (char*)"End date:");
-        mPrintXY(7, 4, (char*)dateSettingToInputDisplay(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(7, 4, (char*)getInputDateFormatHint(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int textX = 0;
         int textY = 5*24;
         PrintMini(&textX, &textY, (char*)"If left blank, the event will end on", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
@@ -1110,7 +1110,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
               int yr,m,d;
               stringToDate(edbuffer, &yr, &m, &d);
               if(isDateValid(yr, m, d)) {
-                long int datediff = DateToDays(yr, m, d) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
+                long int datediff = dateToDays(yr, m, d) - dateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
                 if(datediff>=0) {
                   event->enddate.year = yr;
                   event->enddate.month = m;
@@ -1135,9 +1135,9 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
                 em = event->startdate.month;
                 ed = event->startdate.day;
               }
-              if(!chooseCalendarDate(&ey, &em, &ed,
+              if(!selectDateScreen(&ey, &em, &ed,
                                     (char*)"Select event end date:", NULL, 1)) {
-                long int datediff = DateToDays(ey, em, ed) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
+                long int datediff = dateToDays(ey, em, ed) - dateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
                 if(datediff>=0) {
                   event->enddate.year = ey;
                   event->enddate.month = em;
@@ -1175,7 +1175,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
                 stringToTime(etbuffer, &h, &m, &s);
                 if(isTimeValid(h, m, s)) {
                   /*long int timediff = (h*60*60+m*60+s) - (event->starttime.hour*60*60+event->starttime.minute*60+event->starttime.second);
-                  long int datediff = DateToDays(event->enddate.year, event->enddate.month, event->enddate.day) - DateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
+                  long int datediff = dateToDays(event->enddate.year, event->enddate.month, event->enddate.day) - dateToDays(event->startdate.year, event->startdate.month, event->startdate.day);
                   if(datediff > 0 || timediff >= 0) {*/
                   EventTime possibleEnd;
                   possibleEnd.hour = h; possibleEnd.minute = m; possibleEnd.second = s;
@@ -1241,7 +1241,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         //event->dayofweek = dow(event->startdate.day, event->startdate.month, event->startdate.year);
         if(type == EVENTEDITORTYPE_ADD) {
           event->repeat = 0;
-          int res = AddEvent(event, CALENDARFOLDER);
+          int res = addEvent(event, CALENDARFOLDER);
           if(res) {
             mMsgBoxPush(4);
             if (res == 4) {
@@ -1282,7 +1282,7 @@ inline static void PrintMiniFix( int x, int y, const char*Msg, const int flags, 
 }
 
 int isWeekendCol(int x) {
-  if(GetSetting(SETTING_WEEK_START_DAY)) {
+  if(getSetting(SETTING_WEEK_START_DAY)) {
     return x == 5 || x == 6;
   } else {
     return x == 0 || x == 6;
@@ -1311,7 +1311,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   int x,y = 0;
   drawRectangle(LEFT+2,TOP+2+THICKNESS,RIGHT-2-2-LEFT,THICKNESS,COLOR_LIGHTGRAY);
   drawRectangle(RIGHT-2-WIDTH,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
-  if(GetSetting(SETTING_WEEK_START_DAY)) drawRectangle(RIGHT-2-WIDTH*2,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
+  if(getSetting(SETTING_WEEK_START_DAY)) drawRectangle(RIGHT-2-WIDTH*2,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
   else drawRectangle(LEFT+2,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
   drawLine(LEFT+2,TOP+2+THICKNESS,RIGHT-3,TOP+2+THICKNESS,COLOR_BLACK);
   for (x = LEFT + 2+WIDTH; x < RIGHT - WIDTH;x+=WIDTH)
@@ -1323,7 +1323,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
       drawLine(LEFT+2,y,RIGHT-3,y,COLOR_BLACK);
   }
 
-  int k = GetSetting(SETTING_WEEK_START_DAY) + 1;
+  int k = getSetting(SETTING_WEEK_START_DAY) + 1;
   for (x = LEFT+2; x < RIGHT - WIDTH; x+= WIDTH)
   {
     textX = x+2;
@@ -1333,9 +1333,9 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   }
 
   int startingday = dow(year,month,1);
-  int startsOnFirstDayOfWeek = startingday == GetSetting(SETTING_WEEK_START_DAY);
+  int startsOnFirstDayOfWeek = startingday == getSetting(SETTING_WEEK_START_DAY);
   int day = 1;
-  int startOnSunday = !GetSetting(SETTING_WEEK_START_DAY);
+  int startOnSunday = !getSetting(SETTING_WEEK_START_DAY);
   int monthStartCol = (startOnSunday ? startingday : (startingday ? startingday - 1 : 6));
   int prevstart = getMonthDays((month == 1 ? 12 : month - 1)) - (startsOnFirstDayOfWeek ? 7 : monthStartCol) + ((month == 3 && isLeap(year)) ? 2 : 1);
   char buffer[10];
@@ -1358,7 +1358,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
       //events indicator:            
       if (show_event_count) {
         if (*bufmonth!=month || *bufyear!=year) { //events in buffer are not for this month, refresh.
-          GetEventCountsForMonth(year, month, eventcount, busydays);
+          getEventCountsForMonth(year, month, eventcount, busydays);
           *bufmonth = month; //update which month is now in buffer
           *bufyear = year; //update which year is now in buffer
         }
@@ -1374,16 +1374,16 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
           PrintMiniMini( &textX, &textY, eventstr, 0, TEXT_COLOR_BLACK, 0 );
           if(day == d) {
             // color replacements for when background is red
-            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+1+24, 8*2, 12, COLOR_WHITE, COLOR_RED);
-            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+1+24, 8*2, 12, COLOR_BLACK, COLOR_WHITE);
+            replaceColorInArea(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+1+24, 8*2, 12, COLOR_WHITE, COLOR_RED);
+            replaceColorInArea(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+1+24, 8*2, 12, COLOR_BLACK, COLOR_WHITE);
           }
         }
         if(busydays[day] > 0 && day != d) {
           if(isWeekendCol(x)) {
-            VRAMReplaceColorInRect(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+1+24, 8*2, 12, COLOR_WHITE, categoryBackColors[busydays[day]]);
-            VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_LIGHTBLUE, categoryBackColors[busydays[day]]);
+            replaceColorInArea(LEFT+2+WIDTH*x+2+12*2+2, TOP+2+y*THICKNESS-TOPOFFSET+1+24, 8*2, 12, COLOR_WHITE, categoryBackColors[busydays[day]]);
+            replaceColorInArea(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_LIGHTBLUE, categoryBackColors[busydays[day]]);
           } else {
-            VRAMReplaceColorInRect(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_WHITE, categoryBackColors[busydays[day]]);
+            replaceColorInArea(LEFT+2+WIDTH*x, TOP+1+2+y*THICKNESS, WIDTH, THICKNESS-1, COLOR_WHITE, categoryBackColors[busydays[day]]);
           }
         }
       }
@@ -1417,19 +1417,19 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
 }
 
-int deleteEventUI(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask) {
+int deleteEventPrompt(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
   mMsgBoxPush(4);
   mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 3, (istask ? (char*)"Selected Task?" : (char*)"Selected Event?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(closeMsgBox(1, 4)) {
-    RemoveEvent(&date, events, CALENDARFOLDER, count, pos);
+    removeEvent(&date, events, CALENDARFOLDER, count, pos);
     return EVENTDELETE_RETURN_CONFIRM;
   }
   return EVENTDELETE_RETURN_EXIT;
 }
 
-int deleteAllEventUI(int y, int m, int d, int istask) {
+int deleteAllEventsPrompt(int y, int m, int d, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
   mMsgBoxPush(4);
   if (istask) {
@@ -1438,13 +1438,13 @@ int deleteAllEventUI(int y, int m, int d, int istask) {
     multiPrintXY(3, 2, "Delete All Events\non Selected Day?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   }
   if(closeMsgBox(1, 4)) {
-    RemoveDay(&date, CALENDARFOLDER);
+    removeDay(&date, CALENDARFOLDER);
     return EVENTDELETE_RETURN_CONFIRM;
   }
   return EVENTDELETE_RETURN_EXIT;
 }
 
-int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, int graphical)
+int selectDateScreen(int *yr, int *m, int *d, char* message, char* message2, int graphical)
 { //returns 0 on success, 1 on user abort
   if(graphical) {
     DefineStatusMessage(message, 1, 0, 0);
@@ -1465,7 +1465,7 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
     SetSetupSetting( (unsigned int)0x14, 0); //we only accept numbers, so switch off alpha/shift
     drawScreenTitle(message, message2);
     mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);  
-    mPrintXY(6, 4, (char*)dateSettingToInputDisplay(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(6, 4, (char*)getInputDateFormatHint(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     
     textInput input;
     input.x=6;
@@ -1493,9 +1493,9 @@ int chooseCalendarDate(int *yr, int *m, int *d, char* message, char* message2, i
   }
 }
 
-int moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
+int moveEventScreen(CalendarEvent* events, int count, int pos, int isCopy) {
   int ey=events[pos].startdate.year, em=events[pos].startdate.month, ed=events[pos].startdate.day;
-  if(!chooseCalendarDate(&ey, &em, &ed, (isCopy ? (char*)"Select date to copy event to:" : (char*)"Select date to move event to:"), NULL, 1)) {
+  if(!selectDateScreen(&ey, &em, &ed, (isCopy ? (char*)"Select date to copy event to:" : (char*)"Select date to move event to:"), NULL, 1)) {
     if(ey == (signed)events[pos].startdate.year && em == (signed)events[pos].startdate.month && ed == (signed)events[pos].startdate.day) {
       return EVENTEDITOR_RETURN_EXIT; //destination date is same as current event date
     }
@@ -1508,22 +1508,22 @@ int moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
     events[pos].startdate.month = em;
     events[pos].startdate.year = ey;
     // calculate new end date based on the difference between the old begin date and the new begin date
-    long int datediff = DateToDays(ey, em, ed) - DateToDays(oldstartdate.year, oldstartdate.month, oldstartdate.day);
-    long int odatedays = DateToDays(events[pos].enddate.year, events[pos].enddate.month, events[pos].enddate.day);
+    long int datediff = dateToDays(ey, em, ed) - dateToDays(oldstartdate.year, oldstartdate.month, oldstartdate.day);
+    long int odatedays = dateToDays(events[pos].enddate.year, events[pos].enddate.month, events[pos].enddate.day);
     long int newdatedays = odatedays + datediff;
     //update end date with difference:
     long int nd,nm,ny;
-    DaysToDate(newdatedays, &ny, &nm, &nd);
+    daysToDate(newdatedays, &ny, &nm, &nd);
     events[pos].enddate.day = nd;
     events[pos].enddate.month = nm;
     events[pos].enddate.year = ny;
     // add event on new day
-    if(GetEventsForDate(&events[pos].startdate, CALENDARFOLDER, NULL)+1 > MAX_DAY_EVENTS) {
+    if(getEvents(&events[pos].startdate, CALENDARFOLDER, NULL)+1 > MAX_DAY_EVENTS) {
       AUX_DisplayErrorMessage( 0x2E );
       return EVENTEDITOR_RETURN_CONFIRM; // do not keep running, as we'd delete the original event, even though the move was not sucessful.
     } else {
       //already checked if passes num limit
-      int res = AddEvent(&events[pos], CALENDARFOLDER);
+      int res = addEvent(&events[pos], CALENDARFOLDER);
       if(res > 0) {
         mMsgBoxPush(4);
         if (res == 4) { //error on size check
@@ -1538,7 +1538,7 @@ int moveEvent(CalendarEvent* events, int count, int pos, int isCopy) {
       }
     }
     // delete event on current (old) day
-    if(!isCopy) RemoveEvent(&oldstartdate, events, CALENDARFOLDER, count, pos);
+    if(!isCopy) removeEvent(&oldstartdate, events, CALENDARFOLDER, count, pos);
     return EVENTEDITOR_RETURN_CONFIRM;
   }
   return EVENTEDITOR_RETURN_EXIT;
@@ -1551,7 +1551,7 @@ void invalidFieldMsg(int istime) {
   closeMsgBox(); 
 }
 
-void setEventChrono(CalendarEvent* event) {
+void setReminderScreen(CalendarEvent* event) {
   // set a downwards chrono that ends on the start time of the event
   // like a event reminder
   
@@ -1565,18 +1565,19 @@ void setEventChrono(CalendarEvent* event) {
   int res = doSelector(&sel);
   if (res == SELECTOR_RETURN_EXIT) return;
   // get unix*1000 time of the event's start time/date
-  long long int estart = DateTime2Unix(event->startdate.year, event->startdate.month, event->startdate.day, event->starttime.hour, event->starttime.minute, event->starttime.second, 0);
+  long long int estart = dateTimeToUEBT(event->startdate.year, event->startdate.month, event->startdate.day, event->starttime.hour, event->starttime.minute, event->starttime.second, 0);
   // get chrono duration (difference between event start time and current time)
   
-  long long int duration = estart - currentUnixTime();
+  long long int duration = estart - currentUEBT();
   mMsgBoxPush(4);
   if(duration < 0) {
     // event is in the past, abort
     multiPrintXY(3, 2, "Event starts in\nthe past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   } else {
     // set downwards chrono with the calculated duration
-    res = setChronoExternal(sel.value-1, duration, CHRONO_TYPE_DOWN);
-    if(res) {
+    chronometer* chr = getChronoArrayPtr();
+    if(chr[sel.value-1].state == CHRONO_STATE_CLEARED) {
+      setChrono(&chr[sel.value-1], duration, CHRONO_TYPE_DOWN);
       // success setting a chrono
       multiPrintXY(3, 2, "Event reminder\nset successfully.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     } else {
@@ -1587,7 +1588,7 @@ void setEventChrono(CalendarEvent* event) {
   closeMsgBox();
 }
 
-int changeEventCategory(CalendarEvent* event) {
+int setCategoryPrompt(CalendarEvent* event) {
   //Allows for changing the category of a event/task with a color select dialog.
   //Returns 1 on success and 0 on user abort
   //Does not save the changes to SMEM (like eventEditor)
@@ -1605,14 +1606,14 @@ int changeEventCategory(CalendarEvent* event) {
   return EVENTEDITOR_RETURN_EXIT;
 }
 
-void viewNthEventOnDay(EventDate* date, int pos) {
-  int num = GetEventsForDate(date, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+void viewEventAtPos(EventDate* date, int pos) {
+  int num = getEvents(date, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
   CalendarEvent* tmpevents = (CalendarEvent*)alloca(num*sizeof(CalendarEvent));
-  GetEventsForDate(date, CALENDARFOLDER, tmpevents);
+  getEvents(date, CALENDARFOLDER, tmpevents);
   viewEvent(&tmpevents[pos]); 
 }
 
-void searchEventsGUI(int y, int m, int d) {
+void searchEventsScreen(int y, int m, int d) {
   mMsgBoxPush(5);
   MenuItem smallmenuitems[5];
   smallmenuitems[0].text = (char*)"Selected year";
@@ -1664,16 +1665,16 @@ void searchEventsGUI(int y, int m, int d) {
   switch(smallmenu.selection) {
     case 1:
     case 2:
-      menu.numitems = SearchEventsOnYearOrMonth(y, (smallmenu.selection==1? 0:m), CALENDARFOLDER, NULL, needle, 200); //get event count
+      menu.numitems = searchEventsOnYearOrMonth(y, (smallmenu.selection==1? 0:m), CALENDARFOLDER, NULL, needle, 200); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
-      menu.numitems = SearchEventsOnYearOrMonth(y, (smallmenu.selection==1? 0:m), CALENDARFOLDER, events, needle, 200);
+      menu.numitems = searchEventsOnYearOrMonth(y, (smallmenu.selection==1? 0:m), CALENDARFOLDER, events, needle, 200);
       break;
     case 3:
     { EventDate sday;
       sday.day = d; sday.month = m; sday.year = y;
-      menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
+      menu.numitems = searchEventsOnDay(&sday, CALENDARFOLDER, NULL, needle, MAX_DAY_EVENTS); //get event count
       events = (SimpleCalendarEvent*)alloca(menu.numitems*sizeof(SimpleCalendarEvent));
-      menu.numitems = SearchEventsOnDay(&sday, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
+      menu.numitems = searchEventsOnDay(&sday, CALENDARFOLDER, events, needle, MAX_DAY_EVENTS);
       break;
     }
     //case 4:
@@ -1707,7 +1708,7 @@ void searchEventsGUI(int y, int m, int d) {
       progressMessage((char*)" Searching...", 0, yearCount);
       for(int i = 0; i < yearCount; i++) {
         int prev = eventsCount;
-        eventsCount += SearchEventsOnYearOrMonth(userStartYear+i, 0, CALENDARFOLDER, NULL, needle, maxEventsPerYear);
+        eventsCount += searchEventsOnYearOrMonth(userStartYear+i, 0, CALENDARFOLDER, NULL, needle, maxEventsPerYear);
         if(eventsCount > prev) { // if there are events on this year...
           searchTop = userStartYear+i;
           if(!searchBottom) searchBottom = userStartYear+i;
@@ -1717,12 +1718,12 @@ void searchEventsGUI(int y, int m, int d) {
       closeProgressMessage();
 
       events = (SimpleCalendarEvent*)alloca(eventsCount*sizeof(SimpleCalendarEvent));
-      eventsCount = 0; // reset array start index to pass to SearchEventsOnYearOrMonth
+      eventsCount = 0; // reset array start index to pass to searchEventsOnYearOrMonth
       const int yearWithEventsCount = searchTop - searchBottom + 1;
 
       progressMessage((char*)" Searching...", 0, yearWithEventsCount);
       for(int i = 0; i < yearWithEventsCount; i++) {
-        eventsCount += SearchEventsOnYearOrMonth(searchBottom+i, 0, CALENDARFOLDER, events+eventsCount, needle, maxEventsPerYear);
+        eventsCount += searchEventsOnYearOrMonth(searchBottom+i, 0, CALENDARFOLDER, events+eventsCount, needle, maxEventsPerYear);
         progressMessage((char*)" Searching...", i+1, yearWithEventsCount);
       }
       closeProgressMessage();
@@ -1751,7 +1752,7 @@ void searchEventsGUI(int y, int m, int d) {
         if(!menu.numitems) break;
       case MENU_RETURN_SELECTION:
       case MENU_RETURN_SELECTION_RIGHT:
-        viewNthEventOnDay(&events[menu.selection-1].startdate, events[menu.selection-1].origpos);
+        viewEventAtPos(&events[menu.selection-1].startdate, events[menu.selection-1].origpos);
         break;
       case KEY_CTRL_F2:
         if(menu.numitems>0) {
@@ -1772,7 +1773,7 @@ void searchEventsGUI(int y, int m, int d) {
   }
 }
 
-void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int height, int showHourMarks, int isWeek, int maxx) {
+void drawBusymapDay(EventDate* thisday, int startx, int starty, int width, int height, int showHourMarks, int isWeek, int maxx) {
   if(!isWeek) drawRectangle(startx, starty, width, height, COLOR_LIGHTGRAY);
   if(showHourMarks) {
     for(int i = 0; i < 24; i++) {
@@ -1781,20 +1782,20 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
       if(showHourMarks==2) plot(startx+tx, starty-2,COLOR_GRAY);
     }
   }
-  int count = GetEventsForDate(thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+  int count = getEvents(thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
   CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
-  count = GetEventsForDate(thisday, CALENDARFOLDER, events);
+  count = getEvents(thisday, CALENDARFOLDER, events);
   int categoryColors[10] = {0xBDF7, COLOR_BLACK, COLOR_BLUE, COLOR_LIMEGREEN, COLOR_CYAN, COLOR_RED, COLOR_MAGENTA, COLOR_YELLOW};
   int curitem = 0;
   while(curitem < count) {
-    long int daysduration = DateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - DateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
+    long int daysduration = dateToDays(events[curitem].enddate.year, events[curitem].enddate.month, events[curitem].enddate.day) - dateToDays(events[curitem].startdate.year, events[curitem].startdate.month, events[curitem].startdate.day);
     long int bwidth = 0;
     if(events[curitem].timed) {
       long int start = events[curitem].starttime.hour*60*60 + events[curitem].starttime.minute*60 + events[curitem].starttime.second;        
       
       long int x = (width*start)/(24*60*60);
       long int duration = daysduration*24*60*60 + events[curitem].endtime.hour*60*60 + events[curitem].endtime.minute*60 + events[curitem].endtime.second - start;
-      if(duration<0) setDBneedsRepairFlag(1); //event ends before it starts, user should repair the DB
+      if(duration<0) setDBcorruptFlag(1); //event ends before it starts, user should repair the DB
       bwidth = (width*duration)/(24*60*60);
       if(bwidth <= 0) bwidth = 1; // always make an event visible
       if((!isWeek) && x+bwidth > width) {
@@ -1808,7 +1809,7 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
       }
       drawRectangle(startx+x, starty, bwidth, height, categoryColors[events[curitem].category]);
     } else if(!events[curitem].timed && isWeek) {
-      if(daysduration<0) setDBneedsRepairFlag(1); //event ends before it starts, user should repair the DB
+      if(daysduration<0) setDBcorruptFlag(1); //event ends before it starts, user should repair the DB
       bwidth = width*(daysduration+1);
       if(startx+bwidth > maxx) {
         bwidth = maxx-startx;
@@ -1818,14 +1819,14 @@ void drawDayBusyMap(EventDate* thisday, int startx, int starty, int width, int h
     curitem++;
   }
 }
-void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int height) {
-  long int ddays=DateToDays(y, m, d);
+void drawBusymapWeek(int y, int m, int d, int startx, int starty, int width, int height) {
+  long int ddays=dateToDays(y, m, d);
   unsigned int curday = 0;
   int daywidth = width/7;
   drawRectangle(startx, starty, daywidth*7, height, COLOR_LIGHTGRAY);
   while(curday < 7) {
     long int ny, nm, nd;
-    DaysToDate(ddays, &ny, &nm, &nd);
+    daysToDate(ddays, &ny, &nm, &nd);
     EventDate date;
     date.year=ny; date.month=nm; date.day=nd;
     if(!isDateValid(ny,nm,nd)) {
@@ -1836,14 +1837,14 @@ void drawWeekBusyMap(int y, int m, int d, int startx, int starty, int width, int
     plot(startx+daywidth*curday,starty-2,COLOR_GRAY);
     if(date.year == (unsigned)getCurrentYear() && date.month == (unsigned)getCurrentMonth() && date.day == (unsigned)getCurrentDay())
       drawRectangle(startx+daywidth*curday+1, starty-2, daywidth-1, 2, COLOR_YELLOW);
-    drawDayBusyMap(&date, startx+curday*daywidth, starty, daywidth, height, 0,curday+1,startx+daywidth*7);
+    drawBusymapDay(&date, startx+curday*daywidth, starty, daywidth, height, 0,curday+1,startx+daywidth*7);
     CopySpriteNbitMasked(busymap_labels[dow(date.year,date.month,date.day)], startx+daywidth*curday+1, starty+1, 17, 7, busymap_labels_palette, 0, 1);
     ddays++;
     curday++;
   }
 }
 
-void calendarTools(int y, int m, int d) {
+void calendarToolsMenu(int y, int m, int d) {
   mMsgBoxPush(6);
   MenuItem smallmenuitems[5];
   smallmenuitems[0].text = (char*)"Count days";
@@ -1871,16 +1872,16 @@ void calendarTools(int y, int m, int d) {
         int y1 = y;
         int m1 = m;
         int d1 = d;
-        if(chooseCalendarDate(&y1, &m1, &d1, (char*)"Select first date", NULL, 1)) return;
+        if(selectDateScreen(&y1, &m1, &d1, (char*)"Select first date", NULL, 1)) return;
         int y2=y1, m2=m1, d2=d1;
-        if(chooseCalendarDate(&y2, &m2, &d2, (char*)"Select second date", NULL, 1)) return;
+        if(selectDateScreen(&y2, &m2, &d2, (char*)"Select second date", NULL, 1)) return;
 
-        int daysdiff = DateToDays(y2, m2, d2) - DateToDays(y1, m1, d1);
+        int daysdiff = dateToDays(y2, m2, d2) - dateToDays(y1, m1, d1);
         int businessdiff = 0;
         int weekdays[7] = {0,0,0,0,0,0,0};
         for(int i = 0; (daysdiff < 0 ? i > daysdiff : i < daysdiff); (daysdiff < 0 ? i-- : i++)) {
           long int ny, nm, nd;
-          DaysToDate(DateToDays(y1, m1, d1)+i, &ny, &nm, &nd);
+          daysToDate(dateToDays(y1, m1, d1)+i, &ny, &nm, &nd);
           int dw = dow(ny, nm, nd);
           if(dw != 0 && dw != 6) (daysdiff < 0 ? businessdiff-- : businessdiff++ );
           weekdays[dw]++;
@@ -1935,9 +1936,9 @@ void calendarTools(int y, int m, int d) {
         doTextArea(&text);
         break;
       }
-      case 2: repairCalendarDatabase(); break;
-      case 3: trimCalendarDatabase(); break;
-      case 4: importCalendarEvents(); break;
+      case 2: databaseRepairScreen(); break;
+      case 3: databaseTrimScreen(); break;
+      case 4: eventImportScreen(); break;
       case 5: {
         setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
         calendarSettingsMenu();
@@ -1948,13 +1949,13 @@ void calendarTools(int y, int m, int d) {
   }  
 }
 
-void repairCalendarDatabase() {
+void databaseRepairScreen() {
   textArea text;
   text.title = (char*)"Database repair";
 
   textElement elem[8];
   text.elements = elem;
-  if(getDBneedsRepairFlag()) {
+  if(getDBcorruptFlag()) {
     elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This often happens when a version of " ADDIN_FRIENDLYNAME " prior to v1.1 has been used, or when events with invalid data are imported.";
     elem[1].text = (char*)"Repairing the database now, to avoid further problems, is very important. After doing it, you should not see this message again.";
   } else {
@@ -1974,7 +1975,7 @@ void repairCalendarDatabase() {
   text.numelements = 4;
   if(!doTextArea(&text)) return;
   
-  setDBneedsRepairFlag(0);
+  setDBcorruptFlag(0);
   text.type = TEXTAREATYPE_INSTANT_RETURN;
   text.allowF1 = 0;
   text.scrollbar=0;
@@ -2029,7 +2030,7 @@ void repairCalendarDatabase() {
         Bdisp_PutDisp_DD();
         loopc = 0;
       } else loopc++;
-      repairEventsFile((char*)buffer, CALENDARFOLDER, &checkedevents, &problemsfound);
+      repairEventFile((char*)buffer, CALENDARFOLDER, &checkedevents, &problemsfound);
       checkedfiles++;
     }
     ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
@@ -2054,11 +2055,11 @@ void repairCalendarDatabase() {
 
 int trimCalendarCategoryHelper(EventDate* date, const int delcat) {
   // returns 1 if whole file is to be deleted, 0 otherwise
-  int ne = GetEventsForDate(date, CALENDARFOLDER, NULL);
+  int ne = getEvents(date, CALENDARFOLDER, NULL);
   int didChanges = 0;
   // we can use alloca here, as we're going to return right after
   CalendarEvent* ce = (CalendarEvent*)alloca(ne*sizeof(CalendarEvent));
-  GetEventsForDate(date, CALENDARFOLDER, ce);
+  getEvents(date, CALENDARFOLDER, ce);
   for(int i = 0; i < ne; i++) {
     if(ce[i].category == (unsigned int)delcat) {
       if(ne == 1) return 1; // there was only one event remaining, delete file
@@ -2068,10 +2069,10 @@ int trimCalendarCategoryHelper(EventDate* date, const int delcat) {
       ne--; //this "deletes" the event
     }
   }
-  if(didChanges) ReplaceEventFile(date, ce, CALENDARFOLDER, ne);
+  if(didChanges) replaceEventFile(date, ce, CALENDARFOLDER, ne);
   return 0;
 }
-void trimCalendarDatabase() {
+void databaseTrimScreen() {
   textArea text;
   text.title = (char*)"Trim database";
   text.type = TEXTAREATYPE_INSTANT_RETURN;
@@ -2115,7 +2116,7 @@ void trimCalendarDatabase() {
       case 1:
       {
         int y = edgedate.year, m = edgedate.month, d = edgedate.day;
-        if(chooseCalendarDate(&y, &m, &d, (char*)"Trim all events before:", NULL, 1)) return;
+        if(selectDateScreen(&y, &m, &d, (char*)"Trim all events before:", NULL, 1)) return;
         edgedate.year = y; edgedate.month = m; edgedate.day = d;
         break;
       }
@@ -2222,7 +2223,7 @@ void trimCalendarDatabase() {
 }
 int importHelper(EventDate* date, int count, textArea* text, textElement* elem, int initSuc) {
   CalendarEvent* events = (CalendarEvent*)alloca(count*sizeof(CalendarEvent));
-  GetEventsForDate(date, CALENDARFOLDER, events);
+  getEvents(date, CALENDARFOLDER, events);
   int successful = initSuc;
   for(int curitem = 0; curitem < count; curitem++) {
     char buffer1[20];
@@ -2231,11 +2232,11 @@ int importHelper(EventDate* date, int count, textArea* text, textElement* elem, 
     doTextArea(text);
     Bdisp_PutDisp_DD();
     // add the event. this will automatically put it in the correct file in the database.
-    if(!AddEvent(&events[curitem], CALENDARFOLDER)) successful++;
+    if(!addEvent(&events[curitem], CALENDARFOLDER)) successful++;
   }
   return successful;
 }
-void importCalendarEvents() {
+void eventImportScreen() {
   textArea text;
   text.title = (char*)"Import events";
 
@@ -2275,11 +2276,11 @@ void importCalendarEvents() {
   thisday.month = 0; thisday.year = 0;
   int successful = 0;
   for(thisday.day = 1; thisday.day<100; thisday.day++) {
-    int count = GetEventsForDate(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+    int count = getEvents(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
     if(count && count<=MAX_DAY_EVENTS) {
       successful = importHelper(&thisday, count, &text, elem, successful);
       // delete so we don't import this day again, if user calls the import function again.
-      RemoveDay(&thisday, CALENDARFOLDER);
+      removeDay(&thisday, CALENDARFOLDER);
     }
   }
   text.type = TEXTAREATYPE_NORMAL;

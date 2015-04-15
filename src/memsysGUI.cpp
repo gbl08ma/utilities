@@ -23,7 +23,7 @@
 #include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
 
-// the following two functions are auxiliars to memoryCapacityViewer
+// the following two functions are auxiliars to memoryCapacityScreen
 void drawCapacityBar(int textY, long long int cur, long long int full) {
   long long int barwidthcpl = (long long int)(LCD_WIDTH_PX*cur)/(long long int)full;
   drawRectangle(0, textY+24, LCD_WIDTH_PX, 20, COLOR_GRAY);
@@ -39,9 +39,9 @@ void drawCapacityBar(int textY, long long int cur, long long int full) {
   PrintMiniMini( &textX, &textY, buffer, 0, TEXT_COLOR_CYAN, 0 ); //draw  
   
   textY += 19;
-  VRAMReplaceColorInRect(0, textY, LCD_WIDTH_PX, 20, COLOR_WHITE, COLOR_GRAY);  
-  VRAMReplaceColorInRect(0, textY, barwidthcpl, 20, COLOR_GRAY, COLOR_BLUE);
-  VRAMReplaceColorInRect(0, textY, LCD_WIDTH_PX, 20, COLOR_CYAN, COLOR_WHITE);
+  replaceColorInArea(0, textY, LCD_WIDTH_PX, 20, COLOR_WHITE, COLOR_GRAY);  
+  replaceColorInArea(0, textY, barwidthcpl, 20, COLOR_GRAY, COLOR_BLUE);
+  replaceColorInArea(0, textY, LCD_WIDTH_PX, 20, COLOR_CYAN, COLOR_WHITE);
 }
 
 void drawCapacityText(int* textY, const char* desc, int cur, int full) {
@@ -56,7 +56,7 @@ void drawCapacityText(int* textY, const char* desc, int cur, int full) {
   *textY = *textY + 12;
 }
 
-void memoryCapacityViewer(int isPaneOffset) {
+void memoryCapacityScreen(int isPaneOffset) {
   if(!isPaneOffset) {
     Bdisp_AllClr_VRAM();
     drawScreenTitle((char*)"Memory Usage");
@@ -90,7 +90,7 @@ void memoryCapacityViewer(int isPaneOffset) {
   }
 }
 
-int GetAddins(AddIn addins[]) {
+int getAddins(AddIn addins[]) {
   /*searches storage memory for active and inactive add-ins, returns their count*/
   unsigned short path[MAX_FILENAME_SIZE+1], path2[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
@@ -135,16 +135,16 @@ void addinManager() {
   menu.nodatamsg = (char*)"No Add-Ins";
   menu.title = (char*)"Add-In Manager";
   while(res) {
-    res = addinManagerSub(&menu);
+    res = addinManagerChild(&menu);
   }
 }
 
-int addinManagerSub(Menu* menu) {
+int addinManagerChild(Menu* menu) {
   //returns 1 when it wants to be restarted (refresh addins)
   //returns 0 if the idea really is to exit the screen
   AddIn addins[200]; 
   
-  menu->numitems = GetAddins(addins);
+  menu->numitems = getAddins(addins);
   MenuItem* menuitems = (MenuItem*)alloca(menu->numitems*sizeof(MenuItem));
   menu->items = menuitems;
  

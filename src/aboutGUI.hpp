@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-void showAbout();
-void buildExpiredMessage();
+void aboutScreen();
+void buildExpiredScreen();
 
 #endif

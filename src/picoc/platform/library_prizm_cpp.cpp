@@ -1267,12 +1267,12 @@ const struct LibraryFunction PrizmSystemSyscalls[] =
 
 // aboutGUI
 
-pcvoid(showAbout)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    showAbout();
+pcvoid(aboutScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    aboutScreen();
 }
 
-pcvoid(buildExpiredMessage)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    buildExpiredMessage();
+pcvoid(buildExpiredScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    buildExpiredScreen();
 }
 
 // calendarGUI
@@ -1289,8 +1289,8 @@ pcvoid(viewWeekCalendar)(struct ParseState *Parser, struct Value *ReturnValue, s
     ReturnValue->Val->Integer = viewWeekCalendar();
 }
 
-pcvoid(viewWeekCalendarSub)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = viewWeekCalendarSub((Menu*)Param[0]->Val->Pointer, (int*)Param[1]->Val->Pointer, (int*)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer, (int*)Param[4]->Val->Pointer, (int*)Param[5]->Val->Pointer);
+pcvoid(viewWeekCalendarChild)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = viewWeekCalendarChild((Menu*)Param[0]->Val->Pointer, (int*)Param[1]->Val->Pointer, (int*)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer, (int*)Param[4]->Val->Pointer, (int*)Param[5]->Val->Pointer);
 }
 
 pcvoid(viewEvents)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1301,8 +1301,8 @@ pcvoid(viewEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct V
     viewEvent((CalendarEvent*)Param[0]->Val->Pointer, Param[1]->Val->Integer);
 }
 
-pcvoid(viewEventsSub)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = viewEventsSub((Menu*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer);
+pcvoid(viewEventsChild)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = viewEventsChild((Menu*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer);
 }
 
 pcvoid(fillInputDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1321,126 +1321,126 @@ pcvoid(drawCalendar)(struct ParseState *Parser, struct Value *ReturnValue, struc
     drawCalendar(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, (int*)Param[4]->Val->Pointer, (int*)Param[5]->Val->Pointer, (int*)Param[6]->Val->Pointer, (int*)Param[7]->Val->Pointer);
 }
 
-pcvoid(moveEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = moveEvent((CalendarEvent*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer);
+pcvoid(moveEventScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = moveEventScreen((CalendarEvent*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer);
 }
 
-pcvoid(deleteEventUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = deleteEventUI(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, (CalendarEvent*)Param[3]->Val->Pointer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer);
+pcvoid(deleteEventPrompt)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = deleteEventPrompt(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, (CalendarEvent*)Param[3]->Val->Pointer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer);
 }
 
-pcvoid(deleteAllEventUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = deleteAllEventUI(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer);
+pcvoid(deleteAllEventsPrompt)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = deleteAllEventsPrompt(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer);
 }
 
-pcvoid(chooseCalendarDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = chooseCalendarDate((int*)Param[0]->Val->Pointer, (int*)Param[1]->Val->Pointer, (int*)Param[2]->Val->Pointer, (char*)Param[3]->Val->Pointer, (char*)Param[4]->Val->Pointer, Param[5]->Val->Integer);
+pcvoid(selectDateScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = selectDateScreen((int*)Param[0]->Val->Pointer, (int*)Param[1]->Val->Pointer, (int*)Param[2]->Val->Pointer, (char*)Param[3]->Val->Pointer, (char*)Param[4]->Val->Pointer, Param[5]->Val->Integer);
 }
 
 pcvoid(invalidFieldMsg)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     invalidFieldMsg(Param[0]->Val->Integer);
 }
 
-pcvoid(setEventChrono)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    setEventChrono((CalendarEvent*)Param[0]->Val->Pointer);
+pcvoid(setReminderScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setReminderScreen((CalendarEvent*)Param[0]->Val->Pointer);
 }
 
-pcvoid(changeEventCategory)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = changeEventCategory((CalendarEvent*)Param[0]->Val->Pointer);
+pcvoid(setCategoryPrompt)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = setCategoryPrompt((CalendarEvent*)Param[0]->Val->Pointer);
 }
 
-pcvoid(viewNthEventOnDay)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    viewNthEventOnDay((EventDate*)Param[0]->Val->Pointer, Param[1]->Val->Integer);
+pcvoid(viewEventAtPos)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    viewEventAtPos((EventDate*)Param[0]->Val->Pointer, Param[1]->Val->Integer);
 }
 
-pcvoid(searchEventsGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    searchEventsGUI(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer);
+pcvoid(searchEventsScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    searchEventsScreen(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer);
 }
 
-pcvoid(drawDayBusyMap)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    drawDayBusyMap((EventDate*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer, Param[7]->Val->Integer);
+pcvoid(drawBusymapDay)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    drawBusymapDay((EventDate*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer, Param[7]->Val->Integer);
 }
 
-pcvoid(drawWeekBusyMap)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    drawWeekBusyMap(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer);
+pcvoid(drawBusymapWeek)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    drawBusymapWeek(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer);
 }
 
-pcvoid(calendarTools)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    calendarTools(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer);
+pcvoid(calendarToolsMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    calendarToolsMenu(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer);
 }
 
-pcvoid(repairCalendarDatabase)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    repairCalendarDatabase();
+pcvoid(databaseRepairScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    databaseRepairScreen();
 }
 
-pcvoid(trimCalendarDatabase)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    trimCalendarDatabase();
+pcvoid(databaseTrimScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    databaseTrimScreen();
 }
 
-pcvoid(importCalendarEvents)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    importCalendarEvents();
+pcvoid(eventImportScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    eventImportScreen();
 }
 
 // calendarProvider
 
-pcvoid(calEventToChar)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    calEventToChar((CalendarEvent*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
+pcvoid(eventToString)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    eventToString((CalendarEvent*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
-pcvoid(charToCalEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    charToCalEvent((char*)Param[0]->Val->Pointer, (CalendarEvent*)Param[1]->Val->Pointer);
+pcvoid(stringToEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    stringToEvent((char*)Param[0]->Val->Pointer, (CalendarEvent*)Param[1]->Val->Pointer);
 }
 
-pcvoid(charToSimpleCalEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    charToSimpleCalEvent((char*)Param[0]->Val->Pointer, (SimpleCalendarEvent*)Param[1]->Val->Pointer);
+pcvoid(stringToSimpleEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    stringToSimpleEvent((char*)Param[0]->Val->Pointer, (SimpleCalendarEvent*)Param[1]->Val->Pointer);
 }
 
-pcvoid(smemFilenameFromDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    smemFilenameFromDate((EventDate*)Param[0]->Val->Pointer, (unsigned short*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer);
+pcvoid(eventDateToFilename)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    eventDateToFilename((EventDate*)Param[0]->Val->Pointer, (unsigned short*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer);
 }
 
-pcvoid(AddEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = AddEvent((CalendarEvent*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
+pcvoid(addEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = addEvent((CalendarEvent*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
-pcvoid(ReplaceEventFile)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = ReplaceEventFile((EventDate*)Param[0]->Val->Pointer, (CalendarEvent*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer, Param[3]->Val->Integer);
+pcvoid(replaceEventFile)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = replaceEventFile((EventDate*)Param[0]->Val->Pointer, (CalendarEvent*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer, Param[3]->Val->Integer);
 }
 
-pcvoid(RemoveEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    RemoveEvent((EventDate*)Param[0]->Val->Pointer, (CalendarEvent*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer, Param[3]->Val->Integer, Param[4]->Val->Integer);
+pcvoid(removeEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    removeEvent((EventDate*)Param[0]->Val->Pointer, (CalendarEvent*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer, Param[3]->Val->Integer, Param[4]->Val->Integer);
 }
 
-pcvoid(RemoveDay)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    RemoveDay((EventDate*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
+pcvoid(removeDay)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    removeDay((EventDate*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
-pcvoid(GetEventsForDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = GetEventsForDate((EventDate*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, (CalendarEvent*)Param[2]->Val->Pointer, Param[3]->Val->Integer, (SimpleCalendarEvent*)Param[4]->Val->Pointer);
+pcvoid(getEvents)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = getEvents((EventDate*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, (CalendarEvent*)Param[2]->Val->Pointer, Param[3]->Val->Integer, (SimpleCalendarEvent*)Param[4]->Val->Pointer);
 }
 
-pcvoid(GetEventCountsForMonth)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    GetEventCountsForMonth(Param[0]->Val->Integer, Param[1]->Val->Integer, (int*)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer);
+pcvoid(getEventCountsForMonth)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    getEventCountsForMonth(Param[0]->Val->Integer, Param[1]->Val->Integer, (int*)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer);
 }
 
-pcvoid(SearchEventsOnDay)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = SearchEventsOnDay((EventDate*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, (SimpleCalendarEvent*)Param[2]->Val->Pointer, (char*)Param[3]->Val->Pointer, Param[4]->Val->Integer);
+pcvoid(searchEventsOnDay)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = searchEventsOnDay((EventDate*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, (SimpleCalendarEvent*)Param[2]->Val->Pointer, (char*)Param[3]->Val->Pointer, Param[4]->Val->Integer);
 }
 
-pcvoid(SearchEventsOnYearOrMonth)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = SearchEventsOnYearOrMonth(Param[0]->Val->Integer, Param[1]->Val->Integer, (char*)Param[2]->Val->Pointer, (SimpleCalendarEvent*)Param[3]->Val->Pointer, (char*)Param[4]->Val->Pointer, Param[5]->Val->Integer);
+pcvoid(searchEventsOnYearOrMonth)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = searchEventsOnYearOrMonth(Param[0]->Val->Integer, Param[1]->Val->Integer, (char*)Param[2]->Val->Pointer, (SimpleCalendarEvent*)Param[3]->Val->Pointer, (char*)Param[4]->Val->Pointer, Param[5]->Val->Integer);
 }
 
-pcvoid(repairEventsFile)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    repairEventsFile((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, (int*)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer);
+pcvoid(repairEventFile)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    repairEventFile((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, (int*)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer);
 }
 
-pcvoid(setDBneedsRepairFlag)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    setDBneedsRepairFlag(Param[0]->Val->Integer);
+pcvoid(setDBcorruptFlag)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setDBcorruptFlag(Param[0]->Val->Integer);
 }
 
-pcvoid(getDBneedsRepairFlag)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = getDBneedsRepairFlag();
+pcvoid(getDBcorruptFlag)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = getDBcorruptFlag();
 }
 
 // chronoGUI
@@ -1469,20 +1469,20 @@ pcvoid(clearSelectedChronos)(struct ParseState *Parser, struct Value *ReturnValu
     clearSelectedChronos((Menu*)Param[0]->Val->Pointer, (chronometer*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
-pcvoid(setChronoGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    setChronoGUI((Menu*)Param[0]->Val->Pointer, (chronometer*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
+pcvoid(setChronoScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setChronoScreen((Menu*)Param[0]->Val->Pointer, (chronometer*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
-pcvoid(setBuiltinChrono)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    setBuiltinChrono((Menu*)Param[0]->Val->Pointer, (chronometer*)Param[1]->Val->Pointer);
+pcvoid(setPresetChrono)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setPresetChrono((Menu*)Param[0]->Val->Pointer, (chronometer*)Param[1]->Val->Pointer);
 }
 
-pcvoid(getLastChronoComplete)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = getLastChronoComplete();
+pcvoid(getLastCompleteChrono)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = getLastCompleteChrono();
 }
 
-pcvoid(checkDownwardsChronoCompleteGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    checkDownwardsChronoCompleteGUI((chronometer*)Param[0]->Val->Pointer, Param[1]->Val->Integer);
+pcvoid(checkChronoComplete)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    checkChronoComplete((chronometer*)Param[0]->Val->Pointer);
 }
 
 // chronoProvider
@@ -1521,20 +1521,10 @@ pcvoid(setChronoArrayPtr)(struct ParseState *Parser, struct Value *ReturnValue, 
     setChronoArrayPtr((chronometer*)Param[0]->Val->Pointer);
 }
 
-pcvoid(checkChronoComplete)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    checkChronoComplete();
-}
-
-pcvoid(setChronoExternal)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    long long int p1 = (long long int) Param[1]->Val->Integer << 32 | Param[2]->Val->Integer;
-    long long int p2 = (long long int) Param[3]->Val->Integer << 32 | Param[4]->Val->Integer;
-    setChronoExternal(Param[0]->Val->Integer, p1, p2);
-}
-
 // editorGUI
 
-pcvoid(fileTextEditor)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    fileTextEditor((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
+pcvoid(textfileEditor)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    textfileEditor((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
 // fileGUI
@@ -1543,48 +1533,48 @@ pcvoid(fileManager)(struct ParseState *Parser, struct Value *ReturnValue, struct
     fileManager();
 }
 
-pcvoid(fillMenuStatusWithClip)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    fillMenuStatusWithClip((char*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer);
+pcvoid(getFileManagerStatus)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    getFileManagerStatus((char*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer);
 }
 
-pcvoid(fileManagerSub)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = fileManagerSub((char*)Param[0]->Val->Pointer, (int*)Param[1]->Val->Pointer, (int*)Param[2]->Val->Integer, (int*)Param[3]->Val->Integer, (File*)Param[4]->Val->Integer, (char*)Param[5]->Val->Integer);
+pcvoid(fileManagerChild)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = fileManagerChild((char*)Param[0]->Val->Pointer, (int*)Param[1]->Val->Pointer, (int*)Param[2]->Val->Integer, (int*)Param[3]->Val->Integer, (File*)Param[4]->Val->Integer, (char*)Param[5]->Val->Integer);
 }
 
-pcvoid(deleteFilesGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = deleteFilesGUI((File*)Param[0]->Val->Pointer, (Menu*)Param[1]->Val->Pointer);
+pcvoid(deleteFilesPrompt)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = deleteFilesPrompt((File*)Param[0]->Val->Pointer, (Menu*)Param[1]->Val->Pointer);
 }
 
-pcvoid(makeFolderGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = makeFolderGUI((char*)Param[0]->Val->Pointer);
+pcvoid(newFolderScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = newFolderScreen((char*)Param[0]->Val->Pointer);
 }
 
-pcvoid(makeg3pGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = makeg3pGUI((char*)Param[0]->Val->Pointer);
+pcvoid(newG3Pscreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = newG3Pscreen((char*)Param[0]->Val->Pointer);
 }
 
-pcvoid(renameFileGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = renameFileGUI((File*)Param[0]->Val->Pointer, (Menu*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer);
+pcvoid(renameFileScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = renameFileScreen((File*)Param[0]->Val->Pointer, (Menu*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer);
 }
 
-pcvoid(searchFilesGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = searchFilesGUI((char*)Param[0]->Val->Pointer, Param[1]->Val->Integer);
+pcvoid(searchFilesScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = searchFilesScreen((char*)Param[0]->Val->Pointer, Param[1]->Val->Integer);
 }
 
-pcvoid(fileInformation)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = fileInformation((File*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer);
+pcvoid(viewFileInfo)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = viewFileInfo((File*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer);
 }
 
-pcvoid(fileViewAsText)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    fileViewAsText((char*)Param[0]->Val->Pointer);
+pcvoid(viewFileAsText)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    viewFileAsText((char*)Param[0]->Val->Pointer);
 }
 
-pcvoid(viewFilesInClipboard)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    viewFilesInClipboard((File*)Param[0]->Val->Pointer, (int*)Param[1]->Val->Pointer);
+pcvoid(viewClipboard)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    viewClipboard((File*)Param[0]->Val->Pointer, (int*)Param[1]->Val->Pointer);
 }
 
-pcvoid(folderStatistics)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    folderStatistics((File*)Param[0]->Val->Pointer, (Menu*)Param[1]->Val->Pointer);
+pcvoid(folderStatsScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    folderStatsScreen((File*)Param[0]->Val->Pointer, (Menu*)Param[1]->Val->Pointer);
 }
 
 pcvoid(compressSelectedFiles)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1603,22 +1593,22 @@ pcvoid(buildIconTable)(struct ParseState *Parser, struct Value *ReturnValue, str
     buildIconTable((MenuItemIcon*)Param[0]->Val->Pointer);
 }
 
-pcvoid(overwriteFileGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = overwriteFileGUI((char*)Param[0]->Val->Pointer);
+pcvoid(overwriteFilePrompt)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = overwriteFilePrompt((char*)Param[0]->Val->Pointer);
 }
 
 // fileProvider
 
-pcvoid(insertSortFileMenuArray)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    insertSortFileMenuArray((File*)Param[0]->Val->Pointer, (MenuItem*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
+pcvoid(sortFilesMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    sortFilesMenu((File*)Param[0]->Val->Pointer, (MenuItem*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
-pcvoid(GetAnyFiles)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = GetAnyFiles((File*)Param[0]->Val->Pointer, (MenuItem*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer);
+pcvoid(getFiles)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = getFiles((File*)Param[0]->Val->Pointer, (MenuItem*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer);
 }
 
-pcvoid(SearchForFiles)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = SearchForFiles((File*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer, (int*)Param[7]->Val->Pointer, Param[8]->Val->Integer);
+pcvoid(searchForFiles)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = searchForFiles((File*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer, (int*)Param[7]->Val->Pointer, Param[8]->Val->Integer);
 }
 
 pcvoid(deleteFiles)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1629,20 +1619,20 @@ pcvoid(renameFile)(struct ParseState *Parser, struct Value *ReturnValue, struct 
     renameFile((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
-pcvoid(nameFromFilename)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    nameFromFilename((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
+pcvoid(filenameToName)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    filenameToName((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
 pcvoid(copyFile)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     copyFile((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
-pcvoid(filePasteClipboardItems)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    filePasteClipboardItems((File*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
+pcvoid(pasteClipboard)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    pasteClipboard((File*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
-pcvoid(fileIconFromName)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = fileIconFromName((char*)Param[0]->Val->Pointer);
+pcvoid(filenameToIcon)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = filenameToIcon((char*)Param[0]->Val->Pointer);
 }
 
 pcvoid(stringEndsInG3A)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1689,12 +1679,12 @@ pcvoid(drawCircularCountdownIndicator)(struct ParseState *Parser, struct Value *
     drawCircularCountdownIndicator(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->UnsignedShortInteger, Param[4]->Val->UnsignedShortInteger, Param[5]->Val->Integer, Param[6]->Val->Integer);
 }
 
-pcvoid(VRAMReplaceColorInRect)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    VRAMReplaceColorInRect(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->UnsignedShortInteger, Param[5]->Val->UnsignedShortInteger);
+pcvoid(replaceColorInArea)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    replaceColorInArea(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->UnsignedShortInteger, Param[5]->Val->UnsignedShortInteger);
 }
 
-pcvoid(VRAMInvertArea)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    VRAMInvertArea(Param[0]->Val->ShortInteger, Param[1]->Val->ShortInteger, Param[2]->Val->ShortInteger, Param[3]->Val->ShortInteger);
+pcvoid(invertArea)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    invertArea(Param[0]->Val->ShortInteger, Param[1]->Val->ShortInteger, Param[2]->Val->ShortInteger, Param[3]->Val->ShortInteger);
 }
 
 pcvoid(darkenStatusbar)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1765,8 +1755,8 @@ pcvoid(popAllMsgBoxes)(struct ParseState *Parser, struct Value *ReturnValue, str
     popAllMsgBoxes();
 }
 
-pcvoid(getNumberOfMsgBoxPushed)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = getNumberOfMsgBoxPushed();
+pcvoid(getMsgBoxCount)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = getMsgBoxCount();
 }
 
 pcvoid(drawScreenTitle)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1787,12 +1777,12 @@ pcvoid(CPU_change_freq)(struct ParseState *Parser, struct Value *ReturnValue, st
     CPU_change_freq(Param[0]->Val->Integer);
 }
 
-pcvoid(GetBacklightSubLevel_RAW)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = GetBacklightSubLevel_RAW();
+pcvoid(getRawBacklightSubLevel)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = getRawBacklightSubLevel();
 }
 
-pcvoid(SetBacklightSubLevel_RAW)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    SetBacklightSubLevel_RAW(Param[0]->Val->Integer);
+pcvoid(setRawBacklightSubLevel)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setRawBacklightSubLevel(Param[0]->Val->Integer);
 }
 
 pcvoid(getHardwareID)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1813,8 +1803,8 @@ pcvoid(setBrightnessToStartupSetting)(struct ParseState *Parser, struct Value *R
 
 // homeGUI
 
-pcvoid(showHome)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    showHome();
+pcvoid(homeScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    homeScreen();
 }
 
 pcvoid(powerMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1946,20 +1936,20 @@ pcvoid(isPasswordSet)(struct ParseState *Parser, struct Value *ReturnValue, stru
 
 // memsysGUI
 
-pcvoid(memoryCapacityViewer)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    memoryCapacityViewer(Param[0]->Val->Integer);
+pcvoid(memoryCapacityScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    memoryCapacityScreen(Param[0]->Val->Integer);
 }
 
-pcvoid(GetAddins)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = GetAddins((AddIn*)Param[0]->Val->Pointer);
+pcvoid(getAddins)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = getAddins((AddIn*)Param[0]->Val->Pointer);
 }
 
 pcvoid(addinManager)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     addinManager();
 }
 
-pcvoid(addinManagerSub)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = addinManagerSub((Menu*)Param[0]->Val->Pointer);
+pcvoid(addinManagerChild)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = addinManagerChild((Menu*)Param[0]->Val->Pointer);
 }
 
 pcvoid(changeFKeyColor)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1990,16 +1980,16 @@ pcvoid(closeMsgBox)(struct ParseState *Parser, struct Value *ReturnValue, struct
 
 // powerGUI
 
-pcvoid(changePoweroffTimeout)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    changePoweroffTimeout();
+pcvoid(setPoweroffTimeout)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setPoweroffTimeout();
 }
 
-pcvoid(changeBacklightTimeout)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    changeBacklightTimeout();
+pcvoid(setBacklightTimeout)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setBacklightTimeout();
 }
 
-pcvoid(changeBacklightLevel)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    changeBacklightLevel();
+pcvoid(setBacklightLevel)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setBacklightLevel();
 }
 
 pcvoid(powerInformation)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2036,20 +2026,20 @@ pcvoid(calendarSettingsMenu)(struct ParseState *Parser, struct Value *ReturnValu
 
 // settingsProvider
 
-pcvoid(GetSetting)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = GetSetting(Param[0]->Val->Integer);
+pcvoid(getSetting)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = getSetting(Param[0]->Val->Integer);
 }
 
-pcvoid(SetSetting)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    SetSetting(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer);
+pcvoid(setSetting)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setSetting(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer);
 }
 
-pcvoid(LoadSettings)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = LoadSettings();
+pcvoid(loadSettings)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = loadSettings();
 }
 
-pcvoid(SaveSettings)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    SaveSettings();
+pcvoid(saveSettings)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    saveSettings();
 }
 
 // stringsProvider
@@ -2058,8 +2048,8 @@ pcvoid(toksplit)(struct ParseState *Parser, struct Value *ReturnValue, struct Va
     ReturnValue->Val->Pointer = (char*)toksplit((char*)Param[0]->Val->Pointer, Param[1]->Val->Character, (char*)Param[2]->Val->Pointer, Param[3]->Val->Integer);
 }
 
-pcvoid(EndsIWith)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = EndsIWith((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
+pcvoid(strEndsWith)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = strEndsWith((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
 pcvoid(memmem)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2088,8 +2078,8 @@ pcvoid(viewTasks)(struct ParseState *Parser, struct Value *ReturnValue, struct V
     viewTasks();
 }
 
-pcvoid(viewTasksSub)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = viewTasksSub((Menu*)Param[0]->Val->Pointer);
+pcvoid(viewTasksChild)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = viewTasksChild((Menu*)Param[0]->Val->Pointer);
 }
 
 // textGUI
@@ -2116,12 +2106,12 @@ pcvoid(RTCunadjustedWizard)(struct ParseState *Parser, struct Value *ReturnValue
     RTCunadjustedWizard(Param[0]->Val->Integer);
 }
 
-pcvoid(setTimeGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    setTimeGUI(Param[0]->Val->Integer);
+pcvoid(setTimeScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setTimeScreen(Param[0]->Val->Integer);
 }
 
-pcvoid(setDateGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    setDateGUI(Param[0]->Val->Integer);
+pcvoid(setDateScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setDateScreen(Param[0]->Val->Integer);
 }
 
 pcvoid(currentTimeToBasicVar)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2132,8 +2122,8 @@ pcvoid(drawHomeClock)(struct ParseState *Parser, struct Value *ReturnValue, stru
     drawHomeClock(Param[0]->Val->Integer, Param[1]->Val->Integer);
 }
 
-pcvoid(changeTimezone)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    changeTimezone();
+pcvoid(setTimezone)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    setTimezone();
 }
 
 // timeProvider
@@ -2214,8 +2204,8 @@ pcvoid(getCurrentMillisecond)(struct ParseState *Parser, struct Value *ReturnVal
     ReturnValue->Val->Integer = getCurrentMillisecond();
 }
 
-pcvoid(DateTime2Unix)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    long long int t = DateTime2Unix(Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer, Param[7]->Val->Integer, Param[8]->Val->Integer);
+pcvoid(dateTimeToUEBT)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    long long int t = dateTimeToUEBT(Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer, Param[7]->Val->Integer, Param[8]->Val->Integer);
     long long int a = t & 0x00000000ffffffffLL;
     long long int b = (long long int)(t & 0xffffffff00000000LL) >> 32;
     *(int*)Param[0]->Val->Pointer = b;
@@ -2238,8 +2228,8 @@ pcvoid(blockForMilliseconds)(struct ParseState *Parser, struct Value *ReturnValu
     blockForMilliseconds(Param[0]->Val->Integer);
 }
 
-pcvoid(getMSdiff)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = getMSdiff(Param[0]->Val->Integer, Param[1]->Val->Integer);
+pcvoid(tickDifferenceToMilliseconds)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = tickDifferenceToMilliseconds(Param[0]->Val->Integer, Param[1]->Val->Integer);
 }
 
 pcvoid(isTimeValid)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2250,12 +2240,12 @@ pcvoid(isDateValid)(struct ParseState *Parser, struct Value *ReturnValue, struct
     ReturnValue->Val->Integer = isDateValid(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer);
 }
 
-pcvoid(DaysToDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    DaysToDate(Param[0]->Val->Integer, (long int*)Param[1]->Val->Pointer, (long int*)Param[2]->Val->Pointer, (long int*)Param[3]->Val->Pointer);
+pcvoid(daysToDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    daysToDate(Param[0]->Val->Integer, (long int*)Param[1]->Val->Pointer, (long int*)Param[2]->Val->Pointer, (long int*)Param[3]->Val->Pointer);
 }
 
-pcvoid(DateToDays)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = DateToDays(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer);
+pcvoid(dateToDays)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = dateToDays(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer);
 }
 
 pcvoid(stringToDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2266,12 +2256,12 @@ pcvoid(stringToTime)(struct ParseState *Parser, struct Value *ReturnValue, struc
     stringToTime((char*)Param[0]->Val->Pointer, (int*)Param[1]->Val->Pointer, (int*)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer);
 }
 
-pcvoid(dateSettingToInputDisplay)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Pointer = (char*)dateSettingToInputDisplay(Param[0]->Val->Integer);
+pcvoid(getInputDateFormatHint)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Pointer = (char*)getInputDateFormatHint(Param[0]->Val->Integer);
 }
 
-pcvoid(isTodayDSTstartEndDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = isTodayDSTstartEndDate();
+pcvoid(isDSTchangeToday)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = isDSTchangeToday();
 }
 
 // toolsGUI
@@ -2280,36 +2270,36 @@ pcvoid(balanceManager)(struct ParseState *Parser, struct Value *ReturnValue, str
     balanceManager();
 }
 
-pcvoid(balanceManagerSub)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = balanceManagerSub((Menu*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
+pcvoid(balanceManagerChild)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = balanceManagerChild((Menu*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
-pcvoid(addTransactionGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = addTransactionGUI((char*)Param[0]->Val->Pointer);
+pcvoid(addTransactionWizard)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = addTransactionWizard((char*)Param[0]->Val->Pointer);
 }
 
-pcvoid(deleteTransactionGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = deleteTransactionGUI((Transaction*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer, Param[3]->Val->Integer);
+pcvoid(deleteTransactionPrompt)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = deleteTransactionPrompt((Transaction*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer, Param[3]->Val->Integer);
 }
 
 pcvoid(viewTransaction)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     viewTransaction((Transaction*)Param[0]->Val->Pointer);
 }
 
-pcvoid(createWalletGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = createWalletGUI(Param[0]->Val->Integer);
+pcvoid(createWalletWizard)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = createWalletWizard(Param[0]->Val->Integer);
 }
 
-pcvoid(changeWalletGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = changeWalletGUI((char*)Param[0]->Val->Pointer);
+pcvoid(changeWalletScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = changeWalletScreen((char*)Param[0]->Val->Pointer);
 }
 
-pcvoid(deleteWalletGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = deleteWalletGUI((char*)Param[0]->Val->Pointer);
+pcvoid(deleteWalletPrompt)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = deleteWalletPrompt((char*)Param[0]->Val->Pointer);
 }
 
-pcvoid(renameWalletGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = renameWalletGUI((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
+pcvoid(renameWalletScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = renameWalletScreen((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
 pcvoid(passwordGenerator)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2320,20 +2310,20 @@ pcvoid(totpClient)(struct ParseState *Parser, struct Value *ReturnValue, struct 
     totpClient();
 }
 
-pcvoid(viewTOTPcodeGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    viewTOTPcodeGUI((totp*)Param[0]->Val->Pointer);
+pcvoid(viewTOTPcode)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    viewTOTPcode((totp*)Param[0]->Val->Pointer);
 }
 
-pcvoid(addTOTPGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = addTOTPGUI();
+pcvoid(addTOTPwizard)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = addTOTPwizard();
 }
 
-pcvoid(renameTOTPGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = renameTOTPGUI(Param[0]->Val->Integer, (char*)Param[1]->Val->Pointer);
+pcvoid(renameTOTPscreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = renameTOTPscreen(Param[0]->Val->Integer, (char*)Param[1]->Val->Pointer);
 }
 
-pcvoid(deleteTOTPGUI)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = deleteTOTPGUI(Param[0]->Val->Integer);
+pcvoid(deleteTOTPprompt)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = deleteTOTPprompt(Param[0]->Val->Integer);
 }
 
 // toolsProvider
@@ -2354,8 +2344,8 @@ pcvoid(subtractCurrency)(struct ParseState *Parser, struct Value *ReturnValue, s
     subtractCurrency((Currency*)Param[0]->Val->Pointer, (Currency*)Param[1]->Val->Pointer);
 }
 
-pcvoid(niceNameToWallet)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    niceNameToWallet((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
+pcvoid(walletNameToPath)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    walletNameToPath((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
 pcvoid(getWalletBalance)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2436,15 +2426,15 @@ pcvoid(getTimestamp)(struct ParseState *Parser, struct Value *ReturnValue, struc
     ReturnValue->Val->Pointer = (char*)getTimestamp();
 }
 
-pcvoid(getBuildIsExpired)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = getBuildIsExpired();
+pcvoid(isBuildExpired)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = isBuildExpired();
 }
 
 
 const struct LibraryFunction UtilitiesAboutGUI[] =
 {
-    { pcfunc(showAbout),             "void showAbout(void);" },
-    { pcfunc(buildExpiredMessage),   "void buildExpiredMessage(void);" },
+    { pcfunc(aboutScreen),           "void aboutScreen(void);" },
+    { pcfunc(buildExpiredScreen),    "void buildExpiredScreen(void);" },
     { NULL,         NULL }
 };
 
@@ -2453,49 +2443,49 @@ const struct LibraryFunction UtilitiesCalendarGUI[] =
     { pcfunc(viewCalendar),          "void viewCalendar(int);" },
     { pcfunc(viewMonthCalendar),     "int viewMonthCalendar(int);" },
     { pcfunc(viewWeekCalendar),      "int viewWeekCalendar();" },
-    { pcfunc(viewWeekCalendarSub),   "int viewWeekCalendarSub(void*, int*, int*, int*, int*, int*);" },
+    { pcfunc(viewWeekCalendarChild), "int viewWeekCalendarChild(void*, int*, int*, int*, int*, int*);" },
     { pcfunc(viewEvents),            "void viewEvents(int, int, int);" },
     { pcfunc(viewEvent),             "void viewEvent(void*, int);" },
-    { pcfunc(viewEventsSub),         "int viewEventsSub(void*, int, int, int);" },
+    { pcfunc(viewEventsChild),       "int viewEventsChild(void*, int, int, int);" },
     { pcfunc(fillInputDate),         "void fillInputDate(int, int, int, char*);" },
     { pcfunc(fillInputTime),         "void fillInputTime(int, int, int, char*);" },
     { pcfunc(eventEditor),           "int eventEditor(int, int, int, int, void*, int);" },
     { pcfunc(drawCalendar),          "void drawCalendar(int, int, int, int, int*, int*, int*, int*);" },
-    { pcfunc(moveEvent),             "int moveEvent(void*, int, int, int);" },
-    { pcfunc(deleteEventUI),         "int deleteEventUI(int, int, int, void*, int, int, int);" },
-    { pcfunc(deleteAllEventUI),      "int deleteAllEventUI(int, int, int, int);" },
-    { pcfunc(chooseCalendarDate),    "int chooseCalendarDate(int*, int*, int*, char*, char*, int);" },
+    { pcfunc(moveEventScreen),       "int moveEventScreen(void*, int, int, int);" },
+    { pcfunc(deleteEventPrompt),     "int deleteEventPrompt(int, int, int, void*, int, int, int);" },
+    { pcfunc(deleteAllEventsPrompt), "int deleteAllEventsPrompt(int, int, int, int);" },
+    { pcfunc(selectDateScreen),      "int selectDateScreen(int*, int*, int*, char*, char*, int);" },
     { pcfunc(invalidFieldMsg),       "void invalidFieldMsg(int);" },
-    { pcfunc(setEventChrono),        "void setEventChrono(void*);" },
-    { pcfunc(changeEventCategory),   "int changeEventCategory(void*);" },
-    { pcfunc(viewNthEventOnDay),     "void viewNthEventOnDay(void*, int);" },
-    { pcfunc(searchEventsGUI),       "void searchEventsGUI(int, int, int);" },
-    { pcfunc(drawDayBusyMap),        "void drawDayBusyMap(void*, int, int, int, int, int, int, int);" },
-    { pcfunc(drawDayBusyMap),        "void drawWeekBusyMap(int, int, int, int, int, int, int);" },
-    { pcfunc(calendarTools),         "void calendarTools(int, int, int);" },
-    { pcfunc(repairCalendarDatabase),"void repairCalendarDatabase(void);" },
-    { pcfunc(trimCalendarDatabase),  "void trimCalendarDatabase(void);" },
-    { pcfunc(importCalendarEvents),  "void importCalendarEvents(void);" },
+    { pcfunc(setReminderScreen),     "void setReminderScreen(void*);" },
+    { pcfunc(setCategoryPrompt),     "int setCategoryPrompt(void*);" },
+    { pcfunc(viewEventAtPos),        "void viewEventAtPos(void*, int);" },
+    { pcfunc(searchEventsScreen),    "void searchEventsScreen(int, int, int);" },
+    { pcfunc(drawBusymapDay),        "void drawBusymapDay(void*, int, int, int, int, int, int, int);" },
+    { pcfunc(drawBusymapDay),        "void drawBusymapWeek(int, int, int, int, int, int, int);" },
+    { pcfunc(calendarToolsMenu),     "void calendarToolsMenu(int, int, int);" },
+    { pcfunc(databaseRepairScreen),  "void databaseRepairScreen(void);" },
+    { pcfunc(databaseTrimScreen),    "void databaseTrimScreen(void);" },
+    { pcfunc(eventImportScreen),     "void eventImportScreen(void);" },
     { NULL,         NULL }
 };
 
 const struct LibraryFunction UtilitiesCalendarProvider[] =
 {
-    { pcfunc(calEventToChar),        "void calEventToChar(void*, char*);" },
-    { pcfunc(charToCalEvent),        "void charToCalEvent(char*, void*);" },
-    { pcfunc(charToSimpleCalEvent),  "void charToSimpleCalEvent(char*, void*);" },
-    { pcfunc(smemFilenameFromDate),  "void smemFilenameFromDate(void*, unsigned short*, char*);" },
-    { pcfunc(AddEvent),              "int AddEvent(void*, char*, int);" },
-    { pcfunc(ReplaceEventFile),      "int ReplaceEventFile(void*, void*, char*, int);" },
-    { pcfunc(RemoveEvent),           "void RemoveEvent(void*, void*, char*, int, int);" },
-    { pcfunc(RemoveDay),             "void RemoveDay(void*, char*);" },
-    { pcfunc(GetEventsForDate),      "int GetEventsForDate(void*, char*, void*, int, void*);" },
-    { pcfunc(GetEventCountsForMonth),"void GetEventCountsForMonth(int, int, int*, int*);" },
-    { pcfunc(SearchEventsOnDay),     "int SearchEventsOnDay(void*, char*, void*, char*, int);" },
-    { pcfunc(SearchEventsOnYearOrMonth),"int SearchEventsOnYearOrMonth(int, int, char*, void*, char*, int);" },
-    { pcfunc(repairEventsFile),      "void repairEventsFile(char*, char*, int*, int*);" },
-    { pcfunc(setDBneedsRepairFlag),  "void setDBneedsRepairFlag(int);" },
-    { pcfunc(getDBneedsRepairFlag),  "int getDBneedsRepairFlag(void);" },
+    { pcfunc(eventToString),         "void eventToString(void*, char*);" },
+    { pcfunc(stringToEvent),         "void stringToEvent(char*, void*);" },
+    { pcfunc(stringToSimpleEvent),   "void stringToSimpleEvent(char*, void*);" },
+    { pcfunc(eventDateToFilename),   "void eventDateToFilename(void*, unsigned short*, char*);" },
+    { pcfunc(addEvent),              "int addEvent(void*, char*, int);" },
+    { pcfunc(replaceEventFile),      "int replaceEventFile(void*, void*, char*, int);" },
+    { pcfunc(removeEvent),           "void removeEvent(void*, void*, char*, int, int);" },
+    { pcfunc(removeDay),             "void removeDay(void*, char*);" },
+    { pcfunc(getEvents),             "int getEvents(void*, char*, void*, int, void*);" },
+    { pcfunc(getEventCountsForMonth),"void getEventCountsForMonth(int, int, int*, int*);" },
+    { pcfunc(searchEventsOnDay),     "int searchEventsOnDay(void*, char*, void*, char*, int);" },
+    { pcfunc(searchEventsOnYearOrMonth),"int searchEventsOnYearOrMonth(int, int, char*, void*, char*, int);" },
+    { pcfunc(repairEventFile),       "void repairEventFile(char*, char*, int*, int*);" },
+    { pcfunc(setDBcorruptFlag),      "void setDBcorruptFlag(int);" },
+    { pcfunc(getDBcorruptFlag),      "int getDBcorruptFlag(void);" },
     { NULL,         NULL }
 };
 
@@ -2507,10 +2497,10 @@ const struct LibraryFunction UtilitiesChronoGUI[] =
     { pcfunc(startSelectedChronos),  "void startSelectedChronos(void*, void*, int);" },
     { pcfunc(stopSelectedChronos),   "void stopSelectedChronos(void*, void*, int);" },
     { pcfunc(clearSelectedChronos),  "void clearSelectedChronos(void*, void*, int);" },
-    { pcfunc(setChronoGUI),          "void setChronoGUI(void*, void*, int);" },
-    { pcfunc(setBuiltinChrono),      "void setBuiltinChrono(void*, void*);" },
-    { pcfunc(getLastChronoComplete), "int getLastChronoComplete(void);" },
-    { pcfunc(checkDownwardsChronoCompleteGUI),"void checkDownwardsChronoCompleteGUI(void*, int);" },
+    { pcfunc(setChronoScreen),       "void setChronoScreen(void*, void*, int);" },
+    { pcfunc(setPresetChrono),       "void setPresetChrono(void*, void*);" },
+    { pcfunc(getLastCompleteChrono), "int getLastCompleteChrono(void);" },
+    { pcfunc(checkChronoComplete),   "void checkChronoComplete(void*);" },
     { NULL,         NULL }
 };
 
@@ -2525,50 +2515,48 @@ const struct LibraryFunction UtilitiesChronoProvider[] =
     { pcfunc(clearChrono),           "void clearChrono(void*);" },
     { pcfunc(getChronoArrayPtr),     "void* getChronoArrayPtr();" },
     { pcfunc(setChronoArrayPtr),     "void setChronoArrayPtr(void*);" },
-    { pcfunc(checkChronoComplete),   "void checkChronoComplete(void);" },
-    { pcfunc(setChronoExternal),     "int setChronoExternal(int, int, int, int, int);" },
     { NULL,         NULL }
 };
 
 const struct LibraryFunction UtilitiesEditorGUI[] =
 {
-    { pcfunc(fileTextEditor),        "void fileTextEditor(char*, char*);" },
+    { pcfunc(textfileEditor),        "void textfileEditor(char*, char*);" },
     { NULL,         NULL }
 };
 
 const struct LibraryFunction UtilitiesFileGUI[] =
 {
     { pcfunc(fileManager),           "void fileManager(void);" },
-    { pcfunc(fillMenuStatusWithClip),"void fillMenuStatusWithClip(char*, int, int);" },
-    { pcfunc(fileManagerSub),        "int fileManagerSub(char*, int*, int*, int*, void*, char*);" },
-    { pcfunc(deleteFilesGUI),        "int deleteFilesGUI(void*, void*);" },
-    { pcfunc(makeFolderGUI),         "int makeFolderGUI(char*);" },
-    { pcfunc(makeg3pGUI),            "int makeg3pGUI(char*);" },
-    { pcfunc(renameFileGUI),         "int renameFileGUI(void*, void*, char*);" },
-    { pcfunc(searchFilesGUI),        "int searchFilesGUI(char*, int);" },
-    { pcfunc(fileInformation),       "int fileInformation(void*, int, int, int);" },
-    { pcfunc(fileViewAsText),        "void fileViewAsText(char*);" },
-    { pcfunc(viewFilesInClipboard),  "void viewFilesInClipboard(void*, int*);" },
-    { pcfunc(folderStatistics),      "void folderStatistics(void*, void*);" },
+    { pcfunc(getFileManagerStatus),  "void getFileManagerStatus(char*, int, int);" },
+    { pcfunc(fileManagerChild),      "int fileManagerChild(char*, int*, int*, int*, void*, char*);" },
+    { pcfunc(deleteFilesPrompt),     "int deleteFilesPrompt(void*, void*);" },
+    { pcfunc(newFolderScreen),       "int newFolderScreen(char*);" },
+    { pcfunc(newG3Pscreen),          "int newG3Pscreen(char*);" },
+    { pcfunc(renameFileScreen),      "int renameFileScreen(void*, void*, char*);" },
+    { pcfunc(searchFilesScreen),     "int searchFilesScreen(char*, int);" },
+    { pcfunc(viewFileInfo),          "int viewFileInfo(void*, int, int, int);" },
+    { pcfunc(viewFileAsText),        "void viewFileAsText(char*);" },
+    { pcfunc(viewClipboard),         "void viewClipboard(void*, int*);" },
+    { pcfunc(folderStatsScreen),     "void folderStatsScreen(void*, void*);" },
     { pcfunc(compressSelectedFiles), "void compressSelectedFiles(void*, void*);" },
     { pcfunc(decompressSelectedFiles),"void decompressSelectedFiles(void*, void*);" },
     { pcfunc(shortenDisplayPath),    "void shortenDisplayPath(char*, char*, int);" },
     { pcfunc(buildIconTable),        "void buildIconTable(void*);" },
-    { pcfunc(overwriteFileGUI),      "int overwriteFileGUI(char*);" },
+    { pcfunc(overwriteFilePrompt),   "int overwriteFilePrompt(char*);" },
     { NULL,         NULL }
 };
 
 const struct LibraryFunction UtilitiesFileProvider[] =
 {
-    { pcfunc(insertSortFileMenuArray),"void insertSortFileMenuArray(void*, void*, int);" },
-    { pcfunc(GetAnyFiles),           "int GetAnyFiles(void*, void*, char*, int*);" },
-    { pcfunc(SearchForFiles),        "int SearchForFiles(void*, char*, char*, int, int, int, int, int*, int);" },
+    { pcfunc(sortFilesMenu),         "void sortFilesMenu(void*, void*, int);" },
+    { pcfunc(getFiles),              "int getFiles(void*, void*, char*, int*);" },
+    { pcfunc(searchForFiles),        "int searchForFiles(void*, char*, char*, int, int, int, int, int*, int);" },
     { pcfunc(deleteFiles),           "void deleteFiles(void*, void*);" },
     { pcfunc(renameFile),            "void renameFile(char*, char*);" },
-    { pcfunc(nameFromFilename),      "void nameFromFilename(char*, char*, int);" },
+    { pcfunc(filenameToName),        "void filenameToName(char*, char*, int);" },
     { pcfunc(copyFile),              "void copyFile(char*, char*);" },
-    { pcfunc(filePasteClipboardItems),"void filePasteClipboardItems(void*, char*, int);" },
-    { pcfunc(fileIconFromName),      "int fileIconFromName(char*);" },
+    { pcfunc(pasteClipboard),        "void pasteClipboard(void*, char*, int);" },
+    { pcfunc(filenameToIcon),        "int filenameToIcon(char*);" },
     { pcfunc(stringEndsInG3A),       "int stringEndsInG3A(char*);" },
     { pcfunc(stringEndsInJPG),       "int stringEndsInJPG(char*);" },
     { pcfunc(createFolderRecursive), "void createFolderRecursive(char*);" },
@@ -2589,8 +2577,8 @@ const struct LibraryFunction UtilitiesGraphicsProvider[] =
     { pcfunc(drawLine),              "void drawLine(int, int, int, int, int);" },
     { pcfunc(drawFilledCircle),      "void drawFilledCircle(int, int, int, unsigned short);" },
     { pcfunc(drawCircularCountdownIndicator),"void drawCircularCountdownIndicator(int, int, int, unsigned short, unsigned short, int, int);" },
-    { pcfunc(VRAMReplaceColorInRect),"void VRAMReplaceColorInRect(int, int, int, int, unsigned short, unsigned short);" },
-    { pcfunc(VRAMInvertArea),        "void VRAMInvertArea(short, short, short, short);" },
+    { pcfunc(replaceColorInArea),    "void replaceColorInArea(int, int, int, int, unsigned short, unsigned short);" },
+    { pcfunc(invertArea),            "void invertArea(short, short, short, short);" },
     { pcfunc(darkenStatusbar),       "void darkenStatusbar(void);" },
     { pcfunc(darkenFkeys),           "void darkenFkeys(int);" },
     { pcfunc(drawArrowDown),         "void drawArrowDown(int, int, int);" },
@@ -2608,7 +2596,7 @@ const struct LibraryFunction UtilitiesGraphicsProvider[] =
     { pcfunc(mMsgBoxPush),           "void mMsgBoxPush(int);" },
     { pcfunc(mMsgBoxPop),            "void mMsgBoxPop(void);" },
     { pcfunc(popAllMsgBoxes),        "void popAllMsgBoxes(void);" },
-    { pcfunc(getNumberOfMsgBoxPushed),"int getNumberOfMsgBoxPushed(void);" },
+    { pcfunc(getMsgBoxCount),        "int getMsgBoxCount(void);" },
     { pcfunc(drawScreenTitle),       "void drawScreenTitle(char*, char*);" },
     { pcfunc(drawFkeyLabels),        "void drawFkeyLabels(int, int, int, int, int, int);" },
     { pcfunc(drawRGB24toRGB565),     "int drawRGB24toRGB565(int, int, int);" },
@@ -2618,8 +2606,8 @@ const struct LibraryFunction UtilitiesGraphicsProvider[] =
 const struct LibraryFunction UtilitiesHardwareProvider[] =
 {
     { pcfunc(CPU_change_freq),       "void CPU_change_freq(int);" },
-    { pcfunc(GetBacklightSubLevel_RAW),"int GetBacklightSubLevel_RAW(void);" },
-    { pcfunc(SetBacklightSubLevel_RAW),"void SetBacklightSubLevel_RAW(int);" },
+    { pcfunc(getRawBacklightSubLevel),"int getRawBacklightSubLevel(void);" },
+    { pcfunc(setRawBacklightSubLevel),"void setRawBacklightSubLevel(int);" },
     { pcfunc(getHardwareID),         "void getHardwareID(char*);" },
     { pcfunc(getHardwareModel),      "int getHardwareModel(void);" },
     { pcfunc(getIsEmulated),         "int getIsEmulated(void);" },
@@ -2629,7 +2617,7 @@ const struct LibraryFunction UtilitiesHardwareProvider[] =
 
 const struct LibraryFunction UtilitiesHomeGUI[] =
 {
-    { pcfunc(showHome),              "void showHome();" },
+    { pcfunc(homeScreen),            "void homeScreen();" },
     { pcfunc(powerMenu),             "void powerMenu(int*);" },
     { pcfunc(lightMenu),             "void lightMenu(int*);" },
     { pcfunc(timeMenu),              "void timeMenu(int*);" },
@@ -2694,10 +2682,10 @@ const struct LibraryFunction UtilitiesLockProvider[] =
 
 const struct LibraryFunction UtilitiesMemsysGUI[] =
 {
-    { pcfunc(memoryCapacityViewer),  "void memoryCapacityViewer(int);" },
-    { pcfunc(GetAddins),             "int GetAddins(void*);" },
+    { pcfunc(memoryCapacityScreen),  "void memoryCapacityScreen(int);" },
+    { pcfunc(getAddins),             "int getAddins(void*);" },
     { pcfunc(addinManager),          "void addinManager(void);" },
-    { pcfunc(addinManagerSub),       "int addinManagerSub(void*);" },
+    { pcfunc(addinManagerChild),     "int addinManagerChild(void*);" },
     { pcfunc(changeFKeyColor),       "void changeFKeyColor(void);" },
     { pcfunc(systemInfo),            "void systemInfo(void);" },
     { pcfunc(userInfo),              "void userInfo(void);" },
@@ -2714,9 +2702,9 @@ const struct LibraryFunction UtilitiesMenuGUI[] =
 
 const struct LibraryFunction UtilitiesPowerGUI[] =
 {
-    { pcfunc(changePoweroffTimeout), "void changePoweroffTimeout(void);" },
-    { pcfunc(changeBacklightTimeout),"void changeBacklightTimeout(void);" },
-    { pcfunc(changeBacklightLevel),  "void changeBacklightLevel(void);" },
+    { pcfunc(setPoweroffTimeout),    "void setPoweroffTimeout(void);" },
+    { pcfunc(setBacklightTimeout),   "void setBacklightTimeout(void);" },
+    { pcfunc(setBacklightLevel),     "void setBacklightLevel(void);" },
     { pcfunc(powerInformation),      "void powerInformation(void);" },
     { pcfunc(getPLLinfo),            "int getPLLinfo(unsigned int, char**, char**, int*);" },
     { pcfunc(updateCurrentFreq),     "void updateCurrentFreq(void);" },
@@ -2739,17 +2727,17 @@ const struct LibraryFunction UtilitiesSettingsGUI[] =
 
 const struct LibraryFunction UtilitiesSettingsProvider[] =
 {
-    { pcfunc(GetSetting),            "int GetSetting(int);" },
-    { pcfunc(SetSetting),            "void SetSetting(int, int, int);" },
-    { pcfunc(LoadSettings),          "int LoadSettings();" },
-    { pcfunc(SaveSettings),          "void SaveSettings();" },
+    { pcfunc(getSetting),            "int getSetting(int);" },
+    { pcfunc(setSetting),            "void setSetting(int, int, int);" },
+    { pcfunc(loadSettings),          "int loadSettings();" },
+    { pcfunc(saveSettings),          "void saveSettings();" },
     { NULL,         NULL }
 };
 
 const struct LibraryFunction UtilitiesStringsProvider[] =
 {
     { pcfunc(toksplit),              "char *toksplit(char*, char, char*, int);" },
-    { pcfunc(EndsIWith),             "int EndsIWith(char*, char*);" },
+    { pcfunc(strEndsWith),           "int strEndsWith(char*, char*);" },
     { pcfunc(memmem),                "void* memmem(char*, int, char*, int, int);" },
     { pcfunc(strncpy_retlen),        "int strncpy_retlen(char*, char*, int);" },
     { pcfunc(stringToMini),          "void stringToMini(char*, char*);" },
@@ -2761,7 +2749,7 @@ const struct LibraryFunction UtilitiesStringsProvider[] =
 const struct LibraryFunction UtilitiesTasksGUI[] =
 {
     { pcfunc(viewTasks),             "void viewTasks(void);" },
-    { pcfunc(viewTasksSub),          "int viewTasksSub(void*);" },
+    { pcfunc(viewTasksChild),        "int viewTasksChild(void*);" },
     { NULL,         NULL }
 };
 
@@ -2777,11 +2765,11 @@ const struct LibraryFunction UtilitiesTimeGUI[] =
     { pcfunc(drawAnalogClock),       "void drawAnalogClock(int, int, int, int, int);" },
     { pcfunc(drawAnalogChronometer), "void drawAnalogChronometer(int, int, int, int, int, int, int, int, int);" },
     { pcfunc(RTCunadjustedWizard),   "void RTCunadjustedWizard(int);" },
-    { pcfunc(setTimeGUI),            "void setTimeGUI(int);" },
-    { pcfunc(setDateGUI),            "void setDateGUI(int);" },
+    { pcfunc(setTimeScreen),         "void setTimeScreen(int);" },
+    { pcfunc(setDateScreen),         "void setDateScreen(int);" },
     { pcfunc(currentTimeToBasicVar), "void currentTimeToBasicVar(void);" },
     { pcfunc(drawHomeClock),         "void drawHomeClock(int, int);" },
-    { pcfunc(changeTimezone),        "void changeTimezone(void);" },
+    { pcfunc(setTimezone),           "void setTimezone(void);" },
     { NULL,         NULL }
 };
 
@@ -2792,89 +2780,89 @@ const struct LibraryFunction UtilitiesTimeProvider[] =
     { pcfunc(getCurrentDOWAsString), "char* getCurrentDOWAsString();" },
     { pcfunc(getCurrentDOWAsShortString),"char* getCurrentDOWAsShortString();" },
     { pcfunc(getCurrentMonthAsString),"char* getCurrentMonthAsString();" },
-    { pcfunc(getDOWAsString),         "char* getDOWAsString(int);" },
-    { pcfunc(getDOWAsShortString),    "char* getDOWAsShortString(int);" },
-    { pcfunc(getMonthAsString),       "char* getMonthAsString(int);" },
-    { pcfunc(isLeap),                 "int isLeap(int);" },
-    { pcfunc(dow),                    "int dow(int, int, int);" },
-    { pcfunc(getDayOfYear),           "int getDayOfYear(int, int, int);" },
-    { pcfunc(getWeekNumber),          "int getWeekNumber(int, int, int);" },
-    { pcfunc(getCurrentYear),         "int getCurrentYear();" },
-    { pcfunc(getCurrentMonth),        "int getCurrentMonth();" },
-    { pcfunc(getCurrentDay),          "int getCurrentDay();" },
-    { pcfunc(getCurrentHour),         "int getCurrentHour();" },
-    { pcfunc(getCurrentMinute),       "int getCurrentMinute();" },
-    { pcfunc(getCurrentSecond),       "int getCurrentSecond();" },
-    { pcfunc(getCurrentMillisecond),  "int getCurrentMillisecond();" },
-    { pcfunc(DateTime2Unix),          "void DateTime2Unix(int*, int*, int, int, int, int, int, int, int);" },
-    { pcfunc(setTime),                "void setTime(int, int, int);" },
-    { pcfunc(setDate),                "void setDate(int, int, int);" },
-    { pcfunc(blockForTicks),          "void blockForTicks(int);" },
-    { pcfunc(blockForMilliseconds),   "void blockForMilliseconds(int);" },
-    { pcfunc(getMSdiff),              "int getMSdiff(int, int);" },
-    { pcfunc(isTimeValid),            "int isTimeValid(int, int, int);" },
-    { pcfunc(isDateValid),            "int isDateValid(int, int, int);" },
-    { pcfunc(DaysToDate),             "void DaysToDate(int, int*, int*, int*);" },
-    { pcfunc(DateToDays),             "int DateToDays(int,,int, int);" },
-    { pcfunc(stringToDate),           "void stringToDate(char*, int*, int*, int*, int);" },
-    { pcfunc(stringToTime),           "void stringToTime(char*, int*, int*, int*);" },
-    { pcfunc(dateSettingToInputDisplay),"char* dateSettingToInputDisplay(int);" },
-    { pcfunc(isTodayDSTstartEndDate), "int isTodayDSTstartEndDate();" },
+    { pcfunc(getDOWAsString),        "char* getDOWAsString(int);" },
+    { pcfunc(getDOWAsShortString),   "char* getDOWAsShortString(int);" },
+    { pcfunc(getMonthAsString),      "char* getMonthAsString(int);" },
+    { pcfunc(isLeap),                "int isLeap(int);" },
+    { pcfunc(dow),                   "int dow(int, int, int);" },
+    { pcfunc(getDayOfYear),          "int getDayOfYear(int, int, int);" },
+    { pcfunc(getWeekNumber),         "int getWeekNumber(int, int, int);" },
+    { pcfunc(getCurrentYear),        "int getCurrentYear();" },
+    { pcfunc(getCurrentMonth),       "int getCurrentMonth();" },
+    { pcfunc(getCurrentDay),         "int getCurrentDay();" },
+    { pcfunc(getCurrentHour),        "int getCurrentHour();" },
+    { pcfunc(getCurrentMinute),      "int getCurrentMinute();" },
+    { pcfunc(getCurrentSecond),      "int getCurrentSecond();" },
+    { pcfunc(getCurrentMillisecond), "int getCurrentMillisecond();" },
+    { pcfunc(dateTimeToUEBT),        "void dateTimeToUEBT(int*, int*, int, int, int, int, int, int, int);" },
+    { pcfunc(setTime),               "void setTime(int, int, int);" },
+    { pcfunc(setDate),               "void setDate(int, int, int);" },
+    { pcfunc(blockForTicks),         "void blockForTicks(int);" },
+    { pcfunc(blockForMilliseconds),  "void blockForMilliseconds(int);" },
+    { pcfunc(tickDifferenceToMilliseconds),"int tickDifferenceToMilliseconds(int, int);" },
+    { pcfunc(isTimeValid),           "int isTimeValid(int, int, int);" },
+    { pcfunc(isDateValid),           "int isDateValid(int, int, int);" },
+    { pcfunc(daysToDate),            "void daysToDate(int, int*, int*, int*);" },
+    { pcfunc(dateToDays),            "int dateToDays(int,,int, int);" },
+    { pcfunc(stringToDate),          "void stringToDate(char*, int*, int*, int*, int);" },
+    { pcfunc(stringToTime),          "void stringToTime(char*, int*, int*, int*);" },
+    { pcfunc(getInputDateFormatHint),"char* getInputDateFormatHint(int);" },
+    { pcfunc(isDSTchangeToday),      "int isDSTchangeToday();" },
     { NULL,         NULL }
 };
 
 const struct LibraryFunction UtilitiesToolsGUI[] =
 {
-    { pcfunc(balanceManager),         "void balanceManager(void);" },
-    { pcfunc(balanceManagerSub),      "int balanceManagerSub(void*, char*);" },
-    { pcfunc(addTransactionGUI),      "int addTransactionGUI(char*);" },
-    { pcfunc(deleteTransactionGUI),   "int deleteTransactionGUI(void*, char*, int, int);" },
-    { pcfunc(viewTransaction),        "void viewTransaction(void*);" },
-    { pcfunc(createWalletGUI),        "int createWalletGUI(int);" },
-    { pcfunc(changeWalletGUI),        "int changeWalletGUI(char*);" },
-    { pcfunc(deleteWalletGUI),        "int deleteWalletGUI(char*);" },
-    { pcfunc(renameWalletGUI),        "int renameWalletGUI(char*, char*);" },
-    { pcfunc(passwordGenerator),      "void passwordGenerator(void);" },
-    { pcfunc(totpClient),             "void totpClient(void);" },
-    { pcfunc(viewTOTPcodeGUI),        "void viewTOTPcodeGUI(void*);" },
-    { pcfunc(addTOTPGUI),             "int addTOTPGUI(void);" },
-    { pcfunc(renameTOTPGUI),          "int renameTOTPGUI(int, char*);" },
-    { pcfunc(deleteTOTPGUI),          "int deleteTOTPGUI(int);" },
+    { pcfunc(balanceManager),        "void balanceManager(void);" },
+    { pcfunc(balanceManagerChild),   "int balanceManagerChild(void*, char*);" },
+    { pcfunc(addTransactionWizard),  "int addTransactionWizard(char*);" },
+    { pcfunc(deleteTransactionPrompt),"int deleteTransactionPrompt(void*, char*, int, int);" },
+    { pcfunc(viewTransaction),       "void viewTransaction(void*);" },
+    { pcfunc(createWalletWizard),    "int createWalletWizard(int);" },
+    { pcfunc(changeWalletScreen),    "int changeWalletScreen(char*);" },
+    { pcfunc(deleteWalletPrompt),    "int deleteWalletPrompt(char*);" },
+    { pcfunc(renameWalletScreen),    "int renameWalletScreen(char*, char*);" },
+    { pcfunc(passwordGenerator),     "void passwordGenerator(void);" },
+    { pcfunc(totpClient),            "void totpClient(void);" },
+    { pcfunc(viewTOTPcode),          "void viewTOTPcode(void*);" },
+    { pcfunc(addTOTPwizard),         "int addTOTPwizard(void);" },
+    { pcfunc(renameTOTPscreen),      "int renameTOTPscreen(int, char*);" },
+    { pcfunc(deleteTOTPprompt),      "int deleteTOTPprompt(int);" },
     { NULL,         NULL }
 };
 
 const struct LibraryFunction UtilitiesToolsProvider[] =
 {
-    { pcfunc(currencyToString),       "void currencyToString(char*, void*);" },
-    { pcfunc(stringToCurrency),       "int stringToCurrency(void*, char*);" },
-    { pcfunc(addCurrency),            "void addCurrency(void*, void*);" },
-    { pcfunc(subtractCurrency),       "void subtractCurrency(void*, void*);" },
-    { pcfunc(niceNameToWallet),       "void niceNameToWallet(char*, char*);" },
-    { pcfunc(getWalletBalance),       "void getWalletBalance(void*, char*);" },
-    { pcfunc(getCurrentWallet),       "int getCurrentWallet(char*);" },
-    { pcfunc(setCurrentWallet),       "void setCurrentWallet(char*);" },
+    { pcfunc(currencyToString),      "void currencyToString(char*, void*);" },
+    { pcfunc(stringToCurrency),      "int stringToCurrency(void*, char*);" },
+    { pcfunc(addCurrency),           "void addCurrency(void*, void*);" },
+    { pcfunc(subtractCurrency),      "void subtractCurrency(void*, void*);" },
+    { pcfunc(walletNameToPath),      "void walletNameToPath(char*, char*);" },
+    { pcfunc(getWalletBalance),      "void getWalletBalance(void*, char*);" },
+    { pcfunc(getCurrentWallet),      "int getCurrentWallet(char*);" },
+    { pcfunc(setCurrentWallet),      "void setCurrentWallet(char*);" },
     { pcfunc(transactionToCalendarEvent),"void transactionToCalendarEvent(void*, void*);" },
     { pcfunc(calendarEventToTransaction),"void calendarEventToTransaction(void*, void*);" },
-    { pcfunc(getWalletTransactions),  "int getWalletTransactions(char*, void*, int);" },
-    { pcfunc(addTransaction),         "void addTransaction(void*, char*);" },
+    { pcfunc(getWalletTransactions), "int getWalletTransactions(char*, void*, int);" },
+    { pcfunc(addTransaction),        "void addTransaction(void*, char*);" },
     { pcfunc(replaceWalletTransactions),"void replaceWalletTransactions(void*, char*, int);" },
-    { pcfunc(deleteTransaction),      "void deleteTransaction(void*, char*, int, int);" },
-    { pcfunc(createWallet),           "void createWallet(char*, void*);" },
-    { pcfunc(deleteWallet),           "void deleteWallet(char*);" },
-    { pcfunc(generateRandomString),   "void generateRandomString(char*, int, int, int, int, int, int, int*);" },
-    { pcfunc(computeTOTP),            "unsigned int computeTOTP(void*);" },
-    { pcfunc(loadTOTPs),              "int loadTOTPs(void*);" },
-    { pcfunc(addTOTP),                "void addTOTP(char*, char*);" },
-    { pcfunc(removeTOTP),             "void removeTOTP(int);" },
-    { pcfunc(renameTOTP),             "void renameTOTP(int, char*);" },
+    { pcfunc(deleteTransaction),     "void deleteTransaction(void*, char*, int, int);" },
+    { pcfunc(createWallet),          "void createWallet(char*, void*);" },
+    { pcfunc(deleteWallet),          "void deleteWallet(char*);" },
+    { pcfunc(generateRandomString),  "void generateRandomString(char*, int, int, int, int, int, int, int*);" },
+    { pcfunc(computeTOTP),           "unsigned int computeTOTP(void*);" },
+    { pcfunc(loadTOTPs),             "int loadTOTPs(void*);" },
+    { pcfunc(addTOTP),               "void addTOTP(char*, char*);" },
+    { pcfunc(removeTOTP),            "void removeTOTP(int);" },
+    { pcfunc(renameTOTP),            "void renameTOTP(int, char*);" },
     { NULL,         NULL }
 };
 
 const struct LibraryFunction UtilitiesVersionProvider[] =
 {
-    { pcfunc(getVersion),             "char* getVersion();" },
-    { pcfunc(getTimestamp),           "char* getTimestamp();" },
-    { pcfunc(getBuildIsExpired),      "int getBuildIsExpired();" },
+    { pcfunc(getVersion),            "char* getVersion();" },
+    { pcfunc(getTimestamp),          "char* getTimestamp();" },
+    { pcfunc(isBuildExpired),        "int isBuildExpired();" },
     { NULL,         NULL }
 };
 

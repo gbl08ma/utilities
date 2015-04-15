@@ -34,20 +34,20 @@ void viewTasks() {
   menu.nodatamsg = (char*)"No tasks - press F2";
   menu.title = (char*)"Tasks";
   while(res) {
-    res = viewTasksSub(&menu);
+    res = viewTasksChild(&menu);
   }
 }
 
-int viewTasksSub(Menu* menu) {
+int viewTasksChild(Menu* menu) {
   //returns 1 when it wants to be restarted (refresh tasks)
   //returns 0 if the idea really is to exit the screen
   EventDate taskday;
   taskday.day = 0; taskday.month = 0; taskday.year = 0;
   
-  menu->numitems = GetEventsForDate(&taskday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+  menu->numitems = getEvents(&taskday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
   CalendarEvent* tasks = (CalendarEvent*)alloca(menu->numitems*sizeof(CalendarEvent));
   MenuItem* menuitems = (MenuItem*)alloca(menu->numitems*sizeof(MenuItem));
-  menu->numitems = GetEventsForDate(&taskday, CALENDARFOLDER, tasks);
+  menu->numitems = getEvents(&taskday, CALENDARFOLDER, tasks);
   int activecount = 0;
   for(int curitem = 0; curitem < menu->numitems; curitem++) {
     menuitems[curitem].text = (char*)tasks[curitem].title;
@@ -88,7 +88,7 @@ int viewTasksSub(Menu* menu) {
       case KEY_CTRL_F3:
         if(menu->numitems > 0) {
           if(eventEditor(0, 0, 0, EVENTEDITORTYPE_EDIT, &tasks[menu->selection-1], 1) == EVENTEDITOR_RETURN_CONFIRM) {
-            ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
+            replaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
           }
           return 1;
         }
@@ -96,13 +96,13 @@ int viewTasksSub(Menu* menu) {
       case KEY_CTRL_F4:
       case KEY_CTRL_DEL:
         if(menu->numitems > 0)
-          if(EVENTDELETE_RETURN_CONFIRM == deleteEventUI(0, 0, 0, tasks, menu->numitems, menu->selection-1, 1)) {
+          if(EVENTDELETE_RETURN_CONFIRM == deleteEventPrompt(0, 0, 0, tasks, menu->numitems, menu->selection-1, 1)) {
             return 1;
           }
         break;
       case KEY_CTRL_F5:
         if(menu->numitems > 0) {
-          if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventUI(0, 0, 0, 1)) {
+          if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventsPrompt(0, 0, 0, 1)) {
             return 1;
           }
         }
@@ -110,7 +110,7 @@ int viewTasksSub(Menu* menu) {
       case KEY_CTRL_F6:
         if(menu->numitems > 0) {
           tasks[menu->selection-1].repeat = !tasks[menu->selection-1].repeat;
-          ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
+          replaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
           return 1;
         }
         break;
@@ -118,8 +118,8 @@ int viewTasksSub(Menu* menu) {
         if(menu->numitems > 0) {
           //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
           //so on this add-in it is used to change the category (color) of a task/calendar event.
-          if(EVENTEDITOR_RETURN_CONFIRM == changeEventCategory(&tasks[menu->selection-1])) {
-            ReplaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
+          if(EVENTEDITOR_RETURN_CONFIRM == setCategoryPrompt(&tasks[menu->selection-1])) {
+            replaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
             return 1;
           }
         }

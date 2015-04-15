@@ -82,7 +82,7 @@ void drawCircularCountdownIndicator(int centerx, int centery, int radius, color_
 }
 
 //ReplaceColor By Kerm:
-void VRAMReplaceColorInRect(int x, int y, int width, int height, color_t color_old, color_t color_new) { 
+void replaceColorInArea(int x, int y, int width, int height, color_t color_old, color_t color_new) { 
    //color_t* VRAM = GetVRAMAddress();
    color_t* VRAM = (color_t*)0xA8000000; 
    VRAM += (y*LCD_WIDTH_PX)+x; 
@@ -93,7 +93,7 @@ void VRAMReplaceColorInRect(int x, int y, int width, int height, color_t color_o
    } 
 }
 
-void VRAMInvertArea(short x, short y, short width, short height) {
+void invertArea(short x, short y, short width, short height) {
    color_t* VRAM = (color_t*)0xA8000000; 
    VRAM += (y*LCD_WIDTH_PX)+x; 
    for(int j=0; j<height; VRAM += (LCD_WIDTH_PX-width), j++) { 
@@ -104,17 +104,17 @@ void VRAMInvertArea(short x, short y, short width, short height) {
 }
 
 void darkenStatusbar() {
-  if(GetSetting(SETTING_DISPLAY_STATUSBAR)) {
-    VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_BLACK, COLOR_CYAN);
-    VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_WHITE, COLOR_BLACK);
-    VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_CYAN, COLOR_GRAY);
-    VRAMReplaceColorInRect(0, 0, LCD_WIDTH_PX, 24, COLOR_BLUE, COLOR_ORANGE);
+  if(getSetting(SETTING_DISPLAY_STATUSBAR)) {
+    replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_BLACK, COLOR_CYAN);
+    replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_WHITE, COLOR_BLACK);
+    replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_CYAN, COLOR_GRAY);
+    replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_BLUE, COLOR_ORANGE);
   }
 }
 void darkenFkeys(int numkeys) {
-  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_BLACK, COLOR_CYAN);
-  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_WHITE, COLOR_BLACK);
-  VRAMReplaceColorInRect(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_CYAN, COLOR_GRAY);  
+  replaceColorInArea(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_BLACK, COLOR_CYAN);
+  replaceColorInArea(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_WHITE, COLOR_BLACK);
+  replaceColorInArea(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_CYAN, COLOR_GRAY);  
 }
 void drawArrowDown(int bottomX, int bottomY, int color) {
   drawLine(bottomX-7,bottomY-7,bottomX,bottomY,color);
@@ -127,7 +127,7 @@ void drawFkeyPopup(int Fkey, const char* title) {
 // PrintXY text inside the popup starts at X=2 and Y=2
   int fgcolor = COLOR_BLACK;
   int bgcolor = COLOR_WHITE;
-  if (GetSetting(SETTING_THEME)) {
+  if (getSetting(SETTING_THEME)) {
     fgcolor = COLOR_WHITE;
     bgcolor = COLOR_BLACK;
   }
@@ -149,7 +149,7 @@ void drawFkeyPopup(int Fkey, const char* title) {
 
   int textX = FKEY_C3X-111-4;
   int textY = FKEY_C3Y-14-20;
-  PrintMiniMini( &textX, &textY, "...or press: [EXIT]", (GetSetting(SETTING_THEME) == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
+  PrintMiniMini( &textX, &textY, "...or press: [EXIT]", (getSetting(SETTING_THEME) == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
 
   mPrintXY(2, 2, title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
 }
@@ -317,7 +317,7 @@ void popAllMsgBoxes() {
     mMsgBoxPop();
   }
 }
-int getNumberOfMsgBoxPushed() {
+int getMsgBoxCount() {
   return numberOfMsgBoxPushed;
 }
 
