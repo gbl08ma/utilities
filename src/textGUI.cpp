@@ -21,6 +21,10 @@
 
 typedef scrollbar TScrollbar;
 
+void printAreaText(int* x, int* y, const char* string, color_t color, int micro, int preview) {
+  if(micro) PrintMiniMini(x, y, string, 0, color, preview);
+  else PrintMini(x, y, string, 0, 0xFFFFFFFF, 0, 0, color, COLOR_WHITE, !preview, 0);
+}
 int doTextArea(textArea* text) {
   int scroll = 0;
   int isFirstDraw = 1;
@@ -28,55 +32,46 @@ int doTextArea(textArea* text) {
   int key;
   int showtitle = text->title != NULL;
   while(1) {
-    drawRectangle(text->x, text->y+24, text->width, LCD_HEIGHT_PX-24, COLOR_WHITE);
-    int cur = 0;
+    drawRectangle(text->x, text->y+24, text->width, LCD_HEIGHT_PX-24-text->y, COLOR_WHITE);
     int textX = text->x;
     int textY = scroll+(showtitle ? 24 : 0)+text->y; // 24 pixels for title (or not)
-    int temptextY = 0;
-    int temptextX = 0;
-    while(cur < text->numelements) {
+    for(int cur = 0; cur < text->numelements; cur++) {
       if(text->elements[cur].newLine) {
         textX=text->x;
         textY=textY+text->lineHeight+text->elements[cur].lineSpacing; 
       }
       int tlen = strlen(text->elements[cur].text);
       char* singleword = (char*)malloc(tlen); // because of this, a single text element can't have more bytes than malloc can provide
+      if(singleword == NULL) continue; // could not allocate, skip word
       char* src = (char*)text->elements[cur].text;
-      while(*src)
-      {
-        temptextX = 0;
+      while(*src) {
+        int temptextX = 0, temptextY = 0;
         src = toksplit(src, ' ', singleword, tlen); //break into words; next word
-        //check if printing this word would go off the screen, with fake PrintMini drawing:
-        if(text->elements[cur].minimini) {
-          PrintMiniMini( &temptextX, &temptextY, singleword, 0, text->elements[cur].color, 1 );
-        } else {
-          PrintMini(&temptextX, &temptextY, singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 0, 0);
-        }
-        if(temptextX + textX > text->width-6) {
+
+        //check if printing this word would go off the screen, by previewing the length:
+        printAreaText(&temptextX, &temptextY, singleword, text->elements[cur].color, text->elements[cur].minimini, 1);
+        if(temptextX + textX > text->width-(text->scrollbar ? 6 : 0)) {
           //time for a new line
           textX=text->x;
           textY=textY+(text->elements[cur].minimini ? -7 : 0)+text->lineHeight;
         } //else still fits, print new word normally (or just increment textX, if we are not "on stage" yet)
+
         if(textY >= -24 && textY < LCD_HEIGHT_PX) {
-          if(text->elements[cur].minimini) {
-            PrintMiniMini( &textX, &textY, singleword, 0, text->elements[cur].color, 0 );
-          } else {
-            PrintMini(&textX, &textY, singleword, 0, 0xFFFFFFFF, 0, 0, text->elements[cur].color, COLOR_WHITE, 1, 0);
-          }
+          printAreaText(&textX, &textY, singleword, text->elements[cur].color, text->elements[cur].minimini, 0);
           //add a space, since it was removed from token
-          if(*src || text->elements[cur].spaceAtEnd) PrintMini(&textX, &textY, (char*)" ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+          if(*src || text->elements[cur].spaceAtEnd)
+            printAreaText(&textX, &textY, " ", text->elements[cur].color, text->elements[cur].minimini, 0);
         } else {
           textX += temptextX;
-          if(*src || text->elements[cur].spaceAtEnd) textX += 7; // size of a PrintMini space
+          if(*src || text->elements[cur].spaceAtEnd)
+            textX += 7; // size of a PrintMini space
         }
       }
       free(singleword);
-      if(isFirstDraw) {
+      if(isFirstDraw)
         totalTextY = textY+(showtitle ? 0 : 24);
-      } else if(textY>LCD_HEIGHT_PX) {
+      else if(textY>LCD_HEIGHT_PX)
         break;
-      }
-      cur++;
     }
     isFirstDraw=0;
     if(showtitle) {
