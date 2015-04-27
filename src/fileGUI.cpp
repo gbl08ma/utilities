@@ -393,7 +393,7 @@ int newFolderScreen(char* browserbasepath) {
   //returns 1 if user creates folder, 0 if aborts.
   SetBackGround(10);
   clearLine(1,8);
-  drawScreenTitle((char*)"Create folder", (char*)"Name:");
+  drawScreenTitle("Create folder", "Name:");
   char newname[MAX_NAME_SIZE];
   newname[0] = 0;
   textInput input;
@@ -424,7 +424,7 @@ int newG3Pscreen(char* browserbasepath) {
   //returns 1 if user creates file, 0 if aborts.
   SetBackGround(10);
   clearLine(1,8);
-  drawScreenTitle((char*)"Create g3p file", (char*)"Name:");
+  drawScreenTitle("Create g3p file", "Name:");
   char newname[MAX_NAME_SIZE];
   newname[0] = 0;
   textInput input;
@@ -468,7 +468,7 @@ int renameFileScreen(File* files, Menu* menu, char* browserbasepath) {
   char title[MAX_NAME_SIZE+6];
   strcpy(title, menu->items[menu->selection-1].text);
   strcat(title, " to:");
-  drawScreenTitle((char*)"Rename item", title);
+  drawScreenTitle("Rename item", title);
   char newname[MAX_NAME_SIZE];
   strcpy(newname, menu->items[menu->selection-1].text);
   textInput input;
@@ -530,7 +530,7 @@ int searchFilesScreen(char* browserbasepath, int itemsinclip) {
   while(1) {
     if(curstep == 0) {
       SetBackGround(9);
-      drawScreenTitle((char*)"File Search", (char*)"Search for:");
+      drawScreenTitle("File Search", "Search for:");
       drawFkeyLabels(0, 0, 0, 0, 0, 0x04A3); // Next
       while(1) {
         input.key=0;
@@ -544,8 +544,8 @@ int searchFilesScreen(char* browserbasepath, int itemsinclip) {
       while(inloop) {
         // this must be here, inside this loop:
         SetBackGround(9);
-        drawScreenTitle((char*)"File Search", (char*)"Search for:");
-        mPrintXY(1, 3, (char*)needle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        drawScreenTitle("File Search", "Search for:");
+        mPrintXY(1, 3, needle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         drawFkeyLabels(0x036F, 0, 0, 0, 0, 0x00A5); // <, SEARCH (white)
         menuitems[0].value = searchOnFilename;
         menuitems[1].value = searchOnContents;

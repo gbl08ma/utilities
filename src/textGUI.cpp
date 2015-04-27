@@ -43,7 +43,7 @@ int doTextArea(textArea* text) {
       int tlen = strlen(text->elements[cur].text);
       char* singleword = (char*)malloc(tlen); // because of this, a single text element can't have more bytes than malloc can provide
       if(singleword == NULL) continue; // could not allocate, skip word
-      char* src = (char*)text->elements[cur].text;
+      const char* src = (char*)text->elements[cur].text;
       while(*src) {
         int temptextX = 0, temptextY = 0;
         src = toksplit(src, ' ', singleword, tlen); //break into words; next word
@@ -76,7 +76,7 @@ int doTextArea(textArea* text) {
     isFirstDraw=0;
     if(showtitle) {
       clearLine(1,1);
-      drawScreenTitle((char*)text->title);
+      drawScreenTitle(text->title);
     }
     int scrollableHeight = LCD_HEIGHT_PX-24*(showtitle ? 2 : 1)-text->y;
     //draw a scrollbar:

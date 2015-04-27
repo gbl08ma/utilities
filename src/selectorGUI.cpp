@@ -25,14 +25,14 @@ int doSelector(Selector* selector) {
   int initialValue = selector->value; // so we can restore later
 
   if(selector->clearVRAM) Bdisp_AllClr_VRAM();
-  if(selector->title != NULL) drawScreenTitle((char*)selector->title);
-  if(selector->subtitle != NULL) mPrintXY(3, 2, (char*)selector->subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  if(selector->title != NULL) drawScreenTitle(selector->title);
+  if(selector->subtitle != NULL) mPrintXY(3, 2, selector->subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   while(1)
   {
     clearLine(5,(selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4));
-    if(selector->cycle == 1 || selector->value != selector->max) mPrintXY(5, (selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4), (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
+    if(selector->cycle == 1 || selector->value != selector->max) mPrintXY(5, (selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4), "\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
     clearLine(5,6);
-    if(selector->cycle == 1 || selector->value != selector->min) mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
+    if(selector->cycle == 1 || selector->value != selector->min) mPrintXY(5, 6, "\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
     clearLine(5,5);
     if(selector->type == SELECTORTYPE_LONGDATEFORMAT) {
       clearLine(1,4);
@@ -115,7 +115,7 @@ int doSelector(Selector* selector) {
           input.buffer = (char*)nvals;
           clearLine(5,5);
           if(selector->type == SELECTORTYPE_TIMEOUT_MINUTES) {
-            mPrintXY(9, 5, (char*)"Minutes", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(9, 5, "Minutes", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           }
           int res = doTextInput(&input);
           if (res==INPUT_RETURN_CONFIRM && strlen(nvals)) {

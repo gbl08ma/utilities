@@ -15,9 +15,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-char *toksplit(char *src, char tokchar, char *token, int lgh);
+const char *toksplit(const char *src, const char tokchar, char *token, int lgh);
 int strEndsWith(const char *str, const char *suffix);
-void* memmem(char* haystack, int hlen, char* needle, int nlen, int matchCase=1);
+void* memmem(char* haystack, int hlen, const char* needle, int nlen, int matchCase=1);
 int strncpy_retlen(char* dest, const char* src, int n);
 void stringToMini(char* dest, const char* orig);
 int base32_decode(const unsigned char *encoded, unsigned char *result, int size);

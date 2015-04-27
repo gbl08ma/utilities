@@ -81,7 +81,7 @@ void sortFilesMenu(File* data, MenuItem* mdata, int size) {
   for(i = 0; i < size; i++) mdata[i].text = data[i].visname;
 }
 
-int getFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
+int getFiles(File* files, MenuItem* menuitems, const char* basepath, int* count) {
   // searches storage memory for folders and files, puts their count in int* count
   // if File* files is NULL, function will only count files. If it is not null, MenuItem* menuitems will also be updated
   // this function always returns status codes defined on fileProvider.hpp
@@ -131,11 +131,11 @@ int getFiles(File* files, MenuItem* menuitems, char* basepath, int* count) {
   return GETFILES_SUCCESS;
 }
 
-char* SearchStringMatch(char* s1, char* s2, int matchCase) {
+char* SearchStringMatch(const char* s1, const char* s2, int matchCase) {
   if(matchCase) return strstr(s1, s2);
   else return strcasestr(s1, s2);
 }
-int searchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall) {
+int searchForFiles(File* files, const char* basepath, const char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall) {
   // searches storage memory for folders and files containing needle in the filename or contents, puts their count in int* count
   // if File* files is NULL, function will only count search results.
   // this function always returns status codes defined on fileProvider.hpp
@@ -169,7 +169,7 @@ int searchForFiles(File* files, char* basepath, char* needle, int searchOnFilena
         }
       }
       int match = 0;
-      if(searchOnFilename && NULL != SearchStringMatch((char*)buffer, needle, matchCase)) {
+      if(searchOnFilename && NULL != SearchStringMatch(buffer, needle, matchCase)) {
         match = 1;
       }
       if(searchOnContents && !match) {

@@ -98,7 +98,7 @@ int balanceManagerChild(Menu* menu, char* currentWallet) {
   menu->items = items;
   while(1) {
     Bdisp_AllClr_VRAM();
-    drawScreenTitle((char*)"Balance Manager", subtitle);
+    drawScreenTitle("Balance Manager", subtitle);
     // VIEW, INSERT, EDIT, DELETE, empty, LOAD
     drawFkeyLabels(-1, 0x03B4, -1, -1, -1, 0x03B7);
     if(menu->numitems > 0) drawFkeyLabels(0x049F, -1, 0x0038);
@@ -147,7 +147,7 @@ int addTransactionWizard(char* wallet) {
   int curstep = 0;
   while(1) {
     SetBackGround(0x0A);
-    drawScreenTitle((char*)"Add transaction");
+    drawScreenTitle("Add transaction");
     // < (first label), SELECT of on date step, and Next or Finish (last label)
     drawFkeyLabels((curstep>0 ? 0x036F : -1), (curstep == 2 ? 0x000F : -1), -1, -1, -1, (curstep==4 ? 0x04A4 : 0x04A3));
     if(curstep == 0) {
@@ -167,7 +167,7 @@ int addTransactionWizard(char* wallet) {
       while(inloop) {
         // this must be here, inside this loop:
         SetBackGround(0x0A);
-        drawScreenTitle((char*)"Add transaction", (char*)"Select type:");
+        drawScreenTitle("Add transaction", "Select type:");
         drawFkeyLabels(-1, -1, -1, -1, -1, 0x04A3);
         int res = doMenu(&menu);
         if(res == MENU_RETURN_EXIT) return 0;
@@ -178,7 +178,7 @@ int addTransactionWizard(char* wallet) {
         }
       }
     } else if(curstep == 1) {
-      drawScreenTitle(NULL, (char*)"Amount:");
+      drawScreenTitle(NULL, "Amount:");
       char samount[20] = "";
       if(tx.amount.val) {
         currencyToString(samount, &tx.amount);
@@ -209,8 +209,8 @@ int addTransactionWizard(char* wallet) {
         }
       }
     } else if(curstep == 2) {
-      drawScreenTitle(NULL, (char*)"Date:");
-      mPrintXY(7, 4, (char*)getInputDateFormatHint(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      drawScreenTitle(NULL, "Date:");
+      mPrintXY(7, 4, getInputDateFormatHint(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       textInput input;
       input.x=7;
       input.width=8;
@@ -254,8 +254,8 @@ int addTransactionWizard(char* wallet) {
         }
       }
     } else if(curstep == 3) {
-      drawScreenTitle(NULL, (char*)"Time:");
-      mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      drawScreenTitle(NULL, "Time:");
+      mPrintXY(8, 4, "HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       
       textInput input;
       input.x=8;
@@ -286,7 +286,7 @@ int addTransactionWizard(char* wallet) {
         else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep--; break; }
       }
     } else if(curstep == 4) {
-      drawScreenTitle(NULL, (char*)"Description:");
+      drawScreenTitle(NULL, "Description:");
       textInput input;
       input.charlimit=128;
       input.acceptF6=1;
@@ -374,7 +374,7 @@ void viewTransaction(Transaction* tx) {
 
 int createWalletWizard(int isFirstUse) {
   SetBackGround(0x0A);
-  drawScreenTitle((char*)"Create wallet", (char*)"Name:");
+  drawScreenTitle("Create wallet", "Name:");
   drawFkeyLabels(-1, -1, -1, -1, -1, 0x04A3);
   char wallet[MAX_WALLETNAME_SIZE+2] = "";
   textInput input;
@@ -391,7 +391,7 @@ int createWalletWizard(int isFirstUse) {
   }
 
   SetBackGround(0x0A);
-  drawScreenTitle((char*)"Create wallet", (char*)"Initial balance:");
+  drawScreenTitle("Create wallet", "Initial balance:");
   drawFkeyLabels(-1, -1, -1, -1, -1, 0x04A4);
   char balance[20] = "";
   Currency initialBalance;
@@ -542,7 +542,7 @@ int renameWalletScreen(char* wallet, char* newWallet) {
   char title[MAX_WALLETNAME_SIZE+6];
   strcpy(title, wallet);
   strcat(title, " to:");
-  drawScreenTitle((char*)"Rename wallet", title);
+  drawScreenTitle("Rename wallet", title);
   char newname[MAX_WALLETNAME_SIZE];
   strcpy(newname, wallet);
   textInput input;
@@ -627,7 +627,7 @@ void passwordGenerator() {
         if(doSelector(&sel) != SELECTOR_RETURN_SELECTION) break;
 
         SetBackGround(10);
-        drawScreenTitle((char*)"Generate to file", (char*)"Filename:");
+        drawScreenTitle("Generate to file", "Filename:");
         char newname[MAX_NAME_SIZE];
         newname[0] = 0;
         textInput input;
@@ -682,7 +682,7 @@ void passwordGenerator() {
         int inscreen = 1;
         while(inscreen) {
           Bdisp_AllClr_VRAM();
-          drawScreenTitle((char*)"Password Generator", (char*)"Generated passwords:");
+          drawScreenTitle("Password Generator", "Generated passwords:");
           textArea text;
           text.type = TEXTAREATYPE_INSTANT_RETURN;
           text.scrollbar = 0;
@@ -838,11 +838,11 @@ int addTOTPwizard() {
   int curstep = 0;
   while(1) {
     SetBackGround(0x0A);
-    drawScreenTitle((char*)"Add TOTP token");
+    drawScreenTitle("Add TOTP token");
     // < (first label) and Next or Finish (last label)
     drawFkeyLabels((curstep>0 ? 0x036F : 0), 0, 0, 0, 0, (curstep==1 ? 0x04A4 : 0x04A3));
     if(curstep == 0) {
-      drawScreenTitle(NULL, (char*)"Friendly name:");
+      drawScreenTitle(NULL, "Friendly name:");
       textInput input;
       input.charlimit=21;
       input.acceptF6=1;
@@ -858,7 +858,7 @@ int addTOTPwizard() {
         }
       }
     } else if(curstep == 1) {
-      drawScreenTitle(NULL, (char*)"Base32 key:");
+      drawScreenTitle(NULL, "Base32 key:");
       int textX = 0;
       int textY = 3*24+2;
       PrintMini(&textX, &textY, (char*)"This is often shown as a QR code.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
@@ -911,7 +911,7 @@ int renameTOTPscreen(int index, char* oldname) {
   //returns 0 if user aborts, 1 if renames.
   SetBackGround(6);
   clearLine(1,8);
-  drawScreenTitle((char*)"Rename TOTP token");
+  drawScreenTitle("Rename TOTP token");
   char newname[25];
   strcpy(newname, oldname);
   textInput input;

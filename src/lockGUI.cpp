@@ -90,8 +90,8 @@ int passwordInput(int x, int y, unsigned char* buffer) {
         Cursor_SetFlashOff(); return 1;
       } else {
         mMsgBoxPush(3);
-        mPrintXY(3, 3, (char*)"Code can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-        mPrintXY(3, 4, (char*)"empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        mPrintXY(3, 3, "Code can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        mPrintXY(3, 4, "empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         closeMsgBox();
       }
     }
@@ -115,7 +115,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
 int setPassword() {
   unsigned char password[256+8]; // 8 bytes for hardware ID as salt
   Bdisp_AllClr_VRAM();
-  drawScreenTitle((char*)"Calculator lock", (char*)"Set new code:");
+  drawScreenTitle("Calculator lock", "Set new code:");
   if (passwordInput(1, 3, password)) {
     savePassword(password);
     return 1;
@@ -128,14 +128,14 @@ int unlockCalc() {
   unsigned char password[256+8];  // 8 bytes for hardware ID as salt
   
   Bdisp_AllClr_VRAM();
-  drawScreenTitle((char*)"Calculator lock", (char*)"Input code:");
+  drawScreenTitle("Calculator lock", "Input code:");
   if (!passwordInput(1, 3, password)) return 0;
   else {
     int res = comparePasswordHash(password);
     if(!res) return 1;
     else {
       mMsgBoxPush(3);
-      mPrintXY(3, 3, (char*)"Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, "Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       closeMsgBox();
       return 0;
     }

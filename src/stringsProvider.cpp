@@ -39,8 +39,8 @@ Published 2006-02-20. Attribution appreciated.
 Modified by gbl08ma not to skip blanks at the beginning.
 */
 
-char *toksplit(char *src, /* Source of tokens */
-char tokchar, /* token delimiting char */
+const char *toksplit(const char *src, /* Source of tokens */
+const char tokchar, /* token delimiting char */
 char *token, /* receiver of parsed token */
 int lgh) /* length token can receive */
 /* not including final '\0' */
@@ -75,7 +75,7 @@ int strEndsWith(const char *str, const char *suffix)
 // not really for strings, but anyway:
 // based on http://dsss.be/w/c:memmem
 // added case-insensitive functionality
-void* memmem(char* haystack, int hlen, char* needle, int nlen, int matchCase) {
+void* memmem(char* haystack, int hlen, const char* needle, int nlen, int matchCase) {
   if (nlen > hlen) return 0;
   int i,j=0;
   switch(nlen) { // we have a few specialized compares for certain needle sizes

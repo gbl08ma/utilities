@@ -74,7 +74,7 @@ void eventToString(CalendarEvent* calEvent, char* buf) {
   *buf = 0; // null-terminate string
 }
 
-void stringToEvent(char* src, CalendarEvent* calEvent) {
+void stringToEvent(const char* src, CalendarEvent* calEvent) {
   /* Parses a string containing a single event and turns it into a CalendarEvent which the program can work with.
   */
   int curfield = 0; //field we are parsing currently. starts at the category, which is 0.
@@ -153,7 +153,7 @@ void stringToEvent(char* src, CalendarEvent* calEvent) {
   }
 }
 
-void stringToSimpleEvent(char* src, SimpleCalendarEvent* calEvent) {
+void stringToSimpleEvent(const char* src, SimpleCalendarEvent* calEvent) {
   /* Parses a string containing a single event and turns it into a SimpleCalendarEvent which the program can work with.
      Skips all the fields not necessary to a SimpleCalendarEvent
   */
@@ -405,7 +405,7 @@ int getEvents(EventDate* startdate, const char* folder, CalendarEvent* calEvents
     // Parse for events
     int curevent = 0; //current event number/array index (zero based)
     char token[2048];
-    char* src = asrc;
+    const char* src = asrc;
     src = toksplit(src, EVENT_SEPARATOR , token, 2048);
     while (1) {
       //pass event to the parser and store it in the string event array

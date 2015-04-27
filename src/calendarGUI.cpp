@@ -959,19 +959,19 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
     event->timed=0;
     
     //clean buffers:
-    strcpy((char*)event->title, "");
-    strcpy((char*)event->location, "");
-    strcpy((char*)event->description, "");
+    strcpy(event->title, "");
+    strcpy(event->location, "");
+    strcpy(event->description, "");
   }
   if(istask) event->timed=0;
   int curstep = 0;
   while(1) {
     if (type == EVENTEDITORTYPE_ADD) {
       SetBackGround(0x0A);
-      drawScreenTitle(istask ? (char*)"Add New Task" : (char*)"Add New Event");
+      drawScreenTitle(istask ? "Add New Task" : "Add New Event");
     } else {
       SetBackGround(12);
-      drawScreenTitle(istask ? (char*)"Edit Task" : (char*)"Edit Event");
+      drawScreenTitle(istask ? "Edit Task" : "Edit Event");
     }
     if(curstep >= 3) {
       // disable keyboard modifiers, as user may have come from a text input field
@@ -983,7 +983,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
     switch(curstep) {
       case 0:
         {
-          drawScreenTitle(NULL, (char*)"Title:");
+          drawScreenTitle(NULL, "Title:");
           
           textInput input;
           input.forcetext=1; //force text so title must be at least one char.
@@ -1000,7 +1000,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       case 1:
         {
-          drawScreenTitle(NULL, (char*)"Location:");
+          drawScreenTitle(NULL, "Location:");
           
           textInput input;
           input.charlimit=128;
@@ -1017,7 +1017,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       case 2:
         {
-          drawScreenTitle(NULL, (char*)"Description:");
+          drawScreenTitle(NULL, "Description:");
           
           textInput input;
           input.charlimit=1024;
@@ -1038,8 +1038,8 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         }
         break;
       case 3: {   
-        drawScreenTitle(NULL, (char*)"Start time:");
-        mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        drawScreenTitle(NULL, "Start time:");
+        mPrintXY(8, 4, "HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int textX = 0;
         int textY = 5*24;
         PrintMini(&textX, &textY, (char*)"If left blank, the event will be a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
@@ -1083,8 +1083,8 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       }
       case 4: {
-        drawScreenTitle(NULL, (char*)"End date:");
-        mPrintXY(7, 4, (char*)getInputDateFormatHint(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        drawScreenTitle(NULL, "End date:");
+        mPrintXY(7, 4, getInputDateFormatHint(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         int textX = 0;
         int textY = 5*24;
         PrintMini(&textX, &textY, (char*)"If left blank, the event will end on", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
@@ -1153,8 +1153,8 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       }
       case 5: {
         if(event->timed) {
-          drawScreenTitle(NULL, (char*)"End time:");
-          mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          drawScreenTitle(NULL, "End time:");
+          mPrintXY(8, 4, "HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           
           textInput input;
           input.x=8;
@@ -1195,15 +1195,15 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         break;
       }
       case 6: {
-        drawScreenTitle(NULL, (char*)"Select category");
-        mPrintXY(5, 4, (char*)"\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
-        mPrintXY(5, 6, (char*)"\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
+        drawScreenTitle(NULL, "Select category");
+        mPrintXY(5, 4, "\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
+        mPrintXY(5, 6, "\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
         int inscreen=1; int key = 0;
         char buffer[20];
         if(type == EVENTEDITORTYPE_ADD) event->category = 1;
         while(inscreen)
         {
-          mPrintXY(5, 5, (char*)" ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); //clear line
+          mPrintXY(5, 5, " ", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK); //clear line
           itoa(event->category, (unsigned char*)buffer);
           mPrintXY(5, 5, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, (event->category <= 6 ? event->category-1 : TEXT_COLOR_YELLOW));
           mGetKey(&key);
@@ -1245,14 +1245,14 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           if(res) {
             mMsgBoxPush(4);
             if (res == 4) {
-              mPrintXY(3, 2, (char*)"Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              mPrintXY(3, 2, "Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             } else {
-              if(istask) mPrintXY(3, 2, (char*)"Task add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              else mPrintXY(3, 2, (char*)"Event add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              if(istask) mPrintXY(3, 2, "Task add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              else mPrintXY(3, 2, "Event add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             }
-            if(istask) mPrintXY(3, 3, (char*)"Task could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            else mPrintXY(3, 3, (char*)"Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            mPrintXY(3, 4, (char*)"be added.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            if(istask) mPrintXY(3, 3, "Task could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            else mPrintXY(3, 3, "Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            mPrintXY(3, 4, "be added.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             closeMsgBox();
             return EVENTEDITOR_RETURN_EXIT; // error is like exit
           }
@@ -1420,8 +1420,8 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
 int deleteEventPrompt(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask) {
   EventDate date; date.day = d; date.month = m; date.year = y;
   mMsgBoxPush(4);
-  mPrintXY(3, 2, (char*)"Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  mPrintXY(3, 3, (istask ? (char*)"Selected Task?" : (char*)"Selected Event?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 2, "Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  mPrintXY(3, 3, (istask ? "Selected Task?" : "Selected Event?"), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(closeMsgBox(1, 4)) {
     removeEvent(&date, events, CALENDARFOLDER, count, pos);
     return EVENTDELETE_RETURN_CONFIRM;
@@ -1464,8 +1464,8 @@ int selectDateScreen(int *yr, int *m, int *d, char* message, char* message2, int
     Bdisp_AllClr_VRAM();
     SetSetupSetting( (unsigned int)0x14, 0); //we only accept numbers, so switch off alpha/shift
     drawScreenTitle(message, message2);
-    mPrintXY(1, 3, (char*)"Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);  
-    mPrintXY(6, 4, (char*)getInputDateFormatHint(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(1, 3, "Date: ", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);  
+    mPrintXY(6, 4, getInputDateFormatHint(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     
     textInput input;
     input.x=6;
@@ -1527,12 +1527,12 @@ int moveEventScreen(CalendarEvent* events, int count, int pos, int isCopy) {
       if(res > 0) {
         mMsgBoxPush(4);
         if (res == 4) { //error on size check
-          mPrintXY(3, 2, (char*)"Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 2, "Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         } else {
-          mPrintXY(3, 2, (char*)"Event move ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          mPrintXY(3, 2, "Event move ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         }
-        mPrintXY(3, 3, (char*)"Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        mPrintXY(3, 4, (isCopy ? (char*)"be copied." : (char*)"be moved."), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 3, "Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        mPrintXY(3, 4, (isCopy ? "be copied." : "be moved."), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         closeMsgBox();
         return EVENTEDITOR_RETURN_CONFIRM;
       }
@@ -1546,8 +1546,8 @@ int moveEventScreen(CalendarEvent* events, int count, int pos, int isCopy) {
 
 void invalidFieldMsg(int istime) {
   mMsgBoxPush(3);
-  if(istime) mPrintXY(3, 3, (char*)"Invalid time.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-  else mPrintXY(3, 3, (char*)"Invalid date.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  if(istime) mPrintXY(3, 3, "Invalid time.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  else mPrintXY(3, 3, "Invalid date.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   closeMsgBox(); 
 }
 
@@ -1638,7 +1638,7 @@ void searchEventsScreen(int y, int m, int d) {
   
   SetBackGround(9);
   clearLine(1,8);
-  drawScreenTitle((char*)"Event Search", (char*)"Search for:");
+  drawScreenTitle("Event Search", "Search for:");
   drawFkeyLabels(-1,-1,-1,-1,-1,0x00A5); // SEARCH (white)
   
   textInput input;
@@ -1704,7 +1704,7 @@ void searchEventsScreen(int y, int m, int d) {
       int searchBottom = 0, searchTop = 0; // the first and last years to have a non-zero amount of events
       int eventsCount = 0;
 
-      progressMessage((char*)" Searching...", 0, yearCount);
+      progressMessage(" Searching...", 0, yearCount);
       for(int i = 0; i < yearCount; i++) {
         int prev = eventsCount;
         eventsCount += searchEventsOnYearOrMonth(userStartYear+i, 0, CALENDARFOLDER, NULL, needle, maxEventsPerYear);
@@ -1712,7 +1712,7 @@ void searchEventsScreen(int y, int m, int d) {
           searchTop = userStartYear+i;
           if(!searchBottom) searchBottom = userStartYear+i;
         }
-        progressMessage((char*)" Searching...", i+1, yearCount);
+        progressMessage(" Searching...", i+1, yearCount);
       }
       closeProgressMessage();
 
@@ -1720,10 +1720,10 @@ void searchEventsScreen(int y, int m, int d) {
       eventsCount = 0; // reset array start index to pass to searchEventsOnYearOrMonth
       const int yearWithEventsCount = searchTop - searchBottom + 1;
 
-      progressMessage((char*)" Searching...", 0, yearWithEventsCount);
+      progressMessage(" Searching...", 0, yearWithEventsCount);
       for(int i = 0; i < yearWithEventsCount; i++) {
         eventsCount += searchEventsOnYearOrMonth(searchBottom+i, 0, CALENDARFOLDER, events+eventsCount, needle, maxEventsPerYear);
-        progressMessage((char*)" Searching...", i+1, yearWithEventsCount);
+        progressMessage(" Searching...", i+1, yearWithEventsCount);
       }
       closeProgressMessage();
       menu.numitems = eventsCount;

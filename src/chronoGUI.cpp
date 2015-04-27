@@ -365,8 +365,8 @@ void setChronoScreen(Menu* menu, chronometer* tchrono, int menuSelOnly) {
           return;
         }
         Bdisp_AllClr_VRAM();
-        drawScreenTitle((char*)"Set downwards chrono.", (char*)"Chronometer end time:");
-        mPrintXY(8, 4, (char*)"HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        drawScreenTitle("Set downwards chrono.", "Chronometer end time:");
+        mPrintXY(8, 4, "HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         
         textInput input;
         input.x=8;

@@ -45,8 +45,8 @@ typedef struct
 #define GETFILES_USER_ABORTED 2
 
 void sortFilesMenu(File* data, MenuItem* mdata, int size);
-int getFiles(File* files, MenuItem* menuitems, char* basepath, int* count);
-int searchForFiles(File* files, char* basepath, char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall=0);
+int getFiles(File* files, MenuItem* menuitems, const char* basepath, int* count);
+int searchForFiles(File* files, const char* basepath, const char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall=0);
 void deleteFiles(File* files, Menu* menu);
 void renameFile(char* old, char* newf);
 void filenameToName(char* filename, char* name, int max=MAX_NAME_SIZE);

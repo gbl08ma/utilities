@@ -59,7 +59,7 @@ void drawCapacityText(int* textY, const char* desc, int cur, int full) {
 void memoryCapacityScreen(int isPaneOffset) {
   if(!isPaneOffset) {
     Bdisp_AllClr_VRAM();
-    drawScreenTitle((char*)"Memory Usage");
+    drawScreenTitle("Memory Usage");
   }
   int smemfree = 0;
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
@@ -198,7 +198,7 @@ void changeFKeyColor() {
   unsigned char*keycolor = (unsigned char*) 0xFD8013E4;
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
-  drawScreenTitle((char*)"Function Key Color");
+  drawScreenTitle("Function Key Color");
   textArea text;
   text.type = TEXTAREATYPE_INSTANT_RETURN;
   text.y = 132;

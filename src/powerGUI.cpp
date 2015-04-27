@@ -245,7 +245,7 @@ void setCPUclock() {
   while (1) {
     Bdisp_AllClr_VRAM();
 
-    drawScreenTitle((char*)"CPU speed");
+    drawScreenTitle("CPU speed");
 
     drawRectangle(13, 88, 357, 2, COLOR_BLACK);
     

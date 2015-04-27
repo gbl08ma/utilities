@@ -36,7 +36,7 @@ void endSerialComm(int error) {
 
   mMsgBoxPush(4);
   if(error) {
-    mPrintXY(3, 2, (char*)"An error", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 2, "An error", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     char buffer[20];
     char buffer2[20];
     strcpy(buffer, "occurred (");
@@ -45,8 +45,8 @@ void endSerialComm(int error) {
     strcat(buffer, ").");
     mPrintXY(3, 3, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   } else {
-    mPrintXY(3, 2, (char*)"Transfer", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    mPrintXY(3, 3, (char*)"successful.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 2, "Transfer", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    mPrintXY(3, 3, "successful.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   }
   closeMsgBox();
 }

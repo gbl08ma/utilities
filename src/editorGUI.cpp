@@ -59,7 +59,7 @@ void textfileEditor(char* filename, char* basefolder) {
     input.key=0;
     SetBackGround(newfile ? 10 : 6);
     clearLine(1,8);
-    drawScreenTitle((char*)"Text Editor", (char*)"File contents:");
+    drawScreenTitle("Text Editor", "File contents:");
     int res = doTextInput(&input);
     if (res==INPUT_RETURN_EXIT) return; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
@@ -68,7 +68,7 @@ void textfileEditor(char* filename, char* basefolder) {
       unsigned short newfilenameshort[0x10A];
       if(newfile) {
         SetBackGround(13);
-        drawScreenTitle((char*)"Text Editor", (char*)"Save file as:");
+        drawScreenTitle("Text Editor", "Save file as:");
         drawFkeyLabels(0x036F); // <
         textInput ninput;
         ninput.forcetext=1;

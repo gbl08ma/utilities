@@ -69,7 +69,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         // deal with menu items of type MENUITEM_CHECKBOX
         if(menu->items[curitem].type == MENUITEM_CHECKBOX) {
           mPrintXY(menu->startX+menu->width-1,curitem+itemsStartY-menu->scroll,
-            (menu->items[curitem].value == MENUITEM_VALUE_CHECKED ? (char*)"\xe6\xa9" : (char*)"\xe6\xa5"),
+            (menu->items[curitem].value == MENUITEM_VALUE_CHECKED ? "\xe6\xa9" : "\xe6\xa5"),
             (menu->selection == curitem+1 ? TEXT_MODE_INVERT : (menu->pBaRtR == 1? TEXT_MODE_TRANSPARENT_BACKGROUND : TEXT_MODE_NORMAL)), menu->items[curitem].color);
         }
         // deal with multiselect menus
@@ -87,9 +87,9 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           }
           if (menu->items[curitem].isselected) {
             if (menu->selection == curitem+1) {
-              mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"\xe6\x9b", TEXT_MODE_TRANSPARENT_BACKGROUND, (menu->items[curitem].color ==  TEXT_COLOR_GREEN ? TEXT_COLOR_BLUE : TEXT_COLOR_GREEN));
+              mPrintXY(menu->startX, curitem+itemsStartY-menu->scroll, "\xe6\x9b", TEXT_MODE_TRANSPARENT_BACKGROUND, (menu->items[curitem].color ==  TEXT_COLOR_GREEN ? TEXT_COLOR_BLUE : TEXT_COLOR_GREEN));
             } else {
-              mPrintXY(menu->startX,curitem+itemsStartY-menu->scroll,(char*)"\xe6\x9b", TEXT_MODE_NORMAL, TEXT_COLOR_PURPLE);
+              mPrintXY(menu->startX, curitem+itemsStartY-menu->scroll, "\xe6\x9b", TEXT_MODE_NORMAL, TEXT_COLOR_PURPLE);
             }
           }
         }
