@@ -867,7 +867,7 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
               PrintMiniMini( &textX, &textY, (char*)niceout, 0, TEXT_COLOR_BLACK, 0 );
             }
             closeMsgBox(0, 6);
-          }
+          } else AUX_DisplayErrorMessage(0x2B); // Data ERROR
         }
         break;
     }
@@ -906,9 +906,7 @@ void viewFileAsText(char* filename) { //name is the "nice" name of the file, i.e
     }
   } else {
     //Error opening file, abort
-    mMsgBoxPush(4);
-    multiPrintXY(3, 2, (char*)"Error opening\nfile to read.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-    closeMsgBox();
+    AUX_DisplayErrorMessage(0x2B); // Data ERROR
     return;
   }
   char titlebuf[MAX_NAME_SIZE+20];

@@ -58,9 +58,7 @@ void viewImage(char* filename) {
     /* Open a JPEG file */
     devid.fp = Bfile_OpenFile_OS(filenameshort, READWRITE, 0);
     if (devid.fp < 0) {
-      mMsgBoxPush(4);
-      multiPrintXY(3, 2, "An error occurred\n(failed to open\nfile)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      closeMsgBox();
+      AUX_DisplayErrorMessage(0x2B);
       return;
     }
 

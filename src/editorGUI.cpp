@@ -47,9 +47,7 @@ void textfileEditor(char* filename, char* basefolder) {
     }
     if(openerror) {
       //Error opening file, abort
-      mMsgBoxPush(4);
-      multiPrintXY(3, 2, "Error opening\nfile to edit.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-      closeMsgBox();
+      AUX_DisplayErrorMessage(0x2B); // Data ERROR
       return;
     }
   }
