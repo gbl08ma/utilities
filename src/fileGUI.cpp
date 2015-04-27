@@ -265,7 +265,6 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
             smallmenu.height=6;
             smallmenu.startX=3;
             smallmenu.startY=2;
-            smallmenu.scrollbar=1;
             smallmenu.scrollout=1;
             smallmenu.selection = getSetting(SETTING_FILE_MANAGER_SORT)+1;
             smallmenu.title = (char*)"Sort items by:";
@@ -296,7 +295,6 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
         smallmenu.height=4;
         smallmenu.startX=3;
         smallmenu.startY=2;
-        smallmenu.scrollbar=0;
         smallmenu.title = (char*)"Create new:";
         int sres = doMenu(&smallmenu);
         mMsgBoxPop();
@@ -355,7 +353,6 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
         smallmenu.height=4;
         smallmenu.startX=3;
         smallmenu.startY=2;
-        smallmenu.scrollbar=0;
         int sres = doMenu(&smallmenu);
         mMsgBoxPop();
         
@@ -527,7 +524,6 @@ int searchFilesScreen(char* browserbasepath, int itemsinclip) {
   menu.numitems=4;
   menu.height=4;
   menu.startY=4;
-  menu.scrollbar=0;
   menu.scrollout=1;
   menu.pBaRtR=1;
   int curstep = 0;
@@ -627,7 +623,6 @@ int searchFilesScreen(char* browserbasepath, int itemsinclip) {
   menu.pBaRtR=0;
   menu.nodatamsg = (char*)"No files found";
   menu.title = (char*)"Search results";
-  menu.scrollbar=1;
   menu.items = resitems;
   
   while(1) {

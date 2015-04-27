@@ -1628,7 +1628,6 @@ void searchEventsScreen(int y, int m, int d) {
   smallmenu.height=5;
   smallmenu.startX=3;
   smallmenu.startY=2;
-  smallmenu.scrollbar=0;
   smallmenu.statusText = (char*)""; // to clear "Press OPTN..." message
   smallmenu.title = (char*)"Search on:";
   int sres = doMenu(&smallmenu);
@@ -1860,7 +1859,6 @@ void calendarToolsMenu(int y, int m, int d) {
   smallmenu.height=6;
   smallmenu.startX=3;
   smallmenu.startY=2;
-  smallmenu.scrollbar=0;
   smallmenu.statusText = (char*)""; // to clear "Press OPTN..." message
   smallmenu.title = (char*)"Calendar tools";
   int sres = doMenu(&smallmenu);
@@ -2101,7 +2099,6 @@ void databaseTrimScreen() {
   menu.numitems=3;
   menu.startY = 6;
   menu.height = 3;
-  menu.scrollbar = 0;
   
   int res = doMenu(&menu);
   if(res == MENU_RETURN_EXIT) return;

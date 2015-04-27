@@ -52,7 +52,6 @@ typedef struct {
   int startY=1; //Y where to start drawing the menu. NOTE this is not absolute pixel coordinates but rather character coordinates
   int width=21; // NOTE this is not absolute pixel coordinates but rather character coordinates
   int height=8; // NOTE this is not absolute pixel coordinates but rather character coordinates
-  int scrollbar=1; // 1 to show scrollbar, 0 to not show it.
   int scrollout=0; // whether the scrollbar goes out of the menu area (1) or it overlaps some of the menu area (0)
   int numitems; // number of items in menu
   int type=MENUTYPE_NORMAL; // set to MENUTYPE_* .

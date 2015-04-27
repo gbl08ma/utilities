@@ -299,7 +299,6 @@ void setChronoScreen(Menu* menu, chronometer* tchrono, int menuSelOnly) {
   bmenu.items=menuitems;
   bmenu.numitems=3;
   bmenu.height = 4;
-  bmenu.scrollbar=0;
   bmenu.title = (char*)"Set chronometer type";
   
   textArea text;

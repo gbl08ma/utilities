@@ -23,8 +23,9 @@ typedef scrollbar TScrollbar;
 int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what user did. selection is on menu->selection. menu->selection starts at 1!
   int itemsStartY=menu->startY; // char Y where to start drawing the menu items. Having a title increases this by one
   int itemsHeight=menu->height;
-  int showtitle = menu->title != NULL;
-  if (showtitle) {
+  int showTitle = menu->title != NULL;
+  int showScrollbar = menu->numitems > menu->height - showTitle ? 1 : 0;
+  if (showTitle) {
     itemsStartY++;
     itemsHeight--;
   }
@@ -38,7 +39,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
   while(1) {
     if(menu->statusText != NULL) DefineStatusMessage(menu->statusText, 1, 0, 0);
     // Clear the area of the screen we are going to draw on
-    if(0 == menu->pBaRtR) drawRectangle(18*(menu->startX-1), 24*(menu->miniMiniTitle ? itemsStartY:menu->startY), 18*menu->width+(menu->scrollbar && menu->scrollout?6:0), 24*menu->height-(menu->miniMiniTitle ? 24:0), COLOR_WHITE);
+    if(0 == menu->pBaRtR) drawRectangle(18*(menu->startX-1), 24*(menu->miniMiniTitle ? itemsStartY:menu->startY), 18*menu->width+(menu->scrollout?6:0), 24*menu->height-(menu->miniMiniTitle ? 24:0), COLOR_WHITE);
     if (menu->numitems>0) {
       for(int curitem=menu->scroll; menu->scroll > curitem-itemsHeight && curitem < menu->numitems; curitem++) { // print the menu item only when appropriate
         char menuitemarr[70];
@@ -93,7 +94,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           }
         }
       }
-      if (menu->scrollbar) {
+      if (showScrollbar) {
         TScrollbar sb;
         sb.I1 = 0;
         sb.I5 = 0;
@@ -110,7 +111,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
     } else {
       if(menu->nodatamsg != NULL) printCentered(menu->nodatamsg, (itemsStartY*24)+(itemsHeight*24)/2-12, COLOR_BLACK, COLOR_WHITE);
     }
-    if(showtitle) {
+    if(showTitle) {
       if(menu->miniMiniTitle) {
         int textX = 0, textY=(menu->startY-1)*24;
         PrintMiniMini( &textX, &textY, menu->title, 16, menu->titleColor, 0 );
@@ -122,7 +123,7 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
     }
     if(menu->darken) {
       DrawFrame(COLOR_BLACK);
-      invertArea(menu->startX*18-18, menu->startY*24, menu->width*18-(menu->scrollout || !menu->scrollbar ? 0 : 5), menu->height*24);
+      invertArea(menu->startX*18-18, menu->startY*24, menu->width*18-(menu->scrollout || !showScrollbar ? 0 : 5), menu->height*24);
     }
     if(menu->type == MENUTYPE_NO_KEY_HANDLING) return MENU_RETURN_INSTANT; // we don't want to handle keys
     int key;

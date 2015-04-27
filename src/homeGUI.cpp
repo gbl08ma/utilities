@@ -170,12 +170,7 @@ void powerMenu(int* pane_keycache) {
   menu.startX=2;
   menu.startY=3;
   menu.type=MENUTYPE_FKEYS;
-  if(getSetting(SETTING_SHOW_ADVANCED)) {
-    menu.numitems=5;
-  } else {
-    menu.numitems=4;
-    menu.scrollbar=0;
-  }
+  menu.numitems=4 + !!getSetting(SETTING_SHOW_ADVANCED);
   menu.darken=getSetting(SETTING_THEME);
   while(1) {
     int res = doMenu(&menu);
@@ -219,7 +214,6 @@ void lightMenu(int* pane_keycache) {
   menu.height=4;
   menu.startX=2;
   menu.startY=3;
-  menu.scrollbar=0;
   menu.type=MENUTYPE_FKEYS;
   menu.darken=getSetting(SETTING_THEME);
   while(1) {
@@ -262,7 +256,6 @@ void timeMenu(int* pane_keycache) {
   menu.height=4;
   menu.startX=2;
   menu.startY=3;
-  menu.scrollbar=0;
   menu.type=MENUTYPE_FKEYS;
   menu.darken=getSetting(SETTING_THEME);
   
@@ -301,7 +294,6 @@ void toolsMenu(int* pane_keycache) {
   Menu menu;
   menu.items=menuitems;
   menu.numitems=3;
-  menu.scrollbar=0;
   menu.width=19;
   menu.height=4;
   menu.startX=2;
@@ -345,12 +337,7 @@ void memsysMenu(int* pane_keycache) {
   
   Menu menu;
   menu.items=menuitems;
-  if(getSetting(SETTING_SHOW_ADVANCED)) {
-    menu.numitems=5;
-  } else {
-    menu.numitems=4;
-    menu.scrollbar=0;
-  }
+  menu.numitems = 4 + !!getSetting(SETTING_SHOW_ADVANCED);
   menu.width=19;
   menu.height=4;
   menu.startX=2;

@@ -161,7 +161,6 @@ int addTransactionWizard(char* wallet) {
       menu.numitems=2;
       menu.height=2;
       menu.startY=3;
-      menu.scrollbar=0;
       menu.scrollout=1;
       menu.pBaRtR=1;
       int inloop=1;
@@ -570,7 +569,6 @@ int renameWalletScreen(char* wallet, char* newWallet) {
 void passwordGenerator() {
   Menu menu;
   menu.type = MENUTYPE_FKEYS;
-  menu.scrollbar = 0;
   menu.title = (char*)"Password Generator";
   menu.height = 7;
   MenuItem items[10];
@@ -737,7 +735,6 @@ void totpClient() {
     items[i].text = ts[i].name;
   }
   menu.title = (char*)"TOTP authenticator";
-  menu.scrollbar = 1;
   menu.scrollout = 1;
   menu.height = 7;
   menu.nodatamsg = (char*)"No tokens - press F2";

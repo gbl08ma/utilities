@@ -95,7 +95,6 @@ void settingsMenu() {
           Menu menu;
           menu.items=menuitems;
           menu.numitems=2;
-          menu.scrollbar=0;
           menu.width=22;
           menu.selection=getSetting(SETTING_TIMEFORMAT)+1;
           menu.title = (char*)"Set time format";
@@ -126,7 +125,6 @@ void settingsMenu() {
           Menu menu;
           menu.items=menuitems;
           menu.numitems=3;
-          menu.scrollbar=0;
           menu.width=22;
           menu.selection=getSetting(SETTING_DATEFORMAT)+1;
           menu.title = (char*)"Set date format";
@@ -178,7 +176,6 @@ void settingsMenu() {
           smallmenu.height=5;
           smallmenu.startX=3;
           smallmenu.startY=2;
-          smallmenu.scrollbar=0;
           smallmenu.selection=getSetting(SETTING_CHRONO_NOTIFICATION_TYPE)+1;
           smallmenu.title = (char*)"Chrono. notif.";
 
@@ -251,7 +248,6 @@ inline static void lockSettingsMenu() {
           smallmenu.height=4;
           smallmenu.startX=3;
           smallmenu.startY=2;
-          smallmenu.scrollbar=0;
           smallmenu.selection=getSetting(SETTING_UNLOCK_RUNMAT)+1;
           smallmenu.title = (char*)"Run-Mat on unlock";
           int sres = doMenu(&smallmenu);
@@ -422,7 +418,6 @@ void calendarSettingsMenu() {
           smallmenu.height=4;
           smallmenu.startX=3;
           smallmenu.startY=2;
-          smallmenu.scrollbar=0;
           if(menu.selection == 2) {
             smallmenu.title = (char*)"Default Calendar";
             smallmenu.selection=getSetting(SETTING_DEFAULT_CALENDAR_VIEW)+1;
