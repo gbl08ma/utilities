@@ -310,7 +310,7 @@ void setChronoScreen(Menu* menu, chronometer* tchrono, int menuSelOnly) {
   text.elements = elem;
   text.scrollbar=0;
   
-  elem[0].text = (char*)"Chronometers will start the moment you set them. You should familiarize yourself with the behavior of the chronometer function before using it for something important.";
+  elem[0].text = (char*)"Chronometers will start the moment they are set. You should familiarize yourself with the behavior of the chronometer functions before relying on them.";
 
   text.numelements = 1;
   Bdisp_AllClr_VRAM();
