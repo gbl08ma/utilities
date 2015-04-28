@@ -348,11 +348,9 @@ void viewTransaction(Transaction* tx) {
   
   char date[50];
   dateToString(date, tx->date.year, tx->date.month, tx->date.day);
-  
-  char buffer[15]="";
-  timeToString(buffer, tx->time.hour, tx->time.minute, tx->time.second);
   strcat(date, (char*)" ");
-  strcat(date, buffer);
+  // timeToString concatenates
+  timeToString(date, tx->time.hour, tx->time.minute, tx->time.second);
   
   elem[text.numelements].text = date;
   text.numelements++;

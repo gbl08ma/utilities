@@ -15,8 +15,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-int GetDebugMode();
-void SetDebugMode(int val);
+int getDebugMode();
+void setDebugMode(int val);
 
 void debugMessage(char* text1, char* text2, int value);
 void setInitStackPtr(int val);

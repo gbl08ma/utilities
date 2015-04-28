@@ -21,10 +21,10 @@
 
 #ifdef ENABLE_DEBUG
 static int debugMode = 0; // when 1, debug mode is on
-int GetDebugMode() {
+int getDebugMode() {
   return debugMode;
 }
-void SetDebugMode(int val) {
+void setDebugMode(int val) {
   debugMode = val;
 }
 
@@ -110,7 +110,7 @@ void masterControl() {
 #ifdef ENABLE_DEBUG          
         case 5:
         case 6:
-          SetDebugMode(menu.selection-5);
+          setDebugMode(menu.selection-5);
           break;
         case 7:
         case 8:

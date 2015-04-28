@@ -68,12 +68,12 @@ void mGetKey(int* key, int darkenStatus) {
       longjmp(utilities_return, 1); // this is also used for returning from Run-Mat. Basically equates to restarting the add-in.
       break;
 #ifdef ENABLE_DEBUG
-    } else if (*key == KEY_SHIFT_OPTN && GetDebugMode()) {
+    } else if (*key == KEY_SHIFT_OPTN && getDebugMode()) {
       TestMode(1);
       const unsigned int default_fkeys[] = { 0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0 };
       Set_FKeys1(0, (unsigned int*)default_fkeys);
       Set_FKeys2(0);
-    } else if (*key == KEY_CTRL_PRGM && GetDebugMode()) {
+    } else if (*key == KEY_CTRL_PRGM && getDebugMode()) {
       showRAMused();
 #endif
     } else {
