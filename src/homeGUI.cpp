@@ -45,10 +45,10 @@ void homeScreen() {
     //black theme, or not?
     if (getSetting(SETTING_THEME) == 1) {
       Bdisp_Fill_VRAM( COLOR_BLACK, 3 );
-      DrawFrame( 0x000000  );
+      DrawFrame(COLOR_BLACK);
     } else {
       Bdisp_AllClr_VRAM();
-      DrawFrame( 0xFFFFFF  );
+      DrawFrame(COLOR_WHITE);
     }
     if(getSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 3 && getLastCompleteChrono()) {
       char message[30];
@@ -442,15 +442,15 @@ void eventsPane(int retkey, int* pane_keycache) {
   int inscreen = 1;
   if (getSetting(SETTING_THEME)) {
     Bdisp_Fill_VRAM( COLOR_BLACK, 2 ); //fill between the status area and f-key area
-    DrawFrame( 0x000000  );
+    DrawFrame(COLOR_BLACK);
   } else {
     Bdisp_Fill_VRAM( COLOR_WHITE, 2 ); //fill between the status area and f-key area
-    DrawFrame( 0xfffff  );
+    DrawFrame(COLOR_WHITE);
   }
   pane_drawTodayEvents(calevents, 0, 0, numevents, HOME_EVENTS_DISPLAY_FULL);
   if(getSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) drawBusymapDay(&thisday, 0, LCD_HEIGHT_PX-44, LCD_WIDTH_PX, 15, 1,0,0);
   while (inscreen) {
-    if (getSetting(SETTING_THEME)) DrawFrame( 0x000000  );
+    if (getSetting(SETTING_THEME)) DrawFrame(COLOR_BLACK);
     mGetKey(&key, getSetting(SETTING_THEME));
     switch(key) {
       case KEY_CTRL_F1:
@@ -467,8 +467,8 @@ void eventsPane(int retkey, int* pane_keycache) {
 }
 
 void memoryUsagePane(int retkey, int* pane_keycache) {
-  if (getSetting(SETTING_THEME)) DrawFrame(0x000000);
-  else DrawFrame(0xfffff);
+  if (getSetting(SETTING_THEME)) DrawFrame(COLOR_BLACK);
+  else DrawFrame(COLOR_WHITE);
   Bdisp_Fill_VRAM( COLOR_WHITE, 2 ); //fill between the status area and f-key area
   memoryCapacityScreen(-24);
   if(getSetting(SETTING_THEME)) {
@@ -478,7 +478,7 @@ void memoryUsagePane(int retkey, int* pane_keycache) {
   }
   while (1) {
     int key;
-    if (getSetting(SETTING_THEME)) DrawFrame(0x000000);
+    if (getSetting(SETTING_THEME)) DrawFrame(COLOR_BLACK);
     mGetKey(&key, getSetting(SETTING_THEME));
     switch(key) {
       case KEY_CTRL_F1:
