@@ -158,20 +158,24 @@ void drawAnalogClock(int cx, int cy, int radius, int colorbg, int colorfg) {
 void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg, int d, int h, int m, int sPlusMs) {
   // draw outer dial
   drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 0);
-  // draw inner top dial (minutes)
-  drawAnalogClockFace(cx, cy-radius/2, radius/3, colorbg, colorfg, 0);
-  // draw inner bottom dial (hours)
-  drawAnalogClockFace(cx, cy+radius/2, radius/3, colorbg, colorfg, 0);
+  // draw left dial (minutes)
+  drawAnalogClockFace(cx-radius*2, cy, radius/2, colorbg, colorfg, 0);
+  int textX = cx-radius*2-5, textY = cy-radius + 24 - 7;
+  PrintMiniMini( &textX, &textY, (char*)"M", 0, TEXT_COLOR_BLACK, 0 );
+  // draw right dial (hours)
+  drawAnalogClockFace(cx+radius*2, cy, radius/2, colorbg, colorfg, 0);
+  textX = cx+radius*2-4; textY = cy-radius + 24 - 7;
+  PrintMiniMini( &textX, &textY, (char*)"H", 0, TEXT_COLOR_BLACK, 0 );
   // print days
   if(d) {
-    int textX = cx; int textY = cy;
+    textX = cx; textY = cy;
     if(d < 100) textX += radius - radius / 3;
     else if(d < 1000) textX += radius - radius / 2;
     else if(d < 100000) textX += radius - radius / 1.5;
     textY -= 4 + 24;
     char buffer[10];
     itoa(d, (unsigned char*)buffer);
-    PrintMiniMini( &textX, &textY, (char*)buffer, 0, TEXT_COLOR_BLACK, 0 );
+    PrintMiniMini( &textX, &textY, buffer, 0, TEXT_COLOR_BLACK, 0 );
   }
   // seconds needle on bigger dial
   //drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg);
@@ -182,9 +186,9 @@ void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg,
     cy+length*sine((angle+(double)sPlusMs*0.006)*M_PI/180.0),
     colorfg);
   // minutes on top
-  drawAnalogClockMinuteNeedle(m, sPlusMs/1000, cx, cy-radius/2, radius/3, colorfg);
+  drawAnalogClockMinuteNeedle(m, sPlusMs/1000, cx-radius*2, cy, radius/2, colorfg);
   // hours on bottom
-  drawAnalogClockHourNeedle(h, m, cx, cy+radius/2, radius/3, colorfg, 1);
+  drawAnalogClockHourNeedle(h, m, cx+radius*2, cy, radius/2, colorfg, 1);
 }
 
 void setTimeScreen(int canExit) {
