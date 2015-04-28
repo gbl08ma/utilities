@@ -437,24 +437,6 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
         if(menu->fkeypage == 0) return 0;
         else menu->fkeypage = 0;
         break;
-      case MENU_RETURN_SELECTION:
-      case MENU_RETURN_SELECTION_RIGHT:
-        if(!selIsSep) viewEventAtPos(&events[msel-1].startdate, events[msel-1].origpos);
-        else {
-          long int dd = dateToDays(*y, *m, *d) + ssel-1;
-          long int ny, nm, nd;
-          daysToDate(dd, &ny, &nm, &nd);
-          EventDate date;
-          date.year = ny; date.month = nm; date.day = nd;
-          searchValid = 1;
-          viewEvents(date.year, date.month, date.day);
-          if(!searchValid) {
-            *y=ny; *m=nm; *d=nd;
-            *jumpToSel=1;
-            return 1;
-          }
-        }
-        break;
       case MENU_RETURN_SCROLLING:
         if(menu->selection == 1) {
           ddays = dateToDays(*y, *m, *d) - 1; // decrease by one day (go to another week and jump to menu bottom)
@@ -483,8 +465,10 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
           return 1;
         }
         break;
+      case MENU_RETURN_SELECTION:
+      case MENU_RETURN_SELECTION_RIGHT:
       case KEY_CTRL_F2:
-        if(menu->fkeypage == 0) {
+        if(menu->fkeypage == 0 || res == MENU_RETURN_SELECTION || res == MENU_RETURN_SELECTION_RIGHT) {
           if(menu->numitems > 0) {
             if(!selIsSep) viewEventAtPos(&events[msel-1].startdate, events[msel-1].origpos);
             else {
