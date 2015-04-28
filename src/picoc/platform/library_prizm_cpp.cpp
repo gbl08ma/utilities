@@ -1971,7 +1971,7 @@ pcvoid(doMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct Valu
 }
 
 pcvoid(getMenuSelectionSeparators)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = getMenuSelectionSeparators((Menu*)Param[0]->Val->Pointer, Param[1]->Val->Integer);
+    ReturnValue->Val->Integer = getMenuSelectionSeparators((Menu*)Param[0]->Val->Pointer, (int*)Param[1]->Val->Pointer, (int*)Param[2]->Val->Pointer);
 }
 
 pcvoid(closeMsgBox)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2695,7 +2695,7 @@ const struct LibraryFunction UtilitiesMemsysGUI[] =
 const struct LibraryFunction UtilitiesMenuGUI[] =
 {
     { pcfunc(doMenu),                "int doMenu(void*, void*);" },
-    { pcfunc(getMenuSelectionSeparators),"int getMenuSelectionSeparators(void*, int);" },
+    { pcfunc(getMenuSelectionSeparators),"int getMenuSelectionSeparators(void*, int*, int*);" },
     { pcfunc(closeMsgBox),           "int closeMsgBox(int, int);" },
     { NULL,         NULL }
 };

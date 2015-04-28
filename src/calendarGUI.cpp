@@ -430,8 +430,8 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
       drawFkeyLabels(0x0408, 0x0409, 0x040B, 0x040C, 0x0238, 0x015F);
     }
     int res = doMenu(menu);
-    int msel = getMenuSelectionSeparators(menu, 1);
-    int ssel = getMenuSelectionSeparators(menu, 0);
+    int msel, ssel;
+    int selIsSep = getMenuSelectionSeparators(menu, &msel, &ssel);
     switch(res) {
       case MENU_RETURN_EXIT:
         if(menu->fkeypage == 0) return 0;
@@ -439,8 +439,8 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
         break;
       case MENU_RETURN_SELECTION:
       case MENU_RETURN_SELECTION_RIGHT:
-        if(msel>0) viewEventAtPos(&events[msel-1].startdate, events[msel-1].origpos);
-        else if(ssel>0) {
+        if(!selIsSep) viewEventAtPos(&events[msel-1].startdate, events[msel-1].origpos);
+        else {
           long int dd = dateToDays(*y, *m, *d) + ssel-1;
           long int ny, nm, nd;
           daysToDate(dd, &ny, &nm, &nd);
@@ -486,8 +486,8 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
       case KEY_CTRL_F2:
         if(menu->fkeypage == 0) {
           if(menu->numitems > 0) {
-            if(msel>0) viewEventAtPos(&events[msel-1].startdate, events[msel-1].origpos);
-            else if(ssel>0) {
+            if(!selIsSep) viewEventAtPos(&events[msel-1].startdate, events[msel-1].origpos);
+            else {
               long int dd = dateToDays(*y, *m, *d) + ssel-1;
               long int ny, nm, nd;
               daysToDate(dd, &ny, &nm, &nd);
@@ -512,7 +512,7 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
         break;
       case KEY_CTRL_F3:
         if(menu->fkeypage == 0) {
-          if(msel>0) {
+          if(!selIsSep) {
             searchValid = 1;
             viewEvents(events[msel-1].startdate.year, events[msel-1].startdate.month, events[msel-1].startdate.day);
             if(!searchValid) {
@@ -520,7 +520,7 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
               *jumpToSel=1;
               return 1;
             }
-          } else if(ssel>0) {
+          } else {
             long int dd = dateToDays(*y, *m, *d) + ssel-1;
             long int ny, nm, nd;
             daysToDate(dd, &ny, &nm, &nd);
@@ -546,8 +546,8 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
         if(menu->fkeypage == 0) {
           EventDate* date = NULL;
           EventDate rdate;
-          if(msel>0) date = &events[msel-1].startdate;
-          else if(ssel>0) {
+          if(!selIsSep) date = &events[msel-1].startdate;
+          else {
             long int dd = dateToDays(*y, *m, *d) + ssel-1;
             long int ny, nm, nd;
             daysToDate(dd, &ny, &nm, &nd);
@@ -575,18 +575,18 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
       case KEY_CTRL_F5:
         if(menu->fkeypage == 0) {
           int sey=0,sem=0,sed=0;
-          if(msel>0) {
+          if(!selIsSep) {
             sey=events[msel-1].startdate.year;
             sem=events[msel-1].startdate.month;
             sed=events[msel-1].startdate.day;
-          } else if(ssel>0) {
+          } else {
             long int dd = dateToDays(*y, *m, *d) + ssel-1;
             long int ny, nm, nd;
             daysToDate(dd, &ny, &nm, &nd);
             sey=ny;
             sem=nm;
             sed=nd;
-          } else return 1; //this should never happen
+          }
           searchValid=1;
           searchEventsScreen(sey, sem, sed);
           if(sy == LOWEST_SUPPORTED_YEAR-1 || !sm || !sd) {
@@ -602,19 +602,17 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
         break;
       case KEY_CTRL_F6:
         if(menu->fkeypage == 0) {
-          if(msel>0) { // do not lose selection precision if possible
+          if(!selIsSep) { // do not lose selection precision if possible
             sy = events[msel-1].startdate.year;
             sm = events[msel-1].startdate.month;
             sd = events[msel-1].startdate.day;
           } else {
-            if(ssel>0) {
-              long int dd = dateToDays(*y, *m, *d) + ssel-1;
-              long int ny, nm, nd;
-              daysToDate(dd, &ny, &nm, &nd);
-              sy = ny;
-              sm = nm;
-              sd = nd;
-            }
+            long int dd = dateToDays(*y, *m, *d) + ssel-1;
+            long int ny, nm, nd;
+            daysToDate(dd, &ny, &nm, &nd);
+            sy = ny;
+            sm = nm;
+            sd = nd;
           }
           return 2;
         } else if (menu->fkeypage == 1) {
@@ -628,7 +626,7 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
         }
         break;
       case KEY_CTRL_FORMAT:
-        if(menu->numitems > 0 && msel>0) {
+        if(menu->numitems > 0 && !selIsSep) {
           int ne = getEvents(&events[msel-1].startdate, CALENDARFOLDER, NULL);
           // we can use alloca here, as we're going to return right after
           CalendarEvent* ce = (CalendarEvent*)alloca(ne*sizeof(CalendarEvent));
@@ -643,15 +641,13 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
         break;
       case KEY_CTRL_OPTN:
         long int ny, nm, nd;
-        if(msel>0) { // do not lose selection precision if possible
+        if(!selIsSep) { // do not lose selection precision if possible
           ny = events[msel-1].startdate.year;
           nm = events[msel-1].startdate.month;
           nd = events[msel-1].startdate.day;
         } else {
-          if(ssel>0) {
-            long int dd = dateToDays(*y, *m, *d) + ssel-1;
-            daysToDate(dd, &ny, &nm, &nd);
-          }
+          long int dd = dateToDays(*y, *m, *d) + ssel-1;
+          daysToDate(dd, &ny, &nm, &nd);
         }
         searchValid = 1;
         calendarToolsMenu(ny, nm, nd);

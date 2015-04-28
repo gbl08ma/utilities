@@ -74,7 +74,7 @@ typedef struct {
 #define MENU_RETURN_INTOSETTINGS 4 //basically this is to request a redraw when the user accesses the settings. Restoring the VRAM may not work when the user accesses the main menu while the settings menu is open
 #define MENU_RETURN_SELECTION_RIGHT 5 //for when the user presses the Right key to select an item
 int doMenu(Menu* menu, MenuItemIcon* icontable=NULL);
-int getMenuSelectionSeparators(Menu* menu, int ignoreSeparators);
+int getMenuSelectionSeparators(Menu* menu, int* noSeparators, int* onlySeparators);
 
 int closeMsgBox(int yesno=0, int msgY=5);
 
