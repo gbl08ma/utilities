@@ -116,7 +116,7 @@ void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg, i
 
   } while(i!=12); //LIMIT NUMERIC POINTS UPTO =12= Numbers.
 }
-void drawAnalogClockSecondNeedle(int s, int cx, int cy, double radius, int colorfg) {
+void drawAnalogClockSecondNeedle(int s, int cx, int cy, int radius, int colorfg) {
   double angle=-90.0;
   double sx,sy;
   double length = radius - radius/8.0;
@@ -125,7 +125,7 @@ void drawAnalogClockSecondNeedle(int s, int cx, int cy, double radius, int color
   drawLine(cx,cy,sx,sy,colorfg);
 }
 
-void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, int colorfg) {
+void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, int radius, int colorfg) {
   double angle=-90;
   double sx,sy;
   double length = radius - radius/5.0;
@@ -134,7 +134,7 @@ void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, double radius, in
   drawLine(cx,cy,sx,sy, colorfg);
 }
 
-void drawAnalogClockHourNeedle(int h, int m, int cx, int cy, double radius, int colorfg, int ischrono) {
+void drawAnalogClockHourNeedle(int h, int m, int cx, int cy, int radius, int colorfg, int ischrono) {
   double angle=-90;
   double sx,sy;
   double length = radius - radius/(ischrono? 5.0 : 2.5);
@@ -169,9 +169,9 @@ void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg,
   // print days
   if(d) {
     textX = cx; textY = cy;
-    if(d < 100) textX += radius - radius / 3;
-    else if(d < 1000) textX += radius - radius / 2;
-    else if(d < 100000) textX += radius - radius / 1.5;
+    if(d < 100) textX += radius - radius / 3; // (2/3)*radius hopefully with less rounding errors
+    else if(d < 1000) textX += radius / 2;
+    else if(d < 100000) textX += radius / 3;
     textY -= 4 + 24;
     char buffer[10];
     itoa(d, (unsigned char*)buffer);
