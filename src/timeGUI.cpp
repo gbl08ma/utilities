@@ -335,10 +335,13 @@ void currentTimeToBasicVar() {
   TBCD Src;
   double fhour=0.0,fminute=0.0,fsecond=0.0,fmillisecond=0.0,hourfraction = 0;
   
-  fhour = getCurrentHour(); fminute = getCurrentMinute(); fsecond = getCurrentSecond(); fmillisecond = getCurrentMillisecond();
+  fhour = getCurrentHour();
+  fminute = getCurrentMinute();
+  fsecond = getCurrentSecond();
+  fmillisecond = getCurrentMillisecond();
   hourfraction = fhour+fminute/60.0+fsecond/(60.0*60.0)+fmillisecond/(60.0*60.0*1000.0);
-  Src.Set( hourfraction );
-  Alpha_SetData( 'T', &Src );
+  Src.Set(hourfraction);
+  Alpha_SetData('T', &Src);
   mMsgBoxPush(4);
   multiPrintXY(3, 2, "Time fraction\nsaved to alpha\nvariable T.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   closeMsgBox();

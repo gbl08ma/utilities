@@ -49,28 +49,6 @@ void showRAMused() {
 
 #endif
 
-/*void showRAMusedStatus() {
-  int usedStack = (int)GetStackPtr();
-  int ramused = initStackPtr - usedStack;
-  
-  char buffer1[10] = "";
-  char buffer2[25] = "";
-  itoa(ramused, (unsigned char*)buffer1);
-  strcpy(buffer2, "RAM used: ");
-  strcat(buffer2, buffer1);
-  
-  EnableStatusArea(0);    // necessary, if the status area should be used by system functions!
-  DefineStatusAreaFlags(DSA_SETDEFAULT, 0, 0, 0); // necessary, if the status area should be used by system functions!
-  DefineStatusAreaFlags(3, SAF_BATTERY|SAF_TEXT|SAF_GLYPH, 0, 0);
-  
-  DefineStatusMessage((char*)buffer2, 1, 0, 0);
-  DisplayStatusArea();
-}*/
-
-/*void mycallback() {
-  debugMessage((char*)"  My menu", (char*)"  callback", 0);
-}*/
-
 void masterControl() {
   MenuItem menuitems[10];
   menuitems[0].text = (char*)"SS";

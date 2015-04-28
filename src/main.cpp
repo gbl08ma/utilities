@@ -76,10 +76,6 @@ int main()
   loadChronoArray(chrono, NUMBER_OF_CHRONO);
   
   setChronoArrayPtr(chrono); //needed by the checkChronoComplete function
-  
-  // NOTE: the following debug timer is disabled because it makes many things become much slower, and causes system errors on Bfile. only enable if needed.
-  //int ramUsedDbgTimer = Timer_Install(0, showRAMusedStatus, 50);
-  //if (ramUsedDbgTimer > 0) { Timer_Start(ramUsedDbgTimer); }
 
 #ifdef LOG_BATTERY_VOLTAGE
   // log battery voltage on every start-up
