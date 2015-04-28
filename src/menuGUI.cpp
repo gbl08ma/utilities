@@ -48,11 +48,13 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
           strcpy(menuitem, "  "); //allow for the folder and selection icons on MULTISELECT menus (e.g. file browser)
           menuitem += 2;
         }
-        menuitem += strncpy_retlen(menuitem, menu->items[curitem].text, 68);
+        menuitem += strncpy_retlen(menuitem, menu->items[curitem].text, 67);
         if(menu->items[curitem].type != MENUITEM_SEPARATOR) {
           //make sure we have a string big enough to have background when item is selected:          
           // MB_ElementCount is used instead of strlen because multibyte chars count as two with strlen, while graphically they are just one char, making fillerRequired become wrong
-          int fillerRequired = menu->width - MB_ElementCount(menu->items[curitem].text) - (menu->type == MENUTYPE_MULTISELECT ? 2 : 0);
+          int fillerRequired = menu->width +
+                               (menu->width == 21 ? 1 : 0) // if the menu has the full width, fill the half-character at the end of the screen.
+                               - MB_ElementCount(menu->items[curitem].text) - (menu->type == MENUTYPE_MULTISELECT ? 2 : 0);
           for(int i = 0; i < fillerRequired; i++) {
             *menuitem = ' ';
             menuitem++;
