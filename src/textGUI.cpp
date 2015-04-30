@@ -80,7 +80,7 @@ int doTextArea(textArea* text) {
     }
     int scrollableHeight = LCD_HEIGHT_PX-24*(showtitle ? 2 : 1)-text->y;
     //draw a scrollbar:
-    if(text->scrollbar) {
+    if(text->scrollbar && totalTextY > scrollableHeight) {
       TScrollbar sb;
       sb.I1 = 0;
       sb.I5 = 0;
