@@ -260,6 +260,7 @@ int viewWeekCalendar() {
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnInfiniteScrolling=1;
+  menu.returnOnRight = 1;
   // whether to make the menu jump to the day specified on y, m, d.
   int jumpToSel=1; // possible values: 0 not to jump, 1 to jump to day, 2 to jump to menu bottom
 
@@ -466,9 +467,8 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
         }
         break;
       case MENU_RETURN_SELECTION:
-      case MENU_RETURN_SELECTION_RIGHT:
       case KEY_CTRL_F2:
-        if(menu->fkeypage == 0 || res == MENU_RETURN_SELECTION || res == MENU_RETURN_SELECTION_RIGHT) {
+        if(menu->fkeypage == 0 || res == MENU_RETURN_SELECTION) {
           if(menu->numitems > 0) {
             if(!selIsSep) viewEventAtPos(&events[msel-1].startdate, events[msel-1].origpos);
             else {
@@ -654,6 +654,7 @@ void viewEvents(int y, int m, int d) {
   menu.height=7;
   menu.type=MENUTYPE_FKEYS;
   menu.returnOnLeft = 1;
+  menu.returnOnRight = 1;
   menu.nodatamsg = (char*)"No events - press F2";
   char buffer[15];
   dateToString(buffer, y, m, d);
@@ -736,7 +737,6 @@ int viewEventsChild(Menu* menu, int y, int m, int d) {
         }
         break;
       case MENU_RETURN_SELECTION:
-      case MENU_RETURN_SELECTION_RIGHT:
         viewEvent(&events[menu->selection-1]);
         break;
       case KEY_CTRL_F2:
@@ -1640,6 +1640,7 @@ void searchEventsScreen(int y, int m, int d) {
   menu.type=MENUTYPE_FKEYS;
   menu.nodatamsg = (char*)"No events found";
   menu.title = (char*)"Search results";
+  menu.returnOnRight = 1;
 
   switch(smallmenu.selection) {
     case 1:
@@ -1730,7 +1731,6 @@ void searchEventsScreen(int y, int m, int d) {
       case KEY_CTRL_F1:
         if(!menu.numitems) break;
       case MENU_RETURN_SELECTION:
-      case MENU_RETURN_SELECTION_RIGHT:
         viewEventAtPos(&events[menu.selection-1].startdate, events[menu.selection-1].origpos);
         break;
       case KEY_CTRL_F2:

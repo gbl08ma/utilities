@@ -61,6 +61,7 @@ typedef struct {
   int numselitems=0; // number of selected items
   int returnOnInfiniteScrolling=0; //whether the menu should return when user reaches the last item and presses the down key (or the first item and presses the up key)
   int returnOnLeft=0; //whether the menu should return (exit) when the user presses Left
+  int returnOnRight=0;
   int darken=0; // for dark theme on homeGUI menus
   int miniMiniTitle=0; // if true, title will be drawn in minimini. for calendar week view
   int pBaRtR=0; //preserve Background And Return To Redraw. Rarely used
@@ -72,7 +73,6 @@ typedef struct {
 #define MENU_RETURN_INSTANT 2
 #define MENU_RETURN_SCROLLING 3 //for returnOnInfiniteScrolling
 #define MENU_RETURN_INTOSETTINGS 4 //basically this is to request a redraw when the user accesses the settings. Restoring the VRAM may not work when the user accesses the main menu while the settings menu is open
-#define MENU_RETURN_SELECTION_RIGHT 5 //for when the user presses the Right key to select an item
 int doMenu(Menu* menu, MenuItemIcon* icontable=NULL);
 int getMenuSelectionSeparators(Menu* menu, int* noSeparators, int* onlySeparators);
 

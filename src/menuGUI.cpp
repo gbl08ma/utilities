@@ -200,7 +200,8 @@ int doMenu(Menu* menu, MenuItemIcon* icontable) { // returns code telling what u
         if (menu->type==MENUTYPE_FKEYS) return key; // return on the Format key so that event lists can prompt to change event category
         break;
       case KEY_CTRL_RIGHT:
-        if(menu->numitems>0) return MENU_RETURN_SELECTION_RIGHT;
+        if(!menu->returnOnRight) break;
+        // else fallthrough
       case KEY_CTRL_EXE:
         if(menu->numitems>0) return MENU_RETURN_SELECTION;
         break;

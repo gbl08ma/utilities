@@ -135,6 +135,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
   menu.height = 7;
   menu.scrollout = 1;
   menu.returnOnLeft = 1;
+  menu.returnOnRight = 1;
   menu.nodatamsg = (char*)"No Data";
   menu.title = (char*)"Files";
   char statusbuffer[120];
@@ -164,7 +165,6 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
         }
         break;
       case MENU_RETURN_SELECTION:
-      case MENU_RETURN_SELECTION_RIGHT:
         if(menuitems[menu.selection-1].isfolder) {
           strcpy(browserbasepath, files[menu.selection-1].filename); //switch to selected folder
           strcat(browserbasepath, "\\");
@@ -950,6 +950,7 @@ void viewClipboard(File* clipboard, int* itemsinclip) {
   menu.height = 7;
   menu.scrollout = 1;
   menu.type=MENUTYPE_FKEYS;
+  menu.returnOnRight = 1;
   while(1) {
     MenuItem menuitems[MAX_ITEMS_IN_CLIPBOARD];
     menu.title = (char*)"Clipboard";
@@ -971,7 +972,6 @@ void viewClipboard(File* clipboard, int* itemsinclip) {
     int res = doMenu(&menu);
     switch(res) {
       case MENU_RETURN_SELECTION:
-      case MENU_RETURN_SELECTION_RIGHT:
         if(!clipboard[menu.selection-1].isfolder) viewFileInfo(&clipboard[menu.selection-1], 0, *itemsinclip);
         break;
       case MENU_RETURN_EXIT:

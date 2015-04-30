@@ -42,6 +42,7 @@ void balanceManager() {
   menu.startY = 3;
   menu.type=MENUTYPE_FKEYS;
   menu.nodatamsg = (char*)"No data - press F2";
+  menu.returnOnRight = 1;
   while(res) {
     char currentWallet[MAX_FILENAME_SIZE] = "";
     if(!getCurrentWallet(currentWallet)) {
@@ -109,7 +110,6 @@ int balanceManagerChild(Menu* menu, char* currentWallet) {
         break;
       case KEY_CTRL_F1:
       case MENU_RETURN_SELECTION:
-      case MENU_RETURN_SELECTION_RIGHT:
         if(menu->numitems) viewTransaction(&txs[menu->selection-1]);
         break;
       case KEY_CTRL_F2:
@@ -736,6 +736,7 @@ void totpClient() {
   menu.scrollout = 1;
   menu.height = 7;
   menu.nodatamsg = (char*)"No tokens - press F2";
+  menu.returnOnRight = 1;
   while(1) {
     drawFkeyLabels(0, 0x0186, 0, 0, 0, 0x012A); // NEW, TIME
     if(menu.numitems) {
@@ -748,7 +749,6 @@ void totpClient() {
       case KEY_CTRL_F1:
         if(!menu.numitems) break;
       case MENU_RETURN_SELECTION:
-      case MENU_RETURN_SELECTION_RIGHT:
         viewTOTPcode(&ts[menu.selection-1]);
         break;
       case KEY_CTRL_F2:
