@@ -24,7 +24,7 @@
 #include "lockGUI.hpp"
 
 inline static void lockSettingsMenu();
-inline static void clockSettingsMenu();
+inline static void homeSettingsMenu();
 
 void settingsMenu() {
   DrawFrame(COLOR_WHITE);
@@ -41,20 +41,20 @@ void settingsMenu() {
   menuitems[4].text = (char*)"Date format";
   
   menuitems[5].text = (char*)"Home settings";
+
+  menuitems[6].text = (char*)"Calendar settings";
+
+  menuitems[7].text = (char*)"Calc. lock settings";
+
+  menuitems[8].text = (char*)"Chrono. notification";
   
-  menuitems[6].text = (char*)"Display statusbar";
-  menuitems[6].type = MENUITEM_CHECKBOX;
+  menuitems[9].text = (char*)"Display statusbar";
+  menuitems[9].type = MENUITEM_CHECKBOX;
   
-  menuitems[7].text = (char*)"Show advanced tools";
-  menuitems[7].type = MENUITEM_CHECKBOX;
+  menuitems[10].text = (char*)"Show advanced tools";
+  menuitems[10].type = MENUITEM_CHECKBOX;
   
-  menuitems[8].text = (char*)"Startup brightness";
-  
-  menuitems[9].text = (char*)"Calc. lock settings";
-  
-  menuitems[10].text = (char*)"Calendar settings";
-  
-  menuitems[11].text = (char*)"Chrono. notification";
+  menuitems[11].text = (char*)"Startup brightness";
 
   menuitems[12].text = (char*)"About this add-in";
   
@@ -65,8 +65,8 @@ void settingsMenu() {
   menu.statusText = (char*)"";
   setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
   while(1) {
-    menuitems[6].value = getSetting(SETTING_DISPLAY_STATUSBAR);
-    menuitems[7].value = getSetting(SETTING_SHOW_ADVANCED);
+    menuitems[9].value = getSetting(SETTING_DISPLAY_STATUSBAR);
+    menuitems[10].value = getSetting(SETTING_SHOW_ADVANCED);
     
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) {
@@ -133,35 +133,15 @@ void settingsMenu() {
           break;
         }
         case 6:
-          clockSettingsMenu();
+          homeSettingsMenu();
           break;
         case 7:
-          menuitems[6].value = !menuitems[6].value;
-          setSetting(SETTING_DISPLAY_STATUSBAR, menuitems[6].value, 1);
-          break;
-        case 8:
-          menuitems[7].value = !menuitems[7].value;
-          setSetting(SETTING_SHOW_ADVANCED, menuitems[7].value, 1); 
-          break;
-        case 9: // set startup brightness
-        { Selector sel;
-          sel.title = (char*)"Set start brightness";
-          sel.value = getSetting(SETTING_STARTUP_BRIGHTNESS);
-          sel.min = 1;
-          sel.max = 250;
-          sel.type = SELECTORTYPE_STARTUP_BRIGHTNESS;
-          int res = doSelector(&sel);
-          if (res == SELECTOR_RETURN_EXIT) continue;
-          setSetting(SETTING_STARTUP_BRIGHTNESS, sel.value, 1);
-          break;
-        }
-        case 10:
-          lockSettingsMenu();
-          break;
-        case 11:
           calendarSettingsMenu();
           break;
-        case 12:
+        case 8:
+          lockSettingsMenu();
+          break;
+        case 9:
         { mMsgBoxPush(5);
           MenuItem smallmenuitems[4];
           smallmenuitems[0].text = (char*)"No notification";        
@@ -182,6 +162,26 @@ void settingsMenu() {
           int sres = doMenu(&smallmenu);
           if(sres == MENU_RETURN_SELECTION) setSetting(SETTING_CHRONO_NOTIFICATION_TYPE, smallmenu.selection-1, 1);
           mMsgBoxPop();
+          break;
+        }
+        case 10:
+          menuitems[9].value = !menuitems[9].value;
+          setSetting(SETTING_DISPLAY_STATUSBAR, menuitems[9].value, 1);
+          break;
+        case 11:
+          menuitems[10].value = !menuitems[10].value;
+          setSetting(SETTING_SHOW_ADVANCED, menuitems[10].value, 1); 
+          break;
+        case 12: // set startup brightness
+        { Selector sel;
+          sel.title = (char*)"Set start brightness";
+          sel.value = getSetting(SETTING_STARTUP_BRIGHTNESS);
+          sel.min = 1;
+          sel.max = 250;
+          sel.type = SELECTORTYPE_STARTUP_BRIGHTNESS;
+          int res = doSelector(&sel);
+          if (res == SELECTOR_RETURN_EXIT) continue;
+          setSetting(SETTING_STARTUP_BRIGHTNESS, sel.value, 1);
           break;
         }
         case 13:
@@ -293,7 +293,7 @@ inline static int selectPaneType(int orig) {
   else return -1;
 }
 
-inline static void clockSettingsMenu() {
+inline static void homeSettingsMenu() {
   MenuItem menuitems[8];
   menuitems[0].text = (char*)"Set clock type";
   
