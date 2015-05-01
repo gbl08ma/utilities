@@ -143,56 +143,6 @@ int unlockCalc() {
   return 0;
 }
 
-int lockCalc() {
-  //returns 0 on "calculator was locked and now is unlocked"
-  //returns 1 on "there was no lock code and one was now set, or user aborted before setting one"
-  if(!isPasswordSet()) {
-    textArea text;
-    text.title = (char*)"Calculator lock";
-    
-    textElement elem[5];
-    text.elements = elem;
-    
-    elem[0].text = (char*)"This is probably the first time you are using the calculator lock function, which lets you lock your calculator with a password. You must set that password before you can use it. Later, you can set a new password in the Settings menu.";
-    
-    elem[1].newLine = 1;
-    elem[1].lineSpacing = 8;
-    elem[1].text = (char*)"Press EXE to close this message and proceed, or EXIT to cancel.";
-    
-    text.numelements = 2;
-    text.allowEXE = 1;
-    if(!doTextArea(&text)) return 1;
-    setPassword();
-    
-    elem[0].text = (char*)"You successfully set a password for locking your calculator.";
-    
-    elem[1].newLine = 1;
-    elem[1].lineSpacing = 8;
-    elem[1].text = (char*)"Next time you press F5 on the home screen, your calculator will lock. You should then press the ALPHA key to be prompted for the code to unlock it.";
-    
-    elem[2].newLine = 1;
-    elem[2].lineSpacing = 8;
-    elem[2].text = (char*)"You can change settings relative to the calculator lock function on the settings (press Shift then Menu).";
-    
-    elem[3].newLine = 1;
-    elem[3].lineSpacing = 8;
-    elem[3].text = (char*)"Press EXIT to close this message and return to the home screen.";
-    
-    text.numelements = 4;
-    doTextArea(&text);
-    return 1;
-  }
-  if(getSetting(SETTING_LOCK_AUTOOFF)) PowerOff(1);
-  SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return
-  while(1) {
-    homeScreen(1);
-    SetSetupSetting( (unsigned int)0x14, 0); //avoid alpha still being triggered at start of text input
-    if(1==unlockCalc()) {
-      SetGetkeyToMainFunctionReturnFlag(1); //Enable menu return      
-      return 0;
-    }
-  }
-}
 extern jmp_buf utilities_return;
 int rettimer;
 int isKeyPressed(int basic_keycode)
@@ -221,32 +171,79 @@ void openRunMat() {
   APP_RUNMAT(0,0);
 }
 void lockApp() {
-  if (getSetting(SETTING_ENABLE_LOCK)) {
-    setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS_RESTART);
-    int lockres = lockCalc();
-    setmGetKeyMode(MGETKEY_MODE_NORMAL);
-    if(lockres == 0) {
-      if (getSetting(SETTING_UNLOCK_RUNMAT) == 1) {
-        openRunMat();
-      } else if (getSetting(SETTING_UNLOCK_RUNMAT) == 2) {
-        mMsgBoxPush(4);
-        multiPrintXY(3, 2, "Open Run-Mat?\n\n   Yes:[F1]/[1]\n   No :Other key", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        int key,inscreen=1;
-        while(inscreen) {
-          mGetKey(&key);
-          switch(key) {
-            case KEY_CTRL_F1:
-            case KEY_CHAR_1:
-              mMsgBoxPop();
-              openRunMat();
-              break;
-            default:
-              inscreen=0;
-              break;
-          }
-        }
-        mMsgBoxPop();
+  if (!getSetting(SETTING_ENABLE_LOCK))
+    return;
+
+  if(!isPasswordSet()) {
+    textArea text;
+    text.title = (char*)"Calculator lock";
+    
+    textElement elem[5];
+    text.elements = elem;
+    
+    elem[0].text = (char*)"This is probably the first time you are using the calculator lock function, which lets you lock your calculator with a password. You must set that password before you can use it. Later, you can set a new password in the Settings menu.";
+    
+    elem[1].newLine = 1;
+    elem[1].lineSpacing = 8;
+    elem[1].text = (char*)"Press EXE to close this message and proceed, or EXIT to cancel.";
+    
+    text.numelements = 2;
+    text.allowEXE = 1;
+    if(!doTextArea(&text)) return;
+    setPassword();
+    
+    elem[0].text = (char*)"You successfully set a password for locking your calculator.";
+    
+    elem[1].newLine = 1;
+    elem[1].lineSpacing = 8;
+    elem[1].text = (char*)"Next time you press F5 on the home screen, your calculator will lock. You should then press the ALPHA key to be prompted for the code to unlock it.";
+    
+    elem[2].newLine = 1;
+    elem[2].lineSpacing = 8;
+    elem[2].text = (char*)"You can change settings relative to the calculator lock function on the settings (press Shift then Menu).";
+    
+    elem[3].newLine = 1;
+    elem[3].lineSpacing = 8;
+    elem[3].text = (char*)"Press EXIT to close this message and return to the home screen.";
+    
+    text.numelements = 4;
+    doTextArea(&text);
+    return;
+  }
+  setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS_RESTART);
+  SetGetkeyToMainFunctionReturnFlag(0); // Disable menu return
+  if(getSetting(SETTING_LOCK_AUTOOFF))
+    PowerOff(1);
+
+  while(1) {
+    homeScreen(1);
+    SetSetupSetting( (unsigned int)0x14, 0); //avoid alpha still being triggered at start of text input
+    if(1==unlockCalc()) {
+      break;
+    }
+  }
+
+  SetGetkeyToMainFunctionReturnFlag(1); // Enable menu return
+  setmGetKeyMode(MGETKEY_MODE_NORMAL);
+  if (getSetting(SETTING_UNLOCK_RUNMAT) == 1) {
+    openRunMat();
+  } else if (getSetting(SETTING_UNLOCK_RUNMAT) == 2) {
+    mMsgBoxPush(4);
+    multiPrintXY(3, 2, "Open Run-Mat?\n\n   Yes:[F1]/[1]\n   No :Other key", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    int key,inscreen=1;
+    while(inscreen) {
+      mGetKey(&key);
+      switch(key) {
+        case KEY_CTRL_F1:
+        case KEY_CHAR_1:
+          mMsgBoxPop();
+          openRunMat();
+          break;
+        default:
+          inscreen=0;
+          break;
       }
-    } 
+    }
+    mMsgBoxPop();
   }
 }

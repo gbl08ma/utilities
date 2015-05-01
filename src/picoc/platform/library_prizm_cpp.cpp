@@ -1900,10 +1900,6 @@ pcvoid(unlockCalc)(struct ParseState *Parser, struct Value *ReturnValue, struct 
     ReturnValue->Val->Integer = unlockCalc();
 }
 
-pcvoid(lockCalc)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = lockCalc();
-}
-
 pcvoid(lockApp)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     lockApp();
 }
@@ -2664,7 +2660,6 @@ const struct LibraryFunction UtilitiesLockGUI[] =
     { pcfunc(passwordInput),         "int passwordInput(int, int, unsigned char*);" },
     { pcfunc(setPassword),           "int setPassword();" },
     { pcfunc(unlockCalc),            "int unlockCalc();" },
-    { pcfunc(lockCalc),              "int lockCalc();" },
     { pcfunc(lockApp),               "void lockApp();" },
     { pcfunc(openRunMat),            "void openRunMat();" },
     { pcfunc(returnToUtilitiesHandler),"void returnToUtilitiesHandler();" },
