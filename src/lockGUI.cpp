@@ -90,7 +90,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
         Cursor_SetFlashOff(); return 1;
       } else {
         mMsgBoxPush(3);
-        mPrintXY(3, 3, "Code can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        mPrintXY(3, 3, "Password can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         mPrintXY(3, 4, "empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         closeMsgBox();
       }
@@ -115,7 +115,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
 int setPassword() {
   unsigned char password[256+8]; // 8 bytes for hardware ID as salt
   Bdisp_AllClr_VRAM();
-  drawScreenTitle("Calculator lock", "Set new code:");
+  drawScreenTitle("Calculator lock", "Set new password:");
   if (passwordInput(1, 3, password)) {
     savePassword(password);
     return 1;
@@ -128,14 +128,14 @@ int unlockCalc() {
   unsigned char password[256+8];  // 8 bytes for hardware ID as salt
   
   Bdisp_AllClr_VRAM();
-  drawScreenTitle("Calculator lock", "Input code:");
+  drawScreenTitle("Calculator lock", "Enter password:");
   if (!passwordInput(1, 3, password)) return 0;
   else {
     int res = comparePasswordHash(password);
     if(!res) return 1;
     else {
       mMsgBoxPush(3);
-      mPrintXY(3, 3, "Wrong code", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+      mPrintXY(3, 3, "Wrong password", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
       closeMsgBox();
       return 0;
     }
@@ -181,11 +181,11 @@ void lockApp() {
     textElement elem[5];
     text.elements = elem;
     
-    elem[0].text = (char*)"This is probably the first time you are using the calculator lock function, which lets you lock your calculator with a password. You must set that password before you can use it. Later, you can set a new password in the Settings menu.";
+    elem[0].text = (char*)"This is probably the first time you are using the calculator lock function, which lets you lock your calculator with a password. When proceeding, you'll be prompted for a new password.";
     
     elem[1].newLine = 1;
     elem[1].lineSpacing = 8;
-    elem[1].text = (char*)"Press EXE to close this message and proceed, or EXIT to cancel.";
+    elem[1].text = (char*)"Press EXE to proceed, or EXIT to cancel.";
     
     text.numelements = 2;
     text.allowEXE = 1;
@@ -196,15 +196,15 @@ void lockApp() {
     
     elem[1].newLine = 1;
     elem[1].lineSpacing = 8;
-    elem[1].text = (char*)"Next time you press F5 on the home screen, your calculator will lock. You should then press the ALPHA key to be prompted for the code to unlock it.";
+    elem[1].text = (char*)"The next time you press F5 on the home screen, your calculator will lock. To unlock, press the ALPHA key. You'll be prompted for the password you just set.";
     
     elem[2].newLine = 1;
     elem[2].lineSpacing = 8;
-    elem[2].text = (char*)"You can change settings relative to the calculator lock function on the settings (press Shift then Menu).";
+    elem[2].text = (char*)"You can change the password and settings of the calculator lock function on the settings menu (press Shift then Menu).";
     
     elem[3].newLine = 1;
     elem[3].lineSpacing = 8;
-    elem[3].text = (char*)"Press EXIT to close this message and return to the home screen.";
+    elem[3].text = (char*)"Press EXIT to close this message.";
     
     text.numelements = 4;
     doTextArea(&text);

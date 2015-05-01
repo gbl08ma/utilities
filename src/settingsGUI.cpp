@@ -194,9 +194,9 @@ void settingsMenu() {
 
 inline static void lockSettingsMenu() {
   MenuItem menuitems[5];
-  menuitems[0].text = (char*)"Set lock code";
+  menuitems[0].text = (char*)"Set password";
   
-  menuitems[1].text = (char*)"Show last code char";
+  menuitems[1].text = (char*)"Show last character";
   menuitems[1].type = MENUITEM_CHECKBOX;
   
   menuitems[2].text = (char*)"Off after locking";

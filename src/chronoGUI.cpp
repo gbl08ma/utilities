@@ -290,7 +290,7 @@ void clearSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
 void setChronoScreen(Menu* menu, chronometer* tchrono, int menuSelOnly) {
   long long int ms = 0;
   int type = CHRONO_TYPE_UP;
-  MenuItem menuitems[10];
+  MenuItem menuitems[3];
   menuitems[0].text = (char*)"Upwards";
   menuitems[1].text = (char*)"Downwards (period)";
   menuitems[2].text = (char*)"Downwards (date-time)";
