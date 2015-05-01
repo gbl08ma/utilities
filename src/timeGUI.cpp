@@ -103,18 +103,18 @@ void drawAnalogClockFace(int cx, int cy, int radius, int colorbg, int colorfg, i
   // may be extended in the future
   drawFilledCircle(cx, cy, radius, colorfg);
   drawFilledCircle(cx, cy, radius-2, colorbg);
-  int theta=0,i=0;
+  int theta=0,i=0,increment=360/hourmarks;
   if(hourmarks) do{
     double x=cx+(radius-radius/10.0)*cosine(theta*M_PI/180);
     double x1=cx+(radius-radius/12.0)*cosine(theta*M_PI/180);
     double y=cy+(radius-radius/10.0)*sine(theta*M_PI/180);
     double y1=cy+(radius-radius/12.0)*sine(theta*M_PI/180);
     drawLine(x,y,x1,y1,COLOR_GRAY);
-    // Increase angle by 30 degrees, which is the circular distance between each numeric point:
-    theta+=30;
+    // Increase angle by the circular distance between each numeric point:
+    theta+=increment;
     i++;
 
-  } while(i!=12); //LIMIT NUMERIC POINTS UPTO =12= Numbers.
+  } while(i!=hourmarks); //LIMIT NUMERIC POINTS UPTO =12= Numbers.
 }
 void drawAnalogClockSecondNeedle(int s, int cx, int cy, int radius, int colorfg) {
   double angle=-90.0;
@@ -149,21 +149,21 @@ void drawAnalogClock(int cx, int cy, int radius, int colorbg, int colorfg) {
   if(h>12) h=h-12;
   int m = getCurrentMinute();
   int s = getCurrentSecond();
-  drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 1);
+  drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 12);
   if(getSetting(SETTING_CLOCK_SECONDS)) drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg ^ COLOR_INDIANRED);
   drawAnalogClockMinuteNeedle(m, s, cx, cy, radius, colorfg);
   drawAnalogClockHourNeedle(h, m, cx, cy, radius, colorfg, 0);
 }
 
 void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg, int d, int h, int m, int sPlusMs) {
-  // draw outer dial
-  drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 0);
+  // draw bigger dial
+  drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 60);
   // draw left dial (minutes)
-  drawAnalogClockFace(cx-radius*2, cy, radius/2, colorbg, colorfg, 0);
+  drawAnalogClockFace(cx-radius*2, cy, (radius*2)/3, colorbg, colorfg, 60);
   int textX = cx-radius*2-5, textY = cy-radius + 24 - 7;
   PrintMiniMini( &textX, &textY, (char*)"M", 0, TEXT_COLOR_BLACK, 0 );
   // draw right dial (hours)
-  drawAnalogClockFace(cx+radius*2, cy, radius/2, colorbg, colorfg, 0);
+  drawAnalogClockFace(cx+radius*2, cy, (radius*2)/3, colorbg, colorfg, 24);
   textX = cx+radius*2-4; textY = cy-radius + 24 - 7;
   PrintMiniMini( &textX, &textY, (char*)"H", 0, TEXT_COLOR_BLACK, 0 );
   // print days
@@ -186,9 +186,9 @@ void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg,
     cy+length*sine((angle+(double)sPlusMs*0.006)*M_PI/180.0),
     colorfg);
   // minutes on top
-  drawAnalogClockMinuteNeedle(m, sPlusMs/1000, cx-radius*2, cy, radius/2, colorfg);
+  drawAnalogClockMinuteNeedle(m, sPlusMs/1000, cx-radius*2, cy, (radius*2)/3, colorfg);
   // hours on bottom
-  drawAnalogClockHourNeedle(h, m, cx+radius*2, cy, radius/2, colorfg, 1);
+  drawAnalogClockHourNeedle(h, m, cx+radius*2, cy, (radius*2)/3, colorfg, 1);
 }
 
 void setTimeScreen(int canExit) {
