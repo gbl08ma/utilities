@@ -1931,7 +1931,7 @@ void databaseRepairScreen() {
   textArea text;
   text.title = (char*)"Database repair";
 
-  textElement elem[8];
+  textElement elem[10];
   text.elements = elem;
   if(getDBcorruptFlag()) {
     elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This often happens when a version of " ADDIN_FRIENDLYNAME " prior to v1.1 has been used, or when events with invalid data are imported.";
@@ -1978,6 +1978,7 @@ void databaseRepairScreen() {
   int checkedfiles = 0;
   int checkedevents = 0;
   int problemsfound = 0;
+  int totalsize = 0;
   
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
@@ -2009,6 +2010,7 @@ void databaseRepairScreen() {
         loopc = 0;
       } else loopc++;
       repairEventFile((char*)buffer, CALENDARFOLDER, &checkedevents, &problemsfound);
+      totalsize += fileinfo.fsize;
       checkedfiles++;
     }
     ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
@@ -2023,7 +2025,15 @@ void databaseRepairScreen() {
   
   itoa((int)problemsfound, (unsigned char*)buffer3);
   elem[6].text = buffer3;
-  
+
+  // show total database size in bytes
+
+  char buffer4[40];
+  sprintf(buffer4, "Database size: %d bytes", totalsize);
+  elem[7].newLine = 1;
+  elem[7].text = buffer4;
+  text.numelements = 8;
+
   text.type = TEXTAREATYPE_NORMAL;
   elem[0].text = (char*)"Done repairing the calendar database. Press EXIT.";
   doTextArea(&text);
