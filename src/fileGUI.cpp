@@ -331,7 +331,11 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
         int allcompressed = 1;
         if(menu.numselitems) {
           for(int i = 0; i < menu.numitems; i++) {
-            if(!menu.items[i].isfolder && menu.items[i].isselected) {
+            if(menu.items[i].isfolder) {
+              allcompressed = 0;
+              break; // no need to check more, if one of the items is a folder, then not all items are compressed.
+            }
+            if(menu.items[i].isselected) {
               int origfilesize;
               if(!isFileCompressed(files[i].filename, &origfilesize)) {
                 allcompressed = 0;
