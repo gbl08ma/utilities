@@ -1804,7 +1804,7 @@ pcvoid(setBrightnessToStartupSetting)(struct ParseState *Parser, struct Value *R
 // homeGUI
 
 pcvoid(homeScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    homeScreen();
+    homeScreen(Param[0]->Val->Integer);
 }
 
 pcvoid(powerMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2617,7 +2617,7 @@ const struct LibraryFunction UtilitiesHardwareProvider[] =
 
 const struct LibraryFunction UtilitiesHomeGUI[] =
 {
-    { pcfunc(homeScreen),            "void homeScreen();" },
+    { pcfunc(homeScreen),            "void homeScreen(int);" },
     { pcfunc(powerMenu),             "void powerMenu(int*);" },
     { pcfunc(lightMenu),             "void lightMenu(int*);" },
     { pcfunc(timeMenu),              "void timeMenu(int*);" },

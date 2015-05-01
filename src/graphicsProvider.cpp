@@ -105,9 +105,8 @@ void invertArea(short x, short y, short width, short height) {
 
 void darkenStatusbar() {
   if(getSetting(SETTING_DISPLAY_STATUSBAR)) {
-    replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_BLACK, COLOR_CYAN);
+    replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_BLACK, COLOR_GRAY);
     replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_WHITE, COLOR_BLACK);
-    replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_CYAN, COLOR_GRAY);
     replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_BLUE, COLOR_ORANGE);
   }
 }

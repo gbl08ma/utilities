@@ -36,8 +36,9 @@
 #include "lockGUI.hpp"
 #include "fileGUI.hpp"
 #include "editorGUI.hpp"
+#include "sprites.h"
 
-void homeScreen() {
+void homeScreen(int isLocked) {
   unsigned short key = 0;
   int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
   int pane_keycache = 0;
@@ -54,19 +55,25 @@ void homeScreen() {
       char message[30];
       sprintf(message, "Chronometer %d ended", getLastCompleteChrono());
       DefineStatusMessage(message, 1, 4, 0);
-    } else if (isDSTchangeToday()) {
+    } else if (isDSTchangeToday() && !isLocked) {
       char message[100];
       stringToMini(message, "To adjust the clock: SHIFT then MENU");
       DefineStatusMessage(message, 1, 0, 0);
     } else DefineStatusMessage((char*)"", 1, 0, 0);
     DisplayStatusArea();
+    if(isLocked && !GetSetupSetting((unsigned int)0x14)) {
+      setBrightnessToStartupSetting();
+      drawRectangle(18, 2, 18, 18, COLOR_BLACK);
+      drawRectangle(20, 4, 14, 14, COLOR_CYAN);
+      CopySpriteNbitMasked(lock_icon, 22, 5, 10, 12, lock_icon_palette, 0xffff, 1);
+    }
     if (getSetting(SETTING_THEME)) darkenStatusbar();
     
     // Print time
     drawHomeClock(getSetting(SETTING_CLOCK_TYPE));
 
     //Show FKeys
-    if (getSetting(SETTING_DISPLAY_FKEYS)) {
+    if (getSetting(SETTING_DISPLAY_FKEYS) && !isLocked) {
       drawFkeyLabels(0x043A, 0x043E, 0x012A, 0x011C, 0x03E7, (getSetting(SETTING_ENABLE_LOCK) ? 0x04D3 : -1)); //POWER, LIGHT, TIME, TOOL, M&S, key icon (lock)
       if (getSetting(SETTING_THEME)) {
         darkenFkeys((getSetting(SETTING_ENABLE_LOCK) == 1 ? 6 : 5));
@@ -96,58 +103,62 @@ void homeScreen() {
       }
       pane_keycache = 0;
     }
-    switch (key) {
-      case KEY_PRGM_SHIFT:
-        //turn on/off shift manually because getkeywait doesn't do it
-        SetSetupSetting( (unsigned int)0x14, (GetSetupSetting( (unsigned int)0x14) == 0));
-        break;
-      case KEY_PRGM_MENU:
-        if (GetSetupSetting( (unsigned int)0x14) == 1) {
-          SetSetupSetting( (unsigned int)0x14, 0);
-          saveVRAMandCallSettings();
-        }
-        break;
-      case KEY_PRGM_F1:
-        powerMenu(&pane_keycache);
-        break;
-      case KEY_PRGM_F2:
-        lightMenu(&pane_keycache);
-        break;
-      case KEY_PRGM_F3:
-        timeMenu(&pane_keycache);
-        break;
-      case KEY_PRGM_F4:
-        toolsMenu(&pane_keycache);
-        break;
-      case KEY_PRGM_F5:
-        memsysMenu(&pane_keycache);
-        break;
-      case KEY_PRGM_RETURN:
-        if(!getSetting(SETTING_LOCK_ON_EXE)) break;
-        // else fallthrough
-      case KEY_PRGM_F6:
-        lockApp();
-        break;
-      case 71: //KEY_PRGM_0, which is not defined in the SDK and I'm too lazy to add it every time I update the includes folder...
-        if (GetSetupSetting( (unsigned int)0x14) == 1) {
-          SetSetupSetting( (unsigned int)0x14, 0);
-          char code[25] = "";
-          textInput input;
-          input.charlimit=21;
-          input.buffer = (char*)code;
-          int res = doTextInput(&input);
-          if (res==INPUT_RETURN_CONFIRM && !strcmp(code, "qazedcol")) return; // kill main interface; currently this opens masterControl.
-        }
-        break;
-      case KEY_PRGM_UP:
-      case KEY_PRGM_RIGHT:
-      case KEY_PRGM_DOWN:
-      case KEY_PRGM_LEFT:
-        handleHomePane(key, &pane_keycache);
-        break;
-      case 76: //x-0-theta key
-        currentTimeToBasicVar();
-        break;
+    if(key == KEY_PRGM_SHIFT) {
+      //turn shift on/off manually because getkeywait doesn't do it
+      SetSetupSetting( (unsigned int)0x14, (GetSetupSetting( (unsigned int)0x14) == 0));
+    }
+    if(isLocked) {
+      if(key == KEY_PRGM_ALPHA) return;
+    } else {
+      switch (key) {
+        case KEY_PRGM_MENU:
+          if (GetSetupSetting( (unsigned int)0x14) == 1) {
+            SetSetupSetting( (unsigned int)0x14, 0);
+            saveVRAMandCallSettings();
+          }
+          break;
+        case KEY_PRGM_F1:
+          powerMenu(&pane_keycache);
+          break;
+        case KEY_PRGM_F2:
+          lightMenu(&pane_keycache);
+          break;
+        case KEY_PRGM_F3:
+          timeMenu(&pane_keycache);
+          break;
+        case KEY_PRGM_F4:
+          toolsMenu(&pane_keycache);
+          break;
+        case KEY_PRGM_F5:
+          memsysMenu(&pane_keycache);
+          break;
+        case KEY_PRGM_RETURN:
+          if(!getSetting(SETTING_LOCK_ON_EXE)) break;
+          // else fallthrough
+        case KEY_PRGM_F6:
+          lockApp();
+          break;
+        case 71: //KEY_PRGM_0, which is not defined in the SDK and I'm too lazy to add it every time I update the includes folder...
+          if (GetSetupSetting( (unsigned int)0x14) == 1) {
+            SetSetupSetting( (unsigned int)0x14, 0);
+            char code[25] = "";
+            textInput input;
+            input.charlimit=21;
+            input.buffer = (char*)code;
+            int res = doTextInput(&input);
+            if (res==INPUT_RETURN_CONFIRM && !strcmp(code, "qazedcol")) return; // kill main interface; currently this opens masterControl.
+          }
+          break;
+        case KEY_PRGM_UP:
+        case KEY_PRGM_RIGHT:
+        case KEY_PRGM_DOWN:
+        case KEY_PRGM_LEFT:
+          handleHomePane(key, &pane_keycache);
+          break;
+        case 76: //x-0-theta key
+          currentTimeToBasicVar();
+          break;
+      }
     }
     if (key && key!=KEY_PRGM_SHIFT) SetSetupSetting( (unsigned int)0x14, 0);
   }

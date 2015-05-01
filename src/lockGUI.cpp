@@ -185,20 +185,11 @@ int lockCalc() {
   if(getSetting(SETTING_LOCK_AUTOOFF)) PowerOff(1);
   SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return
   while(1) {
-    int textX = 212, textY = LCD_HEIGHT_PX - 17 - 24;
-    int key;
-    Bdisp_AllClr_VRAM();
-    Bdisp_EnableColor(1);
-    DisplayStatusArea();
-    PrintMini(&textX, &textY, (char*)"Calculator locked", 0, 0xFFFFFFFF, 0, 0, COLOR_LIGHTGRAY, COLOR_WHITE, 1, 0);
-    GetKey(&key); //oh, the pleasure of using GetKey and still have the Menu blocked
-    setBrightnessToStartupSetting();
-    if (key == KEY_CTRL_ALPHA) {
-      SetSetupSetting( (unsigned int)0x14, 0); //avoid alpha still being triggered at start of text input
-      if(1==unlockCalc()) {
-        SetGetkeyToMainFunctionReturnFlag(1); //Enable menu return      
-        return 0;
-      }
+    homeScreen(1);
+    SetSetupSetting( (unsigned int)0x14, 0); //avoid alpha still being triggered at start of text input
+    if(1==unlockCalc()) {
+      SetGetkeyToMainFunctionReturnFlag(1); //Enable menu return      
+      return 0;
     }
   }
 }
