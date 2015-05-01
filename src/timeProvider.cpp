@@ -426,9 +426,10 @@ const char* getInputDateFormatHint(int setting) {
 // currently returns true for start/end dates for the US and EU
 int isDSTchangeToday() {
   int y = getCurrentYear();
+  int m = getCurrentMonth();
   int d = getCurrentDay();
-  return (  d == 14 - (1+y*5/4) % 7 // US start
-         || d == 7 - (1+5*y/4) % 7 // US end
-         || d == 31 - (4+5*y/4) % 7    // EU start
-         || d == 31 - (1+5*y/4) % 7); // EU end
+  return (  (d == 14 - (1+y*5/4) % 7 && m == 3)   // US start
+         || (d == 7 - (1+5*y/4) % 7 && m == 11)   // US end
+         || (d == 31 - (4+5*y/4) % 7 && m == 3)   // EU start
+         || (d == 31 - (1+5*y/4) % 7 && m == 10)); // EU end
 }
