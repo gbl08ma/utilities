@@ -962,58 +962,39 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
     drawFkeyLabels((curstep>0 ? 0x036F : 0), (curstep == 4 ? 0x000F : 0), 0, 0, 0, (curstep==6 ? 0x04A4 : 0x04A3));
     switch(curstep) {
       case 0:
-        {
-          drawScreenTitle(NULL, "Title:");
-          
-          textInput input;
-          input.forcetext=1; //force text so title must be at least one char.
-          input.charlimit=21;
-          input.acceptF6=1;
-          input.buffer = (char*)event->title;
-          while(1) {
-            input.key=0;
-            int res = doTextInput(&input);
-            if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
-            else if (res==INPUT_RETURN_CONFIRM) { curstep=curstep+1; break;} // continue to next step
-          }
-        }
-        break;
       case 1:
-        {
-          drawScreenTitle(NULL, "Location:");
-          
-          textInput input;
-          input.charlimit=128;
-          input.acceptF6=1;
-          input.buffer = (char*)event->location;
-          while(1) {
-            input.key=0;
-            int res = doTextInput(&input);
-            if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
-            else if (res==INPUT_RETURN_CONFIRM) { curstep=curstep+1; break;} // continue to next step
-            else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
-          }
-        }
-        break;
       case 2:
-        {
-          drawScreenTitle(NULL, "Description:");
-          
+        {          
           textInput input;
-          input.charlimit=1024;
+          switch(curstep) {
+            case 0:
+              drawScreenTitle(NULL, "Title:");
+              input.forcetext=1; //force text so title must be at least one char.
+              input.charlimit=21;
+              input.buffer = (char*)event->title;
+              break;
+            case 1:
+              drawScreenTitle(NULL, "Location:");
+              input.charlimit=128;
+              input.buffer = (char*)event->location;
+              break;
+            case 2:
+              drawScreenTitle(NULL, "Description:");
+              input.charlimit=1024;
+              input.buffer = (char*)event->description;
+              break;
+          }
           input.acceptF6=1;
-          input.buffer = (char*)event->description;
           while(1) {
             input.key=0;
             int res = doTextInput(&input);
             if (res==INPUT_RETURN_EXIT) return EVENTEDITOR_RETURN_EXIT; // user aborted
             else if (res==INPUT_RETURN_CONFIRM) {
-              // continue to next step
-              if(istask) curstep=6;
-              else curstep=curstep+1;
+              if(istask && curstep == 2) curstep=6; // jump to last step
+              else curstep=curstep+1; // continue to next step
               break;
             }
-            else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
+            else if (curstep && res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) { curstep=curstep-1; break; }
           }
         }
         break;
@@ -1206,14 +1187,16 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             case KEY_CTRL_F6:
               inscreen = 0;
               break;
-            case KEY_CHAR_0: event->category = 0; break;
-            case KEY_CHAR_1: event->category = 1; break;
-            case KEY_CHAR_2: event->category = 2; break;
-            case KEY_CHAR_3: event->category = 3; break;
-            case KEY_CHAR_4: event->category = 4; break;
-            case KEY_CHAR_5: event->category = 5; break;
-            case KEY_CHAR_6: event->category = 6; break;
-            case KEY_CHAR_7: event->category = 7; break;
+            case KEY_CHAR_0:
+            case KEY_CHAR_1:
+            case KEY_CHAR_2:
+            case KEY_CHAR_3:
+            case KEY_CHAR_4:
+            case KEY_CHAR_5:
+            case KEY_CHAR_6:
+            case KEY_CHAR_7:
+              event->category = key - KEY_CHAR_0;
+              break;
             case KEY_CTRL_EXIT: return EVENTEDITOR_RETURN_EXIT;
           }
         }
