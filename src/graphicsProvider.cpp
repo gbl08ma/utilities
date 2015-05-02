@@ -262,15 +262,7 @@ void closeProgressMessage() {
 void printCentered(char* text, int y, int FGC, int BGC) {
   int len = MB_ElementCount(text);
   int x = LCD_WIDTH_PX/2-(len*18)/2;
-  int cur = 0;
-  while(cur<len) {
-    PrintCXY(x, y, &text[cur], 0x40, -1, FGC, BGC, 1, 0 );
-    x=x+18;
-    // for multibyte chars, PrintCXY appears to take care of reading the next array element
-    // (i.e., address of the pointer + 1) if necessary!
-    if(text[cur] == '\xe6' || text[cur] == '\xe7') cur++;
-    cur++;
-  }
+  PrintCXY(x, y, text, 0x40, -1, FGC, BGC, 1, 0 );
 }
 
 void clearLine(int x, int y, color_t color) {
