@@ -21,7 +21,7 @@
 /*App settings.*/
 // the default value of the settings goes on settingsProvider.cpp
 
-#define SETTINGSFILE_VERSION 13 // NOTE: increase this when changing the amount or meaning of settings!
+#define SETTINGSFILE_VERSION 14 // NOTE: increase this when changing the amount or meaning of settings!
 
 #define SETTING_SELF_FILEVERSION 0 // this is a special field used by the settings system to determine file compatibility
 #define SETTING_TIMEFORMAT 1 // 0 = 24-hour HH:MM:SS ; 1 = 12-hour HH:MM:SS AM/PM
@@ -83,8 +83,9 @@
 #define SETTING_HOME_PANE_RIGHT 26
 #define SETTING_HOME_PANE_BOTTOM 27
 #define SETTING_HOME_PANE_LEFT 28
+#define SETTING_LOCK_USERNAME 29 // 0 = do not show owner info on lock screen, 1 = show (default)
 
-#define NUMBER_OF_SETTINGS 28 // NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
+#define NUMBER_OF_SETTINGS 29 // NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
 /*End of settings*/ 
 
 int getSetting(int setting);

@@ -196,9 +196,6 @@ void lockApp() {
     if(!doTextArea(&text) || !setPassword()) return;
     
     elem[0].text = (char*)"You successfully set a password for locking your calculator.";
-    
-    elem[1].newLine = 1;
-    elem[1].lineSpacing = 8;
     elem[1].text = (char*)"The next time you press F6 on the home screen, your calculator will lock. To unlock, press the ALPHA key. You'll be prompted for the password you just set.";
     
     elem[2].newLine = 1;

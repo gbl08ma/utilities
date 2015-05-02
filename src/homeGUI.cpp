@@ -42,6 +42,20 @@ void homeScreen(int isLocked) {
   unsigned short key = 0;
   int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
   int pane_keycache = 0;
+
+  // find the registered username, if any:
+  char* username = NULL;
+  char* organization = NULL;
+  if(isLocked && getSetting(SETTING_LOCK_USERNAME)) {
+    char* flagpointer = (char*)0x80BE0000;
+    while(*flagpointer == 0x0F) {
+      if(*(flagpointer+0x2C) != '\0') {
+        username = (flagpointer+0x18);
+        organization = (flagpointer+0x04);
+      }
+      flagpointer = flagpointer + 0x40;
+    }
+  }
   while (1) {
     //black theme, or not?
     if (getSetting(SETTING_THEME) == 1) {
@@ -72,12 +86,23 @@ void homeScreen(int isLocked) {
     // Print time
     drawHomeClock(getSetting(SETTING_CLOCK_TYPE));
 
-    //Show FKeys
-    if (getSetting(SETTING_DISPLAY_FKEYS) && !isLocked) {
-      drawFkeyLabels(0x043A, 0x043E, 0x012A, 0x011C, 0x03E7, (getSetting(SETTING_ENABLE_LOCK) ? 0x04D3 : -1)); //POWER, LIGHT, TIME, TOOL, M&S, key icon (lock)
-      if (getSetting(SETTING_THEME)) {
-        darkenFkeys((getSetting(SETTING_ENABLE_LOCK) == 1 ? 6 : 5));
+    if(!isLocked) {
+      // Show FKeys
+      if (getSetting(SETTING_DISPLAY_FKEYS)) {
+        drawFkeyLabels(0x043A, 0x043E, 0x012A, 0x011C, 0x03E7, (getSetting(SETTING_ENABLE_LOCK) ? 0x04D3 : -1)); //POWER, LIGHT, TIME, TOOL, M&S, key icon (lock)
+        if (getSetting(SETTING_THEME)) {
+          darkenFkeys((getSetting(SETTING_ENABLE_LOCK) == 1 ? 6 : 5));
+        }
       }
+    } else if(username) {
+      int textX = 0, textY = LCD_HEIGHT_PX - 58;
+      PrintMini(&textX, &textY, username, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 0, 0);
+      textX = LCD_WIDTH_PX - textX;
+      PrintMini(&textX, &textY, username, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 1, 0);
+      textX = 0; textY += 17;
+      PrintMini(&textX, &textY, organization, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 0, 0);
+      textX = LCD_WIDTH_PX - textX;
+      PrintMini(&textX, &textY, organization, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 1, 0);
     }
     if(!pane_keycache) {
       Bdisp_PutDisp_DD();

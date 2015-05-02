@@ -68,6 +68,7 @@ int loadSettings() { // returns 0 on success, 1 if settings were reset (first ru
   settings[SETTING_FILE_MANAGER_SORT] = 1;
   settings[SETTING_FILE_MANAGER_SEARCH] = 1;
   settings[SETTING_TIMEZONE] = 51;
+  settings[SETTING_LOCK_USERNAME] = 1;
   return 1;
 }
 

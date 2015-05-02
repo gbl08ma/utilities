@@ -193,7 +193,7 @@ void settingsMenu() {
 }
 
 inline static void lockSettingsMenu() {
-  MenuItem menuitems[5];
+  MenuItem menuitems[6];
   menuitems[0].text = (char*)"Set password";
   
   menuitems[1].text = (char*)"Show last character";
@@ -204,17 +204,21 @@ inline static void lockSettingsMenu() {
   
   menuitems[3].text = (char*)"Lock on [EXE]";
   menuitems[3].type = MENUITEM_CHECKBOX;
+
+  menuitems[4].text = (char*)"Show owner info";
+  menuitems[4].type = MENUITEM_CHECKBOX;
   
-  menuitems[4].text = (char*)"Run-Mat on unlock";
+  menuitems[5].text = (char*)"Run-Mat on unlock";
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=5;
+  menu.numitems=6;
   menu.scrollout=1;
   while(1) {
     menuitems[1].value = getSetting(SETTING_PASSWORD_PRIVACY);
     menuitems[2].value = getSetting(SETTING_LOCK_AUTOOFF);
     menuitems[3].value = getSetting(SETTING_LOCK_ON_EXE);
+    menuitems[4].value = getSetting(SETTING_LOCK_USERNAME);
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
@@ -234,7 +238,11 @@ inline static void lockSettingsMenu() {
           menuitems[3].value = !menuitems[3].value;
           setSetting(SETTING_LOCK_ON_EXE, menuitems[3].value, 1);
           break;
-        case 5: {
+        case 5:
+          menuitems[4].value = !menuitems[4].value;
+          setSetting(SETTING_LOCK_USERNAME, menuitems[4].value, 1);
+          break;
+        case 6: {
           mMsgBoxPush(4);
           MenuItem smallmenuitems[3];
           smallmenuitems[0].text = (char*)"Off";
