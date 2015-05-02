@@ -114,13 +114,22 @@ int passwordInput(int x, int y, unsigned char* buffer) {
 
 int setPassword() {
   unsigned char password[256+8]; // 8 bytes for hardware ID as salt
-  Bdisp_AllClr_VRAM();
-  drawScreenTitle("Calculator lock", "Set new password:");
-  if (passwordInput(1, 3, password)) {
-    savePassword(password);
-    return 1;
+  unsigned char confirmation[256+8];
+  while(1) {
+    Bdisp_AllClr_VRAM();
+    drawScreenTitle("Calculator lock", "Set new password:");
+    if (!passwordInput(1, 3, password))
+      return 0;
+    Bdisp_AllClr_VRAM();
+    drawScreenTitle("Calculator lock", "Confirm password:");
+    if (passwordInput(1, 3, confirmation)) {
+      if(!strcmp((char*)password, (char*)confirmation)) {
+        savePassword(password);
+        return 1;
+      } else
+        AUX_DisplayErrorMessage(0x13); // Mismatch
+    } else return 0;
   }
-  return 0;
 }
 
 int unlockCalc() {
@@ -133,12 +142,7 @@ int unlockCalc() {
   else {
     int res = comparePasswordHash(password);
     if(!res) return 1;
-    else {
-      mMsgBoxPush(3);
-      mPrintXY(3, 3, "Wrong password", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-      closeMsgBox();
-      return 0;
-    }
+    else AUX_DisplayErrorMessage(0x13); // Mismatch
   }
   return 0;
 }
@@ -189,14 +193,13 @@ void lockApp() {
     
     text.numelements = 2;
     text.allowEXE = 1;
-    if(!doTextArea(&text)) return;
-    setPassword();
+    if(!doTextArea(&text) || !setPassword()) return;
     
     elem[0].text = (char*)"You successfully set a password for locking your calculator.";
     
     elem[1].newLine = 1;
     elem[1].lineSpacing = 8;
-    elem[1].text = (char*)"The next time you press F5 on the home screen, your calculator will lock. To unlock, press the ALPHA key. You'll be prompted for the password you just set.";
+    elem[1].text = (char*)"The next time you press F6 on the home screen, your calculator will lock. To unlock, press the ALPHA key. You'll be prompted for the password you just set.";
     
     elem[2].newLine = 1;
     elem[2].lineSpacing = 8;
