@@ -1257,10 +1257,8 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
 #define THICKNESS 20
 #define TOPOFFSET 22
 #define WIDTH 47
-  drawLine(LEFT,TOP,RIGHT-1,TOP,COLOR_BLACK);
-  drawLine(LEFT,TOP,LEFT,BOTTOM-1,COLOR_BLACK);
-  drawLine(LEFT,BOTTOM-1,RIGHT-1,BOTTOM-1,COLOR_BLACK);
-  drawLine(RIGHT-1,BOTTOM-1,RIGHT-1,TOP,COLOR_BLACK);
+  drawRectangle(LEFT, TOP, RIGHT-LEFT, BOTTOM-TOP, COLOR_BLACK);
+  drawRectangle(LEFT+1, TOP+1, RIGHT-LEFT-2, BOTTOM-TOP-2, COLOR_WHITE);
   drawRectangle(LEFT+2,TOP+2,RIGHT-2-2-LEFT,THICKNESS,COLOR_BLACK);
   textX=LEFT+5; textY= TOP+2-TOPOFFSET;
   PrintMini(&textX, &textY, getMonthAsString(month), 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
