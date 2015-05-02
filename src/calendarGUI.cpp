@@ -1206,17 +1206,10 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           event->repeat = 0;
           int res = addEvent(event, CALENDARFOLDER);
           if(res) {
-            mMsgBoxPush(4);
-            if (res == 4) {
-              mPrintXY(3, 2, "Filesize ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            } else {
-              if(istask) mPrintXY(3, 2, "Task add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-              else mPrintXY(3, 2, "Event add. ERROR", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            }
-            if(istask) mPrintXY(3, 3, "Task could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            else mPrintXY(3, 3, "Event could not", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            mPrintXY(3, 4, "be added.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            closeMsgBox();
+            if (res == 4)
+              AUX_DisplayErrorMessage(0x32); // Invalid Data Size
+            else
+              AUX_DisplayErrorMessage(0x2B); // Data ERROR
             return EVENTEDITOR_RETURN_EXIT; // error is like exit
           }
           return EVENTEDITOR_RETURN_CONFIRM;
