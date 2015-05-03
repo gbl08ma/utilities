@@ -23,6 +23,7 @@ void timeMenu(int* pane_keycache);
 void memsysMenu(int* pane_keycache);
 void toolsMenu(int* pane_keycache);
 void handleHomePane(int key, int* pane_keycache);
+void paneHandleBasicKeys(int retkey, int* pane_keycache);
 void eventsPane(int retkey, int* pane_keycache);
 void memoryUsagePane(int retkey, int* pane_keycache);
 

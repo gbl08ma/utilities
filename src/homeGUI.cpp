@@ -431,6 +431,25 @@ void handleHomePane(int key, int* pane_keycache) {
   }
 }
 
+void paneHandleBasicKeys(int retkey, int* pane_keycache) {
+  while (1) {
+    if (getSetting(SETTING_THEME)) DrawFrame(COLOR_BLACK);
+    int key;
+    mGetKey(&key, getSetting(SETTING_THEME));
+    switch(key) {
+      case KEY_CTRL_F1:
+      case KEY_CTRL_F2:
+      case KEY_CTRL_F3:
+      case KEY_CTRL_F4:
+      case KEY_CTRL_F5:
+        *pane_keycache = key;
+      case KEY_CTRL_EXIT:
+        return; //return to the main pane
+    }
+    if(key == retkey) return; //return to the main pane
+  }
+}
+
 void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
   color_t color_fg, color_bg, color_title;
   if (getSetting(SETTING_THEME)) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; color_title = COLOR_ORANGE; } else
@@ -465,7 +484,6 @@ void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int 
 }
 #define HOME_EVENTS_DISPLAY_FULL 6
 void eventsPane(int retkey, int* pane_keycache) {
-  int key;
   EventDate thisday;
   thisday.day = getCurrentDay(); thisday.month = getCurrentMonth(); thisday.year = getCurrentYear();
   int numevents = getEvents(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
@@ -475,7 +493,6 @@ void eventsPane(int retkey, int* pane_keycache) {
     calevents = (CalendarEvent*)alloca(getnum*sizeof(CalendarEvent)); // we don't want to allocate more than what we need for the few events we want to display in full.
     getEvents(&thisday, CALENDARFOLDER, calevents, HOME_EVENTS_DISPLAY_FULL);
   }
-  int inscreen = 1;
   if (getSetting(SETTING_THEME)) {
     Bdisp_Fill_VRAM( COLOR_BLACK, 2 ); //fill between the status area and f-key area
     DrawFrame(COLOR_BLACK);
@@ -485,21 +502,7 @@ void eventsPane(int retkey, int* pane_keycache) {
   }
   pane_drawTodayEvents(calevents, 0, 0, numevents, HOME_EVENTS_DISPLAY_FULL);
   if(getSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) drawBusymapDay(&thisday, 0, LCD_HEIGHT_PX-44, LCD_WIDTH_PX, 15, 1,0,0);
-  while (inscreen) {
-    if (getSetting(SETTING_THEME)) DrawFrame(COLOR_BLACK);
-    mGetKey(&key, getSetting(SETTING_THEME));
-    switch(key) {
-      case KEY_CTRL_F1:
-      case KEY_CTRL_F2:
-      case KEY_CTRL_F3:
-      case KEY_CTRL_F4:
-      case KEY_CTRL_F5:
-        *pane_keycache = key;
-      case KEY_CTRL_EXIT:
-        return; //return to the main pane
-    }
-    if(key == retkey) return; //return to the main pane
-  }
+  paneHandleBasicKeys(retkey, pane_keycache);
 }
 
 void memoryUsagePane(int retkey, int* pane_keycache) {
@@ -512,20 +515,5 @@ void memoryUsagePane(int retkey, int* pane_keycache) {
     replaceColorInArea(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24*2-1, COLOR_WHITE, COLOR_BLACK);
     replaceColorInArea(0, 24, LCD_WIDTH_PX, LCD_HEIGHT_PX-24*2-1, COLOR_CYAN, COLOR_WHITE);
   }
-  while (1) {
-    int key;
-    if (getSetting(SETTING_THEME)) DrawFrame(COLOR_BLACK);
-    mGetKey(&key, getSetting(SETTING_THEME));
-    switch(key) {
-      case KEY_CTRL_F1:
-      case KEY_CTRL_F2:
-      case KEY_CTRL_F3:
-      case KEY_CTRL_F4:
-      case KEY_CTRL_F5:
-        *pane_keycache = key;
-      case KEY_CTRL_EXIT:
-        return; //return to the main pane
-    }
-    if(key == retkey) return; //return to the main pane
-  }
+  paneHandleBasicKeys(retkey, pane_keycache);
 }

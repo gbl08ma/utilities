@@ -1831,6 +1831,10 @@ pcvoid(handleHomePane)(struct ParseState *Parser, struct Value *ReturnValue, str
     handleHomePane(Param[0]->Val->Integer, (int*)Param[1]->Val->Pointer);
 }
 
+pcvoid(paneHandleBasicKeys)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    paneHandleBasicKeys(Param[0]->Val->Integer, (int*)Param[1]->Val->Pointer);
+}
+
 pcvoid(eventsPane)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     eventsPane(Param[0]->Val->Integer, (int*)Param[1]->Val->Pointer);
 }
@@ -2620,6 +2624,7 @@ const struct LibraryFunction UtilitiesHomeGUI[] =
     { pcfunc(memsysMenu),            "void memsysMenu(int*);" },
     { pcfunc(toolsMenu),             "void toolsMenu(int*);" },
     { pcfunc(handleHomePane),        "void handleHomePane(int, int*)" },
+    { pcfunc(paneHandleBasicKeys),   "void paneHandleBasicKeys(int, int*)" },
     { pcfunc(eventsPane),            "void eventsPane(int, int*);" },
     { pcfunc(memoryUsagePane),       "void memoryUsagePane(int, int*);" },
     { NULL,         NULL }
