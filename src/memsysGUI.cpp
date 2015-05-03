@@ -156,7 +156,6 @@ int addinManagerChild(Menu* menu) {
   
   if(menu->numitems>0) drawFkeyLabels(0x0103, 0x0038); // CHANGE (white), DELETE
   
-  unsigned short newpath[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
   unsigned short oldpath[MAX_FILENAME_SIZE+1];
   switch(doMenu(menu)) {
@@ -170,6 +169,7 @@ int addinManagerChild(Menu* menu) {
         } else { //enable
           buffer[strlen((char*)buffer)-3] = 'g'; //so it goes from h3a to g3a
         }
+        unsigned short newpath[MAX_FILENAME_SIZE+1];
         Bfile_StrToName_ncpy(newpath, buffer, MAX_FILENAME_SIZE+1);
         Bfile_RenameEntry( oldpath , newpath );
         return 1; //reload list

@@ -32,11 +32,11 @@ void drawRectangle(int x, int y, int width, int height, unsigned short color) {
 void drawLine(int x0, int y0, int x1, int y1, int color) {
    int dx =  abs(x1-x0), sx = x0<x1 ? 1 : -1;
    int dy = -abs(y1-y0), sy = y0<y1 ? 1 : -1;
-   int err = dx+dy, e2;                                   /* error value e_xy */
+   int err = dx+dy;                                           /* error value e_xy */
                                                     
-   for (;;) {                                                         /* loop */
+   for (;;) {                                                 /* loop */
       plot(x0,y0,color);                              
-      e2 = 2*err;                                   
+      int e2 = 2*err;                                   
       if (e2 >= dy) {                                         /* e_xy+e_x > 0 */
          if (x0 == x1) break;                       
          err += dy; x0 += sx;                       

@@ -669,7 +669,7 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
       while(1) {
         unsigned char in_buf[FILE_COMPORIGBUF+5];
         unsigned int read_sz = Bfile_ReadFile_OS( hOldFile, in_buf, FILE_COMPORIGBUF, -1 );
-        if (read_sz <= 0) {
+        if (!read_sz) {
           fres = heatshrink_decoder_finish(hsd);
           if (fres < 0) { goto cleanexit; }
           if (fres == HSDR_FINISH_DONE) break;
@@ -752,10 +752,9 @@ void PicocPlatformScanFile(const char *filename)
     unsigned short pFile[MAX_FILENAME_SIZE];
     Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
     int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
-    unsigned int filesize = 0;
     if(hFile >= 0) // Check if it opened
     { //opened
-        filesize = Bfile_GetFileSize_OS(hFile);
+        unsigned int filesize = Bfile_GetFileSize_OS(hFile);
         if(!filesize) {
             Bfile_CloseFile_OS(hFile);
             return;

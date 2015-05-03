@@ -2083,9 +2083,8 @@ void databaseTrimScreen() {
       }
       case 2:
       {
-        unsigned char selcolor = (unsigned char) 0xFF; //just so it isn't uninitialized
         int initcolor = 0;
-        selcolor = ColorIndexDialog1( initcolor, 0 );
+        unsigned char selcolor = ColorIndexDialog1(initcolor, 0);
         if(selcolor != (unsigned char)0xFF) {
           //user didn't press EXIT, QUIT or AC/ON. input is validated.
           selcolor != 7 ? delcat = selcolor+1 : delcat = 0;

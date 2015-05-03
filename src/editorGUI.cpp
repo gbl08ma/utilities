@@ -63,10 +63,10 @@ void textfileEditor(char* filename, char* basefolder) {
     int res = doTextInput(&input);
     if (res==INPUT_RETURN_EXIT) return; // user aborted
     else if (res==INPUT_RETURN_CONFIRM) {
-      int backToEditor = 0;
       char newfilename[MAX_FILENAME_SIZE];
       unsigned short newfilenameshort[0x10A];
       if(newfile) {
+        int backToEditor = 0;
         SetBackGround(13);
         drawScreenTitle("Text Editor", "Save file as:");
         drawFkeyLabels(0x036F); // <
