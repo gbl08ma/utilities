@@ -175,8 +175,6 @@ int base32_validate(const char* string) {
 }
 
 void itoa_zeropad(int n, char* buffer, int digits) {
-  char buffer2[11];
-  itoa(n, (unsigned char*)buffer2);
   // pad with zeros:
   char* ptr = buffer;
   int tens = ipow(10,--digits);
@@ -187,5 +185,5 @@ void itoa_zeropad(int n, char* buffer, int digits) {
     }
     tens /= 10;
   }
-  strcpy(ptr, buffer2);
+  itoa(n, (unsigned char*)ptr);
 }
