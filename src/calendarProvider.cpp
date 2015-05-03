@@ -22,7 +22,7 @@
 #include "selectorGUI.hpp"
 #include "calendarProvider.hpp" 
 #include "fileProvider.hpp" 
-#include "debugGUI.hpp" 
+#include "graphicsProvider.hpp" 
 
 void eventToString(CalendarEvent* calEvent, char* buf) {
   /* Parses a CalendarEvent struct and turns it into a string which can be written to a file.
@@ -543,6 +543,12 @@ int searchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   char mbuf[10]; mbuf[0] = 0;
   if(m) itoa_zeropad(m, mbuf, 2);
   sprintf(buffer, "%s\\%d%s*.pce", folder, y, mbuf);
+
+  // calculate length of desired matches so we don't see events for year 1234 when searching in the year 123
+  int correctLen = 12; // 8 chars (4 for year + 2 for month + 2 for day) + dot + extension
+  if(y < 1000) correctLen--;
+  if(y < 100) correctLen--;
+  if(y < 10) correctLen--;
   
   file_type_t fileinfo;
   int findhandle;
@@ -550,30 +556,27 @@ int searchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-    // get the start date from the filename
-    int nlen = strlen((char*)buffer);
-    if (nlen <= 12) { // if the filename is bigger than 12, it isn't in the correct format
-      char mainname[20];
-      strncpy(mainname, (char*)buffer, nlen-4); //strip the file extension out
-      // strcpy will not add a \0 at the end if the limit is reached, let's add it ourselves
-      mainname[nlen-4] = '\0';
-      nlen = strlen(mainname);
-      
+    if ((int)strlen((char*)buffer) == correctLen) {
+      // get the start date from the filename
+      int len = correctLen-4;
+      // strip the file extension out:
+      buffer[len] = '\0';
       int isValid = 1;
-      // verify that it only contains numbers
-      for(int i = 0; i < nlen; i++) {
-        if(!isdigit(mainname[i])) {
-          // some character is not a number, this file is invalid, do nothing on it
+      // verify that it only contains digits
+      for(int i = 0; i < len; i++) {
+        if(!isdigit(buffer[i])) {
+          // some character is not a digit, this file is invalid, do nothing on it
           isValid = 0;
         }
       }
+      
       if(isValid) {
         char tmpbuf[10];
         int i;
-        for(i = 0; i < 8 - nlen; i++) {
+        for(i = 0; i < 8 - len; i++) {
           tmpbuf[i] = '0';
         }
-        strcpy(tmpbuf+i, mainname);
+        strcpy(tmpbuf+i, buffer);
         EventDate thisday;
         int signedYear, signedMonth, signedDay;
         stringToDate(tmpbuf, &signedYear, &signedMonth, &signedDay, 2);
