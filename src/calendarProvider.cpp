@@ -739,15 +739,12 @@ void repairEventFile(char* name, const char* folder, int* checkedevents, int* pr
     *problemsfound = *problemsfound + 1;
     return;
   }
-  char mainname[20];
-  strncpy(mainname, name, nlen-4); //strip the file extension out
-  // strcpy will not add a \0 at the end if the limit is reached, let's add it ourselves
-  mainname[nlen-4] = '\0';
-  nlen = strlen(mainname);
+  nlen -= 4;
+  name[nlen] = '\0'; //strip the file extension out
   
   // last step in checking the file name: verify that it only contains numbers
   for(int i = 0; i < nlen; i++) {
-    if(!isdigit(mainname[i])) {
+    if(!isdigit(name[i])) {
       // some character is not a number, delete file
       Bfile_DeleteEntry(pFile);
       *problemsfound = *problemsfound + 1;
@@ -759,7 +756,7 @@ void repairEventFile(char* name, const char* folder, int* checkedevents, int* pr
   for(i = 0; i<8-nlen; i++) {
     strcpy(tmpbuf+i, "0");
   }
-  strcpy(tmpbuf+i, mainname);
+  strcpy(tmpbuf+i, name);
   EventDate thisday;
   int y, m, d;
   stringToDate(tmpbuf, &y, &m, &d, 2);
