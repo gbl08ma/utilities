@@ -82,12 +82,10 @@ void walletNameToPath(char* dest, char* orig) {
 }
 
 void getWalletBalance(Currency* balance, const char* wallet) {
-  unsigned short ufile[MAX_FILENAME_SIZE];
   char file[MAX_FILENAME_SIZE];
   strcpy(file, wallet);
   strcat(file, (char*)"\\Balance");
-  Bfile_StrToName_ncpy(ufile, file, MAX_FILENAME_SIZE);
-  int hFile = Bfile_OpenFile_OS(ufile, READWRITE, 0);
+  int hFile = fileOpen(file);
   if(hFile < 0) return;
   char contents[15] = "";
   Bfile_ReadFile_OS(hFile, contents, 15, 0);
@@ -96,12 +94,10 @@ void getWalletBalance(Currency* balance, const char* wallet) {
 }
 
 void setWalletBalance(Currency* balance, const char* wallet) {
-  unsigned short ufile[MAX_FILENAME_SIZE];
   char file[MAX_FILENAME_SIZE];
   strcpy(file, wallet);
   strcat(file, (char*)"\\Balance");
-  Bfile_StrToName_ncpy(ufile, file, MAX_FILENAME_SIZE);
-  int hFile = Bfile_OpenFile_OS(ufile, READWRITE, 0);
+  int hFile = fileOpen(file);
   if(hFile < 0) return;
   char contents[20] = "";
   currencyToString((char*)contents, balance);

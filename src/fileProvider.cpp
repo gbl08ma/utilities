@@ -725,9 +725,7 @@ cleanexit:
 
 int isFileCompressed(char* filename, int* origfilesize) {
   if(!strEndsWith(filename, (char*)COMPRESSED_FILE_EXTENSION)) return 0;
-  unsigned short filenameshort[MAX_FILENAME_SIZE];
-  Bfile_StrToName_ncpy(filenameshort, filename, MAX_FILENAME_SIZE);
-  int hFile = Bfile_OpenFile_OS(filenameshort, READWRITE, 0); // Get handle for the old file
+  int hFile = fileOpen(filename); // Get handle for the old file
   if(hFile < 0) return 0;
   unsigned char header[14] = "";
   int chl = strlen((char*)COMPRESSED_FILE_HEADER);
@@ -738,7 +736,13 @@ int isFileCompressed(char* filename, int* origfilesize) {
   return 1;
 }
 
-
+// wrapper around Bfile_OpenFile_OS that takes a "normal" string directly
+// returns a file handle or the same error codes as Bfile_OpenFile_OS
+int fileOpen(char* filename) {
+  unsigned short pFile[MAX_FILENAME_SIZE];
+  Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
+  return Bfile_OpenFile_OS(pFile, READWRITE, 0);
+}
 #ifdef ENABLE_PICOC_SUPPORT
 extern "C" {
 #include "picoc/picoc.h"
@@ -749,9 +753,7 @@ void PicocPlatformScanFile(const char *filename)
 {
     char* asrc = NULL;
     //Get file contents
-    unsigned short pFile[MAX_FILENAME_SIZE];
-    Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
-    int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+    int hFile = fileOpen(filename); // Get handle
     if(hFile >= 0) // Check if it opened
     { //opened
         unsigned int filesize = Bfile_GetFileSize_OS(hFile);

@@ -1655,6 +1655,10 @@ pcvoid(isFileCompressed)(struct ParseState *Parser, struct Value *ReturnValue, s
     ReturnValue->Val->Integer = isFileCompressed((char*)Param[0]->Val->Pointer, (int*)Param[1]->Val->Pointer);
 }
 
+pcvoid(fileOpen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = fileOpen((char*)Param[0]->Val->Pointer);
+}
+
 // firstRunGUI
 
 pcvoid(firstRunWizard)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2562,6 +2566,7 @@ const struct LibraryFunction UtilitiesFileProvider[] =
     { pcfunc(createFolderRecursive), "void createFolderRecursive(char*);" },
     { pcfunc(compressFile),          "void compressFile(char*, char*, int, int);" },
     { pcfunc(isFileCompressed),      "int isFileCompressed(char*, int*);" },
+    { pcfunc(fileOpen),              "int fileOpen(char*);" },
     { NULL,         NULL }
 };
 

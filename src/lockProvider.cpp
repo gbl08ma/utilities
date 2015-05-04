@@ -33,11 +33,8 @@ void hashPassword(unsigned char* password, unsigned char* hash) {
 int comparePasswordHash(unsigned char* inputPassword) {
   //returns values defined as RETURN_PASSWORD_*
   //Load hash from SMEM
-  unsigned short pFile[MAX_FILENAME_SIZE]; // Make buffer
-  int hFile;
-  Bfile_StrToName_ncpy(pFile, SMEMHASHFILE, MAX_FILENAME_SIZE); 
-  hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   unsigned char smemHash[32] = "";
+  int hFile = fileOpen(SMEMHASHFILE);
   if(hFile < 0) // Check if it opened
   {
     //error, file doesn't exist.
@@ -84,10 +81,7 @@ int savePassword(unsigned char* password) {
 
 int isPasswordSet(void) {
   //returns 1 if user has already set a code for locking the calc, 0 if not.
-  unsigned short pFile[MAX_FILENAME_SIZE]; // Make buffer
-  int hFile;
-  Bfile_StrToName_ncpy(pFile, SMEMHASHFILE, MAX_FILENAME_SIZE); 
-  hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  int hFile = fileOpen(SMEMHASHFILE);
   if(hFile < 0) return 0;
   Bfile_CloseFile_OS(hFile);
   return 1;

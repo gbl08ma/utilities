@@ -819,9 +819,7 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
       #endif
       case KEY_CTRL_F6:
         if(file->size > 0) {
-          unsigned short pFile[MAX_FILENAME_SIZE+1];
-          Bfile_StrToName_ncpy(pFile, file->filename, MAX_FILENAME_SIZE); 
-          int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+          int hFile = fileOpen(file->filename); // Get handle
           if(hFile >= 0) // Check if it opened
           { //opened
             unsigned char output1[20] = "";
@@ -879,9 +877,7 @@ void viewFileAsText(char* filename) { //name is the "nice" name of the file, i.e
   
   unsigned char* asrc = NULL;
   //Get file contents
-  unsigned short pFile[MAX_FILENAME_SIZE];
-  Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
-  int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+  int hFile = fileOpen(filename); // Get handle
   unsigned int filesize = 0;
   if(hFile >= 0) // Check if it opened
   { //opened

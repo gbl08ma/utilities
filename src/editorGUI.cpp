@@ -30,9 +30,7 @@ void textfileEditor(char* filename, char* basefolder) {
   if(!newfile) {
     newfile = 0;
     int openerror = 0;
-    unsigned short pFile[MAX_FILENAME_SIZE];
-    Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
-    int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
+    int hFile = fileOpen(filename); // Get handle
     if(hFile >= 0) // Check if it opened
     { //opened
       unsigned int filesize = Bfile_GetFileSize_OS(hFile);

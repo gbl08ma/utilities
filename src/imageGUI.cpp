@@ -19,6 +19,7 @@
 #include "constantsProvider.hpp"
 #include "textGUI.hpp"
 #include "inputGUI.hpp"
+#include "fileProvider.hpp"
 #include "tjpgd.h"
 
 void viewImage(char* filename) {
@@ -50,13 +51,11 @@ void viewImage(char* filename) {
   devid.Graph.transparency = 0;
   
   int scale = 0;
-  unsigned short filenameshort[0x10A];
-  Bfile_StrToName_ncpy(filenameshort, filename, 0x10A);
   while(1) {
     int key;
     Bdisp_AllClr_VRAM();
     /* Open a JPEG file */
-    devid.fp = Bfile_OpenFile_OS(filenameshort, READWRITE, 0);
+    devid.fp = fileOpen(filename);
     if (devid.fp < 0) {
       AUX_DisplayErrorMessage(0x2B);
       return;
