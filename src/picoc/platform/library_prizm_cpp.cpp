@@ -2871,6 +2871,110 @@ const struct LibraryFunction UtilitiesVersionProvider[] =
     { NULL,         NULL }
 };
 
+
+// Struct init helpers:
+
+pcvoid(initMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    Menu s;
+    *(Menu*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initMenuItem)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    MenuItem s;
+    *(MenuItem*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initEventDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    EventDate s;
+    *(EventDate*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initEventTime)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    EventTime s;
+    *(EventTime*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initCalendarEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    CalendarEvent s;
+    *(CalendarEvent*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initSimpleCalendarEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    SimpleCalendarEvent s;
+    *(SimpleCalendarEvent*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initChronometer)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    chronometer s;
+    *(chronometer*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initFile)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    File s;
+    *(File*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initTextInput)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    textInput s;
+    *(textInput*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initAddIn)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    AddIn s;
+    *(AddIn*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initSelector)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    Selector s;
+    *(Selector*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initTextElement)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    textElement s;
+    *(textElement*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initTextArea)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    textArea s;
+    *(textArea*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initCurrency)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    Currency s;
+    *(Currency*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initTransaction)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    Transaction s;
+    *(Transaction*)Param[0]->Val->Pointer = s;
+}
+
+pcvoid(initTOTP)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    totp s;
+    *(totp*)Param[0]->Val->Pointer = s;
+}
+
+const struct LibraryFunction UtilitiesStructInitializers[] =
+{
+    { pcfunc(initEventDate),         "void initEventDate(void*);" },
+    { pcfunc(initEventTime),         "void initEventTime(void*);" },
+    { pcfunc(initCalendarEvent),     "void initCalendarEvent(void*);" },
+    { pcfunc(initSimpleCalendarEvent),"void initSimpleCalendarEvent(void*);" },
+    { pcfunc(initChronometer),       "void initChronometer(void*);" },
+    { pcfunc(initFile),              "void initFile(void*);" },
+    { pcfunc(initTextInput),         "void initTextInput(void*);" },
+    { pcfunc(initAddIn),             "void initAddIn(void*);" },
+    { pcfunc(initMenu),              "void initMenu(void*);" },
+    { pcfunc(initMenuItem),          "void initMenuItem(void*);" },
+    { pcfunc(initSelector),          "void initSelector(void*);" },
+    { pcfunc(initTextElement),       "void initTextElement(void*);" },
+    { pcfunc(initTextArea),          "void initTextArea(void*);" },
+    { pcfunc(initCurrency),          "void initCurrency(void*);" },
+    { pcfunc(initTransaction),       "void initTransaction(void*);" },
+    { pcfunc(initTOTP),              "void initTOTP(void*);" },
+    { NULL,         NULL }
+};
+
 extern "C" {
     void PlatformLibraryInit_cpp();
 }
@@ -2941,6 +3045,8 @@ void PlatformLibraryInit_cpp()
     IncludeRegister("utilities/toolsGUI.h", &PrizmSetupFunc, &UtilitiesToolsGUI[0], NULL);
     IncludeRegister("utilities/toolsProvider.h", &PrizmSetupFunc, &UtilitiesToolsProvider[0], NULL);
     IncludeRegister("utilities/versionProvider.h", &PrizmSetupFunc, &UtilitiesVersionProvider[0], NULL);
+
+    IncludeRegister("utilities/structInit.h", &PrizmSetupFunc, &UtilitiesStructInitializers[0], NULL);
 
     definition = "#define UTILITIES_API_VERSION 1";
     PicocParse("utilities/versionProvider.h", definition, strlen(definition), TRUE, TRUE, FALSE);
