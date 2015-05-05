@@ -73,7 +73,7 @@ void createFolderRecursive(const char* folder);
 #define COMPRESSED_FILE_EXTENSION ".phc"
 void compressFile(char* oldfilename, char* newfilename, int action, int silent=0);
 int isFileCompressed(char* filename, int* origfilesize);
-int fileOpen(char* filename);
+int fileOpen(const char* filename);
 
 #ifdef ENABLE_PICOC_SUPPORT
 extern "C" {

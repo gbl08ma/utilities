@@ -738,7 +738,7 @@ int isFileCompressed(char* filename, int* origfilesize) {
 
 // wrapper around Bfile_OpenFile_OS that takes a "normal" string directly
 // returns a file handle or the same error codes as Bfile_OpenFile_OS
-int fileOpen(char* filename) {
+int fileOpen(const char* filename) {
   unsigned short pFile[MAX_FILENAME_SIZE];
   Bfile_StrToName_ncpy(pFile, filename, MAX_FILENAME_SIZE); 
   return Bfile_OpenFile_OS(pFile, READWRITE, 0);

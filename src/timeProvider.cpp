@@ -345,8 +345,6 @@ int isDateValid(int y, int m, int d) {
 
 // converts an amount of days to a date
 // result goes in the three last parameters
-// converts an amount of days to a date
-// result goes in the three last parameters
 void daysToDate(long day_number, long* year, long* month, long* day) {
   *year = ((long long)10000 * day_number + 14780) / (long long)3652425;
   long ddd = day_number - (365L * *year + *year / 4L - *year / 100 + *year / 400L);
