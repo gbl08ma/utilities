@@ -24,10 +24,12 @@
 
 void hashPassword(unsigned char* password, unsigned char* hash) {
   char salt[16];
+  unsigned char salted[256+8];
   getHardwareID(salt);
-  strcat((char*)password, salt);
-  int len = strlen((char*)password);
-  sha2(password, len, hash, 0);
+  strcpy((char*)salted, (char*)password);
+  strcat((char*)salted, salt);
+  int len = strlen((char*)salted);
+  sha2(salted, len, hash, 0);
 }
 
 int comparePasswordHash(unsigned char* inputPassword) {

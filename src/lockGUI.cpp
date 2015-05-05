@@ -113,8 +113,8 @@ int passwordInput(int x, int y, unsigned char* buffer) {
 }
 
 int setPassword() {
-  unsigned char password[256+8]; // 8 bytes for hardware ID as salt
-  unsigned char confirmation[256+8];
+  unsigned char password[256];
+  unsigned char confirmation[256];
   while(1) {
     Bdisp_AllClr_VRAM();
     drawScreenTitle("Calculator lock", "Set new password:");
@@ -134,7 +134,7 @@ int setPassword() {
 
 int unlockCalc() {
   //returns 1 on unlocked and 0 on still locked
-  unsigned char password[256+8];  // 8 bytes for hardware ID as salt
+  unsigned char password[256];
   
   Bdisp_AllClr_VRAM();
   drawScreenTitle("Calculator lock", "Enter password:");

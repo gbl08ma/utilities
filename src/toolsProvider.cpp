@@ -387,6 +387,12 @@ int loadTOTPs(totp* ts) {
   int tokencount = getEvents(&date, TOTPFOLDER, events);
   for(int i = 0; i<tokencount; i++) {
     ts[i].keylen = base32_decode((unsigned char*)events[i].description, ts[i].key, 32); // create key from secret string
+    if(ts[i].keylen < 0) {
+      // error decoding
+      tokencount--;
+      removeTOTP(i);
+      continue;
+    }
     strcpy(ts[i].name, (char*)events[i].title);
   }
   return tokencount;
