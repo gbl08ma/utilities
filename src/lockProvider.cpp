@@ -20,16 +20,14 @@
 #include "hardwareProvider.hpp"
 #include "fileProvider.hpp"
 #include "debugGUI.hpp"
+#include "stringsProvider.hpp"
 #include "sha2.h"
 
 void hashPassword(unsigned char* password, unsigned char* hash) {
-  char salt[16];
   unsigned char salted[256+8];
-  getHardwareID(salt);
-  strcpy((char*)salted, (char*)password);
-  strcat((char*)salted, salt);
-  int len = strlen((char*)salted);
-  sha2(salted, len, hash, 0);
+  int len = strncpy_retlen((char*)salted, (char*)password, 256);
+  getHardwareID((char*)salted+len);
+  sha2(salted, len+8, hash, 0);
 }
 
 int comparePasswordHash(unsigned char* inputPassword) {

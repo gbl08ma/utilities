@@ -31,7 +31,7 @@ int passwordInput(int x, int y, unsigned char* buffer) {
   int charlimit = 256;
   unsigned char dispbuffer[256]; //will hold asterisks instead of real characters...
   //clean buffer and display buffer
-  strcpy((char*)buffer, "");
+  memset(buffer, 0, 256);
   while(1)
   {   
     strcpy((char*)dispbuffer, "");
