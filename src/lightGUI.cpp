@@ -43,6 +43,7 @@ void flashLight(int noDraw) { // if noDraw is true, this function will just chan
   unsigned int initlevel = getRawBacklightSubLevel();
   unsigned int prevlevel = 0;
   int timer = Timer_Install(0, pushBogusKey, 500);
+  int menuFlag = GetGetkeyToMainFunctionReturnFlag();
   SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return. This way, we always have a chance to set the brightness correctly
   if (timer > 0) { Timer_Start(timer); }
   int key = KEY_CHAR_STORE;
@@ -73,7 +74,7 @@ void flashLight(int noDraw) { // if noDraw is true, this function will just chan
         Timer_Stop(timer);
         Timer_Deinstall(timer);
       }
-      SetGetkeyToMainFunctionReturnFlag(1); //Enable menu return
+      SetGetkeyToMainFunctionReturnFlag(menuFlag); // Enable menu return, if it was previously enabled
       return;
     }
   }
