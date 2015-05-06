@@ -95,14 +95,15 @@ void homeScreen(int isLocked) {
         }
       }
     } else if(username) {
+      color_t c = getSetting(SETTING_THEME) ? COLOR_BLACK : COLOR_WHITE;
       int textX = 0, textY = LCD_HEIGHT_PX - 58;
-      PrintMini(&textX, &textY, username, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 0, 0);
+      PrintMini(&textX, &textY, username, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, c, 0, 0);
       textX = LCD_WIDTH_PX - textX;
-      PrintMini(&textX, &textY, username, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 1, 0);
+      PrintMini(&textX, &textY, username, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, c, 1, 0);
       textX = 0; textY += 17;
-      PrintMini(&textX, &textY, organization, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 0, 0);
+      PrintMini(&textX, &textY, organization, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, c, 0, 0);
       textX = LCD_WIDTH_PX - textX;
-      PrintMini(&textX, &textY, organization, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 1, 0);
+      PrintMini(&textX, &textY, organization, 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, c, 1, 0);
     }
     if(!pane_keycache) {
       Bdisp_PutDisp_DD();
