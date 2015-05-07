@@ -237,39 +237,42 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
       case KEY_CTRL_F2:
       case KEY_CTRL_F3:
         if (menu.numselitems > 0) {
-          if((*itemsinclip < MAX_ITEMS_IN_CLIPBOARD) && menu.numselitems <= MAX_ITEMS_IN_CLIPBOARD-*itemsinclip) {
-            int ifile = 0;
-            while(ifile < menu.numitems) {  
-              if (menu.items[ifile].isselected) {
-                int inclip = 0;
-                int clippos = 0;
-                for(int i = 0; i<*itemsinclip; i++) {
-                  if(!strcmp(clipboard[i].filename, files[ifile].filename)) {
-                    inclip=1;
-                    clippos = i;
+          int ifile = 0, hasErrored = 0;
+          while(ifile < menu.numitems) {  
+            if (menu.items[ifile].isselected) {
+              int inclip = 0;
+              int clippos = 0;
+              for(int i = 0; i<*itemsinclip; i++) {
+                if(!strcmp(clipboard[i].filename, files[ifile].filename)) {
+                  inclip=1;
+                  clippos = i;
+                }
+              }
+              if(!inclip) {
+                if(!hasErrored) { // if it's not yet full / we're yet to show the message
+                  if(*itemsinclip < MAX_ITEMS_IN_CLIPBOARD) {
+                    clipboard[*itemsinclip] = files[ifile];
+                    //0=cut file; 1=copy file:
+                    clipboard[*itemsinclip].action = (res == KEY_CTRL_F2 ? 0 : 1);
+                    *itemsinclip = *itemsinclip + 1;
+                  } else {
+                    mMsgBoxPush(4);
+                    multiPrintXY(3, 2, (char*)"The clipboard is\nfull; can't add\nmore items to it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+                    closeMsgBox();
+                    hasErrored = 1; // do not keep looping with the same message
                   }
                 }
-                if(!inclip) {
-                  clipboard[*itemsinclip] = files[ifile];
-                  //0=cut file; 1=copy file:
-                  clipboard[*itemsinclip].action = (res == KEY_CTRL_F2 ? 0 : 1);
-                  *itemsinclip = *itemsinclip + 1;
-                } else {
-                  // file is already in the clipboard
-                  // set it to the opposite action
-                  clipboard[clippos].action = !clipboard[clippos].action;
-                }
-                menu.items[ifile].isselected = 0; // clear selection
-                menu.numselitems--;
+              } else {
+                // file is already in the clipboard
+                // set it to the opposite action
+                clipboard[clippos].action = !clipboard[clippos].action;
               }
-              ifile++;
+              menu.items[ifile].isselected = 0; // clear selection
+              menu.numselitems--;
             }
-          } else {
-            mMsgBoxPush(4);
-            multiPrintXY(3, 2, (char*)"The clipboard is\nfull; can't add\nmore items to it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-            closeMsgBox();
+            ifile++;
           }
-        } else if (menu.numselitems == 0) {
+        } else {
           if(res==KEY_CTRL_F2) {
             mMsgBoxPush(6);
             MenuItem smallmenuitems[7];
