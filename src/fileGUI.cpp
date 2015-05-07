@@ -142,13 +142,36 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
   while(1) {
     getFileManagerStatus((char*)statusbuffer, *itemsinclip, 0);
     menu.statusText = statusbuffer;
-    if(menu.fkeypage == 0) {
+    int allcompressed = 1;
+    if(menu.numselitems == 0) {
       drawFkeyLabels(0, // set by menu as SELECT [empty], otherwise make it white (we're not using Bdisp_AllClr_VRAM)
-        (menu.numselitems>0 ? 0x0069 : 0x03B6), // CUT (white) or SEQ
-        (menu.numselitems>0 ? 0x0034 : (menu.numitems>0 ? 0x0187 : 0)), // COPY (white) or SEARCH (only if there are items)
+        0x03B6, // SEQ
+        (menu.numitems>0 ? 0x0187 : 0), // SEARCH (only if there are items)
         0x0186, // NEW
         (menu.numitems>0 ? 0x0188 : 0), // RENAME or white
-        (menu.numselitems>0 ? 0x0038 : 0)); // DELETE or white
+        0); // white
+    } else {
+      if(menu.numselitems) {
+        for(int i = 0; i < menu.numitems; i++) {
+          if(menu.items[i].isselected) {
+            if(menu.items[i].isfolder) {
+              allcompressed = 0;
+              break; // no need to check more, if one of the items is a folder, then not all items are compressed.
+            }
+            int origfilesize;
+            if(!isFileCompressed(files[i].filename, &origfilesize)) {
+              allcompressed = 0;
+              break; // no need to check more, at least one of the selected files is not compressed.
+            }
+          }
+        }
+      }
+      drawFkeyLabels(0, // set by menu as SELECT [empty], otherwise make it white (we're not using Bdisp_AllClr_VRAM)
+        0x0069, // CUT (white)
+        0x0034, // COPY (white)
+        (allcompressed ? 0x161 : 0x160), // Comp (white) / Dec (white)
+        0x045B, // REVERSE (white)
+        0x0038); // DELETE
     }
     res = doMenu(&menu, icontable);
     switch(res) {
@@ -282,36 +305,49 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
         }
         break;
       case KEY_CTRL_F4: {
-        mMsgBoxPush(4);
-        MenuItem smallmenuitems[5];
-        smallmenuitems[0].text = (char*)"Folder";
-        smallmenuitems[1].text = (char*)"Text File";
-        smallmenuitems[2].text = (char*)"Blank g3p file";
-        
-        Menu smallmenu;
-        smallmenu.items=smallmenuitems;
-        smallmenu.numitems=3;
-        smallmenu.width=17;
-        smallmenu.height=4;
-        smallmenu.startX=3;
-        smallmenu.startY=2;
-        smallmenu.title = (char*)"Create new:";
-        int sres = doMenu(&smallmenu);
-        mMsgBoxPop();
-        
-        if(sres == MENU_RETURN_SELECTION) {
-          if(smallmenu.selection == 1) {
-            if(newFolderScreen(browserbasepath)) return 1; // if user said yes and a folder was created, reload file list
-          } else if(smallmenu.selection == 2) {
-            textfileEditor(NULL, browserbasepath); return 1;
-          } else if(smallmenu.selection == 3) {
-            if(newG3Pscreen(browserbasepath)) return 1;
+        if(menu.numselitems == 0) {
+          mMsgBoxPush(4);
+          MenuItem smallmenuitems[5];
+          smallmenuitems[0].text = (char*)"Folder";
+          smallmenuitems[1].text = (char*)"Text File";
+          smallmenuitems[2].text = (char*)"Blank g3p file";
+          
+          Menu smallmenu;
+          smallmenu.items=smallmenuitems;
+          smallmenu.numitems=3;
+          smallmenu.width=17;
+          smallmenu.height=4;
+          smallmenu.startX=3;
+          smallmenu.startY=2;
+          smallmenu.title = (char*)"Create new:";
+          int sres = doMenu(&smallmenu);
+          mMsgBoxPop();
+          
+          if(sres == MENU_RETURN_SELECTION) {
+            if(smallmenu.selection == 1) {
+              if(newFolderScreen(browserbasepath)) return 1; // if user said yes and a folder was created, reload file list
+            } else if(smallmenu.selection == 2) {
+              textfileEditor(NULL, browserbasepath); return 1;
+            } else if(smallmenu.selection == 3) {
+              if(newG3Pscreen(browserbasepath)) return 1;
+            }
           }
+        } else {
+          if(allcompressed) decompressSelectedFiles(files, &menu);
+          else compressSelectedFiles(files, &menu);
+          return 1;
         }
         break;
       }
       case KEY_CTRL_F5:
-        if(menu.numitems>0 && renameFileScreen(files, &menu, browserbasepath)) return 1;
+        if(menu.numselitems == 0) {
+          if(menu.numitems>0 && renameFileScreen(files, &menu, browserbasepath)) return 1;
+        } else {
+          for(int i = 0; i < menu.numitems; i++) {
+            menu.items[i].isselected = !menu.items[i].isselected;
+          }
+          menu.numselitems = menu.numitems - menu.numselitems;
+        }
         break;
       case KEY_CTRL_F6:
       case KEY_CTRL_DEL:
@@ -328,31 +364,14 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
         break;
       case KEY_CTRL_OPTN:
       {
-        int allcompressed = 1;
-        if(menu.numselitems) {
-          for(int i = 0; i < menu.numitems; i++) {
-            if(menu.items[i].isfolder) {
-              allcompressed = 0;
-              break; // no need to check more, if one of the items is a folder, then not all items are compressed.
-            }
-            if(menu.items[i].isselected) {
-              int origfilesize;
-              if(!isFileCompressed(files[i].filename, &origfilesize)) {
-                allcompressed = 0;
-                break; // no need to check more, at least one of the selected files is not compressed.
-              }
-            }
-          }
-        }
         mMsgBoxPush(4);
         MenuItem smallmenuitems[5];
         smallmenuitems[0].text = (char*)"Folder statistics";
         smallmenuitems[1].text = (char*)"View clipboard";
-        smallmenuitems[2].text = (char*)(allcompressed ? "Decompr. selected" : "Compress selected");
         
         Menu smallmenu;
         smallmenu.items=smallmenuitems;
-        smallmenu.numitems=(menu.numselitems ? 3 : 2);
+        smallmenu.numitems=2;
         smallmenu.width=17;
         smallmenu.height=4;
         smallmenu.startX=3;
@@ -365,10 +384,6 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
             folderStatsScreen(files, &menu);
           } else if(smallmenu.selection == 2) {
             viewClipboard(clipboard, itemsinclip);
-          } else if(smallmenu.selection == 3) {
-            if(allcompressed) decompressSelectedFiles(files, &menu);
-            else compressSelectedFiles(files, &menu);
-            return 1;
           }
         }
         break;
