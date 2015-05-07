@@ -58,8 +58,8 @@ void masterControl() {
 #ifdef ENABLE_DEBUG
   menuitems[4].text = (char*)"Dbg0";
   menuitems[5].text = (char*)"Dbg1";
-  menuitems[6].text = (char*)"FR0";
-  menuitems[7].text = (char*)"FR1";
+  menuitems[6].text = (char*)"Ac0";
+  menuitems[7].text = (char*)"Ac1";
   menuitems[8].text = (char*)"Rst";
 #endif
   
@@ -92,7 +92,7 @@ void masterControl() {
           break;
         case 7:
         case 8:
-          setSetting(SETTING_IS_FIRST_RUN, menu.selection-7, 0); // do not autosave, to allow full control of the operator
+          setSetting(SETTING_ACTIVATION_STATUS, menu.selection-7, 0); // do not autosave, to allow full control of the operator
           break;
         case 9:
           //CallbackAtQuitMainFunction( mycallback );

@@ -63,7 +63,7 @@ int main()
   Bdisp_EnableColor(1);
   DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
   
-  if(getSetting(SETTING_IS_FIRST_RUN) == 1) { // must include "== 1", see setting description
+  if(!getSetting(SETTING_ACTIVATION_STATUS)) {
     firstRunWizard();
     RTCunadjustedWizard(0);
   } else {

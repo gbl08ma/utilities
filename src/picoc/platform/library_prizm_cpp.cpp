@@ -1033,8 +1033,8 @@ const struct LibraryFunction PrizmDisplaySyscalls[] =
     { pcfunc(Bdisp_GetPoint_DD),     "unsigned short Bdisp_GetPoint_DD(int, int);" },
     { pcfunc(DirectDrawRectangle),   "void DirectDrawRectangle(int, int, int, int, unsigned short);" },
     { pcfunc(HourGlass),             "void HourGlass(void);" },
-    { pcfunc(Bdisp_WriteGraphVRAM),  "void Bdisp_WriteGraphVRAM(struct display_graph*);" },
-    { pcfunc(Bdisp_WriteGraphDD_WB), "void Bdisp_WriteGraphDD_WB(struct display_graph*);" },
+    { pcfunc(Bdisp_WriteGraphVRAM),  "void Bdisp_WriteGraphVRAM(void*);" },
+    { pcfunc(Bdisp_WriteGraphDD_WB), "void Bdisp_WriteGraphDD_WB(void*);" },
     { pcfunc(Bdisp_ShapeBase3XVRAM), "void Bdisp_ShapeBase3XVRAM(void*);" },
     { pcfunc(Bdisp_ShapeBase),       "void Bdisp_ShapeBase(unsigned char*, void*, int, int, int, int);" },
     { pcfunc(Bdisp_ShapeToVRAM16C),  "void Bdisp_ShapeToVRAM16C(void*, int);" },
@@ -2732,8 +2732,8 @@ const struct LibraryFunction UtilitiesSettingsGUI[] =
 
 const struct LibraryFunction UtilitiesSettingsProvider[] =
 {
-    { pcfunc(getSetting),            "int getSetting(int);" },
-    { pcfunc(setSetting),            "void setSetting(int, int, int);" },
+    { pcfunc(getSetting),            "unsigned char getSetting(int);" },
+    { pcfunc(setSetting),            "void setSetting(int, unsigned char, int);" },
     { pcfunc(loadSettings),          "int loadSettings();" },
     { pcfunc(saveSettings),          "void saveSettings();" },
     { NULL,         NULL }
@@ -2986,10 +2986,7 @@ void PlatformLibraryInit_cpp()
     // display:
     IncludeRegister("fxcg/display.h", &PrizmSetupFunc, &PrizmDisplaySyscalls[0], "struct display_fill{int x1; int y1; int x2; int y2; unsigned char mode;};");
     
-    const char *definition = "struct display_graph {int x;int y;int xofs;int yofs;int width;int height;char colormode;char zero4;char P20_1;char P20_2;int bitmap;char color_idx1;char color_idx2;char color_idx3;char P20_3;char writemodify;char writekind;char zero6;char one1;int transparency;};";
-    PicocParse("fxcg/display.h", definition, strlen(definition), TRUE, TRUE, FALSE);
-    
-    definition = "enum{TEXT_COLOR_BLACK=0,TEXT_COLOR_BLUE=1,TEXT_COLOR_GREEN=2,TEXT_COLOR_CYAN=3,TEXT_COLOR_RED=4,TEXT_COLOR_PURPLE=5,TEXT_COLOR_YELLOW=6,TEXT_COLOR_WHITE=7};";
+    const char* definition = "enum{TEXT_COLOR_BLACK=0,TEXT_COLOR_BLUE=1,TEXT_COLOR_GREEN=2,TEXT_COLOR_CYAN=3,TEXT_COLOR_RED=4,TEXT_COLOR_PURPLE=5,TEXT_COLOR_YELLOW=6,TEXT_COLOR_WHITE=7};";
     PicocParse("fxcg/display.h", definition, strlen(definition), TRUE, TRUE, FALSE);
     
     definition = "enum{TEXT_MODE_NORMAL=0,TEXT_MODE_INVERT=1,TEXT_MODE_TRANSPARENT_BACKGROUND=0x20,TEXT_MODE_AND=0x21};";

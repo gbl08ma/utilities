@@ -20,11 +20,11 @@ static unsigned char settings[NUMBER_OF_SETTINGS+1];
 // Routines for accessing and setting settings
 // NOTE: directly accessing the settings array is strictly forbidden!
 
-int getSetting(int setting) {
+unsigned char getSetting(int setting) {
   return settings[setting];
 }
 
-void setSetting(int setting, int value, int autosave) {
+void setSetting(int setting, unsigned char value, int autosave) {
   settings[setting] = value;
   if(setting == SETTING_DISPLAY_STATUSBAR) {
     if(settings[setting]) {
@@ -59,7 +59,6 @@ int loadSettings() { // returns 0 on success, 1 if settings were reset (first ru
   settings[SETTING_DISPLAY_FKEYS] = 1;
   settings[SETTING_PASSWORD_PRIVACY] = 1;
   settings[SETTING_SHOW_CALENDAR_EVENTS_COUNT] = 1;
-  settings[SETTING_IS_FIRST_RUN] = 1;
   settings[SETTING_ENABLE_LOCK] = 1;
   settings[SETTING_CLOCK_SECONDS] = 1;
   settings[SETTING_DEFAULT_CALENDAR_VIEW] = 1;

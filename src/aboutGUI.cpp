@@ -16,7 +16,6 @@
 #include "textGUI.hpp"
 #include "versionProvider.hpp"
 #include "graphicsProvider.hpp"
-#include "hardwareProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "settingsProvider.hpp"
 
@@ -143,7 +142,12 @@ void aboutScreen() {
 }
 
 void buildExpiredScreen() {
-  if(getSetting(SETTING_IS_FIRST_RUN) == 2) return;
+  unsigned char s = getSetting(SETTING_ACTIVATION_STATUS);
+  // to understand the following code, see the description of the setting on settingsProvider.hpp
+  if(s > 1)  {
+    setSetting(SETTING_ACTIVATION_STATUS, --s, 1);
+    return;
+  }
   textArea text;
   text.title = (char*)"Check for updates";
   
@@ -161,10 +165,10 @@ void buildExpiredScreen() {
   elem[2].text = (char*)"http://tny.im/utupd";
   elem[3].newLine = 1;
   elem[3].lineSpacing = 16;
-  elem[3].text = (char*)"Press EXIT to continue, or F1 if you don't want to see this message again.";
+  elem[3].text = (char*)"Press EXIT to continue, or F1 to temporarily stop this message from showing.";
   
   text.numelements = 4;
-  if(doTextArea(&text) == TEXTAREA_RETURN_F1) {
-    setSetting(SETTING_IS_FIRST_RUN, 2, 1);
+  if(doTextArea(&text) == TEXTAREA_RETURN_F1) {    
+    setSetting(SETTING_ACTIVATION_STATUS, 255, 1);
   }
 }

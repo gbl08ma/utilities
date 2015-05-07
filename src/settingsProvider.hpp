@@ -21,7 +21,7 @@
 /*App settings.*/
 // the default value of the settings goes on settingsProvider.cpp
 
-#define SETTINGSFILE_VERSION 14 // NOTE: increase this when changing the amount or meaning of settings!
+#define SETTINGSFILE_VERSION 15 // NOTE: increase this when changing the amount or meaning of settings!
 
 #define SETTING_SELF_FILEVERSION 0 // this is a special field used by the settings system to determine file compatibility
 #define SETTING_TIMEFORMAT 1 // 0 = 24-hour HH:MM:SS ; 1 = 12-hour HH:MM:SS AM/PM
@@ -46,7 +46,13 @@
 #define SETTING_DISPLAY_FKEYS 8 // 0: show last input character when entering passwords; 1: do not show last char
 #define SETTING_PASSWORD_PRIVACY 9 // had a different name before, value meaning is the same
 #define SETTING_SHOW_CALENDAR_EVENTS_COUNT 10 // 1 if this is the first time the add-in is run, then it's set to zero and never changed, unless the user cancels update checking, in which case it's set to 2. So: if 1 is first run, if any other value is not first run.
-#define SETTING_IS_FIRST_RUN 11 // 1 if this is the first time the add-in is run, then it's set to zero and never changed, unless the user cancels update checking, in which case it's set to 2. So: if 1 is first run, if any other value is not first run.
+#define SETTING_ACTIVATION_STATUS 11
+/* add-in "activation" status.
+   0 if this is the first time the add-in is running.
+   non-zero if the add-in has ran before. "non-zero" can be:
+      1 if there is no additional information stored in this setting.
+      >1 when it is a countdown to reminding the user to check for updates again, if the build is expired
+*/
 #define SETTING_ENABLE_LOCK 12  // whether lock functionality is available or not. Should always be on and not changeable on the settings menu, except when special instructions are given to disable the function
 #define SETTING_LOCK_AUTOOFF 13 // whether to turn off automatically after locking the calc
 #define SETTING_LOCK_ON_EXE 14 // when enabled, calculator is locked when EXE is pressed on the home screen (i.e. legacy support for people used to the old lock add-in).
@@ -88,8 +94,8 @@
 #define NUMBER_OF_SETTINGS 29 // NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
 /*End of settings*/ 
 
-int getSetting(int setting);
-void setSetting(int setting, int value, int autosave);
+unsigned char getSetting(int setting);
+void setSetting(int setting, unsigned char value, int autosave);
 int loadSettings();
 void saveSettings();
 
