@@ -2064,6 +2064,10 @@ pcvoid(strncpy_retlen)(struct ParseState *Parser, struct Value *ReturnValue, str
     ReturnValue->Val->Integer = strncpy_retlen((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
+pcvoid(strncpy_replace)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Pointer = strncpy_replace((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer);
+}
+
 pcvoid(stringToMini)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     stringToMini((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
@@ -2745,6 +2749,7 @@ const struct LibraryFunction UtilitiesStringsProvider[] =
     { pcfunc(strEndsWith),           "int strEndsWith(char*, char*);" },
     { pcfunc(memmem),                "void* memmem(char*, int, char*, int, int);" },
     { pcfunc(strncpy_retlen),        "int strncpy_retlen(char*, char*, int);" },
+    { pcfunc(strncpy_replace),       "char* strncpy_replace(char*, char*, int, char, char);" },
     { pcfunc(stringToMini),          "void stringToMini(char*, char*);" },
     { pcfunc(base32_decode),         "int base32_decode(unsigned char*, unsigned char*, int);" },
     { pcfunc(base32_validate),       "int base32_validate(char*);" },

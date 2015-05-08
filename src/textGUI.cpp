@@ -41,37 +41,51 @@ int doTextArea(textArea* text) {
         textY=textY+text->lineHeight+text->elements[cur].lineSpacing; 
       }
       int tlen = strlen(text->elements[cur].text);
-      char* singleword = (char*)malloc(tlen); // because of this, a single text element can't have more bytes than malloc can provide
-      if(singleword == NULL) continue; // could not allocate, skip word
+      if(!tlen) continue;
+      // support \n within text elements:
+      char* singleline = (char*)malloc(tlen); // because of this, a single text element can't have more bytes than malloc can provide
+      if(singleline == NULL) continue; // could not allocate, skip line
       const char* src = (char*)text->elements[cur].text;
       while(*src) {
-        int temptextX = 0, temptextY = 0;
-        src = toksplit(src, ' ', singleword, tlen); //break into words; next word
+        src = toksplit(src, '\n', singleline, tlen);
+        const char* wsrc = singleline;
+        char* singleword = (char*)malloc(tlen);
+        if(singleword == NULL) continue; // could not allocate, skip word
+        while(*wsrc) {
+          int temptextX = 0, temptextY = 0;
+          wsrc = toksplit(wsrc, ' ', singleword, tlen); //break into words; next word
 
-        //check if printing this word would go off the screen, by previewing the length:
-        printAreaText(&temptextX, &temptextY, singleword, text->elements[cur].color, text->elements[cur].minimini, 1);
-        if(temptextX + textX > text->width-(text->scrollbar ? 6 : 0)) {
-          //time for a new line
+          //check if printing this word would go off the screen, by previewing the length:
+          printAreaText(&temptextX, &temptextY, singleword, text->elements[cur].color, text->elements[cur].minimini, 1);
+          if(temptextX + textX > text->width-(text->scrollbar ? 6 : 0)) {
+            //time for a new line
+            textX=text->x;
+            textY=textY+(text->elements[cur].minimini ? -7 : 0)+text->lineHeight;
+          } //else still fits, print new word normally (or just increment textX, if we are not "on stage" yet)
+
+          if(textY >= -24 && textY < LCD_HEIGHT_PX) {
+            printAreaText(&textX, &textY, singleword, text->elements[cur].color, text->elements[cur].minimini, 0);
+            //add a space, since it was removed from token
+            if(*wsrc || text->elements[cur].spaceAtEnd)
+              printAreaText(&textX, &textY, " ", text->elements[cur].color, text->elements[cur].minimini, 0);
+          } else {
+            textX += temptextX;
+            if(*wsrc || text->elements[cur].spaceAtEnd)
+              textX += 7; // size of a PrintMini space
+          }
+        }
+        if(*src) {
+          // there's more text in the element, new line
           textX=text->x;
           textY=textY+(text->elements[cur].minimini ? -7 : 0)+text->lineHeight;
-        } //else still fits, print new word normally (or just increment textX, if we are not "on stage" yet)
-
-        if(textY >= -24 && textY < LCD_HEIGHT_PX) {
-          printAreaText(&textX, &textY, singleword, text->elements[cur].color, text->elements[cur].minimini, 0);
-          //add a space, since it was removed from token
-          if(*src || text->elements[cur].spaceAtEnd)
-            printAreaText(&textX, &textY, " ", text->elements[cur].color, text->elements[cur].minimini, 0);
-        } else {
-          textX += temptextX;
-          if(*src || text->elements[cur].spaceAtEnd)
-            textX += 7; // size of a PrintMini space
         }
+        free(singleword);
+        if(isFirstDraw)
+          totalTextY = textY+(showtitle ? 0 : 24);
+        else if(textY>LCD_HEIGHT_PX)
+          break;
       }
-      free(singleword);
-      if(isFirstDraw)
-        totalTextY = textY+(showtitle ? 0 : 24);
-      else if(textY>LCD_HEIGHT_PX)
-        break;
+      free(singleline);
     }
     isFirstDraw=0;
     if(showtitle) {

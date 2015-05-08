@@ -118,6 +118,23 @@ int strncpy_retlen(char* dest, const char* src, int n) {
   return (l > n ? n : l);
 }
 
+// strncpy_replace works like strncpy, but replaces all occurences of char a for char b.
+char* strncpy_replace(char* dest, const char* src, int n, char a, char b) {
+  int l = strlen(src);
+  int i;
+  for (i = 0; i < n; i++) {
+    if(src[i]) {
+      if(src[i] != a)
+        dest[i] = src[i];
+      else dest[i] = b;
+    }
+    else break;
+  }
+  for (; i < n; i++) dest[i] = 0;
+  return dest;
+}
+
+
 // convert a normal text string into a multibyte one where letters become their mini variants (F5 screen of the OS's character select dialog)
 // dest must be at least double the size of orig.
 void stringToMini(char* dest, const char* orig) {

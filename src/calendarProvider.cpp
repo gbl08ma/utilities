@@ -138,11 +138,11 @@ void stringToEvent(const char* src, CalendarEvent* calEvent) {
         calEvent->title[21] = '\0';
         break;
       case 18: //location
-        strncpy((char*)calEvent->location, (char*)token, 128);
+        strncpy_replace((char*)calEvent->location, (char*)token, 128, '\r', '\n');
         calEvent->location[128] = '\0';
         break;
       case 19: //description
-        strncpy((char*)calEvent->description, (char*)token, 1024);
+        strncpy_replace((char*)calEvent->description, (char*)token, 1024, '\r', '\n');
         calEvent->description[1024] = '\0';
         break;
       default: //unknown field. may add special handling later.
