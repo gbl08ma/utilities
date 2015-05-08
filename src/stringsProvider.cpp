@@ -45,12 +45,15 @@ char *token, /* receiver of parsed token */
 int lgh) /* length token can receive */
 /* not including final '\0' */
 {
+  int prevWasMBLead = 0;
   if (src) {
-    while (*src && (tokchar != *src)) {
+    while (*src && (tokchar != *src || prevWasMBLead)) {
       if (lgh) {
         *token++ = *src;
         --lgh;
       }
+      if(*src&128) prevWasMBLead = 1;
+      else prevWasMBLead = 0;
       src++;
     }
     if (*src && (tokchar == *src)) src++;
@@ -118,13 +121,12 @@ int strncpy_retlen(char* dest, const char* src, int n) {
   return (l > n ? n : l);
 }
 
-// strncpy_replace works like strncpy, but replaces all occurences of char a for char b.
+// strncpy_replace works like strncpy, but replaces all occurences of char a for char b, unless a is the second half of a MB char.
 char* strncpy_replace(char* dest, const char* src, int n, char a, char b) {
-  int l = strlen(src);
   int i;
   for (i = 0; i < n; i++) {
     if(src[i]) {
-      if(src[i] != a)
+      if(src[i] != a || (i > 0 && src[i-1]&128))
         dest[i] = src[i];
       else dest[i] = b;
     }
