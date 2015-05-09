@@ -86,5 +86,7 @@
 #endif
 
 #ifndef ENABLE_PICOC_SUPPORT
+#ifdef __ENABLE_PICOC_SUPPORT
 #define ENABLE_PICOC_SUPPORT
+#endif
 #endif
