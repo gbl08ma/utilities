@@ -16,7 +16,9 @@
 #include "stringsProvider.hpp"
 #include "graphicsProvider.hpp"
 
-
+int isMBsecond(char s) { // there is probably a syscall for this, but it's not documented
+  return (s == '\xE5' || s == '\xE6' || s == '\xE7' || s == '\x7F' || s == '\xF7' || s == '\xF9');
+}
 /* copy over the next token from an input string, WITHOUT
 skipping leading blanks. The token is terminated by the
 first appearance of tokchar, or by the end of the source
@@ -36,7 +38,8 @@ for the system namespace. Change to that at your risk.
 
 released to Public Domain, by C.B. Falconer.
 Published 2006-02-20. Attribution appreciated.
-Modified by gbl08ma not to skip blanks at the beginning.
+Modified by gbl08ma not to skip blanks at the beginning,
+and to not break on a token if it is the body of a multi-byte char.
 */
 
 const char *toksplit(const char *src, /* Source of tokens */
@@ -52,7 +55,7 @@ int lgh) /* length token can receive */
         *token++ = *src;
         --lgh;
       }
-      if(*src&128) prevWasMBLead = 1;
+      if(isMBsecond(*src)) prevWasMBLead = 1;
       else prevWasMBLead = 0;
       src++;
     }
@@ -126,7 +129,7 @@ char* strncpy_replace(char* dest, const char* src, int n, char a, char b) {
   int i;
   for (i = 0; i < n; i++) {
     if(src[i]) {
-      if(src[i] != a || (i > 0 && src[i-1]&128))
+      if(src[i] != a || (i > 0 && isMBsecond(src[i-1])))
         dest[i] = src[i];
       else dest[i] = b;
     }

@@ -667,7 +667,7 @@ void repairEventFile(char* name, const char* folder, int* checkedevents, int* pr
   int invalid_field_length = 0; // if asrc is modified to fix a lengthy field, this becomes 1
   int len = strlen((char*)asrc);
   for(int i = 0; i<len; i++) {
-    if(asrc[i] == FIELD_SEPARATOR) {
+    if(asrc[i] == FIELD_SEPARATOR && (i > 0 && !isMBsecond(asrc[i-1]))) { // skip the second char of multi-byte chars
       // end of a field, check length
       if (fieldsep_this_event == 17 && field_length > 21) {
         // invalid title length
@@ -684,7 +684,7 @@ void repairEventFile(char* name, const char* folder, int* checkedevents, int* pr
       fieldsep++;
       fieldsep_this_event++;
       field_length = 0;
-    } else if(asrc[i] == EVENT_SEPARATOR) {
+    } else if(asrc[i] == EVENT_SEPARATOR && (i > 0 && !(asrc[i-1]&128))) {  // skip the second char of multi-byte chars
       if (field_length > 1024) {
         // invalid description length
         fixEventString(asrc, field_length, 1024, &len, &i);
