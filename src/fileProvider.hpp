@@ -19,14 +19,14 @@
 #define MAX_FILENAME_SIZE 270 //full path with //fls0/, extension and everything
 #define MAX_NAME_SIZE 128 //friendly name (in "//fls0/folder/file.txt", this would be "file.txt")
 #define MAX_ITEMS_IN_DIR 200
-#define MAX_ITEMS_IN_CLIPBOARD 51
+#define MAX_ITEMS_IN_CLIPBOARD 75
 #define MAX_TEXTVIEWER_FILESIZE 64*1024
 #define MAX_TEXTVIEWER_LINES 2000
 #define MAX_ITEMS_PER_FOLDER_COPY 100 // also applies to folders in recursive search
 typedef struct
 {
   char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
-  char visname[42]; //visible name, only for menus. use filenameToName to get the proper name.
+  char* visname; // pointer to the last part of the filename (the ABC.def in \\fls0\123\ABC.def).
   short action; // mostly for clipboard, can be used to tag something to do with the file
   short isfolder; // because menuitem shouldn't be the only struct holding this info
   int size; // file size
@@ -49,7 +49,7 @@ int getFiles(File* files, MenuItem* menuitems, const char* basepath, int* count)
 int searchForFiles(File* files, const char* basepath, const char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall=0);
 void deleteFiles(File* files, Menu* menu);
 void renameFile(char* old, char* newf);
-void filenameToName(char* filename, char* name, int max=MAX_NAME_SIZE);
+char* filenameToName(char* filename);
 void copyFile(char* oldfilename, char* newfilename);
 void pasteClipboard(File* clipboard, char* browserbasepath, int itemsInClipboard);
 

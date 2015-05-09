@@ -1620,7 +1620,7 @@ pcvoid(renameFile)(struct ParseState *Parser, struct Value *ReturnValue, struct 
 }
 
 pcvoid(filenameToName)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    filenameToName((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
+    ReturnValue->Val->Pointer = filenameToName((char*)Param[0]->Val->Pointer);
 }
 
 pcvoid(copyFile)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2565,7 +2565,7 @@ const struct LibraryFunction UtilitiesFileProvider[] =
     { pcfunc(searchForFiles),        "int searchForFiles(void*, char*, char*, int, int, int, int, int*, int);" },
     { pcfunc(deleteFiles),           "void deleteFiles(void*, void*);" },
     { pcfunc(renameFile),            "void renameFile(char*, char*);" },
-    { pcfunc(filenameToName),        "void filenameToName(char*, char*, int);" },
+    { pcfunc(filenameToName),        "char* filenameToName(char*);" },
     { pcfunc(copyFile),              "void copyFile(char*, char*);" },
     { pcfunc(pasteClipboard),        "void pasteClipboard(void*, char*, int);" },
     { pcfunc(filenameToIcon),        "int filenameToIcon(char*);" },

@@ -161,7 +161,6 @@ int addTransactionWizard(char* wallet) {
       menu.numitems=2;
       menu.height=2;
       menu.startY=3;
-      menu.scrollout=1;
       menu.pBaRtR=1;
       int inloop=1;
       while(inloop) {
@@ -419,8 +418,7 @@ int createWalletWizard(int isFirstUse) {
 
 int changeWalletScreen(char* currentWallet) {
   // returns 1 if user changes to another wallet
-  char currentWalletNice[MAX_WALLETNAME_SIZE];
-  filenameToName(currentWallet, currentWalletNice, MAX_WALLETNAME_SIZE);
+  char* currentWalletNice = filenameToName(currentWallet);
   Menu menu;
   menu.title = (char*)"Wallet List";
   menu.scrollout=1;

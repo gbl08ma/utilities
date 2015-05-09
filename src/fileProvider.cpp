@@ -32,10 +32,10 @@ int compareFileStructs(File* f1, File* f2, int type) {
   int retval;
   switch(type) {
     case 1:
-      retval = strcmp( f1->filename, f2->filename );
+      retval = strcmp(f1->filename, f2->filename);
       break;
     case 2:
-      retval = -strcmp( f1->filename, f2->filename );
+      retval = -strcmp(f1->filename, f2->filename);
       break;
     case 3:
       retval = f1->size-f2->size;
@@ -77,8 +77,11 @@ void sortFilesMenu(File* data, MenuItem* mdata, int size) {
     data[j + 1] = temp;
     mdata[j + 1] = mtemp;
   }
-  // update menu text pointers (these are still pointing to the old text locations):
-  for(i = 0; i < size; i++) mdata[i].text = data[i].visname;
+  // update visible filename pointers (these are still pointing to the old text locations):
+  for(i = 0; i < size; i++) {
+    data[i].visname = filenameToName(data[i].filename);
+    mdata[i].text = data[i].visname;
+  }
 }
 
 int getFiles(File* files, MenuItem* menuitems, const char* basepath, int* count) {
@@ -104,9 +107,9 @@ int getFiles(File* files, MenuItem* menuitems, const char* basepath, int* count)
       || strcmp((char*)buffer, (char*)CALENDARFOLDER_NAME) == 0))
     {
       if(files != NULL) {
-        strncpy(files[*count].visname, (char*)buffer, 40);
-        strcpy(files[*count].filename, basepath); 
+        int baselen = strncpy_retlen(files[*count].filename, basepath, MAX_FILENAME_SIZE); 
         strcat(files[*count].filename, (char*)buffer);
+        files[*count].visname = files[*count].filename + baselen;
         files[*count].size = fileinfo.fsize;
         files[*count].isfolder = menuitems[*count].isfolder = !fileinfo.fsize;
         if(fileinfo.fsize == 0) menuitems[*count].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
@@ -203,9 +206,9 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
       }
       if(match) {
         if(files != NULL) {
-          strcpy(files[*count].filename, basepath); 
+          int baselen = strncpy_retlen(files[*count].filename, basepath, MAX_FILENAME_SIZE); 
           strcat(files[*count].filename, (char*)buffer);
-          strncpy(files[*count].visname, (char*)buffer, 40);
+          files[*count].visname = files[*count].filename + baselen;
           files[*count].size = fileinfo.fsize;
           files[*count].isfolder = !fileinfo.fsize;
         }
@@ -273,12 +276,12 @@ void renameFile(char* old, char* newf) {
   }
 }
 
-void filenameToName(char* filename, char* name, int max) {
+char* filenameToName(char* filename) {
   //this function takes a full filename like \\fls0\Folder\file.123
-  //and puts file.123 in name.
+  //and returns a pointer to file.123.
   int i=strlen(filename)-1;
   while (i>=0 && filename[i] != '\\') i--;
-  strncpy(name, filename+i+1, max);
+  return filename+i+1;
 }
 
 void copyFile(char* oldfilename, char* newfilename) {
@@ -425,13 +428,11 @@ void pasteClipboard(File* clipboard, char* browserbasepath, int itemsInClipboard
     int curfile = 0;
     progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
     while(curfile < itemsInClipboard) {
-      char name[MAX_NAME_SIZE];
-      filenameToName(clipboard[curfile].filename, name);
       if(curfile > 0) progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
       char newfilename[MAX_FILENAME_SIZE];
       strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
       unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
-      strncat(newfilename, name, maxcatlen);
+      strncat(newfilename, filenameToName(clipboard[curfile].filename), maxcatlen);
       if (clipboard[curfile].action) {
         //copy file
         if(clipboard[curfile].isfolder) copyFolder(clipboard[curfile].filename, newfilename);

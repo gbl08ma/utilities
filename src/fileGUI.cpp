@@ -252,6 +252,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
                 if(!hasErrored) { // if it's not yet full / we're yet to show the message
                   if(*itemsinclip < MAX_ITEMS_IN_CLIPBOARD) {
                     clipboard[*itemsinclip] = files[ifile];
+                    clipboard[*itemsinclip].visname = filenameToName(clipboard[*itemsinclip].filename);
                     //0=cut file; 1=copy file:
                     clipboard[*itemsinclip].action = (res == KEY_CTRL_F2 ? 0 : 1);
                     *itemsinclip = *itemsinclip + 1;
@@ -705,9 +706,7 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
   text.numelements++;
   
   elem[text.numelements].newLine=1;
-  char name[MAX_NAME_SIZE];
-  filenameToName(file->filename, name);
-  elem[text.numelements].text = name;
+  elem[text.numelements].text = file->visname;
   text.numelements++;
   
   elem[text.numelements].newLine=1;
@@ -733,7 +732,7 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
   unsigned int msgno;
   unsigned short iconbuffer[0x12*0x18];
   unsigned short folder[7]={};
-  SMEM_MapIconToExt( (unsigned char*)name, folder, &msgno, iconbuffer );
+  SMEM_MapIconToExt((unsigned char*)file->visname, folder, &msgno, iconbuffer );
   char mresult[88];
   LocalizeMessage1( msgno, mresult );
   
@@ -797,7 +796,7 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
         break;
       case KEY_CTRL_F2:
         if(allowEdit && !compressed) {
-          if(stringEndsInG3A(name)) {
+          if(stringEndsInG3A(file->visname)) {
             mMsgBoxPush(4);
             multiPrintXY(3, 2, "g3a files can't\nbe edited by\nan add-in.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             closeMsgBox();
@@ -889,10 +888,7 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
   }
 }
 
-void viewFileAsText(char* filename) { //name is the "nice" name of the file, i.e. not full path
-  char name[MAX_NAME_SIZE];
-  filenameToName(filename, name);
-  
+void viewFileAsText(char* filename) { //name is the "nice" name of the file, i.e. not full path  
   unsigned char* asrc = NULL;
   //Get file contents
   int hFile = fileOpen(filename); // Get handle
@@ -923,7 +919,7 @@ void viewFileAsText(char* filename) { //name is the "nice" name of the file, i.e
     return;
   }
   char titlebuf[MAX_NAME_SIZE+20];
-  sprintf(titlebuf, "Viewing %s as text", name);
+  sprintf(titlebuf, "Viewing %s as text", filenameToName(filename));
   DefineStatusMessage((char*)titlebuf, 1, 0, 0);
   textArea text;
   text.allowLeft = 1;
@@ -1179,7 +1175,8 @@ void buildIconTable(MenuItemIcon* icontable) {
 
 int overwriteFilePrompt(char* filename) {
   char cut[MAX_NAME_SIZE];
-  filenameToName(filename, cut, 17);
+  char* visname = filenameToName(filename);
+  strncpy(cut, visname, 17);
   cut[17] = 0;
   return (0x7539 == OverwriteConfirmation(cut, 0));
 }
