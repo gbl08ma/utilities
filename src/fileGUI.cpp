@@ -88,7 +88,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
   buildIconTable(icontable);
   
   // first get file count so we know how much to alloc
-  int res = getFiles(NULL, NULL, browserbasepath, &menu.numitems);
+  int res = getFiles(NULL, browserbasepath, &menu.numitems);
   if(res == GETFILES_MAX_FILES_REACHED) {
     // show "folder has over 200 items, some will be skipped" message
     mMsgBoxPush(5);
@@ -96,15 +96,26 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
       PrintXY_2(TEXT_MODE_NORMAL, 1, 2+i, 1833+i, TEXT_COLOR_BLACK);
     closeMsgBox(0, 6);
   }
-  MenuItem* menuitems = NULL;
   File* files = NULL;
+  MenuItem* menuitems = NULL;
   if(menu.numitems > 0) {
-    menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
     files = (File*)alloca(menu.numitems*sizeof(File));
-    // populate arrays
-    getFiles(files, menuitems, browserbasepath, &menu.numitems);
-    menu.items = menuitems;
+    menuitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
+    // populate files array
+    getFiles(files, browserbasepath, &menu.numitems);
   }
+  for(int i = 0; i < menu.numitems; i++) {
+      menuitems[i].isfolder = files[i].isfolder;
+      if(menuitems[i].isfolder) menuitems[i].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
+      else menuitems[i].icon = filenameToIcon((char*)files[i].visname);
+      menuitems[i].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
+      // because usually alloca is used to declare space for MenuItem*, the space is not cleared. which means we need to explicitly set each field:
+      menuitems[i].text = files[i].visname;
+      menuitems[i].color=TEXT_COLOR_BLACK;
+      menuitems[i].type=MENUITEM_NORMAL;
+      menuitems[i].value=MENUITEM_VALUE_NONE;
+  }
+  menu.items = menuitems;
   
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
@@ -304,7 +315,14 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
               setSetting(SETTING_FILE_MANAGER_SORT, smallmenu.selection-1, 1);
               if(menu.numitems > 1) {
                 HourGlass(); //sorting can introduce a noticeable delay when there are many items
-                sortFilesMenu(files, menuitems, menu.numitems);
+                sortFiles(files, menu.numitems);
+                for(int i = 0; i < menu.numitems; i++) {
+                    menuitems[i].isfolder = files[i].isfolder;
+                    if(menuitems[i].isfolder) menuitems[i].icon = FILE_ICON_FOLDER;
+                    else menuitems[i].icon = filenameToIcon((char*)files[i].visname);
+                    menuitems[i].isselected = 0;
+                    menuitems[i].text = files[i].visname;
+                }
               }
             }
           } else if(menu.numitems && searchFilesScreen(browserbasepath, *itemsinclip)) return 1;

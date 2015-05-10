@@ -1599,12 +1599,12 @@ pcvoid(overwriteFilePrompt)(struct ParseState *Parser, struct Value *ReturnValue
 
 // fileProvider
 
-pcvoid(sortFilesMenu)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    sortFilesMenu((File*)Param[0]->Val->Pointer, (MenuItem*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
+pcvoid(sortFiles)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    sortFiles((File*)Param[0]->Val->Pointer, Param[2]->Val->Integer);
 }
 
 pcvoid(getFiles)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = getFiles((File*)Param[0]->Val->Pointer, (MenuItem*)Param[1]->Val->Pointer, (char*)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer);
+    ReturnValue->Val->Integer = getFiles((File*)Param[0]->Val->Pointer, (char*)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer);
 }
 
 pcvoid(searchForFiles)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2560,8 +2560,8 @@ const struct LibraryFunction UtilitiesFileGUI[] =
 
 const struct LibraryFunction UtilitiesFileProvider[] =
 {
-    { pcfunc(sortFilesMenu),         "void sortFilesMenu(void*, void*, int);" },
-    { pcfunc(getFiles),              "int getFiles(void*, void*, char*, int*);" },
+    { pcfunc(sortFiles),             "void sortFiles(void*, int);" },
+    { pcfunc(getFiles),              "int getFiles(void*, char*, int*);" },
     { pcfunc(searchForFiles),        "int searchForFiles(void*, char*, char*, int, int, int, int, int*, int);" },
     { pcfunc(deleteFiles),           "void deleteFiles(void*, void*);" },
     { pcfunc(renameFile),            "void renameFile(char*, char*);" },

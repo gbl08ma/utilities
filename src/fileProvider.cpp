@@ -60,31 +60,25 @@ int compareFileStructs(File* f1, File* f2, int type) {
   return retval;
 }
 
-void sortFilesMenu(File* data, MenuItem* mdata, int size) {
+void sortFiles(File* data, int size) {
   int sort = getSetting(SETTING_FILE_MANAGER_SORT);
   if(!sort) return;
   int i, j;
   File temp;
-  MenuItem mtemp;
 
   for(i = 1; i < size; i++) {
     temp = data[i];
-    mtemp = mdata[i];
     for (j = i - 1; j >= 0 && compareFileStructs(&data[j], &temp, sort) > 0; j--) {
       data[j + 1] = data[j];
-      mdata[j + 1] = mdata[j];
     }
     data[j + 1] = temp;
-    mdata[j + 1] = mtemp;
   }
-  // update visible filename pointers (these are still pointing to the old text locations):
-  for(i = 0; i < size; i++) {
+  // update/set visible filename pointers:
+  for(i = 0; i < size; i++)
     data[i].visname = filenameToName(data[i].filename);
-    mdata[i].text = data[i].visname;
-  }
 }
 
-int getFiles(File* files, MenuItem* menuitems, const char* basepath, int* count) {
+int getFiles(File* files, const char* basepath, int* count) {
   // searches storage memory for folders and files, puts their count in int* count
   // if File* files is NULL, function will only count files. If it is not null, MenuItem* menuitems will also be updated
   // this function always returns status codes defined on fileProvider.hpp
@@ -107,30 +101,22 @@ int getFiles(File* files, MenuItem* menuitems, const char* basepath, int* count)
       || strcmp((char*)buffer, (char*)CALENDARFOLDER_NAME) == 0))
     {
       if(files != NULL) {
-        int baselen = strncpy_retlen(files[*count].filename, basepath, MAX_FILENAME_SIZE); 
+        strncpy(files[*count].filename, basepath, MAX_FILENAME_SIZE); 
         strcat(files[*count].filename, (char*)buffer);
-        files[*count].visname = files[*count].filename + baselen;
+        // do not set visname, as it will be set by sortFiles.
         files[*count].size = fileinfo.fsize;
-        files[*count].isfolder = menuitems[*count].isfolder = !fileinfo.fsize;
-        if(fileinfo.fsize == 0) menuitems[*count].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
-        else menuitems[*count].icon = filenameToIcon((char*)buffer);
-        menuitems[*count].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
-        // because usually alloca is used to declare space for MenuItem*, the space is not cleared. which means we need to explicitly set each field:
-        menuitems[*count].text = files[*count].visname;
-        menuitems[*count].color=TEXT_COLOR_BLACK;
-        menuitems[*count].type=MENUITEM_NORMAL;
-        menuitems[*count].value=MENUITEM_VALUE_NONE;
+        files[*count].isfolder = !fileinfo.fsize;
       }
       *count=*count+1;
     }
     if (*count==MAX_ITEMS_IN_DIR) {
       Bfile_FindClose(findhandle);
-      if(files != NULL && menuitems != NULL) sortFilesMenu(files, menuitems, *count);
+      if(files != NULL) sortFiles(files, *count);
       return GETFILES_MAX_FILES_REACHED; // Don't find more files, the array is full. 
     } else ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
   Bfile_FindClose(findhandle);
-  if(*count > 1 && files != NULL && menuitems != NULL) sortFilesMenu(files, menuitems, *count);
+  if(*count > 1 && files != NULL) sortFiles(files, *count);
   return GETFILES_SUCCESS;
 }
 
