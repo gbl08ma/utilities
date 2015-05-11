@@ -35,11 +35,11 @@ void firstRunWizard() {
 
   textY = LCD_HEIGHT_PX/2+42/2-24;
   textX = 94;
-  PrintMini(&textX, &textY, (char*)"tny. ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  PrintMini(&textX, &textY, (char*)"tny. internet media", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  textX = 146;
   PrintMini(&textX, &textY, (char*)"i", 0, 0xFFFFFFFF, 0, 0, TNYIM_ORANGE, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, &textY, (char*)"nternet ", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+  textX = 235;
   PrintMini(&textX, &textY, (char*)"m", 0, 0xFFFFFFFF, 0, 0, TNYIM_ORANGE, COLOR_WHITE, 1, 0);
-  PrintMini(&textX, &textY, (char*)"edia", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
   Bdisp_PutDisp_DD();
   blockForMilliseconds(3500);
   
