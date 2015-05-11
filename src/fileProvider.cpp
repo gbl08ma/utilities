@@ -73,9 +73,6 @@ void sortFiles(File* data, int size) {
     }
     data[j + 1] = temp;
   }
-  // update/set visible filename pointers:
-  for(i = 0; i < size; i++)
-    data[i].visname = filenameToName(data[i].filename);
 }
 
 int getFiles(File* files, const char* basepath, int* count) {
@@ -85,6 +82,7 @@ int getFiles(File* files, const char* basepath, int* count) {
   // basepath should start with \\fls0\ and should always have a slash (\) at the end
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
+  size_t baselen = strlen(basepath);
 
   // make the buffer
   sprintf(buffer, "%s*", basepath);
@@ -103,7 +101,7 @@ int getFiles(File* files, const char* basepath, int* count) {
       if(files != NULL) {
         strncpy(files[*count].filename, basepath, MAX_FILENAME_SIZE); 
         strcat(files[*count].filename, (char*)buffer);
-        // do not set visname, as it will be set by sortFiles.
+        files[*count].visname = baselen;
         files[*count].size = fileinfo.fsize;
         files[*count].isfolder = !fileinfo.fsize;
       }
@@ -131,6 +129,7 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
   // basepath should start with \\fls0\ and should always have a slash (\) at the end
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
+  size_t baselen = strlen(basepath);
 
   int numberOfFoldersToSearchInTheEnd = 0;
   char foldersToSearchInTheEnd[MAX_ITEMS_PER_FOLDER_COPY][MAX_NAME_SIZE];
@@ -192,9 +191,9 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
       }
       if(match) {
         if(files != NULL) {
-          int baselen = strncpy_retlen(files[*count].filename, basepath, MAX_FILENAME_SIZE); 
+          strncpy(files[*count].filename, basepath, MAX_FILENAME_SIZE); 
           strcat(files[*count].filename, (char*)buffer);
-          files[*count].visname = files[*count].filename + baselen;
+          files[*count].visname = baselen;
           files[*count].size = fileinfo.fsize;
           files[*count].isfolder = !fileinfo.fsize;
         }

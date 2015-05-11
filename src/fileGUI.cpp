@@ -107,10 +107,10 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
   for(int i = 0; i < menu.numitems; i++) {
       menuitems[i].isfolder = files[i].isfolder;
       if(menuitems[i].isfolder) menuitems[i].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
-      else menuitems[i].icon = filenameToIcon((char*)files[i].visname);
+      else menuitems[i].icon = filenameToIcon(files[i].filename + files[i].visname);
       menuitems[i].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
       // because usually alloca is used to declare space for MenuItem*, the space is not cleared. which means we need to explicitly set each field:
-      menuitems[i].text = files[i].visname;
+      menuitems[i].text = files[i].filename + files[i].visname;
       menuitems[i].color=TEXT_COLOR_BLACK;
       menuitems[i].type=MENUITEM_NORMAL;
       menuitems[i].value=MENUITEM_VALUE_NONE;
@@ -265,7 +265,6 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
                 if(!hasErrored) { // if it's not yet full / we're yet to show the message
                   if(*itemsinclip < MAX_ITEMS_IN_CLIPBOARD) {
                     clipboard[*itemsinclip] = files[ifile];
-                    clipboard[*itemsinclip].visname = filenameToName(clipboard[*itemsinclip].filename);
                     //0=cut file; 1=copy file:
                     clipboard[*itemsinclip].action = (res == KEY_CTRL_F2 ? 0 : 1);
                     *itemsinclip = *itemsinclip + 1;
@@ -319,9 +318,9 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
                 for(int i = 0; i < menu.numitems; i++) {
                     menuitems[i].isfolder = files[i].isfolder;
                     if(menuitems[i].isfolder) menuitems[i].icon = FILE_ICON_FOLDER;
-                    else menuitems[i].icon = filenameToIcon((char*)files[i].visname);
+                    else menuitems[i].icon = filenameToIcon(files[i].filename + files[i].visname);
                     menuitems[i].isselected = 0;
-                    menuitems[i].text = files[i].visname;
+                    menuitems[i].text = files[i].filename + files[i].visname;
                 }
               }
             }
@@ -654,7 +653,7 @@ int searchFilesScreen(char* browserbasepath, int itemsinclip) {
   }
   int curitem = 0;
   while(curitem < menu.numitems) {
-    resitems[curitem].text = files[curitem].visname;
+    resitems[curitem].text = files[curitem].filename + files[curitem].visname;
     resitems[curitem].type = MENUITEM_NORMAL;
     resitems[curitem].color = COLOR_BLACK;
     curitem++;
@@ -726,7 +725,7 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
   text.numelements++;
   
   elem[text.numelements].newLine=1;
-  elem[text.numelements].text = file->visname;
+  elem[text.numelements].text = file->filename + file->visname;
   text.numelements++;
   
   elem[text.numelements].newLine=1;
@@ -752,7 +751,7 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
   unsigned int msgno;
   unsigned short iconbuffer[0x12*0x18];
   unsigned short folder[7]={};
-  SMEM_MapIconToExt((unsigned char*)file->visname, folder, &msgno, iconbuffer );
+  SMEM_MapIconToExt((unsigned char*)(file->filename + file->visname), folder, &msgno, iconbuffer );
   char mresult[88];
   LocalizeMessage1( msgno, mresult );
   
@@ -816,7 +815,7 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
         break;
       case KEY_CTRL_F2:
         if(allowEdit && !compressed) {
-          if(stringEndsInG3A(file->visname)) {
+          if(stringEndsInG3A(file->filename + file->visname)) {
             mMsgBoxPush(4);
             multiPrintXY(3, 2, "g3a files can't\nbe edited by\nan add-in.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             closeMsgBox();
@@ -996,7 +995,7 @@ void viewClipboard(File* clipboard, int* itemsinclip) {
     menu.items = menuitems;
     int curitem = 0;
     while(curitem < *itemsinclip) {
-      menuitems[curitem].text = clipboard[curitem].visname;
+      menuitems[curitem].text = clipboard[curitem].filename + clipboard[curitem].visname;
       if(clipboard[curitem].action == 1) menuitems[curitem].color = TEXT_COLOR_RED;
       curitem++;
     }

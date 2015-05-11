@@ -26,11 +26,11 @@
 typedef struct
 {
   char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
-  char* visname; // pointer to the last part of the filename (the ABC.def in \\fls0\123\ABC.def).
+  size_t visname; // offset of the last part inside filename (the ABC.def in \\fls0\123\ABC.def).
+  size_t size; // file size
   short action; // mostly for clipboard, can be used to tag something to do with the file
   short isfolder; // because menuitem shouldn't be the only struct holding this info
-  int size; // file size
-} File; // right now File only holds the filename as other fields are now set directly on a MenuItem array
+} File;
 
 typedef struct
 {
