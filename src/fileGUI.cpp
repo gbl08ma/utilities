@@ -330,7 +330,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
       case KEY_CTRL_F4: {
         if(menu.numselitems == 0) {
           mMsgBoxPush(4);
-          MenuItem smallmenuitems[5];
+          MenuItem smallmenuitems[3];
           smallmenuitems[0].text = (char*)"Folder";
           smallmenuitems[1].text = (char*)"Text File";
           smallmenuitems[2].text = (char*)"Blank g3p file";
@@ -388,7 +388,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
       case KEY_CTRL_OPTN:
       {
         mMsgBoxPush(4);
-        MenuItem smallmenuitems[5];
+        MenuItem smallmenuitems[2];
         smallmenuitems[0].text = (char*)"Folder statistics";
         smallmenuitems[1].text = (char*)"View clipboard";
         
@@ -550,7 +550,7 @@ int searchFilesScreen(char* browserbasepath, int itemsinclip) {
   input.charlimit=50;
   input.acceptF6=1;
   input.buffer = needle;
-  MenuItem menuitems[5];
+  MenuItem menuitems[4];
   menuitems[0].text = (char*)"On filename";
   menuitems[0].type = MENUITEM_CHECKBOX;
   menuitems[1].text = (char*)"On contents";

@@ -182,7 +182,7 @@ void lockApp() {
     textArea text;
     text.title = (char*)"Calculator lock";
     
-    textElement elem[5];
+    textElement elem[4];
     text.elements = elem;
     
     elem[0].text = (char*)"This is probably the first time you are using the calculator lock function, which lets you lock your calculator with a password. When proceeding, you'll be prompted for a new password.";

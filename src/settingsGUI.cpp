@@ -29,7 +29,7 @@ inline static void homeSettingsMenu();
 void settingsMenu() {
   DrawFrame(COLOR_WHITE);
   
-  MenuItem menuitems[15];
+  MenuItem menuitems[13];
   menuitems[0].text = (char*)"Set time";
   
   menuitems[1].text = (char*)"Set date";
@@ -272,7 +272,7 @@ inline static void lockSettingsMenu() {
 
 inline static int selectPaneType(int orig) {
   mMsgBoxPush(5);
-  MenuItem smallmenuitems[15];
+  MenuItem smallmenuitems[11];
   
   Menu smallmenu;
   smallmenu.items=smallmenuitems;
@@ -388,7 +388,7 @@ inline static void homeSettingsMenu() {
 }
 
 void calendarSettingsMenu() {
-  MenuItem menuitems[5];
+  MenuItem menuitems[4];
   menuitems[0].text = (char*)"Show events count";
   menuitems[0].type = MENUITEM_CHECKBOX;
   

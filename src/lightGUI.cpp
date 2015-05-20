@@ -102,7 +102,7 @@ void colorLight() {
   int gkey;
   unsigned int initlevel = getRawBacklightSubLevel();
   
-  MenuItem menuitems[10];
+  MenuItem menuitems[8];
   menuitems[0].text = (char*)"Blue";  
   menuitems[1].text = (char*)"Green";
   menuitems[2].text = (char*)"Red";

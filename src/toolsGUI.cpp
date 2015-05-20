@@ -567,7 +567,7 @@ void passwordGenerator() {
   menu.type = MENUTYPE_FKEYS;
   menu.title = (char*)"Password Generator";
   menu.height = 7;
-  MenuItem items[10];
+  MenuItem items[6];
   int length = 10;
   int seed = RTC_GetTicks() * (GetMainBatteryVoltage(1) % 100);
   char lstr[10];

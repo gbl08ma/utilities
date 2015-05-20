@@ -295,7 +295,7 @@ void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
   textArea text;
   text.title = (char*)"Clock unadjusted";
   
-  textElement elem[3];
+  textElement elem[2];
   text.elements = elem;
   text.allowEXE = 1; text.allowF1 = 1;
   text.scrollbar = 0;

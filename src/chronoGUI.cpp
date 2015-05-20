@@ -305,7 +305,7 @@ void setChronoScreen(Menu* menu, chronometer* tchrono, int menuSelOnly) {
   text.type = TEXTAREATYPE_INSTANT_RETURN;
   text.y = 4*24+5;
 
-  textElement elem[2];
+  textElement elem[1];
   text.elements = elem;
   text.scrollbar=0;
   
@@ -487,7 +487,7 @@ void checkChronoComplete(chronometer* chronoarray) {
       if(getSetting(SETTING_CHRONO_NOTIFICATION_TYPE) && getSetting(SETTING_CHRONO_NOTIFICATION_TYPE) != 3) {
         // user wants notification with pop-up
         mMsgBoxPush(4);
-        char buffer[50];
+        char buffer[34];
         sprintf(buffer, "Chronometer %d\nended.", cur+1);
         multiPrintXY(3,2, buffer, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         

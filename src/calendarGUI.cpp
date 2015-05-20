@@ -1569,7 +1569,7 @@ void viewEventAtPos(EventDate* date, int pos) {
 
 void searchEventsScreen(int y, int m, int d) {
   mMsgBoxPush(5);
-  MenuItem smallmenuitems[5];
+  MenuItem smallmenuitems[4];
   smallmenuitems[0].text = (char*)"Selected year";
   smallmenuitems[1].text = (char*)"Selected month";
   smallmenuitems[2].text = (char*)"Selected day";
@@ -1881,7 +1881,7 @@ void databaseRepairScreen() {
   textArea text;
   text.title = (char*)"Database repair";
 
-  textElement elem[10];
+  textElement elem[8];
   text.elements = elem;
   if(getDBcorruptFlag()) {
     elem[0].text = (char*)"Hey! Sorry to interrupt you like this, but inconsistent data was detected in the calendar database. This often happens when a version of " ADDIN_FRIENDLYNAME " prior to v1.1 has been used, or when events with invalid data are imported.";
@@ -2015,7 +2015,7 @@ void databaseTrimScreen() {
   text.title = (char*)"Trim database";
   text.type = TEXTAREATYPE_INSTANT_RETURN;
 
-  textElement elem[4];
+  textElement elem[3];
   text.elements = elem;
   text.scrollbar=0;
   
@@ -2176,7 +2176,7 @@ void eventImportScreen() {
   textArea text;
   text.title = (char*)"Import events";
 
-  textElement elem[4];
+  textElement elem[3];
   text.elements = elem;
   
   elem[0].text = (char*)"This tool is responsible for the last step in importing events into the calendar database.\n"

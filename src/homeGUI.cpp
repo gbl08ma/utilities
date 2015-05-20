@@ -238,7 +238,7 @@ void powerMenu(int* pane_keycache) {
 void lightMenu(int* pane_keycache) {
   drawFkeyPopup(1, (char*)"Light tools");
   
-  MenuItem menuitems[5];
+  MenuItem menuitems[4];
   menuitems[0].text = (char*)"Lantern";
   menuitems[1].text = (char*)"Flashlight";
   menuitems[2].text = (char*)"Morse light";
@@ -281,7 +281,7 @@ void lightMenu(int* pane_keycache) {
 void timeMenu(int* pane_keycache) {
   drawFkeyPopup(2, (char*)"Time tools");
   
-  MenuItem menuitems[5];
+  MenuItem menuitems[3];
   menuitems[0].text = (char*)"Calendar";
   menuitems[1].text = (char*)"Tasks";
   menuitems[2].text = (char*)"Chronometer";
@@ -323,7 +323,7 @@ void timeMenu(int* pane_keycache) {
 void toolsMenu(int* pane_keycache) {
   drawFkeyPopup(3, (char*)"Tools");
   
-  MenuItem menuitems[5];
+  MenuItem menuitems[3];
   menuitems[0].text = (char*)"Balance manager";
   menuitems[1].text = (char*)"Password generator";
   menuitems[2].text = (char*)"TOTP authenticator";
@@ -365,7 +365,7 @@ void toolsMenu(int* pane_keycache) {
 void memsysMenu(int* pane_keycache) {
   drawFkeyPopup(4, (char*)"Memory & System");
   
-  MenuItem menuitems[6];
+  MenuItem menuitems[5];
   menuitems[0].text = (char*)"File manager";
   menuitems[1].text = (char*)"Memory usage";
   menuitems[2].text = (char*)"Function key color";

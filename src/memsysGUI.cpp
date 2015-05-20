@@ -203,7 +203,7 @@ void changeFKeyColor() {
   text.type = TEXTAREATYPE_INSTANT_RETURN;
   text.y = 132;
   text.lineHeight=19;
-  textElement elem[2];
+  textElement elem[1];
   text.elements = elem;
   text.scrollbar=0;
   
