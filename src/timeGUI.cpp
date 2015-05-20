@@ -275,7 +275,7 @@ void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
     textArea text;
     text.title = (char*)"Clock unadjusted";
     
-    textElement elem[5];
+    textElement elem[3];
     text.elements = elem;
     text.allowEXE = 1; text.allowF1 = 1;
     text.scrollbar = 0;
@@ -295,7 +295,7 @@ void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
   textArea text;
   text.title = (char*)"Clock unadjusted";
   
-  textElement elem[5];
+  textElement elem[3];
   text.elements = elem;
   text.allowEXE = 1; text.allowF1 = 1;
   text.scrollbar = 0;
@@ -315,19 +315,15 @@ void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
   elem[1].lineSpacing = 8;
   elem[1].text = (char*)"Press EXE to continue.";
   
-  text.numelements = 2;
   doTextArea(&text);
   
   setDateScreen(0);
   
-  elem[0].text = (char*)"We're done!";
+  elem[0].text = (char*)"We're done!\nIf you ever need to adjust the clock again press Shift->Menu and choose the appropriate options.";
   elem[1].newLine = 1;
-  elem[1].text = (char*)"If you ever need to adjust the clock again press Shift->Menu and choose the appropriate options.";
-  elem[2].newLine = 1;
-  elem[2].lineSpacing = 8;
-  elem[2].text = (char*)"Press EXE or EXIT to continue.";
+  elem[1].lineSpacing = 8;
+  elem[1].text = (char*)"Press EXE or EXIT to continue.";
   
-  text.numelements = 3;
   doTextArea(&text);
 }
 
