@@ -20,11 +20,11 @@ static unsigned char settings[NUMBER_OF_SETTINGS+1];
 // Routines for accessing and setting settings
 // NOTE: directly accessing the settings array is strictly forbidden!
 
-unsigned char getSetting(int setting) {
+unsigned char getSetting(const int setting) {
   return settings[setting];
 }
 
-void setSetting(int setting, unsigned char value, int autosave) {
+void setSetting(const int setting, const unsigned char value, const int autosave) {
   settings[setting] = value;
   if(setting == SETTING_DISPLAY_STATUSBAR) {
     if(settings[setting]) {

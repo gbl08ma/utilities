@@ -1841,41 +1841,17 @@ void calendarToolsMenu(int y, int m, int d) {
         textArea text;
         text.title = (char*)"Date difference";
 
-        textElement elem[15];
+        textElement elem[10];
         text.elements = elem;
         
         char line1[50];
         char buffer[20], buffer2[20];
         dateToString(buffer, y1, m1, d1);
         dateToString(buffer2, y2, m2, d2);
-        sprintf(line1, "Between %s and %s:", buffer, buffer2);
+        sprintf(line1, "Between %s and %s:\n%d days\n%d business days\n%d years\n%d months\n%d weeks", buffer, buffer2,
+                                                        daysdiff, businessdiff, daysdiff/365, daysdiff/30, daysdiff/7);
         elem[0].text = line1;
-        
-        elem[1].newLine = 1;
-        char line2[50];
-        sprintf(line2, "%d days", daysdiff);
-        elem[1].text = line2;
-        
-        elem[2].newLine = 1;
-        char line3[50];
-        sprintf(line3, "%d business days", businessdiff);
-        elem[2].text = line3;
-
-        elem[3].newLine = 1;
-        char line4[50];
-        sprintf(line4, "%d years", daysdiff/365);
-        elem[3].text = line4;
-
-        elem[4].newLine = 1;
-        char line5[50];
-        sprintf(line5, "%d months", daysdiff/30);
-        elem[4].text = line5;
-
-        elem[5].newLine = 1;
-        char line6[50];
-        sprintf(line6, "%d weeks", daysdiff/7);
-        elem[5].text = line6;
-        text.numelements = 6;
+        text.numelements = 1;
 
         char weeklines[7][50];
         for(int i=0; i<7; i++) {
@@ -2203,28 +2179,26 @@ void eventImportScreen() {
   textElement elem[4];
   text.elements = elem;
   
-  elem[0].text = (char*)"This tool is responsible for the last step in importing events into the calendar database.";
+  elem[0].text = (char*)"This tool is responsible for the last step in importing events into the calendar database.\n"
+                        "It assumes you have already used desktop software (for example, the web app at http://pce.tny.im) to convert events into an appropriate format, and that you followed that software's instructions as to where the resulting files should be in this calculator.";
   elem[1].newLine = 1;
-  elem[1].text = (char*)"It assumes you have already used desktop software (for example, the web app at http://pce.tny.im) to convert events into an appropriate format, and that you followed that software's instructions as to where the resulting files should be in this calculator.";
-  elem[2].newLine = 1;
-  elem[2].lineSpacing = 5;
-  elem[2].text = (char*)"This operation may take a long time, if there are many events to import. Press F1 to start or EXIT to cancel.";
+  elem[1].lineSpacing = 5;
+  elem[1].text = (char*)"This operation may take a long time, if there are many events to import. Press F1 to start or EXIT to cancel.";
   
   text.allowF1 = 1;
-  text.numelements = 3;
+  text.numelements = 2;
   if(!doTextArea(&text)) return;
   
   text.type = TEXTAREATYPE_INSTANT_RETURN;
   text.allowF1 = 0;
   text.scrollbar=0;
   elem[0].text = (char*)"Importing calendar events. This may take a long time, please wait and do not turn off the calculator...";
-  elem[1].newLine = 1;
   elem[1].lineSpacing = 20;
   elem[1].text = (char*)"Number of events imported:";
   elem[1].spaceAtEnd = 1;
   // elem[2] is set in loop
   elem[2].lineSpacing = 0;
-  elem[2].newLine = 0;
+  text.numelements = 3;
   
   // User accepted, let the importing operation begin.
   // the import tool assumes the events to import to be in up to 99 files, up to 100 events each

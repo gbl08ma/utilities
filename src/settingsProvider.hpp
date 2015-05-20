@@ -94,8 +94,8 @@
 #define NUMBER_OF_SETTINGS 29 // NOTE update this when adding settings. DOES NOT include the SETTING_SELF_FILEVERSION
 /*End of settings*/ 
 
-unsigned char getSetting(int setting);
-void setSetting(int setting, unsigned char value, int autosave);
+unsigned char getSetting(const int setting);
+void setSetting(const int setting, const unsigned char value, const int autosave);
 int loadSettings();
 void saveSettings();
 
