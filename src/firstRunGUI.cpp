@@ -46,50 +46,42 @@ void firstRunWizard() {
   textArea text;
   text.title = (char*)"Welcome to " ADDIN_FRIENDLYNAME;
   
-  textElement elem[14];
+  textElement elem[7];
   text.elements = elem;
   text.allowEXE = 1;
   
   elem[0].text = (char*)"This add-in provides functionality not originally present on Casio Prizm (fx-CG 10/20) calculators:";
   elem[1].newLine = 1;
   elem[1].lineSpacing = 5;
-  elem[1].text = (char*)"- Clock and chronometer";
+  elem[1].text = (char*)"- Clock and chronometer\n"
+  "- File manager with file search\n"
+  "- Text editor and JPEG viewer\n"
+  "- Calendar with agenda and tasklist\n"
+  "- Balance manager\n"
+  "- Fine timeout&backlight adjustment\n"
+  "...and more";
+  
   elem[2].newLine = 1;
-  elem[2].text = (char*)"- File manager with file search";
+  elem[2].lineSpacing = 8;
+  elem[2].color = COLOR_ORANGE;
+  elem[2].text = (char*)"Important notes:";
+  
   elem[3].newLine = 1;
-  elem[3].text = (char*)"- Text editor and JPEG viewer";
+  elem[3].text = (char*)"You can set the time, date and many settings from the Settings menu, accessible by pressing Shift+Menu (Set Up) at almost any point in the add-in.";
+  
   elem[4].newLine = 1;
-  elem[4].text = (char*)"- Calendar with agenda and tasklist";
+  elem[4].lineSpacing = 5;
+  elem[4].text = (char*)"Tools for more advanced users are hidden, unless the \"Show advanced tools\" setting is turned on.";
+  
   elem[5].newLine = 1;
-  elem[5].text = (char*)"- Balance manager";
+  elem[5].lineSpacing = 8;
+  elem[5].text = (char*)"Thanks for reading these notes.\nAfter pressing EXIT or EXE, you may be guided to adjust your calculator's clock.";
+  
   elem[6].newLine = 1;
-  elem[6].text = (char*)"- Fine timeout&backlight adjustment";
-  elem[7].newLine = 1;
-  elem[7].text = (char*)"...and more";
+  elem[6].lineSpacing = 3;
+  elem[6].text = (char*)"In case you need help with this software, contact info is on the \"About\" screen, to which you can get from the Settings menu.";
   
-  elem[8].newLine = 1;
-  elem[8].lineSpacing = 8;
-  elem[8].color = COLOR_ORANGE;
-  elem[8].text = (char*)"Important notes:";
-  
-  elem[9].newLine = 1;
-  elem[9].text = (char*)"You can set the time, date and many settings from the Settings menu, accessible by pressing Shift+Menu (Set Up) at almost any point in the add-in.";
-  
-  elem[10].newLine = 1;
-  elem[10].lineSpacing = 5;
-  elem[10].text = (char*)"Tools for more advanced users are hidden, unless the \"Show advanced tools\" setting is turned on.";
-  
-  elem[11].newLine = 1;
-  elem[11].lineSpacing = 8;
-  elem[11].text = (char*)"Thanks for reading these notes.";
-  elem[12].newLine = 1;
-  elem[12].text = (char*)"After pressing EXIT or EXE, you may be guided to adjust your calculator's clock.";
-  
-  elem[13].newLine = 1;
-  elem[13].lineSpacing = 3;
-  elem[13].text = (char*)"In case you need help with this software, contact info is on the \"About\" screen, to which you can get from the Settings menu.";
-  
-  text.numelements = 14;
+  text.numelements = 7;
   doTextArea(&text);
   setSetting(SETTING_ACTIVATION_STATUS, 1, 1);
   setmGetKeyMode(MGETKEY_MODE_NORMAL);
