@@ -111,9 +111,8 @@ void darkenStatusbar() {
   }
 }
 void darkenFkeys(int numkeys) {
-  replaceColorInArea(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_BLACK, COLOR_CYAN);
+  replaceColorInArea(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_BLACK, COLOR_GRAY);
   replaceColorInArea(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_WHITE, COLOR_BLACK);
-  replaceColorInArea(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_CYAN, COLOR_GRAY);  
 }
 void drawArrowDown(int bottomX, int bottomY, int color) {
   drawLine(bottomX-7,bottomY-7,bottomX,bottomY,color);

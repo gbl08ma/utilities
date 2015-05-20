@@ -1039,34 +1039,18 @@ void folderStatsScreen(File* files, Menu* menu) {
   text.scrollbar=0;
   text.title = (char*)"Folder statistics";
   
-  textElement elem[15];
+  textElement elem[5];
   text.elements = elem;
   text.numelements = 0; //we will use this as element cursor
 
-  char ficbuffer[20];
-  char focbuffer[20];
-  int filescount = 0;
+  char ficbuffer[40];
   int folderscount = 0;
   for(int i = 0; i < menu->numitems; i++) {
     if(files[i].isfolder) folderscount++;
-    else filescount++;
   }
 
-  itoa(filescount, (unsigned char*)ficbuffer);
+  sprintf(ficbuffer, "%d files\n%d folders", menu->numitems - folderscount, folderscount);
   elem[text.numelements].text = (char*)ficbuffer;
-  elem[text.numelements].spaceAtEnd=1;
-  text.numelements++;
-  
-  elem[text.numelements].text = (char*)"files";
-  text.numelements++;
-
-  itoa(folderscount, (unsigned char*)focbuffer);
-  elem[text.numelements].newLine=1;
-  elem[text.numelements].text = (char*)focbuffer;
-  elem[text.numelements].spaceAtEnd=1;
-  text.numelements++;
-  
-  elem[text.numelements].text = (char*)"folders";
   text.numelements++;
 
   char tsibuffer[20];
