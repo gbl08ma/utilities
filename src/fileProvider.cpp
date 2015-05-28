@@ -176,7 +176,7 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
             int nlen = strlen(needle);
             while(1) {
               int readsize = Bfile_ReadFile_OS(hFile, buf, 1024, -1);
-              if(NULL != memmem((char*)buf, 1024, needle, nlen, matchCase)) {
+              if(NULL != memmem((char*)buf, readsize, needle, nlen, matchCase)) {
                 match = 1;
                 break;
               }
