@@ -663,6 +663,7 @@ int searchFilesScreen(char* browserbasepath, int itemsinclip) {
   menu.selection = 1;
   menu.startY=1;
   menu.pBaRtR=0;
+  menu.returnOnRight = 1;
   menu.nodatamsg = (char*)"No files found";
   menu.title = (char*)"Search results";
   menu.items = resitems;
