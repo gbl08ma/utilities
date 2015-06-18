@@ -37,8 +37,9 @@ void fileManager() {
   int shownMainMemHelp = 0;
   char browserbasepath[MAX_FILENAME_SIZE+1] = SMEM_PREFIX;
   File clipboard[MAX_ITEMS_IN_CLIPBOARD+1];
+  char filetoedit[MAX_FILENAME_SIZE+1];
+  strcpy(filetoedit, "");
   while(res) {
-    char filetoedit[MAX_FILENAME_SIZE+1];
     int fileAction = 0;
     res = fileManagerChild(browserbasepath, &itemsinclip, &fileAction, &shownMainMemHelp, clipboard, filetoedit);
     switch(fileAction) {
@@ -104,6 +105,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
     // populate files array
     getFiles(files, browserbasepath, &menu.numitems);
   }
+  int has_preset_selection = 0;
   for(int i = 0; i < menu.numitems; i++) {
       menuitems[i].isfolder = files[i].isfolder;
       if(menuitems[i].isfolder) menuitems[i].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
@@ -114,8 +116,13 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
       menuitems[i].color=TEXT_COLOR_BLACK;
       menuitems[i].type=MENUITEM_NORMAL;
       menuitems[i].value=MENUITEM_VALUE_NONE;
+      if(!has_preset_selection && filetoedit[0] && !strcmp(files[i].filename, filetoedit)) {
+        menu.selection = i+1;
+        has_preset_selection = 1;
+      }
   }
   menu.items = menuitems;
+  strcpy(filetoedit, "");
   
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
   Bfile_GetMediaFree_OS( smemMedia, &smemfree );
@@ -186,7 +193,11 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
         0x045B, // REVERSE (white)
         0x0038); // DELETE
     }
-    res = doMenu(&menu, icontable);
+    if(has_preset_selection) {
+      has_preset_selection = 0;
+      res = MENU_RETURN_SELECTION;
+    } else
+      res = doMenu(&menu, icontable);
     switch(res) {
       case MENU_RETURN_EXIT:
         if(!strcmp(browserbasepath, SMEM_PREFIX)) { //check that we aren't already in the root folder
