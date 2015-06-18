@@ -131,17 +131,17 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
   strcpy(friendlypath, browserbasepath+6);
   friendlypath[strlen(friendlypath)-1] = '\0'; //remove ending slash like OS does
   // test to see if friendlypath is too big
-  int jump4=0;
+  int jump=1;
   while(1) {
     int temptextX=5*18+10; // px length of menu title + 10, like menuGUI goes.
     int temptextY=0;
     PrintMini(&temptextX, &temptextY, friendlypath, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); // fake draw
     if(temptextX>LCD_WIDTH_PX-6) {
       char newfriendlypath[MAX_FILENAME_SIZE];
-      shortenDisplayPath(friendlypath, newfriendlypath, (jump4 ? 4 : 1));
-      if(strlen(friendlypath) > strlen(newfriendlypath) && strlen(newfriendlypath) > 3) { // check if len > 3 because shortenDisplayPath may return just "..." when the folder name is too big
+      shortenDisplayPath(friendlypath, newfriendlypath, jump);
+      if(strlen(friendlypath) > strlen(newfriendlypath) && strlen(newfriendlypath) > 2) { // check if len > 2 because shortenDisplayPath may return just the MB char with "..." when the folder name is too big
         // shortenDisplayPath still managed to shorten, copy and continue
-        jump4 = 1; //it has been shortened already, so next time jump the first four characters
+        jump = 3; //it has been shortened already, so next time jump the first three characters
         strcpy(friendlypath, newfriendlypath);
       } else {
         // shortenDisplayPath can't shorten any more even if it still
@@ -1170,7 +1170,7 @@ void shortenDisplayPath(char* longpath, char* shortpath, int jump) {
   //and shortens it one level, like this: ...\long\display\path
   //putting the result in shortpath
   // jump: amount of characters to jump when parsing the string. useful for jumping the first / or .../
-  strcpy(shortpath, (char*)"...");
+  strcpy(shortpath, (char*)"\xe5\x94");
   int max = strlen(longpath);
   while (jump < max && longpath[jump] != '\\')
           jump++;
