@@ -1051,26 +1051,30 @@ void folderStatsScreen(File* files, Menu* menu) {
   text.scrollbar=0;
   text.title = (char*)"Folder statistics";
   
-  textElement elem[5];
+  textElement elem[7];
   text.elements = elem;
   text.numelements = 0; //we will use this as element cursor
 
-  char ficbuffer[40];
-  int folderscount = 0;
+  
+  int folders_count = 0, sel_folders_count = 0,
+      sel_size = 0, total_size = 0;
   for(int i = 0; i < menu->numitems; i++) {
-    if(files[i].isfolder) folderscount++;
+    if(files[i].isfolder) {
+      folders_count++;
+      if(menu->items[i].isselected) sel_folders_count++;
+    }
+    else if(menu->items[i].isselected) {
+      sel_size += files[i].size;
+    }
+    total_size += files[i].size;
   }
 
-  sprintf(ficbuffer, "%d files\n%d folders", menu->numitems - folderscount, folderscount);
+  char ficbuffer[40];
+  sprintf(ficbuffer, "%d files\n%d folders", menu->numitems - folders_count, folders_count);
   elem[text.numelements].text = (char*)ficbuffer;
   text.numelements++;
 
   char tsibuffer[20];
-  int totalsize = 0;
-  for(int i = 0; i < menu->numitems; i++) {
-    totalsize += files[i].size;
-  }
-
   elem[text.numelements].newLine=1;
   elem[text.numelements].lineSpacing=3;
   elem[text.numelements].color=COLOR_LIGHTGRAY;
@@ -1078,25 +1082,32 @@ void folderStatsScreen(File* files, Menu* menu) {
   elem[text.numelements].spaceAtEnd=1;
   text.numelements++;
 
-  sprintf(tsibuffer, "%d bytes", totalsize);
+  sprintf(tsibuffer, "%d bytes", total_size);
   elem[text.numelements].text = (char*)tsibuffer;
   text.numelements++;
 
   char tssbuffer[20];
+  char sficbuffer[40];
   if(menu->numselitems) {
-    int selsize = 0;
-    for(int i = 0; i < menu->numitems; i++) {
-      if(menu->items[i].isselected) selsize += files[i].size;
-    }
+    elem[text.numelements].newLine=1;
+    elem[text.numelements].lineSpacing=7;
+    elem[text.numelements].color=COLOR_BLUE;
+    elem[text.numelements].text = (char*)"Selected items";
+    text.numelements++;
+
+    sprintf(sficbuffer, "%d files\n%d folders", menu->numselitems - sel_folders_count, sel_folders_count);
+    elem[text.numelements].newLine=1;
+    elem[text.numelements].text = (char*)sficbuffer;
+    text.numelements++;
 
     elem[text.numelements].newLine=1;
     elem[text.numelements].lineSpacing=3;
     elem[text.numelements].color=COLOR_LIGHTGRAY;
-    elem[text.numelements].text = (char*)"Size of selected files:";
+    elem[text.numelements].text = (char*)"Size of files:";
     elem[text.numelements].spaceAtEnd=1;
     text.numelements++;
 
-    sprintf(tssbuffer, "%d bytes", selsize);
+    sprintf(tssbuffer, "%d bytes", sel_size);
     elem[text.numelements].text = (char*)tssbuffer;
     text.numelements++;
   }
