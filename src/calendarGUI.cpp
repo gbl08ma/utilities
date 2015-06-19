@@ -1001,11 +1001,8 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       case 3: {   
         drawScreenTitle(NULL, "Start time:");
         mPrintXY(8, 4, "HHMMSS", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        int textX = 0;
-        int textY = 5*24;
-        PrintMini(&textX, &textY, (char*)"If left blank, the event will be a", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-        textX=0; textY += 17;
-        PrintMini(&textX, &textY, (char*)"full-day event.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        multiPrintMini(0, 5*24, "If left blank, the event will be a\n"
+                                "full-day event.");
         
         textInput input;
         input.x=8;
@@ -1046,11 +1043,8 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
       case 4: {
         drawScreenTitle(NULL, "End date:");
         mPrintXY(7, 4, getInputDateFormatHint(), TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-        int textX = 0;
-        int textY = 5*24;
-        PrintMini(&textX, &textY, (char*)"If left blank, the event will end on", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-        textX=0; textY += 17;
-        PrintMini(&textX, &textY, (char*)"the same day that it starts.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+        multiPrintMini(0, 5*24, "If left blank, the event will end on\n"
+                                "the same day that it starts.");
         
         textInput input;
         input.x=7;

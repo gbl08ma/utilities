@@ -1747,6 +1747,10 @@ pcvoid(multiPrintXY)(struct ParseState *Parser, struct Value *ReturnValue, struc
     multiPrintXY(Param[0]->Val->Integer, Param[1]->Val->Integer, (char*)Param[2]->Val->Pointer, Param[3]->Val->Integer, Param[4]->Val->Integer);
 }
 
+pcvoid(multiPrintMini)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    multiPrintMini(Param[0]->Val->Integer, Param[1]->Val->Integer, (char*)Param[2]->Val->Pointer, Param[3]->Val->Integer);
+}
+
 pcvoid(mMsgBoxPush)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     mMsgBoxPush(Param[0]->Val->Integer);
 }
@@ -2606,6 +2610,7 @@ const struct LibraryFunction UtilitiesGraphicsProvider[] =
     { pcfunc(clearLine),             "void clearLine(int, int, unsigned short);" },
     { pcfunc(mPrintXY),              "void mPrintXY(int, int, char*, int, int);" },
     { pcfunc(multiPrintXY),          "void multiPrintXY(int, int, char*, int, int);" },
+    { pcfunc(multiPrintMini),        "void multiPrintMini(int, int, char*, int);" },
     { pcfunc(mMsgBoxPush),           "void mMsgBoxPush(int);" },
     { pcfunc(mMsgBoxPop),            "void mMsgBoxPop(void);" },
     { pcfunc(popAllMsgBoxes),        "void popAllMsgBoxes(void);" },

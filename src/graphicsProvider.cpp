@@ -288,6 +288,15 @@ void multiPrintXY(int x, int y, const char* msg, int mode, int color) {
   }
 }
 
+void multiPrintMini(int x, int y, const char* msg, int fgcolor) {
+  char token[100];
+  while(*msg) {
+    msg = toksplit((char*)msg, '\n', token, 100);
+    PrintMini(&x, &y, token, 0x02, 0xFFFFFFFF, 0, 0, fgcolor, COLOR_WHITE, 1, 0);
+    x=0; y += 17;
+  }
+}
+
 static int numberOfMsgBoxPushed = 0;
 // progressMessage and closeProgressMessage do not count towards this number even though they push and pop MsgBoxes
 // this is because mGetKey can't be used to "restart" the add-in while a progressbar is shown

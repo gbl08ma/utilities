@@ -771,6 +771,14 @@ void totpClient() {
   }
 }
 
+static const char* totpHelpMessages[]={
+  "Having problems with the code?",
+  "If yes, please make sure that the",
+  "calculator's clock is adjusted and",
+  "that the timezone is correctly set.",
+  "You can press OPTN to adjust both."
+};
+
 void viewTOTPcode(totp* tkn) {
   unsigned short key = 0; int keyCol, keyRow;
   Bdisp_AllClr_VRAM();
@@ -794,21 +802,10 @@ void viewTOTPcode(totp* tkn) {
     int color = drawRGB24toRGB565(val, val, val);
     printCentered(buffer, 164, color, COLOR_WHITE);
     if(ms_spent < 2500) shown_since_beginning = 1;
-    else if(shown_since_beginning) {
-      if(ms_spent < 5000) {
-        DefineStatusMessage((char*)"Having problems with the code?", 1, 0, 0);
-      } else if(ms_spent < 7500) {
-        DefineStatusMessage((char*)"If yes, please make sure that the", 1, 0, 0);
-      } else if(ms_spent < 10000) {
-        DefineStatusMessage((char*)"calculator's clock is adjusted and", 1, 0, 0);
-      } else if(ms_spent < 12500) {
-        DefineStatusMessage((char*)"that the timezone is correctly set.", 1, 0, 0);
-      } else if(ms_spent < 15000) {
-        DefineStatusMessage((char*)"You can press OPTN to adjust both.", 1, 0, 0);
-      } else if(ms_spent < 17500) {
-        DefineStatusMessage((char*)"", 1, 0, 0);
-      }
-    }
+    else if(ms_spent < 15000 && shown_since_beginning)
+      DefineStatusMessage((char*)totpHelpMessages[(ms_spent-2500)/2500], 1, 0, 0);
+    else
+      DefineStatusMessage((char*)"", 1, 0, 0);
     DisplayStatusArea();
     Bdisp_PutDisp_DD();
     key = PRGM_GetKey();
@@ -855,17 +852,11 @@ int addTOTPwizard() {
       }
     } else if(curstep == 1) {
       drawScreenTitle(NULL, "Base32 key:");
-      int textX = 0;
-      int textY = 3*24+2;
-      PrintMini(&textX, &textY, (char*)"This is often shown as a QR code.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      textX=0; textY += 17;
-      PrintMini(&textX, &textY, (char*)"Try looking for the \"I can't scan a QR", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      textX=0; textY += 17;
-      PrintMini(&textX, &textY, (char*)"code\" option. A key usually looks", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      textX=0; textY += 17;
-      PrintMini(&textX, &textY, (char*)"like this: JBSWY3DPEHPK3PXP", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-      textX=0; textY += 17;
-      PrintMini(&textX, &textY, (char*)"Some keys are longer.", 0x02, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+      multiPrintMini(0, 3*24+2, "This is often shown as a QR code.\n"
+                                "Try looking for the \"I can't scan a QR\n"
+                                "code\" option. A key usually looks\n"
+                                "like this: JBSWY3DPEHPK3PXP\n"
+                                "Some keys are longer.");
       textInput input;
       input.charlimit=32;
       input.acceptF6=1;
