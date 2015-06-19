@@ -30,12 +30,14 @@ int compareFileStructs(File* f1, File* f2, int type) {
   if(f1->isfolder < f2->isfolder) return 1;
   else if(f1->isfolder > f2->isfolder) return -1;
   int retval;
+  char* f1name = f1->filename + f1->visname;
+  char* f2name = f2->filename + f2->visname;
   switch(type) {
     case 1:
-      retval = strcmp(f1->filename, f2->filename);
+      retval = strcmp(f1name, f2name);
       break;
     case 2:
-      retval = -strcmp(f1->filename, f2->filename);
+      retval = -strcmp(f1name, f2name);
       break;
     case 3:
       retval = f1->size-f2->size;
@@ -47,16 +49,16 @@ int compareFileStructs(File* f1, File* f2, int type) {
     case 6:
     default:
     {
-      char* ptr1 = f1->filename + strlen(f1->filename);
-      char* ptr2 = f2->filename + strlen(f2->filename);
-      for(; ptr1 > f1->filename && *ptr1 != '.'; ptr1--);
-      for(; ptr2 > f2->filename && *ptr2 != '.'; ptr2--);
+      char* ptr1 = f1name + strlen(f1name);
+      char* ptr2 = f2name + strlen(f2name);
+      for(; ptr1 > f1name && *ptr1 != '.'; ptr1--);
+      for(; ptr2 > f2name && *ptr2 != '.'; ptr2--);
       retval = (type == 5 ? 1 : -1) * strcmp(ptr1, ptr2);
       break;
     }
   }
   // make A-Z the sub-sorting for items that are otherwise the same, according to the chosen criteria
-  if(!retval) return strcmp(f1->filename, f2->filename);
+  if(!retval) return strcmp(f1name, f2name);
   return retval;
 }
 

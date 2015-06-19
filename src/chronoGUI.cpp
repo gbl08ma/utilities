@@ -517,7 +517,7 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
 
     char tbuf[42];
     formatChronoString(chrn, menu->selection, tbuf, 1); // also takes care of drawing analog chrono
-    if(strlen(tbuf)) printCentered(tbuf, 8*24-1, COLOR_BLACK, COLOR_WHITE);
+    if(tbuf[0]) printCentered(tbuf, 8*24-1, COLOR_BLACK, COLOR_WHITE);
     else clearLine(1,8);
 
     sprintf(tbuf, "Chronometer %d (", menu->selection);
