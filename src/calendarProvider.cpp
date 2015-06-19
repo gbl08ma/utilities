@@ -24,15 +24,15 @@
 #include "fileProvider.hpp" 
 #include "graphicsProvider.hpp" 
 
-void eventToString(CalendarEvent* calEvent, char* buf) {
+char* eventToString(CalendarEvent* calEvent, char* buf) {
   /* Parses a CalendarEvent struct and turns it into a string which can be written to a file.
      The resulting string is appended to the end of buf.
      The first field (category) begins with no separator.
      An event doesn't begin with any separators, and the last field ends with a field separator followed by an event separator.
-     An event (as bytes) can take at most 1,3 KiB. The lengthy fields are obviously the title, the location and mainly the description.*/
+     An event (as bytes) can take at most 1,3 KiB. The lengthy fields are obviously the title, the location and mainly the description.
+     Returns a pointer to the end of the buffer. */
   char smallbuf[50]; 
   int zero = 0;
-  buf += strlen((char*)buf); // so we append to the end of buf
   itoa(calEvent->category, (unsigned char*)smallbuf);
   buf += strncpy_retlen(buf, smallbuf, 2); *(buf++) = FIELD_SEPARATOR;
   /*itoa(calEvent->daterange, (unsigned char*)smallbuf);*/ itoa(zero, (unsigned char*)smallbuf);
@@ -72,6 +72,7 @@ void eventToString(CalendarEvent* calEvent, char* buf) {
   buf += strncpy_retlen(buf, calEvent->description, 1024); *(buf++) = EVENT_SEPARATOR;
   //the last field ends with an event separator (EVENT_SEPARATOR), without a field separator.
   *buf = 0; // null-terminate string
+  return buf;
 }
 
 void stringToEvent(const char* src, CalendarEvent* calEvent) {
@@ -247,14 +248,13 @@ int addEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
   //If the specified file doesn't exist, it is created and the event is added to it.
   //Returns 0 on success, other values on error.
   char newevent[2048];
-  newevent[0] = 0;
-  eventToString(calEvent, newevent);
-  size_t size = strlen(FILE_HEADER) + strlen(newevent);
+  int eventsize = eventToString(calEvent, newevent) - newevent;
   unsigned short pFile[MAX_FILENAME_SIZE];
   eventDateToFilename(&calEvent->startdate, pFile, folder);
   int hAddFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
   if(hAddFile < 0) // Check if it opened
   {
+    size_t size = sizeof(FILE_HEADER) - 1 + eventsize;
     // Returned error, file might not exist, so create it
     int BCEres = Bfile_CreateEntry_OS(pFile, CREATEMODE_FILE, &size);
     if(BCEres >= 0) // Did it create?
@@ -293,7 +293,6 @@ int addEvent(CalendarEvent* calEvent, const char* folder, int secondCall) {
     /*File exists and is open. Check its size and if its OK, append new event to it.
     (one does not need to recreate the file with new size when increasing the size) */
     int oldsize = Bfile_GetFileSize_OS(hAddFile);
-    int eventsize = strlen(newevent);
     if (oldsize > MAX_EVENT_FILESIZE || oldsize+eventsize > MAX_EVENT_FILESIZE) { //file bigger than we can handle
       Bfile_CloseFile_OS(hAddFile);
       if(oldsize > MAX_EVENT_FILESIZE) setDBcorruptFlag(1);
@@ -312,12 +311,13 @@ int replaceEventFile(EventDate *startdate, CalendarEvent* newEvents, const char*
   // count: number of events in newEvents (number of events in old file doesn't matter). starts at 1.
 
   //convert the calevents back to char. assuming each event, as string, doesn't take more than 1250 bytes
-  char newfilecontents [7+count*1250];
+  char newfilecontents[7+count*1250];
   strcpy(newfilecontents, (char*)FILE_HEADER); //we need to initialize the char, take the opportunity to add the file header
+  char* contentptr = newfilecontents + sizeof(FILE_HEADER) - 1;
   for(int j = 0; j < count; j++) {
-    eventToString(&newEvents[j], newfilecontents); //eventToString only does strncat, so it can append directly.
+    contentptr = eventToString(&newEvents[j], contentptr);
   }
-  size_t newsize = strlen((char*)newfilecontents);
+  size_t newsize = contentptr - newfilecontents;
 
   unsigned short pFile[MAX_FILENAME_SIZE];
   eventDateToFilename(startdate, pFile, folder);
@@ -409,10 +409,10 @@ int getEvents(EventDate* startdate, const char* folder, CalendarEvent* calEvents
     src = toksplit(src, EVENT_SEPARATOR , token, 2048);
     while (1) {
       //pass event to the parser and store it in the string event array
-      if(calEvents != NULL) stringToEvent(curevent==0? token+strlen(FILE_HEADER) : token, &calEvents[curevent]); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
+      if(calEvents != NULL) stringToEvent(curevent==0? token+sizeof(FILE_HEADER)-1 : token, &calEvents[curevent]); //convert to a calendar event. if is first event on file, it comes with a header that needs to be skipped.
       // we don't want full CalendarEvents, but do we want SimpleCalendarEvents?
       else if(simpleCalEvents != NULL) {
-        stringToSimpleEvent(curevent==0? token+strlen(FILE_HEADER) : token, &simpleCalEvents[curevent]);
+        stringToSimpleEvent(curevent==0? token+sizeof(FILE_HEADER)-1 : token, &simpleCalEvents[curevent]);
       }
       curevent++;
       if (strlen(src) < 5) { //5 bytes is not enough space to hold an event, so that means there are no more events to process... right?

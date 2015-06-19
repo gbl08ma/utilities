@@ -1384,7 +1384,7 @@ pcvoid(eventImportScreen)(struct ParseState *Parser, struct Value *ReturnValue, 
 // calendarProvider
 
 pcvoid(eventToString)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    eventToString((CalendarEvent*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
+    ReturnValue->Val->Pointer = eventToString((CalendarEvent*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
 pcvoid(stringToEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2483,7 +2483,7 @@ const struct LibraryFunction UtilitiesCalendarGUI[] =
 
 const struct LibraryFunction UtilitiesCalendarProvider[] =
 {
-    { pcfunc(eventToString),         "void eventToString(void*, char*);" },
+    { pcfunc(eventToString),         "char* eventToString(void*, char*);" },
     { pcfunc(stringToEvent),         "void stringToEvent(char*, void*);" },
     { pcfunc(stringToSimpleEvent),   "void stringToSimpleEvent(char*, void*);" },
     { pcfunc(eventDateToFilename),   "void eventDateToFilename(void*, unsigned short*, char*);" },

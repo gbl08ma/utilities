@@ -264,9 +264,10 @@ void renameFile(char* old, char* newf) {
 char* filenameToName(char* filename) {
   //this function takes a full filename like \\fls0\Folder\file.123
   //and returns a pointer to file.123.
-  int i=strlen(filename)-1;
-  while (i>=0 && filename[i] != '\\') i--;
-  return filename+i+1;
+  char* name = filename;
+  while(*filename++)
+    if(*filename == '\\') name = filename+1;
+  return name;
 }
 
 void copyFile(char* oldfilename, char* newfilename) {
@@ -417,7 +418,7 @@ void pasteClipboard(File* clipboard, char* browserbasepath, int itemsInClipboard
       char newfilename[MAX_FILENAME_SIZE];
       strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
       unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
-      strncat(newfilename, filenameToName(clipboard[curfile].filename), maxcatlen);
+      strncat(newfilename, clipboard[curfile].filename + clipboard[curfile].visname, maxcatlen);
       if (clipboard[curfile].action) {
         //copy file
         if(clipboard[curfile].isfolder) copyFolder(clipboard[curfile].filename, newfilename);

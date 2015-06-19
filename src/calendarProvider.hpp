@@ -63,7 +63,7 @@ typedef struct // a simplified calendar event, for use when the memory available
 } SimpleCalendarEvent;
 // end of type definitions
 
-void eventToString(CalendarEvent* calEvent, char* buf);
+char* eventToString(CalendarEvent* calEvent, char* buf);
 void stringToEvent(const char* src, CalendarEvent* calEvent);
 void stringToSimpleEvent(const char* src, SimpleCalendarEvent* calEvent);
 void eventDateToFilename(EventDate* date, unsigned short* filename, const char* folder);

@@ -919,7 +919,7 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
   }
 }
 
-void viewFileAsText(char* filename) { //name is the "nice" name of the file, i.e. not full path  
+void viewFileAsText(char* filename) {
   unsigned char* asrc = NULL;
   //Get file contents
   int hFile = fileOpen(filename); // Get handle
