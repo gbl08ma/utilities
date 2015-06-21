@@ -634,10 +634,10 @@ int searchFilesScreen(char* browserbasepath, int itemsinclip) {
     }
   }
   unsigned int newsetting = 0;
-  if(searchOnFilename) newsetting |= (1U << 0);
-  if(searchOnContents) newsetting |= (1U << 1);
-  if(searchRecursively) newsetting |= (1U << 2);
-  if(matchCase) newsetting |= (1U << 3);
+  newsetting |= ((unsigned)searchOnFilename << 0);
+  newsetting |= ((unsigned)searchOnContents << 1);
+  newsetting |= ((unsigned)searchRecursively << 2);
+  newsetting |= ((unsigned)matchCase << 3);
   setSetting(SETTING_FILE_MANAGER_SEARCH, newsetting, 1); // remember search preferences
 
   SetBackGround(9);
