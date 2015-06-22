@@ -590,7 +590,8 @@ void passwordGenerator() {
     Bdisp_AllClr_VRAM();
     drawFkeyLabels(0x03B3, 0, 0, 0, 0, 0x0184); // FILE, EXE (white)
     itoa(length, (unsigned char*)lstr);
-    char t[20] = "Length: ";
+    char t[20];
+    strcpy(t, "Length: ");
     strcat(t, lstr);
     items[0].text = t;
     switch(doMenu(&menu)) {

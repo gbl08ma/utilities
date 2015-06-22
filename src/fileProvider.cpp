@@ -647,7 +647,7 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
       // DECOMPRESS
       // check file header, jumping it at the same time
       unsigned char header[16] = "";
-      int chl = strlen((char*)COMPRESSED_FILE_HEADER)+6; // 4 bytes for original filesize and 2 for window size and lookahead
+      int chl = sizeof(COMPRESSED_FILE_HEADER)-1+6; // 4 bytes for original filesize and 2 for window size and lookahead
       Bfile_ReadFile_OS( hOldFile, header, chl, -1 );
       if(strncmp((char*)header, (char*)COMPRESSED_FILE_HEADER, chl)) goto cleanexit; // not a compressed file
       windowsize = header[chl-2];
@@ -673,7 +673,7 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
       unsigned char header[16];
       strcpy((char*)header, (char*)COMPRESSED_FILE_HEADER);
       // write uncompressed filesize to header
-      int len=strlen((char*)COMPRESSED_FILE_HEADER);
+      int len=sizeof(COMPRESSED_FILE_HEADER)-1;
       header[len] = (origfilesize >> 24) & 0xFF;
       header[len+1] = (origfilesize >> 16) & 0xFF;
       header[len+2] = (origfilesize >> 8) & 0xFF;
@@ -717,7 +717,7 @@ int isFileCompressed(char* filename, int* origfilesize) {
   int hFile = fileOpen(filename); // Get handle for the old file
   if(hFile < 0) return 0;
   unsigned char header[14] = "";
-  int chl = strlen((char*)COMPRESSED_FILE_HEADER);
+  int chl = sizeof(COMPRESSED_FILE_HEADER)-1;
   Bfile_ReadFile_OS(hFile, header, chl+4, -1 ); // +4 bytes for the original filesize info
   Bfile_CloseFile_OS(hFile);
   if(strncmp((char*)header, (char*)COMPRESSED_FILE_HEADER, chl)) return 0;
