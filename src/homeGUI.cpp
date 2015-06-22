@@ -452,35 +452,30 @@ void paneHandleBasicKeys(int retkey, int* pane_keycache) {
 }
 
 void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
-  color_t color_fg, color_bg, color_title;
-  if (getSetting(SETTING_THEME)) { color_fg = COLOR_WHITE; color_bg = COLOR_BLACK; color_title = COLOR_ORANGE; } else
-  { color_fg = COLOR_BLACK; color_bg = COLOR_WHITE; color_title = COLOR_BLUE; }
-  
-  int textX = startx;
-  int textY = starty;
+  color_t color_fg, color_title;
+  if (getSetting(SETTING_THEME)) { color_fg = COLOR_WHITE; color_title = COLOR_ORANGE; } else
+  { color_fg = COLOR_BLACK; color_title = COLOR_BLUE; }
+
   if (numevents>0) {
     int curevent = 0; //current processing event
     char itemtext[25];
-    PrintMini(&textX, &textY, (char*)"Events starting today", 0, 0xFFFFFFFF, 0, 0, color_title, color_bg, 1, 0); //draw
+    multiPrintMini(startx, starty, "Events starting today", color_title);
     while(curevent < numevents && curevent < maxevents) {
-      textX = startx + 5;
-      textY = textY + 18;
+      starty += 18;
       strcpy(itemtext, "- ");
       strcat(itemtext, (char*)calevents[curevent].title);
       int tcolor = calevents[curevent].category-1;
       if (getSetting(SETTING_THEME) && tcolor == TEXT_COLOR_BLACK) tcolor = TEXT_COLOR_WHITE;
       color_t tfcolor = textColorToFullColor(tcolor);
-      PrintMini(&textX, &textY, itemtext, 0, 0xFFFFFFFF, 0, 0, tfcolor, color_bg, 1, 0); //draw
+      multiPrintMini(startx + 5, starty, itemtext, tfcolor);
       curevent++;
     }
     if(numevents>maxevents) {
-      textX = startx + 5;
-      textY = textY + 20;
       sprintf(itemtext, "  ...and %d more event%s", numevents-maxevents, numevents-maxevents > 1 ? "s" : "");
-      PrintMini(&textX, &textY, itemtext, 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
+      multiPrintMini(startx + 5, starty + 20, itemtext, color_fg);
     }
   } else {
-    PrintMini(&textX, &textY, (char*)"  No events starting today", 0, 0xFFFFFFFF, 0, 0, color_fg, color_bg, 1, 0); //draw
+    multiPrintMini(startx, starty, "  No events starting today", color_fg);
   } 
 }
 #define HOME_EVENTS_DISPLAY_FULL 6

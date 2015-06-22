@@ -1242,8 +1242,6 @@ int isWeekendCol(int x) {
 static const color_t categoryBackColors[] = {0xffd8, 0xffd8, 0x7bff, 0x7fef, 0x7fff, 0xfbef, 0xfbff, 0xffef};
 void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* busydays, int* bufmonth, int* bufyear) {
   Bdisp_AllClr_VRAM();
-  int textX = 0;
-  int textY = 0;
 #define TOP 25
 #define BOTTOM (LCD_HEIGHT_PX - TOP-2)
 #define LEFT 25
@@ -1254,8 +1252,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   drawRectangle(LEFT, TOP, RIGHT-LEFT, BOTTOM-TOP, COLOR_BLACK);
   drawRectangle(LEFT+1, TOP+1, RIGHT-LEFT-2, BOTTOM-TOP-2, COLOR_WHITE);
   drawRectangle(LEFT+2,TOP+2,RIGHT-2-2-LEFT,THICKNESS,COLOR_BLACK);
-  textX=LEFT+5; textY= TOP+2-TOPOFFSET;
-  PrintMini(&textX, &textY, getMonthAsString(month), 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
+  multiPrintMini(LEFT+5, TOP+2-TOPOFFSET, getMonthAsString(month), COLOR_WHITE);
   int x,y = 0;
   drawRectangle(LEFT+2,TOP+2+THICKNESS,RIGHT-2-2-LEFT,THICKNESS,COLOR_LIGHTGRAY);
   drawRectangle(RIGHT-2-WIDTH,TOP+2+2*THICKNESS,WIDTH,THICKNESS*6,COLOR_LIGHTBLUE);
@@ -1274,9 +1271,7 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   int k = getSetting(SETTING_WEEK_START_DAY) + 1;
   for (x = LEFT+2; x < RIGHT - WIDTH; x+= WIDTH)
   {
-    textX = x+2;
-    textY = TOP+2+THICKNESS-TOPOFFSET;
-    PrintMini(&textX, &textY, getDOWAsShortString(k++), 0, 0xFFFFFFFF, 0, 0, COLOR_BLUE, COLOR_LIGHTGRAY, 1, 0);
+    multiPrintMini(x+2, TOP+2+THICKNESS-TOPOFFSET, getDOWAsShortString(k++), COLOR_BLUE);
     if(k == 8) k = 1;
   }
 
@@ -1358,8 +1353,8 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
       }
   }
   itoa(year,(unsigned char*)buffer);
-  textX = 0; //RIGHT-5-50;
-  textY = TOP+2-TOPOFFSET;
+  int textX = 0; //RIGHT-5-50;
+  int textY = TOP+2-TOPOFFSET;
   PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 0, 0);
   textX = RIGHT-4-textX;
   PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);

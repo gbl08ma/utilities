@@ -29,17 +29,10 @@ void firstRunWizard() {
   Bdisp_AllClr_VRAM();
   DrawFrame(COLOR_WHITE);
   drawtnyimLogo( LCD_WIDTH_PX/2-138/2, LCD_HEIGHT_PX/2-42/2);
-  int textY = LCD_HEIGHT_PX/2-42/2-24 - 20;
-  int textX = 104;
-  PrintMini(&textX, &textY, (char*)"brought to you by", 0, 0xFFFFFFFF, 0, 0, COLOR_GRAY, COLOR_WHITE, 1, 0);
-
-  textY = LCD_HEIGHT_PX/2+42/2-24;
-  textX = 94;
-  PrintMini(&textX, &textY, (char*)"tny. internet media", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
-  textX = 146;
-  PrintMini(&textX, &textY, (char*)"i", 0, 0xFFFFFFFF, 0, 0, TNYIM_ORANGE, COLOR_WHITE, 1, 0);
-  textX = 235;
-  PrintMini(&textX, &textY, (char*)"m", 0, 0xFFFFFFFF, 0, 0, TNYIM_ORANGE, COLOR_WHITE, 1, 0);
+  multiPrintMini(104, LCD_HEIGHT_PX/2-42/2-24 - 20, "brought to you by", COLOR_GRAY);
+  multiPrintMini(94, LCD_HEIGHT_PX/2+42/2-24, "tny. internet media");
+  multiPrintMini(146, LCD_HEIGHT_PX/2+42/2-24, "i", TNYIM_ORANGE);
+  multiPrintMini(235, LCD_HEIGHT_PX/2+42/2-24, "m", TNYIM_ORANGE);
   Bdisp_PutDisp_DD();
   blockForMilliseconds(3500);
   
