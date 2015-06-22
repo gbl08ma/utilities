@@ -1497,25 +1497,29 @@ void invalidFieldMsg(int istime) {
 void setReminderScreen(CalendarEvent* event) {
   // set a downwards chrono that ends on the start time of the event
   // like a event reminder
-  
-  // ask user which chrono to set
-  Selector sel;
-  sel.title = (char*)"Set event reminder";
-  sel.subtitle = (char*)"Select chrono";
-  sel.value = 1;
-  sel.min = 1;
-  sel.max = NUMBER_OF_CHRONO;
-  int res = doSelector(&sel);
-  if (res == SELECTOR_RETURN_EXIT) return;
+
   // get unix*1000 time of the event's start time/date
   long long int estart = dateTimeToUEBT(event->startdate.year, event->startdate.month, event->startdate.day, event->starttime.hour, event->starttime.minute, event->starttime.second, 0);
+
   // get chrono duration (difference between event start time and current time)
-  
   long long int duration = estart - currentUEBT();
+  Selector sel;
+  if(duration > 0) {
+    // ask user which chrono to set
+    sel.title = (char*)"Set event reminder";
+    sel.subtitle = (char*)"Select chrono";
+    sel.value = 1;
+    sel.min = 1;
+    sel.max = NUMBER_OF_CHRONO;
+    if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
+    
+    // update, so that the value is "fresh"
+    duration = estart - currentUEBT();
+  }
   mMsgBoxPush(4);
-  if(duration < 0) {
+  if(duration <= 0) {
     // event is in the past, abort
-    multiPrintXY(3, 2, "Event starts in\nthe past.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    multiPrintXY(3, 2, "The event already\nstarted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   } else {
     // set downwards chrono with the calculated duration
     chronometer* chr = getChronoArrayPtr();
