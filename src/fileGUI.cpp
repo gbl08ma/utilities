@@ -875,14 +875,14 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
             sha1_context ctx1;
             sha2_context ctx2;
             unsigned char buf[4096];
-            int readsize = 1; // not zero so we have the chance to enter the while loop
             sha1_starts(&ctx1);
             sha2_starts(&ctx2, 0);
-            while( readsize > 0) {
+            int readsize;
+            do {
               readsize = Bfile_ReadFile_OS(hFile, buf, sizeof( buf ), -1);
               sha1_update(&ctx1, buf, readsize);
               sha2_update(&ctx2, buf, readsize);
-            }
+            } while(readsize > 0);
             Bfile_CloseFile_OS(hFile);
             sha1_finish(&ctx1, output1);
             sha2_finish(&ctx2, output2);

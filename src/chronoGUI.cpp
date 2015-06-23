@@ -520,22 +520,21 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
     if(tbuf[0]) printCentered(tbuf, 8*24-1, COLOR_BLACK, COLOR_WHITE);
     else clearLine(1,8);
 
-    sprintf(tbuf, "Chronometer %d (", menu->selection);
+    sprintf(tbuf, "Chronometer %d (\xe6", menu->selection);
     if(chrn->state == CHRONO_STATE_CLEARED) {
-      strcat(tbuf, "\xe6\xa6");
+      strcat(tbuf, "\xa6)");
       drawFkeyLabels(0, -1, -1, -1, -1, 0x0010); // SET
     } else if (chrn->state == CHRONO_STATE_RUNNING) {
       drawFkeyLabels(0x0031, -1, -1, -1, -1, 0x0149); // stop icon, CLEAR
       // "hack" the stop icon, turning it into a pause icon
       drawRectangle(30, 197, 4, 14, COLOR_WHITE);
-      if(chrn->type == CHRONO_TYPE_UP) strcat(tbuf, "\xe6\x9C");
-      else strcat(tbuf, "\xe6\x9D");
+      if(chrn->type == CHRONO_TYPE_UP) strcat(tbuf, "\x9C)");
+      else strcat(tbuf, "\x9D)");
     } else {
       drawFkeyLabels(0x040A, -1, -1, -1, -1, 0x0149); // play icon, CLEAR
-      if(chrn->type == CHRONO_TYPE_UP) strcat(tbuf, "\xe6\xAC");
-      else strcat(tbuf, "\xe6\xAD"); 
+      if(chrn->type == CHRONO_TYPE_UP) strcat(tbuf, "\xAC)");
+      else strcat(tbuf, "\xAD)"); 
     }
-    strcat(tbuf, ")");
     drawScreenTitle(tbuf);
 
     DisplayStatusArea();
