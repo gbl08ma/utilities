@@ -95,7 +95,6 @@ void settingsMenu() {
           Menu menu;
           menu.items=menuitems;
           menu.numitems=2;
-          menu.width=22;
           menu.selection=getSetting(SETTING_TIMEFORMAT)+1;
           menu.title = (char*)"Set time format";
           int res = doMenu(&menu);
@@ -125,7 +124,6 @@ void settingsMenu() {
           Menu menu;
           menu.items=menuitems;
           menu.numitems=3;
-          menu.width=22;
           menu.selection=getSetting(SETTING_DATEFORMAT)+1;
           menu.title = (char*)"Set date format";
           int res = doMenu(&menu);

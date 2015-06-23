@@ -428,8 +428,6 @@ int changeWalletScreen(char* currentWallet) {
   MenuItem items[MAX_WALLETS];
   int mustRefresh = 0;
   while(1) {
-    // TODO list wallets, let user change wallets, create, rename, delete wallets
-
     char wallets[MAX_WALLETS][MAX_WALLETNAME_SIZE];
     // build wallet list:
     unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];

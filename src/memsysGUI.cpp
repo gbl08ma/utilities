@@ -126,7 +126,6 @@ int getAddins(AddIn addins[]) {
 }
 
 void addinManager() {
-  int res=1;
   Menu menu;
   
   menu.scrollout=1;
@@ -134,9 +133,7 @@ void addinManager() {
   menu.type=MENUTYPE_FKEYS;
   menu.nodatamsg = (char*)"No Add-Ins";
   menu.title = (char*)"Add-In Manager";
-  while(res) {
-    res = addinManagerChild(&menu);
-  }
+  while(addinManagerChild(&menu));
 }
 
 int addinManagerChild(Menu* menu) {
