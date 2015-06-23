@@ -111,8 +111,7 @@ int getCurrentWallet(char* wallet) {
   // or returns 0 if there's no wallet yet
   char statusfile[MAX_FILENAME_SIZE];
   unsigned short ufile[MAX_FILENAME_SIZE];
-  strcpy(statusfile, BALANCEFOLDER);
-  strcat(statusfile, (char*)"\\Wallet");
+  strcpy(statusfile, BALANCEFOLDER"\\Wallet");
   Bfile_StrToName_ncpy(ufile, statusfile, MAX_FILENAME_SIZE);
   int hFile = Bfile_OpenFile_OS(ufile, READWRITE, 0); // Get handle
   if(hFile < 0)
@@ -127,8 +126,7 @@ void setCurrentWallet(char* wallet) {
   // doesn't check that the wallet folder actually exists
   char statusfile[MAX_FILENAME_SIZE];
   unsigned short ufile[MAX_FILENAME_SIZE];
-  strcpy(statusfile, BALANCEFOLDER);
-  strcat(statusfile, (char*)"\\Wallet");
+  strcpy(statusfile, BALANCEFOLDER"\\Wallet");
   Bfile_StrToName_ncpy(ufile, statusfile, MAX_FILENAME_SIZE);
   int hFile = Bfile_OpenFile_OS(ufile, READWRITE, 0); // Get handle
   if(hFile < 0) {

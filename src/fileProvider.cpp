@@ -132,6 +132,7 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
   size_t baselen = strlen(basepath);
+  int nlen = strlen(needle);
 
   int numberOfFoldersToSearchInTheEnd = 0;
   char foldersToSearchInTheEnd[MAX_ITEMS_PER_FOLDER_COPY][MAX_NAME_SIZE];
@@ -175,7 +176,6 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
             unsigned char buf[1030] = ""; // initialize to zeros, and make sure it is a bit bigger than the amount
             // of bytes we're going to read, so that the string is always null-terminated and can be safely
             // passed to the string compare function.
-            int nlen = strlen(needle);
             while(1) {
               int readsize = Bfile_ReadFile_OS(hFile, buf, 1024, -1);
               if(NULL != memmem((char*)buf, readsize, needle, nlen, matchCase)) {
@@ -412,6 +412,7 @@ void pasteClipboard(File* clipboard, char* browserbasepath, int itemsInClipboard
   //when the action field of a clipboard item is 0, the item will be moved.
   //when the action field is 1, the item will be copied.
   //don't forget to reload the file list after using this
+  unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(browserbasepath);
   if (itemsInClipboard>0) {
     int curfile = 0;
     progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
@@ -419,7 +420,6 @@ void pasteClipboard(File* clipboard, char* browserbasepath, int itemsInClipboard
       if(curfile > 0) progressMessage((char*)" Pasting...", curfile, itemsInClipboard);
       char newfilename[MAX_FILENAME_SIZE];
       strncpy(newfilename, browserbasepath, MAX_FILENAME_SIZE);
-      unsigned int maxcatlen = MAX_FILENAME_SIZE-strlen(newfilename);
       strncat(newfilename, clipboard[curfile].filename + clipboard[curfile].visname, maxcatlen);
       if (clipboard[curfile].action) {
         //copy file
@@ -467,7 +467,7 @@ void createFolderRecursive(const char* folder) {
   // creates folder \\fls0\Fol1\Abc even if \\fls0\Fol1 doesn't exist yet
   // despite the name, this is not a recursive function.
   int l = strlen(folder);
-  int s = strlen(SMEM_PREFIX);
+  int s = sizeof(SMEM_PREFIX)-1;
   while(1) {
     char nFolder[MAX_FILENAME_SIZE];
     unsigned short pFolder[MAX_FILENAME_SIZE];

@@ -1723,7 +1723,7 @@ void drawBusymapDay(EventDate* thisday, int startx, int starty, int width, int h
   if(!isWeek) drawRectangle(startx, starty, width, height, COLOR_LIGHTGRAY);
   if(showHourMarks) {
     for(int i = 0; i < 24; i++) {
-      int tx=(width*i*60*60)/(24*60*60);
+      int tx=(width*i)/24;
       plot(startx+tx,(showHourMarks==2? starty-1 : starty+height),COLOR_GRAY);
       if(showHourMarks==2) plot(startx+tx, starty-2,COLOR_GRAY);
     }
@@ -1823,7 +1823,7 @@ void calendarToolsMenu(int y, int m, int d) {
 
         int daysdiff = dateToDays(y2, m2, d2) - dateToDays(y1, m1, d1);
         int businessdiff = 0;
-        int weekdays[7] = {0,0,0,0,0,0,0};
+        int weekdays[7] = {0};
         for(int i = 0; (daysdiff < 0 ? i > daysdiff : i < daysdiff); (daysdiff < 0 ? i-- : i++)) {
           long int ny, nm, nd;
           daysToDate(dateToDays(y1, m1, d1)+i, &ny, &nm, &nd);

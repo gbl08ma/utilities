@@ -460,11 +460,8 @@ void getEventCountsForMonthHelper(EventDate* date, int count, int* busydays) {
   }
 }
 void getEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
-  for(unsigned int k = 0; k<=31; k++) {
-    //clean arrays
-    busydays[k] = 0;
-    dbuffer[k] = 0;
-  }
+  memset(dbuffer, 0, 31*sizeof(int));
+  memset(busydays, 0, 31*sizeof(int));
 
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
@@ -572,11 +569,8 @@ int searchEventsOnYearOrMonth(int y, int m, const char* folder, SimpleCalendarEv
       
       if(isValid) {
         char tmpbuf[10];
-        int i;
-        for(i = 0; i < 8 - len; i++) {
-          tmpbuf[i] = '0';
-        }
-        strcpy(tmpbuf+i, buffer);
+        memset(&tmpbuf, '0', sizeof(int)*(8-len));
+        strcpy(tmpbuf+8-len, buffer);
         EventDate thisday;
         int signedYear, signedMonth, signedDay;
         stringToDate(tmpbuf, &signedYear, &signedMonth, &signedDay, 2);
@@ -752,11 +746,8 @@ void repairEventFile(char* name, const char* folder, int* checkedevents, int* pr
     }
   }
   char tmpbuf[10];
-  int i;
-  for(i = 0; i<8-nlen; i++) {
-    strcpy(tmpbuf+i, "0");
-  }
-  strcpy(tmpbuf+i, name);
+  memset(&tmpbuf, '0', sizeof(int)*(8-nlen));
+  strcpy(tmpbuf+8-nlen, name);
   EventDate thisday;
   int y, m, d;
   stringToDate(tmpbuf, &y, &m, &d, 2);
