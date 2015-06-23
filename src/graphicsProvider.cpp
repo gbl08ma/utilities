@@ -15,7 +15,6 @@
 #include "graphicsProvider.hpp"
 #include "settingsProvider.hpp"
 #include "stringsProvider.hpp"
-#include "debugGUI.hpp"
 
 void drawRectangle(int x, int y, int width, int height, unsigned short color) {
 	unsigned short*s=(unsigned short*)0xA8000000;
@@ -229,18 +228,11 @@ void drawtnyimLogo(int x, int y) {
     drawRectangle(x+logoO[i], y+logoO[i+1], logoO[i+2], logoO[i+3], TNYIM_ORANGE);
 }
 
+static const color_t fullColorsForText[] =
+{COLOR_BLACK, COLOR_BLUE, COLOR_LIMEGREEN, COLOR_CYAN, COLOR_RED,
+  COLOR_MAGENTA, COLOR_YELLOW, COLOR_LIGHTGRAY};
 int textColorToFullColor(int textcolor) {
-  switch(textcolor) {
-    case TEXT_COLOR_BLACK: return COLOR_BLACK;
-    case TEXT_COLOR_BLUE: return COLOR_BLUE;
-    case TEXT_COLOR_GREEN: return COLOR_LIMEGREEN;
-    case TEXT_COLOR_CYAN: return COLOR_CYAN;
-    case TEXT_COLOR_RED: return COLOR_RED;
-    case TEXT_COLOR_PURPLE: return COLOR_MAGENTA;
-    case TEXT_COLOR_YELLOW: return COLOR_YELLOW;
-    case TEXT_COLOR_WHITE: return COLOR_LIGHTGRAY;
-    default: return COLOR_BLACK;
-  }
+  return fullColorsForText[textcolor % sizeof(fullColorsForText)];
 }
 
 void progressMessage(const char* message, int cur, int total) {
@@ -327,30 +319,13 @@ void drawScreenTitle(const char* title, const char* subtitle) {
 
 void drawFkeyLabels(int f1, int f2, int f3, int f4, int f5, int f6) {
   // set arguments to negative numbers if that fkey is not to be affected.
+  int f[] = {f1, f2, f3, f4, f5, f6};
   int iresult;
-  if(f1>=0) {
-    GetFKeyPtr(f1, &iresult);
-    FKey_Display(0, (int*)iresult);
-  }
-  if(f2>=0) {
-    GetFKeyPtr(f2, &iresult);
-    FKey_Display(1, (int*)iresult);
-  }
-  if(f3>=0) {
-    GetFKeyPtr(f3, &iresult);
-    FKey_Display(2, (int*)iresult);
-  }
-  if(f4>=0) {
-    GetFKeyPtr(f4, &iresult);
-    FKey_Display(3, (int*)iresult);
-  }
-  if(f5>=0) {
-    GetFKeyPtr(f5, &iresult);
-    FKey_Display(4, (int*)iresult);
-  }
-  if(f6>=0) {
-    GetFKeyPtr(f6, &iresult);
-    FKey_Display(5, (int*)iresult);
+  for(int i = 0; i < 6; i++) {
+    if(f[i] >= 0) {
+      GetFKeyPtr(f[i], &iresult);
+      FKey_Display(i, (int*)iresult);
+    }
   }
 }
 
