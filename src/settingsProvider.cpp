@@ -52,7 +52,7 @@ int loadSettings() { // returns 0 on success, 1 if settings were reset (first ru
   return 0;
 
   resetSettings:
-  for(int i = 1; i <= NUMBER_OF_SETTINGS; i++) settings[i] = 0;
+  memset(settings+1, 0, (sizeof(settings)-1)*sizeof(unsigned char));
   // the defaults for some settings are not zero:
   settings[SETTING_DISPLAY_STATUSBAR] = 1;
   settings[SETTING_STARTUP_BRIGHTNESS] = 250;

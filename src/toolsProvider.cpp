@@ -35,11 +35,10 @@ void currencyToString(char* dest, Currency* orig) {
 int stringToCurrency(Currency* dest, char* orig) {
   // returns 0 on success, 1 on error
   char buffer[20];
-  int l = strlen(orig);
   int i;
-  for(i = 0; i < l; i++) {
-    if(orig[i] == '.') break;
-    buffer[i] = orig[i];
+  for(i = 0; *orig; orig++) {
+    if(*orig == '.') break;
+    buffer[i++] = *orig;
   }
   buffer[i] = 0;
   if(i > 9) return 1; // too many digits for units
@@ -48,16 +47,13 @@ int stringToCurrency(Currency* dest, char* orig) {
   if(buffer[0] == '-') {
     hasNegativeSign = 1;
   }
-  int n = 0;
-  for(i++; i < l; i++) {
-    buffer[n++] = orig[i];
-  }
-  buffer[n] = 0;
-  l = strlen(buffer);
   int cents;
-  if(l < 2) cents = atoi(buffer) * 10LL;
-  else if(l == 2) cents = atoi(buffer);
-  else return 1; // error: too many digits for cents
+  if(*orig) {
+    int l = strncpy_retlen(buffer, orig+1, 20);
+    if(l < 2) cents = atoi(buffer) * 10LL;
+    else if(l == 2) cents = atoi(buffer);
+    else return 1; // error: too many digits for cents
+  } else cents = 0;
 
   if(res < 0) res -= (long long int)cents;
   else res += (long long int)cents;

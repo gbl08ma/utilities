@@ -25,7 +25,6 @@
 #include "timeProvider.hpp"
 
 void viewTasks() {
-  int res=1;
   Menu menu;
   
   menu.scrollout=1;
@@ -34,9 +33,7 @@ void viewTasks() {
   menu.nodatamsg = (char*)"No tasks - press F2";
   menu.title = (char*)"Tasks";
   menu.returnOnRight = 1;
-  while(res) {
-    res = viewTasksChild(&menu);
-  }
+  while(viewTasksChild(&menu));
 }
 
 int viewTasksChild(Menu* menu) {
@@ -54,13 +51,13 @@ int viewTasksChild(Menu* menu) {
     menuitems[curitem].text = (char*)tasks[curitem].title;
     menuitems[curitem].type = MENUITEM_CHECKBOX;
     menuitems[curitem].value = tasks[curitem].repeat;
-    if(menuitems[curitem].value) activecount++;
+    if(!menuitems[curitem].value) activecount++;
     menuitems[curitem].color = tasks[curitem].category-1;
   }
   menu->items=menuitems;
   
   char subtitle[50];
-  sprintf(subtitle, "%d tasks, %d active", menu->numitems, menu->numitems-activecount);
+  sprintf(subtitle, "%d tasks, %d active", menu->numitems, activecount);
   menu->subtitle = subtitle;
   while(1) {
     Bdisp_AllClr_VRAM();

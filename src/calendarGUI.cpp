@@ -2105,11 +2105,8 @@ void databaseTrimScreen() {
           EventDate thisday;
           if(!deleteThisFile) {
             char tmpbuf[10];
-            int i;
-            for(i = 0; i<8-nlen; i++) {
-              strcpy(tmpbuf+i, "0");
-            }
-            strcpy(tmpbuf+i, mainname);
+            memset(&tmpbuf, '0', sizeof(int)*(8-nlen));
+            strcpy(tmpbuf+8-nlen, mainname);
             int y, m, d;
             stringToDate(tmpbuf, &y, &m, &d, 2);
             thisday.year=y; thisday.month=m; thisday.day=d;
