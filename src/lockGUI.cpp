@@ -35,17 +35,16 @@ int passwordInput(int x, int y, unsigned char* buffer) {
   while(1)
   {   
     strcpy((char*)dispbuffer, "");
-    int numchars = strlen((char*)buffer);
+    int numchars = strlen((char*)buffer) - 1;
 
-    if(numchars > 0) {
-      for (int k = 0; k < numchars-1; k++) {
-        strcat((char*)dispbuffer, "*");
-      }
-      if(getSetting(SETTING_PASSWORD_PRIVACY) && key<30000 && cursor==numchars) {
+    if(numchars >= 0) {
+      memset(dispbuffer, '*', numchars);
+      dispbuffer[numchars] = 0;
+      if(getSetting(SETTING_PASSWORD_PRIVACY) && key<30000 && cursor==numchars + 1) {
         //show last character for easier typing
         //only show last char if last key was a CHAR key and cursor is at the end
         strcat((char*)dispbuffer, " ");
-        dispbuffer[(strlen((char*)dispbuffer)-1)] = buffer[(strlen((char*)buffer)-1)];
+        dispbuffer[numchars] = buffer[numchars];
       } else {
         strcat((char*)dispbuffer, "*");
       }
@@ -86,12 +85,11 @@ int passwordInput(int x, int y, unsigned char* buffer) {
     }  
     if (key == KEY_CTRL_EXIT) { Cursor_SetFlashOff(); return 0; }
     if (key == KEY_CTRL_EXE) {
-      if (strlen((char*)buffer) > 0) {
+      if (buffer[0]) {
         Cursor_SetFlashOff(); return 1;
       } else {
         mMsgBoxPush(3);
-        mPrintXY(3, 3, "Password can't be", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
-        mPrintXY(3, 4, "empty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
+        multiPrintXY(3, 3, "Password can't be\nempty.", TEXT_MODE_NORMAL, TEXT_COLOR_BLACK);
         closeMsgBox();
       }
     }
@@ -140,8 +138,7 @@ int unlockCalc() {
   drawScreenTitle("Calculator lock", "Enter password:");
   if (!passwordInput(1, 3, password)) return 0;
   else {
-    int res = comparePasswordHash(password);
-    if(!res) return 1;
+    if(!comparePasswordHash(password)) return 1;
     else AUX_DisplayErrorMessage(0x13); // Mismatch
   }
   return 0;

@@ -2089,11 +2089,10 @@ void databaseTrimScreen() {
         } else {
           // user wants to do something that depends on the start date, so we need to get it from the filename
           char mainname[20];
-          int nlen = strlen((char*)buffer);
-          strncpy(mainname, (char*)buffer, nlen-4); //strip the file extension out
-          // strcpy will not add a \0 at the end if the limit is reached, let's add it ourselves
-          mainname[nlen-4] = '\0';
-          nlen = strlen(mainname);
+          int nlen = strlen((char*)buffer) - 4;
+          strncpy(mainname, (char*)buffer, nlen); //strip the file extension out
+          // strncpy will not add a \0 at the end if the limit is reached, let's add it ourselves
+          mainname[nlen] = '\0';
           
           // verify that it only contains numbers
           for(int i = 0; i < nlen; i++) {

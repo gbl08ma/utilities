@@ -114,7 +114,7 @@ int viewTasksChild(Menu* menu) {
       case KEY_CTRL_FORMAT:
         if(menu->numitems > 0) {
           //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
-          //so on this add-in it is used to change the category (color) of a task/calendar event.
+          //so in this add-in it is used to change the category (color) of a task/calendar event.
           if(EVENTEDITOR_RETURN_CONFIRM == setCategoryPrompt(&tasks[menu->selection-1])) {
             replaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
             return 1;
