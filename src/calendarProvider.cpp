@@ -460,8 +460,8 @@ void getEventCountsForMonthHelper(EventDate* date, int count, int* busydays) {
   }
 }
 void getEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
-  memset(dbuffer, 0, 31*sizeof(int));
-  memset(busydays, 0, 31*sizeof(int));
+  memset(dbuffer, 0, 32*sizeof(int));
+  memset(busydays, 0, 32*sizeof(int));
 
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
