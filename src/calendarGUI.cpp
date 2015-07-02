@@ -303,15 +303,8 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
   // y,m,d now has first Sunday/Monday of the week, depending on user setting
   // ddays has the corresponding amount of days
   // calculate week number for menu title accoring to the Sunday/Monday date
-  char buffer[10];
-  int wkn = getWeekNumber(*y,*m,*d);
-  itoa(wkn, (unsigned char*)buffer);
   char menutitle[70];
-  strcpy(menutitle, "Week ");
-  strcat(menutitle, buffer);
-  itoa(*y, (unsigned char*)buffer);
-  strcat(menutitle, (char*)" of ");
-  strcat(menutitle, buffer);
+  sprintf(menutitle, "Week %d of %d", getWeekNumber(*y,*m,*d), *y);
   menu->title = menutitle;
    
   unsigned int curday = 0; unsigned int numevents = 0;
