@@ -20,6 +20,7 @@
 #include "keyboardProvider.hpp"
 #include "hardwareProvider.hpp"
 #include "graphicsProvider.hpp"
+#include "stringsProvider.hpp"
 #include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
 
@@ -109,9 +110,15 @@ int getAddins(AddIn addins[]) {
         ((Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) || (Bfile_Name_MatchMask((const short int*)path2, (const short int*)found))))
     {
       strcpy(addins[curitem].filename, (char*)buffer);
-      //TODO: get friendly add-in name from system add-in table
-      strcpy(addins[curitem].name, (char*)buffer);
-      addins[curitem].name[strlen((char*)buffer)-4] = '\0';
+      // get friendly add-in name from the file:
+      char filename[MAX_FILENAME_SIZE];
+      strcpy(filename, SMEM_PREFIX);
+      strcat(filename, buffer);
+      int hFile = fileOpen(filename);
+      if(hFile >= 0) {
+        Bfile_ReadFile_OS(hFile, addins[curitem].name, 24, 0x006B); // read English friendly name
+        Bfile_CloseFile_OS(hFile);
+      } else strcpy(addins[curitem].name, (char*)buffer);
       addins[curitem].active= (Bfile_Name_MatchMask((const short int*)path, (const short int*)found) ? 1 : 0);
       curitem++;
     }
