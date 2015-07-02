@@ -71,7 +71,7 @@ int viewTasksChild(Menu* menu) {
         break;
       case KEY_CTRL_F1:
       case MENU_RETURN_SELECTION:
-        if(menu->numitems>0) viewEvent(&tasks[menu->selection-1], 1);
+        if(menu->numitems>0) viewEvent(&tasks[menu->selection-1]);
         break;
       case KEY_CTRL_F2:
         if(menu->numitems >= MAX_DAY_EVENTS) {

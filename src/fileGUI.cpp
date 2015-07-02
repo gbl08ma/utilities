@@ -1000,7 +1000,7 @@ void viewClipboard(File* clipboard, int* itemsinclip) {
     MenuItem menuitems[MAX_ITEMS_IN_CLIPBOARD];
     menu.title = (char*)"Clipboard";
     menu.subtitle = (char*)"Black=cut, Red=copy";
-    menu.nodatamsg = (char*)"No items in clipboard";
+    menu.nodatamsg = (char*)"Clipboard empty";
     char statusbuffer[120];
     getFileManagerStatus(statusbuffer, *itemsinclip, 1);
     menu.statusText = statusbuffer;

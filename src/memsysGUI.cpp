@@ -26,8 +26,6 @@
 // the following two functions are auxiliars to memoryCapacityScreen
 void drawCapacityBar(int textY, long long int cur, long long int full) {
   long long int barwidthcpl = (long long int)(LCD_WIDTH_PX*cur)/(long long int)full;
-  drawRectangle(0, textY+24, LCD_WIDTH_PX, 20, COLOR_GRAY);
-  drawRectangle(0, textY+24, (int)barwidthcpl, 20, COLOR_BLUE);
   
   int newTextX = 0;
   textY += 5;

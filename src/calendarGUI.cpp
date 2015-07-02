@@ -797,7 +797,7 @@ int viewEventsChild(Menu* menu, int y, int m, int d) {
   return 1;
 }
 
-void viewEvent(CalendarEvent* event, int istask) {
+void viewEvent(CalendarEvent* event) {
   DefineStatusMessage((char*)"", 1, 0, 0); // clear "press OPTN for more options" message
   textArea text;
   text.title = (char*)event->title;
@@ -817,7 +817,7 @@ void viewEvent(CalendarEvent* event, int istask) {
   
   char startson[50];
   char endson[50];
-  if(!istask) {
+  if(event->startdate.day) { // if it isn't a task
     elem[text.numelements].text = (char*)"Starts on";
     elem[text.numelements].newLine = 1;
     elem[text.numelements].lineSpacing = 8;
@@ -1640,7 +1640,7 @@ void searchEventsScreen(int y, int m, int d) {
       sel.subtitle = (char*)"End year";
       sel.value = userEndYear;
       sel.min = userStartYear;
-      sel.max = userStartYear+249; //do not allow for more than 255 years, otherwise maximum will be less than an event per year
+      sel.max = userStartYear+249; //do not allow for more than 250 years, otherwise maximum will be less than an event per year
       if(sel.max > HIGHEST_SUPPORTED_YEAR) sel.max = HIGHEST_SUPPORTED_YEAR;
       // also, if more than 255 years it would definitely take too much time, and user would certainly reboot the calculator
       sel.cycle = 0;
@@ -1769,10 +1769,10 @@ void drawBusymapWeek(int y, int m, int d, int startx, int starty, int width, int
   long int ddays=dateToDays(y, m, d);
   unsigned int curday = 0;
   int daywidth = width/7;
-  drawRectangle(startx, starty, daywidth*7, height, COLOR_LIGHTGRAY);
+  drawRectangle(startx, starty, width, height, COLOR_LIGHTGRAY);
   while(curday < 7) {
     long int ny, nm, nd;
-    daysToDate(ddays, &ny, &nm, &nd);
+    daysToDate(ddays+curday, &ny, &nm, &nd);
     EventDate date;
     date.year=ny; date.month=nm; date.day=nd;
     if(!isDateValid(ny,nm,nd)) {
@@ -1783,9 +1783,8 @@ void drawBusymapWeek(int y, int m, int d, int startx, int starty, int width, int
     plot(startx+daywidth*curday,starty-2,COLOR_GRAY);
     if(date.year == (unsigned)getCurrentYear() && date.month == (unsigned)getCurrentMonth() && date.day == (unsigned)getCurrentDay())
       drawRectangle(startx+daywidth*curday+1, starty-2, daywidth-1, 2, COLOR_YELLOW);
-    drawBusymapDay(&date, startx+curday*daywidth, starty, daywidth, height, 0,curday+1,startx+daywidth*7);
+    drawBusymapDay(&date, startx+curday*daywidth, starty, daywidth, height, 0, 1, startx+width);
     CopySpriteNbitMasked(busymap_labels[dow(date.year,date.month,date.day)], startx+daywidth*curday+1, starty+1, 17, 7, busymap_labels_palette, 0, 1);
-    ddays++;
     curday++;
   }
 }

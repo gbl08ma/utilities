@@ -94,7 +94,7 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
     textY += 17;
     PrintMiniMini( &newTextX, &textY, buffer2, 0, TEXT_COLOR_BLACK, 1 ); //fake draw
     textX -= newTextX;
-    PrintMiniMini( &textX, &textY, buffer2, (miniminiinvert == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
+    PrintMiniMini( &textX, &textY, buffer2, miniminiinvert, TEXT_COLOR_BLACK, 0 ); //draw
   }
   return;
 }

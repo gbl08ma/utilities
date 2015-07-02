@@ -30,7 +30,7 @@ int viewMonthCalendar(int dateselection=0);
 int viewWeekCalendar();
 int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, int* keepMenuSel);
 void viewEvents(int y, int m, int d);
-void viewEvent(CalendarEvent* event, int istask=0);
+void viewEvent(CalendarEvent* event);
 int viewEventsChild(Menu* menu, int y, int m, int d);
 void fillInputDate(int yr, int m, int d, char* buffer);
 void fillInputTime(int h, int m, int s, char* buffer);

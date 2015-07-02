@@ -1298,7 +1298,7 @@ pcvoid(viewEvents)(struct ParseState *Parser, struct Value *ReturnValue, struct 
 }
 
 pcvoid(viewEvent)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    viewEvent((CalendarEvent*)Param[0]->Val->Pointer, Param[1]->Val->Integer);
+    viewEvent((CalendarEvent*)Param[0]->Val->Pointer);
 }
 
 pcvoid(viewEventsChild)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2461,7 +2461,7 @@ const struct LibraryFunction UtilitiesCalendarGUI[] =
     { pcfunc(viewWeekCalendar),      "int viewWeekCalendar();" },
     { pcfunc(viewWeekCalendarChild), "int viewWeekCalendarChild(void*, int*, int*, int*, int*, int*);" },
     { pcfunc(viewEvents),            "void viewEvents(int, int, int);" },
-    { pcfunc(viewEvent),             "void viewEvent(void*, int);" },
+    { pcfunc(viewEvent),             "void viewEvent(void*);" },
     { pcfunc(viewEventsChild),       "int viewEventsChild(void*, int, int, int);" },
     { pcfunc(fillInputDate),         "void fillInputDate(int, int, int, char*);" },
     { pcfunc(fillInputTime),         "void fillInputTime(int, int, int, char*);" },
