@@ -149,7 +149,7 @@ int addTransactionWizard(char* wallet) {
     SetBackGround(0x0A);
     drawScreenTitle("Add transaction");
     // < (first label), SELECT of on date step, and Next or Finish (last label)
-    drawFkeyLabels((curstep>0 ? 0x036F : -1), (curstep == 2 ? 0x000F : 0), -1, -1, -1, (curstep==4 ? 0x04A4 : 0x04A3));
+    drawFkeyLabels((curstep>0 ? 0x036F : -1), (curstep == 2 ? 0x000F : 0), 0, 0, 0, (curstep==4 ? 0x04A4 : 0x04A3));
     if(curstep == 0) {
       MenuItem menuitems[5];
       menuitems[0].text = (char*)"Debit";
