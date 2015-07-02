@@ -29,44 +29,42 @@ inline static void homeSettingsMenu();
 void settingsMenu() {
   DrawFrame(COLOR_WHITE);
   
-  MenuItem menuitems[13];
+  MenuItem menuitems[12];
   menuitems[0].text = (char*)"Set time";
   
   menuitems[1].text = (char*)"Set date";
   
   menuitems[2].text = (char*)"Time format";
   
-  menuitems[3].text = (char*)"Long date format";
+  menuitems[3].text = (char*)"Date format";
   
-  menuitems[4].text = (char*)"Date format";
+  menuitems[4].text = (char*)"Home settings";
+
+  menuitems[5].text = (char*)"Calendar settings";
+
+  menuitems[6].text = (char*)"Calc. lock settings";
+
+  menuitems[7].text = (char*)"Chrono. notification";
   
-  menuitems[5].text = (char*)"Home settings";
-
-  menuitems[6].text = (char*)"Calendar settings";
-
-  menuitems[7].text = (char*)"Calc. lock settings";
-
-  menuitems[8].text = (char*)"Chrono. notification";
+  menuitems[8].text = (char*)"Display statusbar";
+  menuitems[8].type = MENUITEM_CHECKBOX;
   
-  menuitems[9].text = (char*)"Display statusbar";
+  menuitems[9].text = (char*)"Show advanced tools";
   menuitems[9].type = MENUITEM_CHECKBOX;
   
-  menuitems[10].text = (char*)"Show advanced tools";
-  menuitems[10].type = MENUITEM_CHECKBOX;
-  
-  menuitems[11].text = (char*)"Startup brightness";
+  menuitems[10].text = (char*)"Startup brightness";
 
-  menuitems[12].text = (char*)"About this add-in";
+  menuitems[11].text = (char*)"About this add-in";
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=13;
+  menu.numitems=12;
   menu.scrollout=1;
   menu.statusText = (char*)"";
   setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
   while(1) {
-    menuitems[9].value = getSetting(SETTING_DISPLAY_STATUSBAR);
-    menuitems[10].value = getSetting(SETTING_SHOW_ADVANCED);
+    menuitems[8].value = getSetting(SETTING_DISPLAY_STATUSBAR);
+    menuitems[9].value = getSetting(SETTING_SHOW_ADVANCED);
     
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) {
@@ -101,19 +99,7 @@ void settingsMenu() {
           if(res==MENU_RETURN_SELECTION) setSetting(SETTING_TIMEFORMAT, menu.selection-1, 1);
           break;
         }
-        case 4: // set long date format
-        { Selector format;
-          format.title = (char*)"Set long date format";
-          format.value = getSetting(SETTING_LONGDATEFORMAT);
-          format.min = 0;
-          format.max = 9;
-          format.type = SELECTORTYPE_LONGDATEFORMAT;
-          int res = doSelector(&format);
-          if (res == SELECTOR_RETURN_EXIT) continue;
-          setSetting(SETTING_LONGDATEFORMAT, format.value, 1);
-          break;
-        }
-        case 5: // set date format
+        case 4: // set date format
         { MenuItem menuitems[5];
           char items[3][21];
           for(int i = 0; i < 3; i++) {
@@ -130,16 +116,16 @@ void settingsMenu() {
           if(res==MENU_RETURN_SELECTION) setSetting(SETTING_DATEFORMAT, menu.selection-1, 1);
           break;
         }
-        case 6:
+        case 5:
           homeSettingsMenu();
           break;
-        case 7:
+        case 6:
           calendarSettingsMenu();
           break;
-        case 8:
+        case 7:
           lockSettingsMenu();
           break;
-        case 9:
+        case 8:
         { mMsgBoxPush(5);
           MenuItem smallmenuitems[4];
           smallmenuitems[0].text = (char*)"No notification";        
@@ -162,15 +148,15 @@ void settingsMenu() {
           mMsgBoxPop();
           break;
         }
+        case 9:
+          menuitems[8].value = !menuitems[8].value;
+          setSetting(SETTING_DISPLAY_STATUSBAR, menuitems[8].value, 1);
+          break;
         case 10:
           menuitems[9].value = !menuitems[9].value;
-          setSetting(SETTING_DISPLAY_STATUSBAR, menuitems[9].value, 1);
+          setSetting(SETTING_SHOW_ADVANCED, menuitems[9].value, 1); 
           break;
-        case 11:
-          menuitems[10].value = !menuitems[10].value;
-          setSetting(SETTING_SHOW_ADVANCED, menuitems[10].value, 1); 
-          break;
-        case 12: // set startup brightness
+        case 11: // set startup brightness
         { Selector sel;
           sel.title = (char*)"Set start brightness";
           sel.value = getSetting(SETTING_STARTUP_BRIGHTNESS);
@@ -182,7 +168,7 @@ void settingsMenu() {
           setSetting(SETTING_STARTUP_BRIGHTNESS, sel.value, 1);
           break;
         }
-        case 13:
+        case 12:
           aboutScreen();
           break;
       }
@@ -300,31 +286,32 @@ inline static int selectPaneType(int orig) {
 }
 
 inline static void homeSettingsMenu() {
-  MenuItem menuitems[8];
-  menuitems[0].text = (char*)"Set clock type";
+  MenuItem menuitems[9];
+  menuitems[0].text = (char*)"Clock type";
+  menuitems[1].text = (char*)"Date appearance";
   
-  menuitems[1].text = (char*)"Show seconds";
-  menuitems[1].type = MENUITEM_CHECKBOX;
-  
-  menuitems[2].text = (char*)"Show F. keys labels";
+  menuitems[2].text = (char*)"Show seconds";
   menuitems[2].type = MENUITEM_CHECKBOX;
   
-  menuitems[3].text = (char*)"Dark theme";
+  menuitems[3].text = (char*)"Show F. keys labels";
   menuitems[3].type = MENUITEM_CHECKBOX;
+  
+  menuitems[4].text = (char*)"Dark theme";
+  menuitems[4].type = MENUITEM_CHECKBOX;
 
-  menuitems[4].text = (char*)"Top home panel";
-  menuitems[5].text = (char*)"Right home panel";
-  menuitems[6].text = (char*)"Bottom home panel";
-  menuitems[7].text = (char*)"Left home panel";
+  menuitems[5].text = (char*)"Top home panel";
+  menuitems[6].text = (char*)"Right home panel";
+  menuitems[7].text = (char*)"Bottom home panel";
+  menuitems[8].text = (char*)"Left home panel";
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=8;
+  menu.numitems=9;
   menu.scrollout=1;
   while(1) {
-    menuitems[1].value = getSetting(SETTING_CLOCK_SECONDS);
-    menuitems[2].value = getSetting(SETTING_DISPLAY_FKEYS);
-    menuitems[3].value = getSetting(SETTING_THEME);
+    menuitems[2].value = getSetting(SETTING_CLOCK_SECONDS);
+    menuitems[3].value = getSetting(SETTING_DISPLAY_FKEYS);
+    menuitems[4].value = getSetting(SETTING_THEME);
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
@@ -359,23 +346,35 @@ inline static void homeSettingsMenu() {
           break;
         }
         case 2:
-          menuitems[1].value = !menuitems[1].value;
-          setSetting(SETTING_CLOCK_SECONDS, menuitems[1].value, 1);
+        { Selector format;
+          format.title = (char*)"Set long date format";
+          format.value = getSetting(SETTING_LONGDATEFORMAT);
+          format.min = 0;
+          format.max = 9;
+          format.type = SELECTORTYPE_LONGDATEFORMAT;
+          int res = doSelector(&format);
+          if (res == SELECTOR_RETURN_EXIT) continue;
+          setSetting(SETTING_LONGDATEFORMAT, format.value, 1);
           break;
+        }
         case 3:
           menuitems[2].value = !menuitems[2].value;
-          setSetting(SETTING_DISPLAY_FKEYS, menuitems[2].value, 1);
+          setSetting(SETTING_CLOCK_SECONDS, menuitems[2].value, 1);
           break;
         case 4:
           menuitems[3].value = !menuitems[3].value;
-          setSetting(SETTING_THEME, menuitems[3].value, 1); 
+          setSetting(SETTING_DISPLAY_FKEYS, menuitems[3].value, 1);
           break;
         case 5:
+          menuitems[4].value = !menuitems[4].value;
+          setSetting(SETTING_THEME, menuitems[4].value, 1); 
+          break;
         case 6:
         case 7:
         case 8:
+        case 9:
         {
-          int s = menu.selection-5+25;
+          int s = menu.selection-6+25;
           int t = selectPaneType(getSetting(s));
           if(t >= 0) setSetting(s, t, 1);
           break;
