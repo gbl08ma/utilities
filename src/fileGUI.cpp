@@ -1116,22 +1116,17 @@ void folderStatsScreen(File* files, Menu* menu) {
 }
 
 void compressSelectedFiles(File* files, Menu* menu) {
-  int tf = 0, cf = 0;
-  for(int i = 0; i < menu->numitems; i++) {
-    if(!files[i].isfolder && menu->items[i].isselected) {
-      int origfilesize = 0;
-      if(!isFileCompressed(files[i].filename, &origfilesize)) {
-        tf++;
-      }
-    }
-  }
+  int tf = 0, cf = 0, origfilesize = 0;
+  for(int i = 0; i < menu->numitems; i++)
+    if(!files[i].isfolder && menu->items[i].isselected && !isFileCompressed(files[i].filename, &origfilesize))
+      tf++;
+
   progressMessage((char*)" Compressing...", 0, tf);
   for(int i = 0; i < menu->numitems; i++) {
     if(!files[i].isfolder && menu->items[i].isselected) {
       char newfilename[MAX_FILENAME_SIZE];
       strcpy(newfilename, files[i].filename);
       strcat(newfilename, (char*)COMPRESSED_FILE_EXTENSION);
-      int origfilesize = 0;
       if(!isFileCompressed(files[i].filename, &origfilesize)) {
         compressFile((char*)files[i].filename, (char*)newfilename, 0, 1);
         cf++;
@@ -1150,7 +1145,7 @@ void decompressSelectedFiles(File* files, Menu* menu) {
       tf++;
     }
   }
-  progressMessage((char*)" Decompressing...", 0, tf);
+  progressMessage((char*)"Decompressing...", 0, tf);
   for(int i = 0; i < menu->numitems; i++) {
     if(!files[i].isfolder && menu->items[i].isselected) {
       char newfilename[MAX_FILENAME_SIZE];
@@ -1159,7 +1154,7 @@ void decompressSelectedFiles(File* files, Menu* menu) {
       newfilename[len-4] = '\0'; // strncpy does not zero-terminate when limit is reached
       compressFile((char*)files[i].filename, (char*)newfilename, 1, 1);
       cf++;
-      progressMessage((char*)" Decompressing...", cf, tf);
+      progressMessage((char*)"Decompressing...", cf, tf);
     }
   }
   closeProgressMessage();
