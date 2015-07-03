@@ -26,7 +26,6 @@
 #include "settingsGUI.hpp"
 #include "powerGUI.hpp"
 #include "lightGUI.hpp"
-#include "chronoProvider.hpp"
 #include "chronoGUI.hpp"
 #include "textGUI.hpp"
 #include "tasksGUI.hpp"
