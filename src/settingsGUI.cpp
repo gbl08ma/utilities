@@ -29,7 +29,7 @@ inline static void homeSettingsMenu();
 void settingsMenu() {
   DrawFrame(COLOR_WHITE);
   
-  MenuItem menuitems[12];
+  MenuItem menuitems[11];
   menuitems[0].text = (char*)"Set time";
   
   menuitems[1].text = (char*)"Set date";
@@ -46,25 +46,21 @@ void settingsMenu() {
 
   menuitems[7].text = (char*)"Chrono. notification";
   
-  menuitems[8].text = (char*)"Display statusbar";
+  menuitems[8].text = (char*)"Show advanced tools";
   menuitems[8].type = MENUITEM_CHECKBOX;
   
-  menuitems[9].text = (char*)"Show advanced tools";
-  menuitems[9].type = MENUITEM_CHECKBOX;
-  
-  menuitems[10].text = (char*)"Startup brightness";
+  menuitems[9].text = (char*)"Startup brightness";
 
-  menuitems[11].text = (char*)"About this add-in";
+  menuitems[10].text = (char*)"About this add-in";
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=12;
+  menu.numitems=11;
   menu.scrollout=1;
   menu.statusText = (char*)"";
   setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
   while(1) {
-    menuitems[8].value = getSetting(SETTING_DISPLAY_STATUSBAR);
-    menuitems[9].value = getSetting(SETTING_SHOW_ADVANCED);
+    menuitems[8].value = getSetting(SETTING_SHOW_ADVANCED);
     
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) {
@@ -150,13 +146,9 @@ void settingsMenu() {
         }
         case 9:
           menuitems[8].value = !menuitems[8].value;
-          setSetting(SETTING_DISPLAY_STATUSBAR, menuitems[8].value, 1);
+          setSetting(SETTING_SHOW_ADVANCED, menuitems[8].value, 1); 
           break;
-        case 10:
-          menuitems[9].value = !menuitems[9].value;
-          setSetting(SETTING_SHOW_ADVANCED, menuitems[9].value, 1); 
-          break;
-        case 11: // set startup brightness
+        case 10: // set startup brightness
         { Selector sel;
           sel.title = (char*)"Set start brightness";
           sel.value = getSetting(SETTING_STARTUP_BRIGHTNESS);
@@ -168,7 +160,7 @@ void settingsMenu() {
           setSetting(SETTING_STARTUP_BRIGHTNESS, sel.value, 1);
           break;
         }
-        case 12:
+        case 11:
           aboutScreen();
           break;
       }
@@ -286,7 +278,7 @@ inline static int selectPaneType(int orig) {
 }
 
 inline static void homeSettingsMenu() {
-  MenuItem menuitems[9];
+  MenuItem menuitems[10];
   menuitems[0].text = (char*)"Clock type";
   menuitems[1].text = (char*)"Date appearance";
   
@@ -295,23 +287,27 @@ inline static void homeSettingsMenu() {
   
   menuitems[3].text = (char*)"Show F. keys labels";
   menuitems[3].type = MENUITEM_CHECKBOX;
-  
-  menuitems[4].text = (char*)"Dark theme";
-  menuitems[4].type = MENUITEM_CHECKBOX;
 
-  menuitems[5].text = (char*)"Top home panel";
-  menuitems[6].text = (char*)"Right home panel";
-  menuitems[7].text = (char*)"Bottom home panel";
-  menuitems[8].text = (char*)"Left home panel";
+  menuitems[4].text = (char*)"Display statusbar";
+  menuitems[4].type = MENUITEM_CHECKBOX;
+  
+  menuitems[5].text = (char*)"Dark theme";
+  menuitems[5].type = MENUITEM_CHECKBOX;
+
+  menuitems[6].text = (char*)"Top home panel";
+  menuitems[7].text = (char*)"Right home panel";
+  menuitems[8].text = (char*)"Bottom home panel";
+  menuitems[9].text = (char*)"Left home panel";
   
   Menu menu;
   menu.items=menuitems;
-  menu.numitems=9;
+  menu.numitems=10;
   menu.scrollout=1;
   while(1) {
     menuitems[2].value = getSetting(SETTING_CLOCK_SECONDS);
     menuitems[3].value = getSetting(SETTING_DISPLAY_FKEYS);
-    menuitems[4].value = getSetting(SETTING_THEME);
+    menuitems[4].value = getSetting(SETTING_DISPLAY_STATUSBAR);
+    menuitems[5].value = getSetting(SETTING_THEME);
     int res = doMenu(&menu);
     if(res == MENU_RETURN_EXIT) return;
     else if(res == MENU_RETURN_SELECTION) {
@@ -367,14 +363,18 @@ inline static void homeSettingsMenu() {
           break;
         case 5:
           menuitems[4].value = !menuitems[4].value;
-          setSetting(SETTING_THEME, menuitems[4].value, 1); 
+          setSetting(SETTING_DISPLAY_STATUSBAR, menuitems[4].value, 1);
           break;
         case 6:
+          menuitems[5].value = !menuitems[5].value;
+          setSetting(SETTING_THEME, menuitems[5].value, 1); 
+          break;
         case 7:
         case 8:
         case 9:
+        case 10:
         {
-          int s = menu.selection-6+25;
+          int s = menu.selection-7+25;
           int t = selectPaneType(getSetting(s));
           if(t >= 0) setSetting(s, t, 1);
           break;

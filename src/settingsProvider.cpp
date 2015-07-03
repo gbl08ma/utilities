@@ -26,14 +26,6 @@ unsigned char getSetting(const int setting) {
 
 void setSetting(const int setting, const unsigned char value, const int autosave) {
   settings[setting] = value;
-  if(setting == SETTING_DISPLAY_STATUSBAR) {
-    if(settings[setting]) {
-      EnableStatusArea(0);
-      DefineStatusAreaFlags(3, SAF_BATTERY | SAF_TEXT | SAF_GLYPH | SAF_ALPHA_SHIFT, 0, 0);
-    } else {
-      EnableStatusArea(3);
-    }
-  }
   if (autosave) saveSettings();
 }
 

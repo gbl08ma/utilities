@@ -59,7 +59,7 @@ void homeScreen(int isLocked) {
   while (1) {
     //black theme, or not?
     if (getSetting(SETTING_THEME) == 1) {
-      Bdisp_Fill_VRAM( COLOR_BLACK, 3 );
+      Bdisp_Fill_VRAM(COLOR_BLACK, 3);
       DrawFrame(COLOR_BLACK);
     } else {
       Bdisp_AllClr_VRAM();
@@ -74,15 +74,17 @@ void homeScreen(int isLocked) {
       stringToMini(message, "To adjust the clock: SHIFT then MENU");
       DefineStatusMessage(message, 1, 0, 0);
     } else DefineStatusMessage((char*)"", 1, 0, 0);
-    DisplayStatusArea();
+    if(getSetting(SETTING_DISPLAY_STATUSBAR)) {
+      DisplayStatusArea();
+      if (getSetting(SETTING_THEME)) darkenStatusbar();
+    }
     if(isLocked && !GetSetupSetting((unsigned int)0x14)) {
       setBrightnessToStartupSetting();
       drawRectangle(18, 2, 18, 18, COLOR_BLACK);
       drawRectangle(20, 4, 14, 14, COLOR_CYAN);
       CopySpriteNbitMasked(lock_icon, 22, 5, 10, 12, lock_icon_palette, 0xffff, 1);
     }
-    if (getSetting(SETTING_THEME)) darkenStatusbar();
-    
+   
     // Print time
     drawHomeClock(getSetting(SETTING_CLOCK_TYPE));
 

@@ -40,7 +40,7 @@
 
 #define SETTING_DATEFORMAT 3 // 0 = DD/MM/YYYY, 1 = MM/DD/YYYY, 2 = YYYY/MM/DD
 #define SETTING_THEME 4  // whether the home screen should use a dark/inverted theme. 0: white theme; 1: dark theme
-#define SETTING_DISPLAY_STATUSBAR 5 // whether the status bar should be displayed
+#define SETTING_DISPLAY_STATUSBAR 5 // whether the status bar should be displayed on the home screen
 #define SETTING_STARTUP_BRIGHTNESS 6 // screen brightness level to force on add-in startup, 0~249. 250 for no forcing
 #define SETTING_SHOW_ADVANCED 7  // whether to show advanced things like CPU clock selection
 #define SETTING_DISPLAY_FKEYS 8 // 0: show last input character when entering passwords; 1: do not show last char
