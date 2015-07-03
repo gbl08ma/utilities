@@ -32,12 +32,12 @@ int viewWeekCalendarChild(Menu* menu, int* y, int* m, int* d, int* jumpToSel, in
 void viewEvents(int y, int m, int d);
 void viewEvent(CalendarEvent* event);
 int viewEventsChild(Menu* menu, int y, int m, int d);
-void fillInputDate(int yr, int m, int d, char* buffer);
-void fillInputTime(int h, int m, int s, char* buffer);
+void fillInputDate(EventDate* date, char* buffer);
+void fillInputTime(EventTime* t, char* buffer);
 int eventEditor(int y, int m, int d, int type=EVENTEDITORTYPE_ADD, CalendarEvent* event=NULL, int istask=0);
 void drawCalendar(int year, int month, int d, int show_event_count, int* eventcount, int* busydays, int* bufmonth, int* bufyear);
 int moveEventScreen(CalendarEvent* events, int count, int pos, int isCopy=0);
-int deleteEventPrompt(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask=0);
+int deleteEventPrompt(CalendarEvent* events, int count, int pos, int istask=0);
 int deleteAllEventsPrompt(int y, int m, int d, int istask=0);
 int selectDateScreen(int *yr, int *m, int *d, char* message, char* message2, int graphical = 0);
 void invalidFieldMsg(int istime);

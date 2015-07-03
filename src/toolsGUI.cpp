@@ -217,7 +217,7 @@ int addTransactionWizard(char* wallet) {
       input.acceptF6=1;
       input.type=INPUTTYPE_DATE;
       char datebuffer[15];
-      fillInputDate(tx.date.year, tx.date.month, tx.date.day, datebuffer);
+      fillInputDate(&tx.date, datebuffer);
       input.buffer = (char*)datebuffer;
       while(1) {
         input.key=0;
@@ -263,7 +263,7 @@ int addTransactionWizard(char* wallet) {
       input.acceptF6=1;
       input.type=INPUTTYPE_TIME;
       char tbuffer[15];
-      fillInputTime(tx.time.hour, tx.time.minute, tx.time.second, tbuffer);
+      fillInputTime(&tx.time, tbuffer);
       input.buffer = (char*)tbuffer;
       while(1) {
         input.key=0;

@@ -93,7 +93,7 @@ int viewTasksChild(Menu* menu) {
       case KEY_CTRL_F4:
       case KEY_CTRL_DEL:
         if(menu->numitems > 0)
-          if(EVENTDELETE_RETURN_CONFIRM == deleteEventPrompt(0, 0, 0, tasks, menu->numitems, menu->selection-1, 1)) {
+          if(EVENTDELETE_RETURN_CONFIRM == deleteEventPrompt(tasks, menu->numitems, menu->selection-1, 1)) {
             return 1;
           }
         break;

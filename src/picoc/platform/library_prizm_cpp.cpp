@@ -1306,11 +1306,11 @@ pcvoid(viewEventsChild)(struct ParseState *Parser, struct Value *ReturnValue, st
 }
 
 pcvoid(fillInputDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    fillInputDate(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, (char*)Param[3]->Val->Pointer);
+    fillInputDate((EventDate*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
 pcvoid(fillInputTime)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    fillInputTime(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, (char*)Param[3]->Val->Pointer);
+    fillInputTime((EventTime*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer);
 }
 
 pcvoid(eventEditor)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -1326,7 +1326,7 @@ pcvoid(moveEventScreen)(struct ParseState *Parser, struct Value *ReturnValue, st
 }
 
 pcvoid(deleteEventPrompt)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = deleteEventPrompt(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, (CalendarEvent*)Param[3]->Val->Pointer, Param[4]->Val->Integer, Param[5]->Val->Integer, Param[6]->Val->Integer);
+    ReturnValue->Val->Integer = deleteEventPrompt((CalendarEvent*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer);
 }
 
 pcvoid(deleteAllEventsPrompt)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2463,12 +2463,12 @@ const struct LibraryFunction UtilitiesCalendarGUI[] =
     { pcfunc(viewEvents),            "void viewEvents(int, int, int);" },
     { pcfunc(viewEvent),             "void viewEvent(void*);" },
     { pcfunc(viewEventsChild),       "int viewEventsChild(void*, int, int, int);" },
-    { pcfunc(fillInputDate),         "void fillInputDate(int, int, int, char*);" },
-    { pcfunc(fillInputTime),         "void fillInputTime(int, int, int, char*);" },
+    { pcfunc(fillInputDate),         "void fillInputDate(void*, char*);" },
+    { pcfunc(fillInputTime),         "void fillInputTime(void*, char*);" },
     { pcfunc(eventEditor),           "int eventEditor(int, int, int, int, void*, int);" },
     { pcfunc(drawCalendar),          "void drawCalendar(int, int, int, int, int*, int*, int*, int*);" },
     { pcfunc(moveEventScreen),       "int moveEventScreen(void*, int, int, int);" },
-    { pcfunc(deleteEventPrompt),     "int deleteEventPrompt(int, int, int, void*, int, int, int);" },
+    { pcfunc(deleteEventPrompt),     "int deleteEventPrompt(void*, int, int, int);" },
     { pcfunc(deleteAllEventsPrompt), "int deleteAllEventsPrompt(int, int, int, int);" },
     { pcfunc(selectDateScreen),      "int selectDateScreen(int*, int*, int*, char*, char*, int);" },
     { pcfunc(invalidFieldMsg),       "void invalidFieldMsg(int);" },

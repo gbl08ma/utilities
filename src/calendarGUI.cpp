@@ -730,9 +730,8 @@ int viewEventsChild(Menu* menu, int y, int m, int d) {
         replaceColorInArea(67, 195, 58, 18, COLOR_WHITE, COLOR_GREEN);
         replaceColorInArea(67, 195, 58, 18, fgc, COLOR_WHITE);
         replaceColorInArea(67, 195, 58, 18, COLOR_GREEN, fgc);
-        for(int x = 0; x < 5; x++) {
+        for(int x = 0; x < 5; x++)
           drawLine(125-x, 214, 126, 213-x, COLOR_WHITE);
-        }
       }
     }
     int res = doMenu(menu);
@@ -741,12 +740,13 @@ int viewEventsChild(Menu* menu, int y, int m, int d) {
         return 0;
         break;
       case KEY_CTRL_F1:
-        if(menu->fkeypage == 0) { if(menu->numitems > 0) viewEvent(&events[menu->selection-1]); }
-        else if (menu->fkeypage == 1) {
-          if(moveEventScreen(events, menu->numitems, menu->selection-1, 1) == EVENTEDITOR_RETURN_CONFIRM) {
-            bufmonth = 0; searchValid = 0;
-            return 1;
-          }
+        if(menu->fkeypage == 0 && menu->numitems > 0)
+          viewEvent(&events[menu->selection-1]);
+        else if (menu->fkeypage == 1 &&
+                 moveEventScreen(events, menu->numitems, menu->selection-1, 1) ==
+                 EVENTEDITOR_RETURN_CONFIRM) {
+          bufmonth = 0; searchValid = 0;
+          return 1;
         }
         break;
       case MENU_RETURN_SELECTION:
@@ -762,7 +762,8 @@ int viewEventsChild(Menu* menu, int y, int m, int d) {
             }
           }
         } else if (menu->fkeypage == 1) {
-          if(moveEventScreen(events, menu->numitems, menu->selection-1) == EVENTEDITOR_RETURN_CONFIRM) {
+          if(moveEventScreen(events, menu->numitems, menu->selection-1) ==
+              EVENTEDITOR_RETURN_CONFIRM) {
             bufmonth=0; searchValid = 0;
             return 1;
           }
@@ -771,11 +772,12 @@ int viewEventsChild(Menu* menu, int y, int m, int d) {
       case KEY_CTRL_F3:
         if(menu->fkeypage == 0) {
           if(menu->numitems > 0) {
-            if(eventEditor(y, m, d, EVENTEDITORTYPE_EDIT, &events[menu->selection-1]) == EVENTEDITOR_RETURN_CONFIRM) {
+            if(eventEditor(y, m, d, EVENTEDITORTYPE_EDIT, &events[menu->selection-1]) ==
+                EVENTEDITOR_RETURN_CONFIRM) {
               replaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
               searchValid = 0; bufmonth = 0;
             }
-            return 1; // even if the user didn't confirm the changes, we have them in our event list.
+            return 1; // even if the user didn't confirm the changes, we have them in our event list
                       // discard the changes by reloading the list to a clean state.
           }
         } else if (menu->fkeypage == 1) {
@@ -788,7 +790,7 @@ int viewEventsChild(Menu* menu, int y, int m, int d) {
           if(EVENTDELETE_RETURN_CONFIRM == \
               // depending on the key, delete all events or just the selected one
               (res == KEY_CTRL_F4 ?
-                deleteEventPrompt(y, m, d, events, menu->numitems, menu->selection-1)
+                deleteEventPrompt(events, menu->numitems, menu->selection-1)
                 :
                 deleteAllEventsPrompt(y, m, d, 0)
               )
@@ -800,7 +802,7 @@ int viewEventsChild(Menu* menu, int y, int m, int d) {
       case KEY_CTRL_DEL:
         if(menu->numitems > 0 &&
            EVENTDELETE_RETURN_CONFIRM == \
-           deleteEventPrompt(y, m, d, events, menu->numitems, menu->selection-1)) {
+           deleteEventPrompt(events, menu->numitems, menu->selection-1)) {
           bufmonth = 0;
           searchValid = 0;
           return 1;
@@ -813,7 +815,8 @@ int viewEventsChild(Menu* menu, int y, int m, int d) {
         //so on this add-in it is used to change the category (color) of a task/calendar event.
         if(menu->numitems > 0 &&
            EVENTEDITOR_RETURN_CONFIRM == setCategoryPrompt(&events[menu->selection-1])) {
-          replaceEventFile(&events[menu->selection-1].startdate, events, CALENDARFOLDER, menu->numitems);
+          replaceEventFile(&events[menu->selection-1].startdate, events,
+                           CALENDARFOLDER, menu->numitems);
           searchValid = 0;
           return 1;
         }
@@ -906,13 +909,13 @@ void viewEvent(CalendarEvent* event) {
   doTextArea(&text);
 }
 
-void fillInputDate(int yr, int m, int d, char* buffer) {
+void fillInputDate(EventDate* date, char* buffer) {
   buffer[0] = '\0';
-  if(yr || m || d) {
+  if(date->year || date->month || date->day) {
     char day[5], month[5], year[5];
-    itoa_zeropad(d, day, 2);
-    itoa_zeropad(m, month, 2);
-    itoa_zeropad(yr, year, 4);
+    itoa_zeropad(date->day, day, 2);
+    itoa_zeropad(date->month, month, 2);
+    itoa_zeropad(date->year, year, 4);
 
     switch(getSetting(SETTING_DATEFORMAT)) {
       case 0:
@@ -934,12 +937,12 @@ void fillInputDate(int yr, int m, int d, char* buffer) {
   }
 }
 
-void fillInputTime(int h, int m, int s, char* buffer) {
+void fillInputTime(EventTime* t, char* buffer) {
   buffer[0] = '\0';
-  if(h || m || s) {
-    itoa_zeropad(h, buffer, 2);
-    itoa_zeropad(m, buffer+2, 2);
-    itoa_zeropad(s, buffer+4, 2);
+  if(t->hour || t->minute || t->second) {
+    itoa_zeropad(t->hour, buffer, 2);
+    itoa_zeropad(t->minute, buffer+2, 2);
+    itoa_zeropad(t->second, buffer+4, 2);
   }
 }
 int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask) {
@@ -1044,9 +1047,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         input.type=INPUTTYPE_TIME;
         char stbuffer[15];
         stbuffer[0] = '\0';
-        if(event->timed) fillInputTime(event->starttime.hour,
-                                       event->starttime.minute,
-                                       event->starttime.second, stbuffer);
+        if(event->timed) fillInputTime(&event->starttime, stbuffer);
         input.buffer = (char*)stbuffer;
         while(1) {
           input.key=0;
@@ -1091,7 +1092,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
         input.acceptF6=1;
         input.type=INPUTTYPE_DATE;
         char edbuffer[15];
-        fillInputDate(event->enddate.year, event->enddate.month, event->enddate.day, edbuffer);
+        fillInputDate(&event->enddate, edbuffer);
         input.buffer = (char*)edbuffer;
         while(1) {
           input.key=0;
@@ -1161,8 +1162,7 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
           input.acceptF6=1;
           input.type=INPUTTYPE_TIME;
           char etbuffer[15];
-          fillInputTime(event->endtime.hour,
-                        event->endtime.minute, event->endtime.second, etbuffer);
+          fillInputTime(&event->endtime, etbuffer);
           input.buffer = (char*)etbuffer;
           while(1) {
             input.key=0;
@@ -1237,8 +1237,6 @@ int eventEditor(int y, int m, int d, int type, CalendarEvent* event, int istask)
             case KEY_CTRL_EXIT: return EVENTEDITOR_RETURN_EXIT;
           }
         }
-        //event->daterange = 0;
-        //event->dayofweek = dow(event->startdate.day, event->startdate.month, event->startdate.year);
         if(type == EVENTEDITORTYPE_ADD) {
           event->repeat = 0;
           int res = addEvent(event, CALENDARFOLDER);
@@ -1424,8 +1422,8 @@ void drawCalendar(int year, int month, int d, int show_event_count, int* eventco
   PrintMini(&textX, &textY, buffer, 0, 0xFFFFFFFF, 0, 0, COLOR_WHITE, COLOR_BLACK, 1, 0);
 }
 
-int deleteEventPrompt(int y, int m, int d, CalendarEvent* events, int count, int pos, int istask) {
-  EventDate date; date.day = d; date.month = m; date.year = y;
+int deleteEventPrompt(CalendarEvent* events, int count, int pos, int istask) {
+  EventDate date = events[pos].startdate;
   mMsgBoxPush(4);
   mPrintXY(3, 2, "Delete the", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   mPrintXY(3, 3, istask ? "Selected Task?" : "Selected Event?",
@@ -1482,7 +1480,11 @@ int selectDateScreen(int *yr, int *m, int *d, char* message, char* message2, int
     input.charlimit=8;
     input.type=INPUTTYPE_DATE;
     char buffer[15];
-    fillInputDate(*yr, *m, *d, buffer);
+    EventDate date;
+    date.year = *yr;
+    date.month = *m;
+    date.day = *d;
+    fillInputDate(&date, buffer);
     input.buffer = (char*)buffer;
     while(1) {
       input.key=0;
@@ -1808,7 +1810,8 @@ void searchEventsScreen(int y, int m, int d) {
   }
 }
 
-void drawBusymapDay(EventDate* thisday, int startx, int starty, int width, int height, int showHourMarks, int isWeek, int maxx) {
+void drawBusymapDay(EventDate* thisday, int startx, int starty, int width, int height,
+                    int showHourMarks, int isWeek, int maxx) {
   if(!isWeek) drawRectangle(startx, starty, width, height, COLOR_LIGHTGRAY);
   if(showHourMarks) {
     for(int i = 0; i < 24; i++) {
