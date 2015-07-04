@@ -12,9 +12,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "powerGUI.hpp"
 #include "menuGUI.hpp"
-#include "hardwareProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "timeProvider.hpp"
@@ -30,7 +28,8 @@
 #include "calendarGUI.hpp"
 #include "inputGUI.hpp"
 
-static int lastChronoComplete=0; // 1-based. 0 means no chrono completed. for notification on home screen.
+static int lastChronoComplete=0; // 1-based.
+                                 // 0 means no chrono completed. for notification on home screen.
 
 void formatChronoString(chronometer* tchrono, int num, char* string, int isChronoView) {
   long long int unixtime = currentUEBT();
@@ -55,8 +54,10 @@ void formatChronoString(chronometer* tchrono, int num, char* string, int isChron
   if(tchrono->state == CHRONO_STATE_CLEARED) { return; } //nothing else to add, chrono is clear
   else if(tchrono->state == CHRONO_STATE_STOPPED) {
     //diff will be calculated in a different way, so that it is always stopped
-    if(tchrono->type == CHRONO_TYPE_DOWN) unixdiff = tchrono->starttime+tchrono->duration-tchrono->laststop;
-    else unixdiff = tchrono->laststop-tchrono->starttime;    
+    if(tchrono->type == CHRONO_TYPE_DOWN)
+      unixdiff = tchrono->starttime+tchrono->duration-tchrono->laststop;
+    else
+      unixdiff = tchrono->laststop-tchrono->starttime;    
   } else {
     if(tchrono->type == CHRONO_TYPE_DOWN) unixdiff = tchrono->starttime+tchrono->duration-unixtime;
     else unixdiff = unixtime-tchrono->starttime;
@@ -92,7 +93,8 @@ void formatChronoString(chronometer* tchrono, int num, char* string, int isChron
     }
   }
   if(isChronoView) {
-    drawAnalogChronometer(LCD_WIDTH_PX / 2, LCD_HEIGHT_PX / 2 + 10, 65, COLOR_WHITE, COLOR_BLACK, days, hours, minutes, seconds*1000 + milliseconds);
+    drawAnalogChronometer(LCD_WIDTH_PX / 2, LCD_HEIGHT_PX / 2 + 10, 65, COLOR_WHITE, COLOR_BLACK,
+                          days, hours, minutes, seconds*1000 + milliseconds);
   }
 }
 void doNothing() {}
@@ -146,11 +148,16 @@ void chronoScreen() {
     }
     if(menu.fkeypage==0) {
       drawFkeyLabels(0x0037, // SELECT (white)
-        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED ? 0x0010 : 0), // SET
-        (hasSelection || chrono[menu.selection-1].state != CHRONO_STATE_CLEARED ? 0x0149 : 0), // CLEAR
-        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_STOPPED ? 0x040A : 0), // play icon
-        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_RUNNING ? 0x0031 : 0), // stop icon
-        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED ? 0x0156 : 0)); // BUILT-IN
+        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED ?
+                                                                          0x0010 : 0), // SET
+        (hasSelection || chrono[menu.selection-1].state != CHRONO_STATE_CLEARED ?
+                                                                          0x0149 : 0), // CLEAR
+        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_STOPPED ?
+                                                                          0x040A : 0), // play icon
+        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_RUNNING ?
+                                                                          0x0031 : 0), // stop icon
+        (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED ?
+                                                                          0x0156 : 0)); // BUILT-IN
       // "hack" the stop icon, turning it into a pause icon
       drawRectangle(286, 197, 4, 14, COLOR_WHITE);
     } else if (menu.fkeypage==1) {
@@ -205,36 +212,42 @@ void chronoScreen() {
           SetSetupSetting( (unsigned int)0x14, 0);
           menu.fkeypage=1;
         } else {
-          if(menuitems[menu.selection-1].value == MENUITEM_VALUE_CHECKED) menuitems[menu.selection-1].value=MENUITEM_VALUE_NONE;
-          else menuitems[menu.selection-1].value=MENUITEM_VALUE_CHECKED;
+          menuitems[menu.selection-1].value = !menuitems[menu.selection-1].value;
         }
         break;
       case KEY_PRGM_F2:
-        if(menu.fkeypage==0 && (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED)) setChronoScreen(&menu, chrono, 0);
+        if(menu.fkeypage==0 &&
+            (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED))
+          setChronoScreen(&menu, chrono, 0);
         else if (menu.fkeypage==1) {
           // select all
-          for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = MENUITEM_VALUE_CHECKED;
+          for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++)
+            menu.items[cur].value = MENUITEM_VALUE_CHECKED;
         }
         break;
       case KEY_PRGM_F3:
         if(menu.fkeypage==0) clearSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
         else if (menu.fkeypage==1) {
           // select none
-          for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = MENUITEM_VALUE_NONE;
+          for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++)
+            menu.items[cur].value = MENUITEM_VALUE_NONE;
         }
         break;
       case KEY_PRGM_F4:
         if(menu.fkeypage==0) startSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
         else if (menu.fkeypage==1) {
           // reverse selection
-          for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) menu.items[cur].value = !menu.items[cur].value;
+          for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++)
+            menu.items[cur].value = !menu.items[cur].value;
         }
         break;
       case KEY_PRGM_F5:
         if(menu.fkeypage==0) stopSelectedChronos(&menu, chrono, NUMBER_OF_CHRONO);
         break;
       case KEY_PRGM_F6:
-        if(menu.fkeypage==0 && (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED)) setPresetChrono(&menu, chrono);
+        if(menu.fkeypage==0 &&
+            (hasSelection || chrono[menu.selection-1].state == CHRONO_STATE_CLEARED))
+          setPresetChrono(&menu, chrono);
         break;
       case KEY_PRGM_EXIT:
         if(menu.fkeypage==0) {
@@ -257,7 +270,8 @@ void startSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
       hasPerformedAny = 1;
     }
   }
-  if(!hasPerformedAny) startChrono(&tchrono[menu->selection-1]); // if there was no selected chrono, do it for the currently selected menu position
+  if(!hasPerformedAny) // if there was no selected chrono, do it for the selected item
+    startChrono(&tchrono[menu->selection-1]);
   saveChronoArray(tchrono, NUMBER_OF_CHRONO);
 }
 
@@ -270,7 +284,8 @@ void stopSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
       hasPerformedAny = 1;
     }
   }
-  if(!hasPerformedAny) stopChrono(&tchrono[menu->selection-1]); // if there was no selected chrono, do it for the currently selected menu position
+  if(!hasPerformedAny) // if there was no selected chrono, do it for the selected item
+    stopChrono(&tchrono[menu->selection-1]);
   saveChronoArray(tchrono, NUMBER_OF_CHRONO); 
 }
 
@@ -283,7 +298,8 @@ void clearSelectedChronos(Menu* menu, chronometer* tchrono, int count) {
       hasPerformedAny = 1;
     }
   }
-  if(!hasPerformedAny) clearChrono(&tchrono[menu->selection-1]); // if there was no selected chrono, do it for the currently selected menu position
+  if(!hasPerformedAny) // if there was no selected chrono, do it for the selected item
+    clearChrono(&tchrono[menu->selection-1]);
   saveChronoArray(tchrono, NUMBER_OF_CHRONO); 
 }
 
@@ -309,7 +325,8 @@ void setChronoScreen(Menu* menu, chronometer* tchrono, int menuSelOnly) {
   text.elements = elem;
   text.scrollbar=0;
   
-  elem[0].text = (char*)"Chronometers will start the moment they are set. You should familiarize yourself with the behavior of the chronometer functions before relying on them.";
+  elem[0].text = (char*)"Chronometers will start the moment they are set. You should familiarize "
+                  "yourself with the behavior of the chronometer functions before relying on them.";
 
   text.numelements = 1;
   Bdisp_AllClr_VRAM();
@@ -328,7 +345,8 @@ void setChronoScreen(Menu* menu, chronometer* tchrono, int menuSelOnly) {
         Selector sel;
         sel.title =  (char*)"Set downwards chrono.";
         sel.subtitle = (char*)"Days";
-        sel.max = 1000000; // some sort of overflow happens with very big values, even though in theory it would all be within the limits of int64
+        sel.max = 1000000; // some sort of overflow happens with much bigger values,
+                           // even though in theory it would all be within the limits of int64
         sel.cycle = 0;
         sel.type = SELECTORTYPE_NORMAL;
         if (doSelector(&sel) == SELECTOR_RETURN_EXIT) return;
@@ -358,9 +376,11 @@ void setChronoScreen(Menu* menu, chronometer* tchrono, int menuSelOnly) {
       } else if(bmenu.selection == 3) {
         int y=getCurrentYear(), m=getCurrentMonth(), d=getCurrentDay();
         if(selectDateScreen(&y, &m, &d, (char*)"Select chronometer end date", (char*)"", 1)) return;
-        if(dateToDays(y, m, d) - dateToDays(getCurrentYear(), getCurrentMonth(), getCurrentDay()) < 0) {
+        if(dateToDays(y, m, d) -
+              dateToDays(getCurrentYear(), getCurrentMonth(), getCurrentDay()) < 0) {
           mMsgBoxPush(4);
-          multiPrintXY(3, 2, "Date is in the\npast.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          multiPrintXY(3, 2, "Date is in the\npast.", TEXT_MODE_TRANSPARENT_BACKGROUND,
+                        TEXT_COLOR_BLACK);
           closeMsgBox();
           return;
         }
@@ -396,7 +416,8 @@ void setChronoScreen(Menu* menu, chronometer* tchrono, int menuSelOnly) {
         ms = dateTimeToUEBT(y, m, d, h, mi, s, 0) - currentUEBT();
         if(ms < 0) {
           mMsgBoxPush(4);
-          multiPrintXY(3, 2, "Time is in the\npast.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          multiPrintXY(3, 2, "Time is in the\npast.", TEXT_MODE_TRANSPARENT_BACKGROUND,
+                        TEXT_COLOR_BLACK);
           closeMsgBox();
           return;
         }
@@ -415,7 +436,8 @@ void setChronoScreen(Menu* menu, chronometer* tchrono, int menuSelOnly) {
       }
     }
   }
-  if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], ms, type); // if there was no selected chrono, do it for the currently selected menu position
+  if(!hasPerformedAny) // if there was no selected chrono, do it for the selected item
+    setChrono(&tchrono[menu->selection-1], ms, type);
   saveChronoArray(tchrono, NUMBER_OF_CHRONO);
 }
 
@@ -466,7 +488,8 @@ void setPresetChrono(Menu* menu, chronometer* tchrono) {
       hasPerformedAny=1;
     }
   }
-  if(!hasPerformedAny) setChrono(&tchrono[menu->selection-1], duration, CHRONO_TYPE_DOWN); // if there was no selected chrono, do it for the currently selected menu position
+  if(!hasPerformedAny) // if there was no selected chrono, do it for the selected item
+    setChrono(&tchrono[menu->selection-1], duration, CHRONO_TYPE_DOWN);
   saveChronoArray(tchrono, NUMBER_OF_CHRONO);
   Bdisp_AllClr_VRAM();
 }
@@ -476,15 +499,17 @@ int getLastCompleteChrono() { return lastChronoComplete; }
 void checkChronoComplete(chronometer* chronoarray) {
   long long int curtime = currentUEBT();
   for(int cur = 0; cur < NUMBER_OF_CHRONO; cur++) {
-    if(chronoarray[cur].state == CHRONO_STATE_RUNNING && chronoarray[cur].type == CHRONO_TYPE_DOWN && //...
-    // check if chrono is complete
-    // if end time of chrono (start+duration) <= current time and chrono is running, chrono is complete
-    /*...*/  chronoarray[cur].starttime+chronoarray[cur].duration<=curtime) {
+    if(chronoarray[cur].state == CHRONO_STATE_RUNNING &&
+       chronoarray[cur].type == CHRONO_TYPE_DOWN && //...
+      // check if chrono is complete
+      // if end time of chrono (start+duration) <= current time and chrono is running, it's complete
+      /*...*/  chronoarray[cur].starttime+chronoarray[cur].duration<=curtime) {
       //clear this chrono
       clearChrono(&chronoarray[cur]);
       saveChronoArray(chronoarray, NUMBER_OF_CHRONO);
       lastChronoComplete = cur+1; // lastChronoComplete is one-based
-      if(getSetting(SETTING_CHRONO_NOTIFICATION_TYPE) && getSetting(SETTING_CHRONO_NOTIFICATION_TYPE) != 3) {
+      if(getSetting(SETTING_CHRONO_NOTIFICATION_TYPE) &&
+         getSetting(SETTING_CHRONO_NOTIFICATION_TYPE) != 3) {
         // user wants notification with pop-up
         mMsgBoxPush(4);
         char buffer[34];
@@ -494,13 +519,15 @@ void checkChronoComplete(chronometer* chronoarray) {
         if(getSetting(SETTING_CHRONO_NOTIFICATION_TYPE) == 1) {
           // notification with screen flashing
           PrintXY_2(TEXT_MODE_NORMAL, 1, 5, 2, TEXT_COLOR_BLACK); // press exit message
-          flashLight(1); // with parameter set to 1, it doesn't change VRAM, and since it returns on pressing EXIT...
+          flashLight(1); // returns on EXIT, and with parameter set to 1, it doesn't change VRAM
           mMsgBoxPop();
         } else {
           // without screen flashing
           closeMsgBox();
         }
-        lastChronoComplete = 0; // otherwise, notification may show on home for a previous timer, if the user changes the setting in the meantime.
+        // otherwise, notification may show on home for a previous timer, if the user changes the
+        // setting in the meantime.
+        lastChronoComplete = 0;
       }
     }
   }
@@ -543,7 +570,8 @@ void viewChrono(Menu* menu, chronometer* chrnarr) {
     if(!key) key_zeroed = 1;
     else if(key_zeroed) {
       key_zeroed = 0;
-      if(key == KEY_PRGM_MENU) GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); //this is here just to handle the Menu key
+      if(key == KEY_PRGM_MENU)
+        GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); // here just to handle the Menu key
       else if(key == KEY_PRGM_F1) {
         if(chrn->state == CHRONO_STATE_RUNNING) stopChrono(chrn);
         else if (chrn->state == CHRONO_STATE_STOPPED) startChrono(chrn);
