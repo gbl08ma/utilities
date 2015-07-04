@@ -505,7 +505,7 @@ void getEventCountsForMonth(int year, int month, int* dbuffer, int* busydays) {
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-    if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0 )) {      
+    if(fileinfo.fsize) { // just in case there's a folder matching the mask
       // get the start day from the filename
       int nlen = strlen((char*)buffer);
       if(isdigit(buffer[nlen-4-2]) && isdigit(buffer[nlen-4-1])) {
