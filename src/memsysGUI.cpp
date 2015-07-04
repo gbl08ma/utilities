@@ -95,7 +95,7 @@ int getAddins(AddIn addins[]) {
   char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy(buffer, SMEM_PREFIX"*");
+  strcpy(buffer, SMEM_PREFIX"*3a");
   
   int curitem = 0;
   file_type_t fileinfo;
@@ -106,7 +106,7 @@ int getAddins(AddIn addins[]) {
   Bfile_StrToName_ncpy(path2, (char*)"*.h3a", MAX_FILENAME_SIZE+1);
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-    if(!(strcmp(buffer, "..") == 0 || strcmp(buffer, ".") == 0 || strcmp(buffer, (char*)SELFFILE) == 0) &&
+    if(strcmp(buffer, (char*)SELFFILE) && fileinfo.fsize &&
         ((Bfile_Name_MatchMask((const short int*)path, (const short int*)found)) || (Bfile_Name_MatchMask((const short int*)path2, (const short int*)found))))
     {
       strcpy(addins[curitem].filename, (char*)buffer);
