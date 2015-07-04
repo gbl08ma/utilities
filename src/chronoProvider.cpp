@@ -20,7 +20,8 @@
 #include "chronoProvider.hpp"
 #include "chronoGUI.hpp"
 
-void saveChronoArray(chronometer* chronoarray, int count) { // count is the amount of chrono in array
+void saveChronoArray(chronometer* chronoarray, int count) {
+  // count is the amount of chrono in array
   int allClear = 1;
   for(int cur = 0; cur < count; cur++) {
     if(chronoarray[cur].state != CHRONO_STATE_CLEARED) allClear=0;
@@ -33,18 +34,21 @@ void saveChronoArray(chronometer* chronoarray, int count) { // count is the amou
     return;
   }
   // Check if directory exists:
-  if(MCS_CreateDirectory(DIRNAME)) // directory already exists, so delete the exiting file that may be there
+  if(MCS_CreateDirectory(DIRNAME))
+    // directory already exists, so delete the exiting file that may be there
     MCSDelVar2(DIRNAME, CHRONOFILE);
   MCSPutVar2(DIRNAME, CHRONOFILE, count*sizeof(chronometer), chronoarray);
 }
 
-void loadChronoArray(chronometer* chronoarray, int count) { // count is the amount of chrono to load to array
+void loadChronoArray(chronometer* chronoarray, int count) {
+  // count is the amount of chrono to load to array
   int size;
   MCSGetDlen2(DIRNAME, CHRONOFILE, &size);
-  // check if file exists, and compare read file size to expected file size to detect incompatibility.
-  // if there is, delete old file and return
+  // check if file exists, and compare read file size to expected file size to detect
+  // incompatibility. if there is, delete old file and return.
   if (size != count*(int)sizeof(chronometer)) {
-    // doesn't exist or is incompatible. We could return right now, but other code may be expecting a "clean" chronoarray,
+    // doesn't exist or is incompatible.
+    // We could return right now, but other code may be expecting a "clean" chronoarray,
     // so we must clear each chrono manually
     for(int cur=0; cur < count; cur++) clearChrono(&chronoarray[cur]);
     return;
@@ -72,8 +76,10 @@ void stopChrono(chronometer* tchrono) {
 
 void startChrono(chronometer* tchrono) {
   if(tchrono->state == CHRONO_STATE_STOPPED) {
-    if(tchrono->type == CHRONO_TYPE_UP) tchrono->starttime = tchrono->starttime+currentUEBT()-tchrono->laststop;
-    else tchrono->duration = tchrono->duration+currentUEBT()-tchrono->laststop;
+    if(tchrono->type == CHRONO_TYPE_UP)
+      tchrono->starttime = tchrono->starttime+currentUEBT()-tchrono->laststop;
+    else
+      tchrono->duration = tchrono->duration+currentUEBT()-tchrono->laststop;
     tchrono->state = CHRONO_STATE_RUNNING;
   }
 }

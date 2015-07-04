@@ -65,15 +65,18 @@
 #endif
 
 #ifndef KNOWN_PAST_TIMESTAMP
-#define KNOWN_PAST_TIMESTAMP 1402704000*1000 // a timestamp that's known to be in the past for all timezones, so we can detect a unadjusted RTC
+// a timestamp that's known to be in the past for all timezones, so we can detect a unadjusted RTC
+#define KNOWN_PAST_TIMESTAMP 1402704000*1000
 #endif
 
 #ifndef BUILD_EXPIRE_TIMESTAMP
-#define BUILD_EXPIRE_TIMESTAMP 1412035200*1000 // after the calc RTC is in a timestamp past this, users will be prompted to check for updates
+// after the calc RTC is in a timestamp past this, users will be prompted to check for updates
+#define BUILD_EXPIRE_TIMESTAMP 1412035200*1000
 #endif
 
 #ifndef HIGHEST_SUPPORTED_YEAR
-#define HIGHEST_SUPPORTED_YEAR 9999 // can't be above 9999 because calendar database format and code expects year to have at most four digits
+// can't be above 9999 because calendar database format and code expects year to have at most four digits
+#define HIGHEST_SUPPORTED_YEAR 9999
 #endif
 
 #ifndef LOWEST_SUPPORTED_YEAR

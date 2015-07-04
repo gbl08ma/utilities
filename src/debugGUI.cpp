@@ -15,7 +15,6 @@
 #include "debugGUI.hpp"
 #include "menuGUI.hpp"
 #include "settingsProvider.hpp"
-#include "linkProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 
@@ -83,7 +82,8 @@ void masterControl() {
         case 2: loadSettings(); break;
         case 3: 
         case 4:
-          setSetting(SETTING_ENABLE_LOCK, menu.selection-3, 0); // do not autosave, to allow full control of the operator
+          // do not autosave, to allow full control of the operator
+          setSetting(SETTING_ENABLE_LOCK, menu.selection-3, 0);
           break;
 #ifdef ENABLE_DEBUG          
         case 5:
@@ -92,10 +92,10 @@ void masterControl() {
           break;
         case 7:
         case 8:
-          setSetting(SETTING_ACTIVATION_STATUS, menu.selection-7, 0); // do not autosave, to allow full control of the operator
+          // do not autosave, to allow full control of the operator
+          setSetting(SETTING_ACTIVATION_STATUS, menu.selection-7, 0);
           break;
         case 9:
-          //CallbackAtQuitMainFunction( mycallback );
           Restart();
           break;
 #endif

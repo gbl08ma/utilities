@@ -14,7 +14,6 @@
 #include <alloca.h>
 
 #include "constantsProvider.hpp"
-#include "timeProvider.hpp"
 #include "settingsProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
@@ -41,7 +40,8 @@ void fileManager() {
   strcpy(filetoedit, "");
   while(res) {
     int fileAction = 0;
-    res = fileManagerChild(browserbasepath, &itemsinclip, &fileAction, &shownMainMemHelp, clipboard, filetoedit);
+    res = fileManagerChild(browserbasepath, &itemsinclip, &fileAction, &shownMainMemHelp,
+                           clipboard, filetoedit);
     switch(fileAction) {
       case 1:
         textfileEditor(filetoedit);
@@ -53,7 +53,8 @@ void fileManager() {
           char resStr[10];
           itoa(res, (unsigned char*)resStr);
           mMsgBoxPush(4);
-          multiPrintXY(3, 2, "PicoC execution\nfinished with\ncode:", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+          multiPrintXY(3, 2, "PicoC execution\nfinished with\ncode:",
+                       TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           mPrintXY(9, 4, resStr, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
           closeMsgBox();
         }
@@ -83,7 +84,8 @@ void getFileManagerStatus(char* title, int itemsinclip, int ismanager) {
   }
 }
 
-int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, int* shownMainMemHelp, File* clipboard, char* filetoedit) {
+int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction,
+                     int* shownMainMemHelp, File* clipboard, char* filetoedit) {
   Menu menu;
   MenuItemIcon icontable[12];
   buildIconTable(icontable);
@@ -108,10 +110,14 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
   int has_preset_selection = 0;
   for(int i = 0; i < menu.numitems; i++) {
       menuitems[i].isfolder = files[i].isfolder;
-      if(menuitems[i].isfolder) menuitems[i].icon = FILE_ICON_FOLDER; // it would be a folder icon anyway, because isfolder is true
-      else menuitems[i].icon = filenameToIcon(files[i].filename + files[i].visname);
-      menuitems[i].isselected = 0; //clear selection. this means selection is cleared when changing directory (doesn't happen with native file manager)
-      // because usually alloca is used to declare space for MenuItem*, the space is not cleared. which means we need to explicitly set each field:
+      if(menuitems[i].isfolder)
+        // it would be a folder icon anyway, because isfolder is true
+        menuitems[i].icon = FILE_ICON_FOLDER;
+      else
+        menuitems[i].icon = filenameToIcon(files[i].filename + files[i].visname);
+      menuitems[i].isselected = 0; // clear selection
+      // because usually alloca is used to declare space for MenuItem*, the space is not initialized
+      // which means we need to explicitly set each field:
       menuitems[i].text = files[i].filename + files[i].visname;
       menuitems[i].color=TEXT_COLOR_BLACK;
       menuitems[i].type=MENUITEM_NORMAL;
@@ -135,11 +141,14 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
   while(1) {
     int temptextX=5*18+10; // px length of menu title + 10, like menuGUI goes.
     int temptextY=0;
-    PrintMini(&temptextX, &temptextY, friendlypath, 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 0, 0); // fake draw
+    PrintMini(&temptextX, &temptextY, friendlypath, 0, 0xFFFFFFFF, 0, 0,
+              COLOR_BLACK, COLOR_WHITE, 0, 0); // fake draw
     if(temptextX>LCD_WIDTH_PX-6) {
       char newfriendlypath[MAX_FILENAME_SIZE];
       shortenDisplayPath(friendlypath, newfriendlypath, jump);
-      if(strlen(friendlypath) > strlen(newfriendlypath) && strlen(newfriendlypath) > 2) { // check if len > 2 because shortenDisplayPath may return just the MB char with "..." when the folder name is too big
+      // check if len > 2 because shortenDisplayPath may return just the MB char with "..." when the
+      // folder name is too big
+      if(strlen(friendlypath) > strlen(newfriendlypath) && strlen(newfriendlypath) > 2) {
         // shortenDisplayPath still managed to shorten, copy and continue
         jump = 3; //it has been shortened already, so next time jump the first three characters
         strcpy(friendlypath, newfriendlypath);
@@ -164,7 +173,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
     menu.statusText = statusbuffer;
     int allcompressed = 1;
     if(menu.numselitems == 0) {
-      drawFkeyLabels(0, // set by menu as SELECT [empty], otherwise make it white (we're not using Bdisp_AllClr_VRAM)
+      drawFkeyLabels(0, // set by menu as SELECT [empty], otherwise clear space
         0x03B6, // SEQ
         (menu.numitems>0 ? 0x0187 : 0), // SEARCH (only if there are items)
         0x0186, // NEW
@@ -176,7 +185,8 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
           if(menu.items[i].isselected) {
             if(menu.items[i].isfolder) {
               allcompressed = 0;
-              break; // no need to check more, if one of the items is a folder, then not all items are compressed.
+              break; // no need to check more, if one of the items is a folder,
+                     // then not all items are compressed.
             }
             int origfilesize;
             if(!isFileCompressed(files[i].filename, &origfilesize)) {
@@ -186,7 +196,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
           }
         }
       }
-      drawFkeyLabels(0, // set by menu as SELECT [empty], otherwise make it white (we're not using Bdisp_AllClr_VRAM)
+      drawFkeyLabels(0, // set by menu as SELECT [empty], otherwise clear space
         0x0069, // CUT (white)
         0x0034, // COPY (white)
         (allcompressed ? 0x161 : 0x160), // Comp (white) / Dec (white)
@@ -200,7 +210,8 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
       res = doMenu(&menu, icontable);
     switch(res) {
       case MENU_RETURN_EXIT:
-        if(!strcmp(browserbasepath, SMEM_PREFIX)) { //check that we aren't already in the root folder
+        // check that we aren't already in the root folder
+        if(!strcmp(browserbasepath, SMEM_PREFIX)) {
           //we are, return 0 so we exit
           return 0;
         } else {
@@ -217,7 +228,8 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
           strcat(browserbasepath, "\\");
           if(!strcmp(browserbasepath, SMEM_PREFIX "@MainMem\\") && !*shownMainMemHelp) {
             mMsgBoxPush(5);
-            multiPrintXY(3, 2, "Note: this is not\nthe Main Memory,\njust a special\nmirror of it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            multiPrintXY(3, 2, "Note: this is not\nthe Main Memory,\njust a special\nmirror of it.",
+                         TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             closeMsgBox(0, 6);
             *shownMainMemHelp=1;
           }
@@ -281,7 +293,10 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
                     *itemsinclip = *itemsinclip + 1;
                   } else {
                     mMsgBoxPush(4);
-                    multiPrintXY(3, 2, (char*)"The clipboard is\nfull; can't add\nmore items to it.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+                    multiPrintXY(3, 2, (char*)"The clipboard is\n"
+                                              "full; can't add\n"
+                                              "more items to it.",
+                                              TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
                     closeMsgBox();
                     hasErrored = 1; // do not keep looping with the same message
                   }
@@ -358,12 +373,12 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
           mMsgBoxPop();
           
           if(sres == MENU_RETURN_SELECTION) {
-            if(smallmenu.selection == 1) {
-              if(newFolderScreen(browserbasepath)) return 1; // if user said yes and a folder was created, reload file list
+            if(smallmenu.selection == 1 && newFolderScreen(browserbasepath)) {
+              return 1; // if a folder was created, reload file list
             } else if(smallmenu.selection == 2) {
               textfileEditor(NULL, browserbasepath); return 1;
-            } else if(smallmenu.selection == 3) {
-              if(newG3Pscreen(browserbasepath)) return 1;
+            } else if(smallmenu.selection == 3 && newG3Pscreen(browserbasepath)) {
+              return 1;
             }
           }
         } else {
@@ -385,7 +400,8 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
         break;
       case KEY_CTRL_F6:
       case KEY_CTRL_DEL:
-        if(menu.numselitems>0 && deleteFilesPrompt(files, &menu)) return 1; // if user said yes and files were deleted, reload file list
+        if(menu.numselitems>0 && deleteFilesPrompt(files, &menu))
+          return 1; // if files were deleted, reload file list
         break;
       case KEY_CTRL_PASTE:
         // clear shift icon and "Shift->9=Paste" part from status bar before pasting
@@ -432,7 +448,8 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction, i
 
 int deleteFilesPrompt(File* files, Menu* menu) {
   mMsgBoxPush(4);
-  multiPrintXY(3, 2, "Delete the\nSelected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(3, 2, "Delete the\n"
+                     "Selected Items?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(closeMsgBox(1, 4)) {
     deleteFiles(files, menu);
     return 1;
@@ -642,20 +659,24 @@ int searchFilesScreen(char* browserbasepath, int itemsinclip) {
 
   SetBackGround(9);
   drawScreenTitle("File Search", "Searching...");
-  multiPrintXY(1, 3, "Please be patient.\n\nYou can press AC/ON\nto abort.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(1, 3, "Please be patient.\n\nYou can press AC/ON\nto abort.",
+               TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   clearLine(1, 8);
   Bdisp_PutDisp_DD();
 
-  int sres = searchForFiles(NULL, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
+  int sres = searchForFiles(NULL, browserbasepath, needle, searchOnFilename, searchOnContents,
+                            searchRecursively, matchCase, &menu.numitems);
   if(sres == GETFILES_USER_ABORTED) {
-    int bkey; GetKey(&bkey); // key debouncing to avoid getting "Break" message closed because AC is still pressed
+    int bkey; GetKey(&bkey); // key debouncing to avoid getting "Break" message closed because AC is
+                             // still pressed
     AUX_DisplayErrorMessage( 0x01 );
     return 0;
   }
   MenuItem* resitems = (MenuItem*)alloca(menu.numitems*sizeof(MenuItem));
   File* files = (File*)alloca(menu.numitems*sizeof(File));
   if(menu.numitems) {
-    sres = searchForFiles(files, browserbasepath, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, &menu.numitems);
+    sres = searchForFiles(files, browserbasepath, needle, searchOnFilename, searchOnContents,
+                          searchRecursively, matchCase, &menu.numitems);
     if(sres == GETFILES_USER_ABORTED) {
       int bkey; GetKey(&bkey);
       AUX_DisplayErrorMessage( 0x01 );
@@ -700,11 +721,13 @@ int searchFilesScreen(char* browserbasepath, int itemsinclip) {
         if(menu.numitems>0) {
           if(!files[menu.selection-1].isfolder) {
             // get folder path from full filename
-            // we can work on the string in the files array, as it is going to be discarded right after:
+            // we can work on the string in the files array, as it is going to be discarded right
+            // after:
             int i=strlen(files[menu.selection-1].filename)-1;
             while (i>=0 && files[menu.selection-1].filename[i] != '\\')
                     i--;
-            if (files[menu.selection-1].filename[i] == '\\') files[menu.selection-1].filename[i] = '\0';
+            if (files[menu.selection-1].filename[i] == '\\')
+              files[menu.selection-1].filename[i] = '\0';
           }
           strcpy(browserbasepath, files[menu.selection-1].filename);
           strcat(browserbasepath, "\\");
@@ -763,7 +786,7 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
   unsigned int msgno;
   unsigned short iconbuffer[0x12*0x18];
   unsigned short folder[7]={};
-  SMEM_MapIconToExt((unsigned char*)(file->filename + file->visname), folder, &msgno, iconbuffer );
+  SMEM_MapIconToExt((unsigned char*)(file->filename + file->visname), folder, &msgno, iconbuffer);
   char mresult[88];
   LocalizeMessage1( msgno, mresult );
   
@@ -797,10 +820,16 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
     getFileManagerStatus((char*)statusText, itemsinclip, 1);
     DefineStatusMessage((char*)statusText, 1, 0, 0);
     doTextArea(&text);
-    drawFkeyLabels((compressed? -1 : 0x03B1), (allowEdit && !compressed? 0x0185: -1), (allowEdit? (compressed ? 0x161 : 0x160) : -1), -1, -1, (file->size>0 ? 0x0371 : -1)); //OPEN, EDIT, Comp (white) or Dec (white), CALC (white)
-    #ifdef ENABLE_PICOC_SUPPORT
-    if(allowEdit && strEndsWith(file->filename, (char*)".c")) drawFkeyLabels(-1, -1, -1, 0x0184); // EXE (white)
-    #endif
+    drawFkeyLabels(compressed ? -1 : 0x03B1, //OPEN
+                   allowEdit && !compressed ? 0x0185: -1, // EDIT
+                   allowEdit ? (compressed ? 0x161 : 0x160) : -1, // Comp (white) or Dec (white)
+#ifdef ENABLE_PICOC_SUPPORT
+                   allowEdit && strEndsWith(file->filename, ".c") ? 0x0184 : -1, // EXE (white)
+#else
+                   -1,
+#endif
+                   -1,
+                   file->size>0 ? 0x0371 : -1); // CALC (white)
     int key;
     mGetKey(&key);
     switch(key) {
@@ -829,7 +858,9 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
         if(allowEdit && !compressed) {
           if(stringEndsInG3A(file->filename + file->visname)) {
             mMsgBoxPush(4);
-            multiPrintXY(3, 2, "g3a files can't\nbe edited by\nan add-in.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+            multiPrintXY(3, 2, "g3a files can't\n"
+                               "be edited by\n"
+                               "an add-in.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
             closeMsgBox();
           } else {
             return 1;
@@ -853,18 +884,18 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
           return 2;
         }
         break;
-      #ifdef DISABLED_EXPERIMENTAL_CODE
+#ifdef DISABLED_EXPERIMENTAL_CODE
       case KEY_CTRL_F4:
         serialTransferSingleFile(file->filename);
         break;
-      #else
-      # ifdef ENABLE_PICOC_SUPPORT
+#else
+# ifdef ENABLE_PICOC_SUPPORT
       case KEY_CTRL_F4:
         if(allowEdit && strEndsWith(file->filename, (char*)".c"))
           return 3;
         break;
-      # endif
-      #endif
+# endif
+#endif
       case KEY_CTRL_F6:
         if(file->size > 0) {
           int hFile = fileOpen(file->filename); // Get handle
@@ -891,7 +922,8 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
             
             mMsgBoxPush(5);
             int textX=2*18, textY=24;
-            PrintMini(&textX, &textY, (char*)"SHA-256 checksum:", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+            PrintMini(&textX, &textY, (char*)"SHA-256 checksum:",
+                      0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
             textY += 20;
             textX=2*18;
             for(int i=0; i<32;i++) {
@@ -902,7 +934,8 @@ int viewFileInfo(File* file, int allowEdit, int itemsinclip, int allowUpDown) {
             }
 
             textX=2*18; textY=24*3;
-            PrintMini(&textX, &textY, (char*)"SHA-1 checksum:", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+            PrintMini(&textX, &textY, (char*)"SHA-1 checksum:",
+                      0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
             textY += 20;
             textX = 2*18;
             for(int i=0; i<20;i++) {
@@ -977,8 +1010,9 @@ void viewFileAsText(char* filename) {
   while(bcur < filesize && ecur <= text.numelements) {
     int jump = 1;
     if(*(asrc+bcur) == '\r' || *(asrc+bcur) == '\n') {
-      //char after the next one (\n) will be the start of a new line
-      //mark this char as null (so previous element ends here) and point this element to the start of the new line
+      // char after the next one (\n) will be the start of a new line
+      // mark this char as null (so previous element ends here) and point this element to the start
+      // of the new line
       jump = ((*(asrc+bcur) == '\r' && *(asrc+bcur+1) == '\n') ? 2 : 1);
       *(asrc+bcur)='\0';
       elem[ecur].text = (char*)(asrc+bcur+jump);
@@ -1012,12 +1046,16 @@ void viewClipboard(File* clipboard, int* itemsinclip) {
       curitem++;
     }
     menu.numitems = *itemsinclip;
-    if(*itemsinclip > 0) drawFkeyLabels(0x0149, 0x04DB, 0x049D, 0, 0, 0); // CLEAR [white], X symbol [white], Switch [white], clear rest of line
-    else clearLine(1, 8);
+    if(*itemsinclip > 0)
+      drawFkeyLabels(0x0149, 0x04DB, 0x049D, 0, 0, 0); // CLEAR [white], X symbol [white],
+                                                       // Switch [white], clear rest of line
+    else
+      clearLine(1, 8);
     int res = doMenu(&menu);
     switch(res) {
       case MENU_RETURN_SELECTION:
-        if(!clipboard[menu.selection-1].isfolder) viewFileInfo(&clipboard[menu.selection-1], 0, *itemsinclip);
+        if(!clipboard[menu.selection-1].isfolder)
+          viewFileInfo(&clipboard[menu.selection-1], 0, *itemsinclip);
         break;
       case MENU_RETURN_EXIT:
         return;
@@ -1037,8 +1075,10 @@ void viewClipboard(File* clipboard, int* itemsinclip) {
       case KEY_CTRL_F3:
         if(*itemsinclip > 0) {
           clipboard[menu.selection-1].action = !clipboard[menu.selection-1].action;
-          if(clipboard[menu.selection-1].action) menuitems[menu.selection-1].color = TEXT_COLOR_BLACK;
-          else menuitems[menu.selection-1].color = TEXT_COLOR_RED;
+          if(clipboard[menu.selection-1].action)
+            menuitems[menu.selection-1].color = TEXT_COLOR_BLACK;
+          else
+            menuitems[menu.selection-1].color = TEXT_COLOR_RED;
         }
         break;
     }
@@ -1095,7 +1135,8 @@ void folderStatsScreen(File* files, Menu* menu) {
     elem[text.numelements].text = (char*)"Selected items";
     text.numelements++;
 
-    sprintf(sficbuffer, "%d files\n%d folders", menu->numselitems - sel_folders_count, sel_folders_count);
+    sprintf(sficbuffer, "%d files\n%d folders",
+            menu->numselitems - sel_folders_count, sel_folders_count);
     elem[text.numelements].newLine=1;
     elem[text.numelements].text = (char*)sficbuffer;
     text.numelements++;
@@ -1118,7 +1159,8 @@ void folderStatsScreen(File* files, Menu* menu) {
 void compressSelectedFiles(File* files, Menu* menu) {
   int tf = 0, cf = 0, origfilesize = 0;
   for(int i = 0; i < menu->numitems; i++)
-    if(!files[i].isfolder && menu->items[i].isselected && !isFileCompressed(files[i].filename, &origfilesize))
+    if(!files[i].isfolder && menu->items[i].isselected &&
+       !isFileCompressed(files[i].filename, &origfilesize))
       tf++;
 
   progressMessage((char*)" Compressing...", 0, tf);
@@ -1161,17 +1203,18 @@ void decompressSelectedFiles(File* files, Menu* menu) {
 }
 
 void shortenDisplayPath(char* longpath, char* shortpath, int jump) {
-  //this function takes a long path for display, like \myfolder\long\display\path
-  //and shortens it one level, like this: ...\long\display\path
-  //putting the result in shortpath
-  // jump: amount of characters to jump when parsing the string. useful for jumping the first / or .../
+  /* this function takes a long path for display, like \myfolder\long\display\path
+   * and shortens it one level, like this: ...\long\display\path
+   * the result goes in shortpath
+   * jump: amount of characters to jump when parsing the string.
+   * useful for jumping the first / or .../
+   */
   strcpy(shortpath, (char*)"\xe5\x94");
   int max = strlen(longpath);
   while (jump < max && longpath[jump] != '\\')
           jump++;
-  if (longpath[jump] == '\\') {
+  if (longpath[jump] == '\\')
     strcat(shortpath, longpath+jump);
-  }
 }
 
 void buildIconTable(MenuItemIcon* icontable) {
@@ -1191,7 +1234,9 @@ void buildIconTable(MenuItemIcon* icontable) {
                              };
 
   for(int i = 0; i < 10; i++)
-    SMEM_MapIconToExt( (unsigned char*)bogusFiles[i], (i==0 ? folder : (unsigned short*)"\x000\x000"), &msgno, icontable[i].data );
+    SMEM_MapIconToExt((unsigned char*)bogusFiles[i],
+                      !i ? folder : (unsigned short*)"\x000\x000",
+                      &msgno, icontable[i].data);
 }
 
 int overwriteFilePrompt(char* filename) {
