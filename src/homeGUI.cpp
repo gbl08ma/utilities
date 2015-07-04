@@ -39,7 +39,7 @@
 
 void homeScreen(int isLocked) {
   unsigned short key = 0;
-  int keyCol; int keyRow; //these aren't actually used, but they are needed to hold different getkey-like results
+  int keyCol; int keyRow; // these are needed only to feed to syscalls, their value is ignored.
   int pane_keycache = 0;
 
   // find the registered username, if any:
@@ -90,7 +90,9 @@ void homeScreen(int isLocked) {
     if(!isLocked) {
       // Show FKeys
       if (getSetting(SETTING_DISPLAY_FKEYS)) {
-        drawFkeyLabels(0x043A, 0x043E, 0x012A, 0x011C, 0x03E7, (getSetting(SETTING_ENABLE_LOCK) ? 0x04D3 : -1)); //POWER, LIGHT, TIME, TOOL, M&S, key icon (lock)
+        drawFkeyLabels(0x043A, 0x043E, 0x012A, 0x011C, 0x03E7, 
+                       getSetting(SETTING_ENABLE_LOCK) ? 0x04D3 : -1);
+                       //POWER, LIGHT, TIME, TOOL, M&S, key icon (lock)
         if (getSetting(SETTING_THEME)) {
           darkenFkeys((getSetting(SETTING_ENABLE_LOCK) == 1 ? 6 : 5));
         }
@@ -165,7 +167,7 @@ void homeScreen(int isLocked) {
         case KEY_PRGM_F6:
           lockApp();
           break;
-        case 71: //KEY_PRGM_0, which is not defined in the SDK and I'm too lazy to add it every time I update the includes folder...
+        case 71: //KEY_PRGM_0, which is not defined in the standard libfxcg headers
           if (GetSetupSetting( (unsigned int)0x14) == 1) {
             SetSetupSetting( (unsigned int)0x14, 0);
             char code[25] = "";
@@ -173,7 +175,8 @@ void homeScreen(int isLocked) {
             input.charlimit=21;
             input.buffer = (char*)code;
             int res = doTextInput(&input);
-            if (res==INPUT_RETURN_CONFIRM && !strcmp(code, "qazedcol")) return; // kill main interface; currently this opens masterControl.
+            if (res==INPUT_RETURN_CONFIRM && !strcmp(code, "qazedcol"))
+              return; // kill main interface; currently this opens masterControl.
           }
           break;
         case KEY_PRGM_UP:
@@ -452,7 +455,8 @@ void paneHandleBasicKeys(int retkey, int* pane_keycache) {
   }
 }
 
-void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents, int maxevents) {
+void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int numevents,
+                          int maxevents) {
   color_t color_fg, color_title;
   if (getSetting(SETTING_THEME)) { color_fg = COLOR_WHITE; color_title = COLOR_ORANGE; } else
   { color_fg = COLOR_BLACK; color_title = COLOR_BLUE; }
@@ -472,7 +476,8 @@ void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int 
       curevent++;
     }
     if(numevents>maxevents) {
-      sprintf(itemtext, "  ...and %d more event%s", numevents-maxevents, numevents-maxevents > 1 ? "s" : "");
+      sprintf(itemtext, "  ...and %d more event%s", numevents-maxevents,
+              numevents-maxevents > 1 ? "s" : "");
       multiPrintMini(startx + 5, starty + 20, itemtext, color_fg);
     }
   } else {
@@ -483,11 +488,12 @@ void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int 
 void eventsPane(int retkey, int* pane_keycache) {
   EventDate thisday;
   thisday.day = getCurrentDay(); thisday.month = getCurrentMonth(); thisday.year = getCurrentYear();
-  int numevents = getEvents(&thisday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+  int numevents = getEvents(&thisday, CALENDARFOLDER, NULL); //get event count
   CalendarEvent* calevents = NULL;
   if (numevents > 0) {
-    int getnum = (numevents>HOME_EVENTS_DISPLAY_FULL?HOME_EVENTS_DISPLAY_FULL:numevents); // number of events to parse.
-    calevents = (CalendarEvent*)alloca(getnum*sizeof(CalendarEvent)); // we don't want to allocate more than what we need for the few events we want to display in full.
+    int getnum = (numevents>HOME_EVENTS_DISPLAY_FULL?HOME_EVENTS_DISPLAY_FULL:numevents);
+    // ^ number of events to parse. allocate memory only for the few events we want to display
+    calevents = (CalendarEvent*)alloca(getnum*sizeof(CalendarEvent));
     getEvents(&thisday, CALENDARFOLDER, calevents, HOME_EVENTS_DISPLAY_FULL);
   }
   if (getSetting(SETTING_THEME)) {
@@ -498,7 +504,8 @@ void eventsPane(int retkey, int* pane_keycache) {
     DrawFrame(COLOR_WHITE);
   }
   pane_drawTodayEvents(calevents, 0, 0, numevents, HOME_EVENTS_DISPLAY_FULL);
-  if(getSetting(SETTING_SHOW_CALENDAR_BUSY_MAP)) drawBusymapDay(&thisday, 0, LCD_HEIGHT_PX-44, LCD_WIDTH_PX, 15, 1,0,0);
+  if(getSetting(SETTING_SHOW_CALENDAR_BUSY_MAP))
+    drawBusymapDay(&thisday, 0, LCD_HEIGHT_PX-44, LCD_WIDTH_PX, 15, 1,0,0);
   paneHandleBasicKeys(retkey, pane_keycache);
 }
 

@@ -29,18 +29,19 @@ void setRawBacklightSubLevel(int level)
 }
 // END OF POWER MANAGEMENT CODE 
 
-// Get calculator's unique ID (as told by Simon Lothar): 8 bytes starting at 0x8001FFD0
-
 void getHardwareID(char* buffer) {
+  // Gets the calculator's unique ID (as told by Simon Lothar): 8 bytes starting at 0x8001FFD0
   // NOTE buffer must be at least 9 bytes long!
   memcpy(buffer, (void*)0x8001FFD0, 8);
   buffer[8] = 0;
 }
 
-// Get calculator model. There is a syscall for this, but with this we know exactly what we are checking.
-// not to be confused with the "PCB model", which on the Prizm series appears to be always 755D for CG 20 or 755A for CG 10.
-// returns 0 on unknown/inconclusive model, 1 on fx-CG 10 and 2 on fx-CG 20
 int getHardwareModel() {
+  /* Returns calculator model. There is a syscall for this, but with this we know exactly what we
+   * are checking. Not to be confused with the "PCB model", which on the Prizm series appears to be
+   * always 755D for CG 20 or 755A for CG 10.
+   * Returns 0 on unknown/inconclusive model, 1 on fx-CG 10 and 2 on fx-CG 20
+   */
   char* byte1 = (char*)0x80000303;
   char* byte2 = (char*)0x80000305;
   if((*byte1 == '\x41') && (*byte2 == '\x5A')) return 1;
@@ -48,10 +49,11 @@ int getHardwareModel() {
   return 0;
 }
 
-// returns 1 if the calculator is emulated
-// uses the power source information to detect the emulator
-// obviously, if an emulator comes that emulates this info better, this function will be inaccurate
 int getIsEmulated() {
+  /* returns 1 if the calculator is emulated
+   * uses the power source information to detect the emulator
+   * obviously, if an emulator comes that emulates this info better, this function will not work.
+   */
   int k = *(unsigned char*)P11DR;
   return !k;
 }

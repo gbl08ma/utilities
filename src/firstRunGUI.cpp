@@ -12,17 +12,14 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "powerGUI.hpp"
+#include "firstRunGUI.hpp"
 #include "menuGUI.hpp"
-#include "selectorGUI.hpp"
 #include "textGUI.hpp"
 #include "graphicsProvider.hpp"
 #include "hardwareProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "timeProvider.hpp"
-#include "firstRunGUI.hpp"
 #include "settingsProvider.hpp"
-#include "debugGUI.hpp"
 
 void firstRunWizard() {
   setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
@@ -43,7 +40,8 @@ void firstRunWizard() {
   text.elements = elem;
   text.allowEXE = 1;
   
-  elem[0].text = (char*)"This add-in provides functionality not originally present on Casio Prizm (fx-CG 10/20) calculators:";
+  elem[0].text = (char*)"This add-in provides functionality not originally present on Casio Prizm "
+                        "(fx-CG 10/20) calculators:";
   elem[1].newLine = 1;
   elem[1].lineSpacing = 5;
   elem[1].text = (char*)"- Clock and chronometer\n"
@@ -60,23 +58,27 @@ void firstRunWizard() {
   elem[2].text = (char*)"Important notes:";
   
   elem[3].newLine = 1;
-  elem[3].text = (char*)"You can set the time, date and many settings from the Settings menu, accessible by pressing Shift+Menu (Set Up) at almost any point in the add-in.";
+  elem[3].text = (char*)"You can set the time, date and many settings from the Settings menu, "
+                        "accessible by pressing Shift+Menu (Set Up) at almost any point in the "
+                        "add-in.";
   
   elem[4].newLine = 1;
   elem[4].lineSpacing = 5;
-  elem[4].text = (char*)"Tools for more advanced users are hidden, unless the \"Show advanced tools\" setting is turned on.";
+  elem[4].text = (char*)"Tools for more advanced users are hidden, unless the \"Show advanced "
+                        "tools\" setting is turned on.";
   
   elem[5].newLine = 1;
   elem[5].lineSpacing = 8;
-  elem[5].text = (char*)"Thanks for reading these notes.\nAfter pressing EXIT or EXE, you may be guided to adjust your calculator's clock.";
+  elem[5].text = (char*)"Thanks for reading these notes.\nAfter pressing EXIT or EXE, you may be "
+                        "guided to adjust your calculator's clock.";
   
   elem[6].newLine = 1;
   elem[6].lineSpacing = 3;
-  elem[6].text = (char*)"In case you need help with this software, contact info is on the \"About\" screen, to which you can get from the Settings menu.";
+  elem[6].text = (char*)"In case you need help with this software, contact info is on the "
+                        "\"About\" screen, to which you can get from the Settings menu.";
   
   text.numelements = 7;
   doTextArea(&text);
   setSetting(SETTING_ACTIVATION_STATUS, 1, 1);
   setmGetKeyMode(MGETKEY_MODE_NORMAL);
 }
- 

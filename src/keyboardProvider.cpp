@@ -53,24 +53,31 @@ void mGetKey(int* key, int darkenStatus) {
     if(getSetting(SETTING_DISPLAY_STATUSBAR) && darkenStatus) darkenStatusbar();
     checkChronoComplete(getChronoArrayPtr());
     GetKey(key);
-    if (*key == KEY_CTRL_SETUP && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {
+    if (*key == KEY_CTRL_SETUP &&
+        mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS &&
+        mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {
       Cursor_SetFlashOff(); // in case we were in an input
       saveVRAMandCallSettings();
       //redraw things like menu status text
       *key = 0;
       return;
-    } else if (*key == KEY_CTRL_QUIT && mGetKeyMode != MGETKEY_MODE_RESTRICT_RESTART && mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {
-      Cursor_SetFlashOff(); // in case we were in an input
-      stopAndUninstallStubTimer(); // in case we were in some timer screen, where the timer has been set
-      // having timers running breaks Bfile functions
+    } else if (*key == KEY_CTRL_QUIT &&
+               mGetKeyMode != MGETKEY_MODE_RESTRICT_RESTART &&
+               mGetKeyMode != MGETKEY_MODE_RESTRICT_SETTINGS_RESTART) {
+      // in case we were in an input:
+      Cursor_SetFlashOff();
+      // in case we were in some timer screen, where the timer has been set:
+      stopAndUninstallStubTimer();
       popAllMsgBoxes();
       mGetKeyMode = MGETKEY_MODE_NORMAL;
-      longjmp(utilities_return, 1); // this is also used for returning from Run-Mat. Basically equates to restarting the add-in.
+      longjmp(utilities_return, 1); // this is also used for returning from Run-Mat.
+      // Basically equates to restarting the add-in, except malloc'ed memory is not freed.
       break;
 #ifdef ENABLE_DEBUG
     } else if (*key == KEY_SHIFT_OPTN && getDebugMode()) {
       TestMode(1);
-      const unsigned int default_fkeys[] = { 0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0 };
+      const unsigned int default_fkeys[] = { 0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,
+                                             0,0x0000FFFF,0,0x0000FFFF,0 };
       Set_FKeys1(0, (unsigned int*)default_fkeys);
       Set_FKeys2(0);
     } else if (*key == KEY_CTRL_PRGM && getDebugMode()) {

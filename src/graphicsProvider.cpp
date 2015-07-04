@@ -74,7 +74,8 @@ void drawFilledCircle(int centerx, int centery, int radius, color_t color) {
   } 
 }
 
-void drawCircularCountdownIndicator(int centerx, int centery, int radius, color_t colorfg, color_t colorbg, int inner, int swap) {
+void drawCircularCountdownIndicator(int centerx, int centery, int radius, color_t colorfg,
+                                    color_t colorbg, int inner, int swap) {
   drawFilledCircle(centerx, centery, radius, colorfg);
   drawFilledCircle(centerx, centery, radius-2, swap ? colorfg : colorbg);
   drawFilledCircle(centerx, centery, inner, swap ? colorbg : colorfg);
@@ -82,24 +83,24 @@ void drawCircularCountdownIndicator(int centerx, int centery, int radius, color_
 
 //ReplaceColor By Kerm:
 void replaceColorInArea(int x, int y, int width, int height, color_t color_old, color_t color_new) { 
-   //color_t* VRAM = GetVRAMAddress();
-   color_t* VRAM = (color_t*)0xA8000000; 
-   VRAM += (y*LCD_WIDTH_PX)+x; 
-   for(int j=0; j<height; VRAM += (LCD_WIDTH_PX-width), j++) { 
-      for(int i=0; i<width; VRAM++, i++) { 
-         if (*VRAM == color_old) *VRAM = color_new; 
-      } 
-   } 
+  //color_t* VRAM = GetVRAMAddress();
+  color_t* VRAM = (color_t*)0xA8000000; 
+  VRAM += (y*LCD_WIDTH_PX)+x; 
+  for(int j=0; j<height; VRAM += (LCD_WIDTH_PX-width), j++) { 
+    for(int i=0; i<width; VRAM++, i++) { 
+       if (*VRAM == color_old) *VRAM = color_new; 
+    } 
+  } 
 }
 
 void invertArea(short x, short y, short width, short height) {
-   color_t* VRAM = (color_t*)0xA8000000; 
-   VRAM += (y*LCD_WIDTH_PX)+x; 
-   for(int j=0; j<height; VRAM += (LCD_WIDTH_PX-width), j++) { 
-      for(int i=0; i<width; VRAM++, i++) { 
-         *VRAM ^= 0xFFFF;
-      } 
-   } 
+  color_t* VRAM = (color_t*)0xA8000000; 
+  VRAM += (y*LCD_WIDTH_PX)+x; 
+  for(int j=0; j<height; VRAM += (LCD_WIDTH_PX-width), j++) { 
+    for(int i=0; i<width; VRAM++, i++) { 
+       *VRAM ^= 0xFFFF;
+    } 
+  } 
 }
 
 void darkenStatusbar() {
@@ -111,7 +112,8 @@ void darkenStatusbar() {
 }
 void darkenFkeys(int numkeys) {
   replaceColorInArea(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_BLACK, COLOR_GRAY);
-  replaceColorInArea(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_WHITE, COLOR_BLACK);
+  replaceColorInArea(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24,
+                     COLOR_WHITE, COLOR_BLACK);
 }
 void drawArrowDown(int bottomX, int bottomY, int color) {
   drawLine(bottomX-7,bottomY-7,bottomX,bottomY,color);
@@ -120,8 +122,9 @@ void drawArrowDown(int bottomX, int bottomY, int color) {
   drawLine(bottomX+1,bottomY+1,bottomX+9,bottomY-7,color); //double thickness of line
 }
 void drawFkeyPopup(int Fkey, const char* title) {
-//draws a big popup pointing to a Fkey (index zero based, F1 = 0, F6 = 5) with the selected color scheme.
-// PrintXY text inside the popup starts at X=2 and Y=2
+ /* draws a big popup pointing to a Fkey (index zero based, F1 = 0, F6 = 5) with the selected color
+  * scheme. PrintXY text inside the popup starts at X=2 and Y=2
+  */
   int fgcolor = COLOR_BLACK;
   int bgcolor = COLOR_WHITE;
   if (getSetting(SETTING_THEME)) {
@@ -146,11 +149,13 @@ void drawFkeyPopup(int Fkey, const char* title) {
 
   int textX = FKEY_C3X-111-4;
   int textY = FKEY_C3Y-14-20;
-  PrintMiniMini( &textX, &textY, "...or press: [EXIT]", (getSetting(SETTING_THEME) == 1 ? 4 : 0), TEXT_COLOR_BLACK, 0 ); //draw
+  PrintMiniMini(&textX, &textY, "...or press: [EXIT]", getSetting(SETTING_THEME) == 1 ? 4 : 0,
+                TEXT_COLOR_BLACK, 0);
 
   mPrintXY(2, 2, title, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLUE);
 }
-void CopySpriteMasked(const unsigned short* data, int x, int y, int width, int height, unsigned short maskcolor) {
+void CopySpriteMasked(const unsigned short* data, int x, int y, int width, int height, 
+                      unsigned short maskcolor) {
   unsigned short* VRAM = (unsigned short*)0xA8000000; 
   VRAM += (LCD_WIDTH_PX*y + x); 
   while(height--) {
@@ -167,7 +172,8 @@ void CopySpriteMasked(const unsigned short* data, int x, int y, int width, int h
   }
 }
 
-void CopySpriteNbitMasked(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, color_t maskColor, unsigned int bitwidth) {
+void CopySpriteNbitMasked(const unsigned char* data, int x, int y, int width, int height,
+                          const color_t* palette, color_t maskColor, unsigned int bitwidth) {
   color_t* VRAM = (color_t*)0xA8000000;
   VRAM += (LCD_WIDTH_PX*y + x);
   int offset = 0;
@@ -190,10 +196,10 @@ void CopySpriteNbitMasked(const unsigned char* data, int x, int y, int width, in
   }
 }
 
-//the following does not update the screen automatically; it will draw the tny.im logo starting at screen coordinates x,y
-//the tny.im logo is great enough not to require any sprites! yay!
-//w:138
-//h:42
+// the following function will draw the tny.im logo starting at screen coordinates x,y
+// the tny.im logo is great enough not to require any sprites! yay!
+// w: 138
+// h: 42
 static const unsigned char logoB[]={
 //draw t
 0, 6, 6, 24,
@@ -258,7 +264,8 @@ void printCentered(char* text, int y, int FGC, int BGC) {
 
 void clearLine(int x, int y, color_t color) {
   // clear text line. x and y are text cursor coordinates
-  // this is meant to achieve the same effect as using PrintXY with a line full of spaces (except it doesn't waste strings).
+  // this is meant to achieve the same effect as using PrintXY with a line full of spaces
+  // (except it doesn't waste bytes with strings made of the space character).
   int width=LCD_WIDTH_PX;
   if(x>1) width = 24*(21-x);
   drawRectangle((x-1)*18, y*24, width, 24, color);
@@ -290,8 +297,10 @@ void multiPrintMini(int x, int y, const char* msg, int fgcolor) {
 }
 
 static int numberOfMsgBoxPushed = 0;
-// progressMessage and closeProgressMessage do not count towards this number even though they push and pop MsgBoxes
-// this is because mGetKey can't be used to "restart" the add-in while a progressbar is shown
+/* progressMessage and closeProgressMessage do not count towards this number, even though they push
+ * and pop MsgBoxes. This is because in all code paths so far, mGetKey can't be used to "restart"
+ * the add-in while a progressbar is shown
+ */
 void mMsgBoxPush(int lines) {
   MsgBoxPush(lines);
   numberOfMsgBoxPushed++;

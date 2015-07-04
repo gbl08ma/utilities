@@ -33,7 +33,9 @@ int doTextInput(textInput* input) {
     drawFkeyLabels(-1, -1, -1, (input->symbols? 0x02A1 : -1), 0x0307); // CHAR, A<>a
   }
   int wasInClip=0;
-  if (input->key) { input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, input->key); }
+  if (input->key)
+    input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor,
+                                     input->key);
   int widthForSyscalls = input->width;
   if(input->width == 21) {
     widthForSyscalls = 20;
@@ -44,32 +46,44 @@ int doTextInput(textInput* input) {
       input->buffer[0]='\xd8';
       input->buffer[1]='\x0';
     }
-    DisplayMBString2( 0, (unsigned char*)input->buffer, input->start, input->cursor, 0, input->x, input->y*24-24, widthForSyscalls+input->x, (input->width==21? 0 : 1) );
+    DisplayMBString2(0, (unsigned char*)input->buffer, input->start, input->cursor, 0, input->x,
+                     input->y*24-24, widthForSyscalls+input->x, input->width==21? 0 : 1);
     
-    drawLine(input->x*18-18, input->y*24-1, (input->width==21?LCD_WIDTH_PX-1:input->width*18+input->x*18-18-1), input->y*24-1, COLOR_GRAY);
-    drawLine(input->x*18-18, input->y*24+23, (input->width==21?LCD_WIDTH_PX-1:input->width*18+input->x*18-18-1), input->y*24+23, COLOR_GRAY);
+    drawLine(input->x*18-18, input->y*24-1,
+             input->width == 21 ? LCD_WIDTH_PX-1 : input->width*18+input->x*18-18-1,
+             input->y*24-1, COLOR_GRAY);
+    drawLine(input->x*18-18, input->y*24+23,
+             input->width == 21 ? LCD_WIDTH_PX-1 : input->width*18+input->x*18-18-1,
+             input->y*24+23, COLOR_GRAY);
     if(input->width != 21) {
       //vertical lines, start and end
       drawLine(input->x*18-18, input->y*24-1, input->x*18-18, input->y*24+23, COLOR_GRAY);
-      drawLine((input->x*18-18)+18*input->width, input->y*24-1, (input->x*18-18)+18*input->width, input->y*24+23, COLOR_GRAY);
+      drawLine((input->x*18-18)+18*input->width,
+               input->y*24-1, (input->x*18-18)+18*input->width, input->y*24+23, COLOR_GRAY);
     }
     if(input->type==INPUTTYPE_DATE) {
       //vertical lines: dd, mm and yyyy separators
       switch(getSetting(SETTING_DATEFORMAT)) {
         case 0:
         case 1:
-          drawLine((input->x*18-18)+18*2, input->y*24-1, (input->x*18-18)+18*2, input->y*24+22, COLOR_GRAY);
-          drawLine((input->x*18-18)+18*4+1, input->y*24-1, (input->x*18-18)+18*4+1, input->y*24+23, COLOR_GRAY);
+          drawLine((input->x*18-18)+18*2, input->y*24-1,
+                   (input->x*18-18)+18*2, input->y*24+22, COLOR_GRAY);
+          drawLine((input->x*18-18)+18*4+1, input->y*24-1,
+                   (input->x*18-18)+18*4+1, input->y*24+23, COLOR_GRAY);
           break;
         case 2:
-          drawLine((input->x*18-18)+18*4, input->y*24-1, (input->x*18-18)+18*4, input->y*24+22, COLOR_GRAY);
-          drawLine((input->x*18-18)+18*6+1, input->y*24-1, (input->x*18-18)+18*6+1, input->y*24+23, COLOR_GRAY);
+          drawLine((input->x*18-18)+18*4, input->y*24-1,
+                   (input->x*18-18)+18*4, input->y*24+22, COLOR_GRAY);
+          drawLine((input->x*18-18)+18*6+1, input->y*24-1,
+                   (input->x*18-18)+18*6+1, input->y*24+23, COLOR_GRAY);
           break;
       }
     } else if(input->type==INPUTTYPE_TIME) {
       //vertical lines: hh, mm and ss separators
-      drawLine((input->x*18-18)+18*2, input->y*24-1, (input->x*18-18)+18*2, input->y*24+23, COLOR_GRAY);
-      drawLine((input->x*18-18)+18*4, input->y*24-1, (input->x*18-18)+18*4, input->y*24+23, COLOR_GRAY);
+      drawLine((input->x*18-18)+18*2, input->y*24-1,
+               (input->x*18-18)+18*2, input->y*24+23, COLOR_GRAY);
+      drawLine((input->x*18-18)+18*4, input->y*24-1,
+               (input->x*18-18)+18*4, input->y*24+23, COLOR_GRAY);
     }
     int keyflag = GetSetupSetting( (unsigned int)0x14);
     if(input->type==INPUTTYPE_NORMAL) {
@@ -84,9 +98,12 @@ int doTextInput(textInput* input) {
       }
     }
     mGetKey(&input->key);
-    if (GetSetupSetting( (unsigned int)0x14) == 0x01 || GetSetupSetting( (unsigned int)0x14) == 0x04 || GetSetupSetting( (unsigned int)0x14) == 0x84) {
-      keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.
-      //we can't update always because that way alpha-not-lock will cancel when F5 is pressed.
+    if (GetSetupSetting((unsigned int)0x14) == 0x01 ||
+        GetSetupSetting((unsigned int)0x14) == 0x04 ||
+        GetSetupSetting( (unsigned int)0x14) == 0x84) {
+      keyflag = GetSetupSetting( (unsigned int)0x14); // make sure the flag we're using is the
+      // updated one. we can't update always because that way alpha-not-lock will cancel when F5 is
+      // pressed.
     }
     if(input->key == KEY_CTRL_EXE || (input->key == KEY_CTRL_F6 && input->acceptF6)) {
       // Next step
@@ -95,7 +112,8 @@ int doTextInput(textInput* input) {
         Cursor_SetFlashOff(); return INPUT_RETURN_CONFIRM;
       } else {
         mMsgBoxPush(4);
-        multiPrintXY(3, 2, "Field can't be\nleft blank.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        multiPrintXY(3, 2, "Field can't be\nleft blank.",
+                     TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         closeMsgBox();
       }
     } else if(input->key == KEY_CTRL_EXIT) {
@@ -105,29 +123,38 @@ int doTextInput(textInput* input) {
       Cursor_SetFlashOff(); return INPUT_RETURN_KEYCODE;
     } else if(input->key == KEY_CTRL_F4 && input->type == INPUTTYPE_NORMAL) {
       short character = selectCharacterAux();
-      if (character) input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, character);
+      if (character)
+        input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit,
+                                         input->cursor, character);
     } else if(input->key == KEY_CTRL_F5 && input->type == INPUTTYPE_NORMAL) {
       // switch between lower and upper-case alpha
       switch(keyflag) {
         case 0x08:
         case 0x88:
-          SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
+          SetSetupSetting((unsigned int)0x14, keyflag-0x04);
           continue; //do not process the key, because otherwise we will leave alpha status
         case 0x04:
         case 0x84:
-          SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
+          SetSetupSetting((unsigned int)0x14, keyflag+0x04);
           continue; //do not process the key, because otherwise we will leave alpha status
       }
     } 
     if(input->key && input->key < 30000) {
-      if(input->type == INPUTTYPE_NORMAL || (input->key >= KEY_CHAR_0 && input->key <= KEY_CHAR_9) ||
-        (input->key == KEY_CHAR_DP && !input->symbols && input->type == INPUTTYPE_NUMERIC)) { // either a normal input, or only allow digits and eventually the decimal separator
-        if ((GetSetupSetting( (unsigned int)0x14) == 0x08 || GetSetupSetting( (unsigned int)0x14) == 0x88) && input->key >= KEY_CHAR_A && input->key <= KEY_CHAR_Z) //if lowercase and key is char...
+      if(input->type == INPUTTYPE_NORMAL ||
+         (input->key >= KEY_CHAR_0 && input->key <= KEY_CHAR_9) ||
+         (input->key == KEY_CHAR_DP && !input->symbols && input->type == INPUTTYPE_NUMERIC)) {
+        // either a normal input, or only allow digits and eventually the decimal separator
+        if ((GetSetupSetting((unsigned int)0x14) == 0x08 ||
+             GetSetupSetting((unsigned int)0x14) == 0x88) &&
+            input->key >= KEY_CHAR_A && input->key <= KEY_CHAR_Z) //if lowercase and key is char...
           input->key = input->key + 32; // to switch to lower-case characters
 
-        input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit, input->cursor, input->key);
+        input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit,
+                                         input->cursor, input->key);
       }
-    } else EditMBStringCtrl2( (unsigned char*)input->buffer, input->charlimit+1, &input->start, &input->cursor, &input->key, input->x, input->y*24-24, 1, widthForSyscalls+input->x-1 );
+    } else EditMBStringCtrl2((unsigned char*)input->buffer, input->charlimit+1, &input->start,
+                             &input->cursor, &input->key, input->x, input->y*24-24, 1,
+                             widthForSyscalls+input->x-1 );
     if(input->key == KEY_CTRL_PASTE) {
       // at this point it will have already pasted
       int pos = strlen(input->buffer)-1;

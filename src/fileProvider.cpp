@@ -15,12 +15,10 @@
 
 #include "constantsProvider.hpp"
 #include "graphicsProvider.hpp"
-#include "timeProvider.hpp"
 #include "settingsProvider.hpp"
 #include "stringsProvider.hpp"
 #include "menuGUI.hpp"
 #include "fileProvider.hpp"
-#include "keyboardProvider.hpp"
 #include "fileGUI.hpp"
 extern "C" {
 #include "heatshrink_encoder.h"
@@ -57,7 +55,8 @@ int compareFileStructs(File* f1, File* f2, int type) {
       break;
     }
   }
-  // make A-Z the sub-sorting for items that are otherwise the same, according to the chosen criteria
+  // make A-Z the sub-sorting for items that are otherwise the same,
+  // according to the chosen criteria
   if(!retval) return strcmp(f1name, f2name);
   return retval;
 }
@@ -78,10 +77,12 @@ void sortFiles(File* data, int size) {
 }
 
 int getFiles(File* files, const char* basepath, int* count) {
-  // searches storage memory for folders and files, puts their count in int* count
-  // if File* files is NULL, function will only count files. If it is not null, MenuItem* menuitems will also be updated
-  // this function always returns status codes defined on fileProvider.hpp
-  // basepath should start with \\fls0\ and should always have a slash (\) at the end
+  /* searches storage memory for folders and files, puts their count in int* count
+   * If File* files is NULL, function will only count files.
+   * If it is not null, MenuItem* menuitems will also be updated
+   * this function always returns status codes defined on fileProvider.hpp
+   * basepath should start with \\fls0\ and should always have a slash (\) at the end
+   */
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
   size_t baselen = strlen(basepath);
@@ -124,11 +125,14 @@ char* SearchStringMatch(const char* s1, const char* s2, int matchCase) {
   if(matchCase) return strstr(s1, s2);
   else return strcasestr(s1, s2);
 }
-int searchForFiles(File* files, const char* basepath, const char* needle, int searchOnFilename, int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall) {
-  // searches storage memory for folders and files containing needle in the filename or contents, puts their count in int* count
-  // if File* files is NULL, function will only count search results.
-  // this function always returns status codes defined on fileProvider.hpp
-  // basepath should start with \\fls0\ and should always have a slash (\) at the end
+int searchForFiles(File* files, const char* basepath, const char* needle, int searchOnFilename,
+  int searchOnContents, int searchRecursively, int matchCase, int* count, int isRecursiveCall) {
+  /* searches storage memory for folders and files containing needle in the filename or contents,
+   * puts their count in int* count
+   * if File* files is NULL, function will only count search results.
+   * this function always returns status codes defined on fileProvider.hpp
+   * basepath should start with \\fls0\ and should always have a slash (\) at the end
+   */
   unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
   size_t baselen = strlen(basepath);
@@ -155,7 +159,8 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
       if(fileinfo.fsize == 0) {
         //it's a folder. add it to the recursion list, if we are searching recursively.
         if(searchRecursively && numberOfFoldersToSearchInTheEnd<MAX_ITEMS_PER_FOLDER_COPY) {
-          strncpy(foldersToSearchInTheEnd[numberOfFoldersToSearchInTheEnd], (char*)buffer, MAX_NAME_SIZE);
+          strncpy(foldersToSearchInTheEnd[numberOfFoldersToSearchInTheEnd], (char*)buffer,
+                  MAX_NAME_SIZE);
           numberOfFoldersToSearchInTheEnd++;
         }
       }
@@ -173,9 +178,9 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
           int hFile = Bfile_OpenFile_OS(pFile, READWRITE, 0); // Get handle
           if(hFile >= 0) // Check if it opened
           { //opened
-            unsigned char buf[1030] = ""; // initialize to zeros, and make sure it is a bit bigger than the amount
-            // of bytes we're going to read, so that the string is always null-terminated and can be safely
-            // passed to the string compare function.
+            unsigned char buf[1030] = ""; // initialize to zeros, and make sure it is a bit bigger
+            // than the amount of bytes we're going to read, so that the string is always
+            // null-terminated and can be safely passed to the string compare function.
             while(1) {
               int readsize = Bfile_ReadFile_OS(hFile, buf, 1024, -1);
               if(NULL != memmem((char*)buf, readsize, needle, nlen, matchCase)) {
@@ -183,9 +188,9 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
                 break;
               }
               if(readsize < 100) break;
-              Bfile_SeekFile_OS(hFile, Bfile_TellFile_OS(hFile)-90); // rewind 90 bytes, to make sure we didn't miss the needle
-              // which may be separated between the end of a read and the start of another. Since the needle has a maximum of
-              // 50 bytes, rewinding 90 ensures we don't miss it between reads.
+              Bfile_SeekFile_OS(hFile, Bfile_TellFile_OS(hFile)-50); // rewind 50 bytes, to make
+              // sure we didn't miss the needle (max. 50 bytes) which may be located between the end
+              // of a read section and the start of another.
             }
             Bfile_CloseFile_OS(hFile);
           }
@@ -210,7 +215,7 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
   }
   Bfile_FindClose(findhandle);
   if(abortkey == KEY_PRGM_ACON) return GETFILES_USER_ABORTED;
-  // now that all handles are closed, look inside the folders we found, if recursive search is enabled
+  // now that all handles are closed, take care of the recursive search, if it was requested
   if((0x881E0000 - (int)GetStackPtr()) < 350000) { // if stack usage is below 350000 bytes...
     if(searchRecursively) for(int i=0; i<numberOfFoldersToSearchInTheEnd; i++) {
       // search only if there's enough free stack
@@ -218,9 +223,11 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
       strcpy(newfolder, basepath);
       strcat(newfolder, foldersToSearchInTheEnd[i]);
       strcat(newfolder, "\\");
-      int sres = searchForFiles(files, newfolder, needle, searchOnFilename, searchOnContents, searchRecursively, matchCase, count, 1);
+      int sres = searchForFiles(files, newfolder, needle, searchOnFilename, searchOnContents,
+                                searchRecursively, matchCase, count, 1);
       if(GETFILES_MAX_FILES_REACHED == sres)
-        return GETFILES_MAX_FILES_REACHED; // if the files array is full, there's no point in searching again
+        // if the files array is full, there's no point in searching again
+        return GETFILES_MAX_FILES_REACHED;
       else if(GETFILES_USER_ABORTED == sres)
         return GETFILES_USER_ABORTED;
     }
@@ -228,11 +235,13 @@ int searchForFiles(File* files, const char* basepath, const char* needle, int se
   return GETFILES_SUCCESS;
 }
 
-
 void deleteFiles(File* files, Menu* menu) {
-  //files: the array (list) of files to perform operations in. NOT files to delete (this will only delete selected files)
-  //menu: the menu of the current file manager window. used to check which files are selected, total number of files, etc.
-  //REFRESH the files array after calling this!
+  /* files: the array (list) of files to perform operations in.
+   * NOT the files to delete (this will only delete selected files)
+   * menu: the menu of the current file manager window. used to check which files are selected,
+   * total number of files, etc.
+   * REFRESH the files array after calling this!
+   */
   if (menu->numitems > 0) {
     int curfile = 0; //current processing file (not number of deleted files!)
     int delfiles = 0; // number of deleted files
@@ -244,7 +253,8 @@ void deleteFiles(File* files, Menu* menu) {
         Bfile_DeleteEntry( path );
         delfiles++;
       }
-      if(delfiles>0) // do not call progressMessage with 0 as the current value twice, otherwise MsgBox might be pushed twice!
+      if(delfiles>0) // do not call progressMessage with 0 as the current value twice,
+                     // otherwise MsgBox might be pushed twice!
         progressMessage((char*)" Deleting...", delfiles, menu->numselitems);
       curfile++;
     }
@@ -292,7 +302,8 @@ void copyFile(char* oldfilename, char* newfilename) {
   size_t copySize = Bfile_GetFileSize_OS(hOldFile);
   Bfile_CloseFile_OS(hOldFile); // close for now
 
-  int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0); // Get handle for the destination file, just to check for its presence
+  // Get handle for the destination file, just to check for its presence
+  int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
   if(hNewFile >= 0) {
     Bfile_CloseFile_OS(hNewFile);
     // destination exists, show overwrite confirmation
@@ -374,11 +385,14 @@ void copyFolder(char* oldfilename, char* newfilename) {
       strcpy(newitem, newfilename);
       strcat(newitem, "\\");
       strcat(newitem, (char*)buffer);
-      // We could call copyFolder again or copyFile here, and our code would be absolutely correct
-      // but the Bfile functions are buggy, and they freak out when there are many file handles/multiple file handles inside folders.
-      // (same reason why we use a temporary file name while copying)
-      // so we add this to a list of items to copy later...
-      // only 100 items can be copied per folder
+      /* We could call copyFolder or copyFile here, and the logic would be absolutely correct.
+       * However, the Bfile functions are buggy, and they freak out when there are multiple file
+       * handles inside folders.
+       * (same reason why we use a temporary file name while copying)
+       * See http://prizm.cemetech.net/index.php/Category:Syscalls:Bfile
+       * So we add this item to a list of items to copy later...
+       * only 100 items can be copied per folder:
+       */
       if(numberOfItemsToCopyInTheEnd<MAX_ITEMS_PER_FOLDER_COPY) {
         strncpy(itemsToCopyInTheEnd[numberOfItemsToCopyInTheEnd], (char*)buffer, MAX_NAME_SIZE);
         itemsToCopyIsFolder[numberOfItemsToCopyInTheEnd] = !fileinfo.fsize;
@@ -436,17 +450,23 @@ void pasteClipboard(File* clipboard, char* browserbasepath, int itemsInClipboard
 }
 
 int filenameToIcon(char* name) {
-  if(strEndsWith(name, (char*)".g1m") || strEndsWith(name, (char*)".g2m") || strEndsWith(name, (char*)".g3m"))
+  if(strEndsWith(name, (char*)".g1m") ||
+     strEndsWith(name, (char*)".g2m") ||
+     strEndsWith(name, (char*)".g3m"))
     return FILE_ICON_G3M;
-  else if (strEndsWith(name, (char*)".g1e") || strEndsWith(name, (char*)".g2e") || strEndsWith(name, (char*)".g3e"))
+  else if (strEndsWith(name, (char*)".g1e") ||
+           strEndsWith(name, (char*)".g2e") ||
+           strEndsWith(name, (char*)".g3e"))
     return FILE_ICON_G3E;
-  else if (strEndsWith(name, (char*)".g3a") || strEndsWith(name, (char*)".g3l"))
+  else if (strEndsWith(name, (char*)".g3a") ||
+           strEndsWith(name, (char*)".g3l"))
     return FILE_ICON_G3A;
   else if (strEndsWith(name, (char*)".g3p"))
     return FILE_ICON_G3P;
   else if (strEndsWith(name, (char*)".g3b"))
     return FILE_ICON_G3B;
-  else if (strEndsWith(name, (char*)".bmp") || strEndsWith(name, (char*)".jpg"))
+  else if (strEndsWith(name, (char*)".bmp") ||
+           strEndsWith(name, (char*)".jpg"))
     return FILE_ICON_BMP;
   else if (strEndsWith(name, (char*)".txt"))
     return FILE_ICON_TXT;
@@ -489,7 +509,8 @@ void createFolderRecursive(const char* folder) {
 
 // (DE)COMPRESSION CODE - START
 
-static int encoder_sink_read(int writehandle, heatshrink_encoder *hse, uint8_t *data, size_t data_sz, size_t* final_sz) {
+static int encoder_sink_read(int writehandle, heatshrink_encoder *hse, uint8_t *data,
+                             size_t data_sz, size_t* final_sz) {
   size_t out_sz = 4096;
   uint8_t out_buf[out_sz];
   memset(out_buf, 0, out_sz);
@@ -523,7 +544,8 @@ static int encoder_sink_read(int writehandle, heatshrink_encoder *hse, uint8_t *
   return 0;
 }
 
-static int decoder_sink_read(int writehandle, heatshrink_decoder *hsd, uint8_t *data, size_t data_sz) {
+static int decoder_sink_read(int writehandle, heatshrink_decoder *hsd, uint8_t *data,
+                             size_t data_sz) {
   size_t sink_sz = 0;
   size_t poll_sz = 0;
   size_t out_sz = 4096;
@@ -561,7 +583,9 @@ static int decoder_sink_read(int writehandle, heatshrink_decoder *hsd, uint8_t *
 void compressFile(char* oldfilename, char* newfilename, int action, int silent) {
   // with action == 0, compresses. with action == 1, decompresses.
   // if silent is true, GUI is not touched.
-  if(!strcmp(newfilename, oldfilename) || stringEndsInG3A(newfilename) || stringEndsInG3A(oldfilename)) {
+  if(!strcmp(newfilename, oldfilename) ||
+      stringEndsInG3A(newfilename) ||
+      stringEndsInG3A(oldfilename)) {
     //trying to overwrite the original file, or this is a g3a file (which we can't "touch")
     return;
   }
@@ -577,7 +601,9 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
   unsigned int origfilesize = 0, lookahead = 0, windowsize = 0;
 #define FILE_COMPORIGBUF 24576
   if(!action) {
-    origfilesize = Bfile_GetFileSize_OS(hOldFile); // so that we can write to the compressed file header the original size
+    origfilesize = Bfile_GetFileSize_OS(hOldFile);
+    // so that we can write the original size to the compressed file header
+
     // test compression with different settings to find out which is best for this case
     static const unsigned char wsArray[]={14, 14, 12, 14, 8 };
     static const unsigned char laArray[]={8,  3,  3,  5, 4 };
@@ -603,7 +629,8 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
       Bfile_CloseFile_OS(hOldFile);
       if(!silent) {
         mMsgBoxPush(5);
-        multiPrintXY(3, 2, "Compressing this\nfile doesn't\nyield a smaller\nsize; aborted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        multiPrintXY(3, 2, "Compressing this\nfile doesn't\nyield a smaller\nsize; aborted.",
+                           TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         closeMsgBox(0, 6);
       }
       return;
@@ -611,7 +638,8 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
   }
   Bfile_CloseFile_OS(hOldFile); // close for now
 
-  int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0); // Get handle for the destination file. This should fail because the file shouldn't exist.
+  // Get handle for the destination file. This should fail because the file shouldn't exist.
+  int hNewFile = Bfile_OpenFile_OS(newfilenameshort, READWRITE, 0);
   if(hNewFile >= 0) {
     // dest file exists (which is bad) and is open.
     Bfile_CloseFile_OS(hNewFile);
@@ -647,9 +675,12 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
       // DECOMPRESS
       // check file header, jumping it at the same time
       unsigned char header[16] = "";
-      int chl = sizeof(COMPRESSED_FILE_HEADER)-1+6; // 4 bytes for original filesize and 2 for window size and lookahead
+      // 6: 4 bytes for original filesize and 2 for window size and lookahead
+      int chl = sizeof(COMPRESSED_FILE_HEADER)-1+6;
       Bfile_ReadFile_OS( hOldFile, header, chl, -1 );
-      if(strncmp((char*)header, (char*)COMPRESSED_FILE_HEADER, chl)) goto cleanexit; // not a compressed file
+      if(strncmp((char*)header, (char*)COMPRESSED_FILE_HEADER, chl))
+        goto cleanexit; // not a compressed file
+
       windowsize = header[chl-2];
       lookahead = header[chl-1];
       heatshrink_decoder *hsd = heatshrink_decoder_alloc(256, windowsize, lookahead);
@@ -700,9 +731,11 @@ cleanexit:
     if(!silent) {
       mMsgBoxPush(5);
       if(action) {
-        multiPrintXY(3, 2, "Decompression\nsuccessful.Delete\ncompressed file?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        multiPrintXY(3, 2, "Decompression\nsuccessful.Delete\ncompressed file?",
+                     TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       } else {
-        multiPrintXY(3, 2, "Compression\nsuccessful.Delete\noriginal file?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        multiPrintXY(3, 2, "Compression\nsuccessful.Delete\noriginal file?",
+                     TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       }
     }
     if(silent || closeMsgBox(1)) {
@@ -721,7 +754,8 @@ int isFileCompressed(char* filename, int* origfilesize) {
   Bfile_ReadFile_OS(hFile, header, chl+4, -1 ); // +4 bytes for the original filesize info
   Bfile_CloseFile_OS(hFile);
   if(strncmp((char*)header, (char*)COMPRESSED_FILE_HEADER, chl)) return 0;
-  *origfilesize = (header[chl] << 24) | (header[chl+1] << 16) | (header[chl+2] << 8) | header[chl+3];
+  *origfilesize = (header[chl] << 24) | (header[chl+1] << 16) |
+                  (header[chl+2] << 8) | header[chl+3];
   return 1;
 }
 

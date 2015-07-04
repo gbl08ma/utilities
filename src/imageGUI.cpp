@@ -76,7 +76,8 @@ void viewImage(char* filename) {
         devid.yoff = -(LCD_HEIGHT_PX/2 - (jdec.height/sdiv)/2);
       } else {
         if(devid.yoff<0) devid.yoff = 0;
-        if(devid.yoff>(int)jdec.height/sdiv-LCD_HEIGHT_PX) devid.yoff=jdec.height/sdiv-LCD_HEIGHT_PX;
+        if(devid.yoff>(int)jdec.height/sdiv-LCD_HEIGHT_PX)
+          devid.yoff=jdec.height/sdiv-LCD_HEIGHT_PX;
       }
 
       res = jd_decomp(&jdec, out_func, scale);   /* Start to decompress with set scaling */
@@ -86,7 +87,8 @@ void viewImage(char* filename) {
       } else {
         Bfile_CloseFile_OS(devid.fp);
         mMsgBoxPush(4);
-        multiPrintXY(3, 2, "An error occurred\n(failed to\ndecompress)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        multiPrintXY(3, 2, "An error occurred\n(failed to\ndecompress)",
+                     TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
         closeMsgBox();
         return;
       }
@@ -94,7 +96,8 @@ void viewImage(char* filename) {
     } else {
       Bfile_CloseFile_OS(devid.fp);
       mMsgBoxPush(4);
-      multiPrintXY(3, 2, "An error occurred\n(failed to\nprepare)", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+      multiPrintXY(3, 2, "An error occurred\n(failed to\nprepare)",
+                   TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
       closeMsgBox();
       return;
     }
@@ -184,7 +187,8 @@ void viewImage(char* filename) {
 
 UINT in_func (JDEC* jd, BYTE* buff, UINT nbyte)
 {
-  IODEV *dev = (IODEV*)jd->device;   /* Device identifier for the session (5th argument of jd_prepare function) */
+  /* Device identifier for the session (5th argument of jd_prepare function) */
+  IODEV *dev = (IODEV*)jd->device;
 
 
   if (buff) {
@@ -203,11 +207,12 @@ UINT out_func (JDEC* jd, void* bitmap, JRECT* rect)
   dev->Graph.x = rect->left - dev->xoff;
   dev->Graph.y = rect->top - dev->yoff; //24 px for status bar...
   if(dev->Graph.x > LCD_WIDTH_PX) return 1; // out of bounds, no need to display
-  if(dev->Graph.y > LCD_HEIGHT_PX) return 0; // no need to decode more, it's already out of vertical bound
+  if(dev->Graph.y > LCD_HEIGHT_PX) return 0; // no need to decode more,
+                                             // it's already out of vertical bound
   dev->Graph.width = rect->right - rect->left + 1;
   dev->Graph.height = rect->bottom - rect->top + 1;
   dev->Graph.bitmap = (int)bitmap;
-  Bdisp_WriteGraphVRAM( &dev->Graph );
+  Bdisp_WriteGraphVRAM(&dev->Graph);
 
   return 1;  /* Continue to decompress */
 }
