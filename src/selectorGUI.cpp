@@ -24,15 +24,21 @@ int doSelector(Selector* selector) {
   int key;
   int initialValue = selector->value; // so we can restore later
 
-  if(selector->clearVRAM) Bdisp_AllClr_VRAM();
-  if(selector->title != NULL) drawScreenTitle(selector->title);
-  if(selector->subtitle != NULL) mPrintXY(3, 2, selector->subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  if(selector->clearVRAM)
+    Bdisp_AllClr_VRAM();
+  if(selector->title != NULL)
+    drawScreenTitle(selector->title);
+  if(selector->subtitle != NULL)
+    mPrintXY(3, 2, selector->subtitle, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   while(1)
   {
     clearLine(5,(selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4));
-    if(selector->cycle == 1 || selector->value != selector->max) mPrintXY(5, (selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4), "\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
+    if(selector->cycle == 1 || selector->value != selector->max)
+      mPrintXY(5, (selector->type == SELECTORTYPE_LONGDATEFORMAT ? 3 : 4),
+               "\xe6\x92", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow up
     clearLine(5,6);
-    if(selector->cycle == 1 || selector->value != selector->min) mPrintXY(5, 6, "\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
+    if(selector->cycle == 1 || selector->value != selector->min)
+      mPrintXY(5, 6, "\xe6\x93", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_PURPLE); //arrow down
     clearLine(5,5);
     if(selector->type == SELECTORTYPE_LONGDATEFORMAT) {
       clearLine(1,4);
@@ -96,9 +102,11 @@ int doSelector(Selector* selector) {
       case KEY_CHAR_7:
       case KEY_CHAR_8:
       case KEY_CHAR_9:
-        if(selector->type != SELECTORTYPE_BACKLIGHT_DURATION && selector->type != SELECTORTYPE_LONGDATEFORMAT) {
+        if(selector->type != SELECTORTYPE_BACKLIGHT_DURATION &&
+           selector->type != SELECTORTYPE_LONGDATEFORMAT) {
           // find maximum number of digits allowed
-          int ndigits = 9; // limit of a 32-bits number has 10 digits, so even unlimited isn't really unlimited
+          // limit of a 32-bits number has 10 digits, so even unlimited isn't really unlimited
+          int ndigits = 9;
           if(selector->max && selector->max != -1) {
             int v = selector->max;
             for(ndigits = 0; v != 0; ndigits++)

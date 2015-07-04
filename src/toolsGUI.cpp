@@ -47,8 +47,10 @@ void balanceManager() {
     char currentWallet[MAX_FILENAME_SIZE] = "";
     if(!getCurrentWallet(currentWallet)) {
       // there is no wallet yet, prompt user to create one
-      if(createWalletWizard(1) < 0) return; // user aborted first wallet creation, can't continue
-      if(!getCurrentWallet(currentWallet)) return; // error: won't get current wallet not even after creating one and setting it
+      if(createWalletWizard(1) < 0)
+        return; // user aborted first wallet creation, can't continue
+      if(!getCurrentWallet(currentWallet))
+        return; // error: won't get current wallet not even after creating one and setting it
     }
     res = balanceManagerChild(&menu, currentWallet);
   }
@@ -119,7 +121,8 @@ int balanceManagerChild(Menu* menu, char* currentWallet) {
         break;
       case KEY_CTRL_F3:
       case KEY_CTRL_DEL:
-        if(menu->numitems && deleteTransactionPrompt(txs, currentWallet, menu->numitems, menu->selection-1)) {
+        if(menu->numitems &&
+           deleteTransactionPrompt(txs, currentWallet, menu->numitems, menu->selection-1)) {
           return 1;
         }
         break;
@@ -149,7 +152,8 @@ int addTransactionWizard(char* wallet) {
     SetBackGround(0x0A);
     drawScreenTitle("Add transaction");
     // < (first label), SELECT of on date step, and Next or Finish (last label)
-    drawFkeyLabels((curstep>0 ? 0x036F : -1), (curstep == 2 ? 0x000F : 0), 0, 0, 0, (curstep==4 ? 0x04A4 : 0x04A3));
+    drawFkeyLabels(curstep>0 ? 0x036F : -1, curstep == 2 ? 0x000F : 0, 0, 0, 0,
+                   curstep==4 ? 0x04A4 : 0x04A3);
     if(curstep == 0) {
       MenuItem menuitems[5];
       menuitems[0].text = (char*)"Debit";
@@ -294,8 +298,10 @@ int addTransactionWizard(char* wallet) {
       while(inloop) {
         input.key=0;
         int res = doTextInput(&input);
-        if (res==INPUT_RETURN_EXIT) return 0; // user aborted
-        else if (res==INPUT_RETURN_CONFIRM) inloop = 0; // all fields complete, continue with transaction adding
+        if (res==INPUT_RETURN_EXIT)
+          return 0; // user aborted
+        else if (res==INPUT_RETURN_CONFIRM)
+          inloop = 0; // all fields complete, continue with transaction adding
         else if (res==INPUT_RETURN_KEYCODE && input.key == KEY_CTRL_F1) {
           curstep--;
           break;
@@ -310,7 +316,8 @@ int addTransactionWizard(char* wallet) {
 
 int deleteTransactionPrompt(Transaction* txs, char* wallet, int count, int pos) {
   mMsgBoxPush(5);
-  multiPrintXY(3, 2, "Delete the\nSelected\nTransaction?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(3, 2, "Delete the\nSelected\nTransaction?",
+               TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   if(closeMsgBox(1, 5)) {
     deleteTransaction(txs, wallet, count, pos);
     return 1;
@@ -443,7 +450,8 @@ int changeWalletScreen(char* currentWallet) {
     int i = 0;
     while(!ret) {
       Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-      if(!(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0) && fileinfo.fsize == 0) { // find folders
+      if(fileinfo.fsize == 0 &&
+         !(strcmp((char*)buffer, "..") == 0 || strcmp((char*)buffer, ".") == 0)) { // find folders
         strcpy(wallets[i], buffer);
         items[i].text = wallets[i];
         i++;
@@ -493,7 +501,8 @@ int changeWalletScreen(char* currentWallet) {
         walletNameToPath(buffer, wallets[menu.selection-1]);
         if(deleteWalletPrompt(buffer)) {
           if(menu.numitems <= 1) {
-            // this was the only wallet: delete pointer file too, so that user is prompted to create a new wallet.
+            // this was the only wallet: delete pointer file too, so that user is prompted to create
+            // a new wallet.
             unsigned short path[MAX_FILENAME_SIZE+1];
             strcpy(buffer, BALANCEFOLDER"\\Wallet");
             Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE);
@@ -519,7 +528,8 @@ int changeWalletScreen(char* currentWallet) {
 
 int deleteWalletPrompt(char* wallet) {
   mMsgBoxPush(4);
-  multiPrintXY(3, 2, "Delete the\nSelected Wallet?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(3, 2, "Delete the\nSelected Wallet?", TEXT_MODE_TRANSPARENT_BACKGROUND,
+               TEXT_COLOR_BLACK);
   if(closeMsgBox(1, 4)) {
     deleteWallet(wallet);
     return 1;
@@ -656,7 +666,8 @@ void passwordGenerator() {
               char password[35];
               char line[37];
               for(int i = 0; i < sel.value; i++) {
-                generateRandomString(password, length, items[1].value, items[2].value, items[3].value, items[4].value, items[5].value, &seed);
+                generateRandomString(password, length, items[1].value, items[2].value,
+                                     items[3].value, items[4].value, items[5].value, &seed);
                 sprintf(line, "%s\r\n", password);
                 Bfile_WriteFile_OS(hFile, line, length+2);
               }
@@ -664,7 +675,7 @@ void passwordGenerator() {
             } else AUX_DisplayErrorMessage(0x2B);
             break;
           } else if(ntry < 2) {
-            // File creation probably failed due to the presence of a file with the same name in SMEM
+            // File creation probably failed due to the presence of a file with the same name
             if(overwriteFilePrompt(newfilename))
               Bfile_DeleteEntry(pFile);
             else
@@ -686,7 +697,8 @@ void passwordGenerator() {
           textElement e[5];
           char passwords[5][35];
           for(int i = 0; i < 5; i++) {
-            generateRandomString(passwords[i], length, items[1].value, items[2].value, items[3].value, items[4].value, items[5].value, &seed);
+            generateRandomString(passwords[i], length, items[1].value, items[2].value,
+                                 items[3].value, items[4].value, items[5].value, &seed);
             e[i].text = passwords[i];
             if(i) e[i].newLine = 1;
           }
@@ -715,7 +727,8 @@ void totpClient() {
   RTCunadjustedWizard(1);
   if(isRTCunadjusted()) {
     mMsgBoxPush(6);
-    multiPrintXY(3, 2, "The OATH TOTP\nauthenticator\ncan't work with\nthe clock\nunadjusted.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    multiPrintXY(3, 2, "The OATH TOTP\nauthenticator\ncan't work with\nthe clock\nunadjusted.",
+                 TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     closeMsgBox(0, 7);
     return;
   }
@@ -790,7 +803,8 @@ void viewTOTPcode(totp* tkn) {
     long long int ms_spent_ll = currentUTCUEBT() - (long long int)ThirtySecCode * 30LL * 1000LL;
     int ms_spent = (int)(ms_spent_ll);
 
-    drawCircularCountdownIndicator(LCD_WIDTH_PX/2, 104, 44, COLOR_BLACK, COLOR_WHITE, (ms_spent*43)/30000, getCurrentSecond() < 30 ? 0 : 1);
+    drawCircularCountdownIndicator(LCD_WIDTH_PX/2, 104, 44, COLOR_BLACK, COLOR_WHITE,
+                                   (ms_spent*43)/30000, getCurrentSecond() < 30 ? 0 : 1);
     // fade in/out animation for text
     int val = 0;
     if(ms_spent >= 29000) {
@@ -808,15 +822,16 @@ void viewTOTPcode(totp* tkn) {
     DisplayStatusArea();
     Bdisp_PutDisp_DD();
     key = PRGM_GetKey();
-    if(key == KEY_PRGM_MENU) GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); //this is here just to handle the Menu key
+    if(key == KEY_PRGM_MENU)
+      GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); //this is here to handle the Menu key
     if(key == KEY_PRGM_OPTN) {
       DefineStatusMessage((char*)"", 1, 0, 0);
       GetKeyWait_OS(&keyCol, &keyRow, 2, 0, 0, &key); // clear keybuffer
       RTCunadjustedWizard(0, 1);
       setTimezone();
       return; // so we don't have to redraw etc.
-      // Also, this way the Shift+Menu instruction shown in the adjustment wizard becomes valid immediately,
-      // which is great if the user wants to repeat the adjustment immediately.
+      // Also, this way the Shift+Menu instruction shown in the adjustment wizard becomes vali
+      // immediately, which is great if the user wants to repeat the adjustment.
     }
   }
   DefineStatusMessage((char*)"", 1, 0, 0);
@@ -918,9 +933,11 @@ int renameTOTPscreen(int index, char* oldname) {
 
 int deleteTOTPprompt(int index) {
   mMsgBoxPush(5);
-  multiPrintXY(3, 2, "Remove the\nSelected Token?", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(3, 2, "Remove the\nSelected Token?",
+               TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
   int textX = 2*18; int textY = 3*24;
-  PrintMiniMini(&textX, &textY, (char*)"Make sure you do not lock yourself out", 16, TEXT_COLOR_RED, 0);
+  PrintMiniMini(&textX, &textY, (char*)"Make sure you do not lock yourself out",
+                16, TEXT_COLOR_RED, 0);
   textX = 2*18; textY += 12;
   PrintMiniMini(&textX, &textY, (char*)"of any website or other system.", 16, TEXT_COLOR_RED, 0);
   if(closeMsgBox(1, 5)) {

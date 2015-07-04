@@ -140,7 +140,8 @@ void settingsMenu() {
           smallmenu.title = (char*)"Chrono. notif.";
 
           int sres = doMenu(&smallmenu);
-          if(sres == MENU_RETURN_SELECTION) setSetting(SETTING_CHRONO_NOTIFICATION_TYPE, smallmenu.selection-1, 1);
+          if(sres == MENU_RETURN_SELECTION)
+            setSetting(SETTING_CHRONO_NOTIFICATION_TYPE, smallmenu.selection-1, 1);
           mMsgBoxPop();
           break;
         }
@@ -320,7 +321,9 @@ inline static void homeSettingsMenu() {
             int key;
             drawHomeClock(cur, 0); // force white theme
             int textX=0, textY=7*24;
-            PrintMini(&textX, &textY, (char*)"\xe6\x92/\xe6\x93: select; EXE: confirm; EXIT: cancel", 0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
+            PrintMini(&textX, &textY,
+                      (char*)"\xe6\x92/\xe6\x93: select; EXE: confirm; EXIT: cancel",
+                      0, 0xFFFFFFFF, 0, 0, COLOR_BLACK, COLOR_WHITE, 1, 0);
             mGetKey(&key);
             switch(key) {
               case KEY_CTRL_UP:
@@ -436,7 +439,8 @@ void calendarSettingsMenu() {
           }
           int sres = doMenu(&smallmenu);
           if(sres == MENU_RETURN_SELECTION)
-            setSetting((menu.selection == 2 ? SETTING_DEFAULT_CALENDAR_VIEW : SETTING_WEEK_START_DAY), smallmenu.selection-1, 1);
+            setSetting(menu.selection == 2 ? SETTING_DEFAULT_CALENDAR_VIEW : SETTING_WEEK_START_DAY,
+                       smallmenu.selection-1, 1);
           mMsgBoxPop();
           break;
         }

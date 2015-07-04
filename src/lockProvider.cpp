@@ -73,7 +73,8 @@ int savePassword(unsigned char* password) {
     // Check if it opened now that we created it:
     if(hFile < 0) return 3;
   }
-  //file exists (even if it didn't exist before) and is open. overwrite its contents with the new hash.
+  // file exists (even if it didn't exist before) and is open.
+  // overwrite its contents with the new hash.
   Bfile_WriteFile_OS(hFile, hash, size);
   Bfile_CloseFile_OS(hFile);
   return 0;

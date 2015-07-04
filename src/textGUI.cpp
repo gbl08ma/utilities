@@ -12,12 +12,10 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "timeProvider.hpp"
 #include "textGUI.hpp"
 #include "stringsProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
-#include "selectorGUI.hpp"
 
 typedef scrollbar TScrollbar;
 
@@ -43,8 +41,10 @@ int doTextArea(textArea* text) {
       int tlen = strlen(text->elements[cur].text);
       if(!tlen) continue;
       // support \n within text elements:
-      char* singleline = (char*)malloc(tlen); // because of this, a single text element can't have more bytes than malloc can provide
-      if(singleline == NULL) continue; // could not allocate, skip line
+      // a single text element can't have more bytes than malloc can provide
+      char* singleline = (char*)malloc(tlen);
+      if(singleline == NULL)
+        continue; // could not allocate, skip line
       const char* src = (char*)text->elements[cur].text;
       while(*src) {
         src = toksplit(src, '\n', singleline, tlen);
@@ -56,18 +56,23 @@ int doTextArea(textArea* text) {
           wsrc = toksplit(wsrc, ' ', singleword, tlen); //break into words; next word
 
           //check if printing this word would go off the screen, by previewing the length:
-          printAreaText(&temptextX, &temptextY, singleword, text->elements[cur].color, text->elements[cur].minimini, 1);
+          printAreaText(&temptextX, &temptextY, singleword, text->elements[cur].color,
+                        text->elements[cur].minimini, 1);
           if(temptextX + textX > text->width-(text->scrollbar ? 6 : 0)) {
             //time for a new line
             textX=text->x;
             textY=textY+(text->elements[cur].minimini ? -7 : 0)+text->lineHeight;
-          } //else still fits, print new word normally (or just increment textX, if we are not "on stage" yet)
+          }
+          // else still fits, print new word normally
+          // (or just increment textX, if we are not "on stage" yet)
 
           if(textY >= -24 && textY < LCD_HEIGHT_PX) {
-            printAreaText(&textX, &textY, singleword, text->elements[cur].color, text->elements[cur].minimini, 0);
+            printAreaText(&textX, &textY, singleword, text->elements[cur].color,
+                          text->elements[cur].minimini, 0);
             //add a space, since it was removed from token
             if(*wsrc || text->elements[cur].spaceAtEnd)
-              printAreaText(&textX, &textY, " ", text->elements[cur].color, text->elements[cur].minimini, 0);
+              printAreaText(&textX, &textY, " ", text->elements[cur].color,
+                            text->elements[cur].minimini, 0);
           } else {
             textX += temptextX;
             if(*wsrc || text->elements[cur].spaceAtEnd)
@@ -122,13 +127,15 @@ int doTextArea(textArea* text) {
       case KEY_CTRL_DOWN:
         if (textY > scrollableHeight-(showtitle ? 0 : 17)) {
           scroll = scroll - 17;
-          if(scroll < -totalTextY+scrollableHeight-(showtitle ? 0 : 17)) scroll = -totalTextY+scrollableHeight-(showtitle ? 0 : 17);
+          if(scroll < -totalTextY+scrollableHeight-(showtitle ? 0 : 17))
+            scroll = -totalTextY+scrollableHeight-(showtitle ? 0 : 17);
         }
         break;
       case KEY_CTRL_PAGEDOWN:
         if (textY > scrollableHeight-(showtitle ? 0 : 17)) {
           scroll = scroll - scrollableHeight;
-          if(scroll < -totalTextY+scrollableHeight-(showtitle ? 0 : 17)) scroll = -totalTextY+scrollableHeight-(showtitle ? 0 : 17);
+          if(scroll < -totalTextY+scrollableHeight-(showtitle ? 0 : 17))
+            scroll = -totalTextY+scrollableHeight-(showtitle ? 0 : 17);
         }
         break;
       case KEY_CTRL_PAGEUP:

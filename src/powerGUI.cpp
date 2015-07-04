@@ -68,7 +68,9 @@ void setBacklightLevel() {
   text.elements = elem;
   text.scrollbar=0;
   
-  elem[0].text = (char*)"This setting is volatile because it is changed by the OS on poweroff, on backlight timeout and when the user changes the setting in the OS's System menu.";
+  elem[0].text = (char*)"This setting is volatile because it is changed by the OS on poweroff, on "
+                        "backlight timeout and when the user changes the setting in the OS's "
+                        "System menu.";
   elem[0].minimini = 1;
   text.numelements = 1;
   doTextArea(&text);
@@ -76,7 +78,8 @@ void setBacklightLevel() {
     switch(doSelector(&sel)) {
       case SELECTOR_RETURN_EXIT:
         setRawBacklightSubLevel(initValue);
-        //deliberate fallthrough: bl level was already set with the instant return, so if user is confirming, just return.
+        // deliberate fallthrough:
+        // bl level was already set with the instant return, so if user is confirming, just return.
       case SELECTOR_RETURN_SELECTION:
         return;
       case SELECTOR_RETURN_INSTANT:
@@ -190,13 +193,16 @@ void powerInformation() {
   text.numelements = 16;
   doTextArea(&text);
 }
-const unsigned int PLLs[] = {PLL_1x, PLL_2x, PLL_3x, PLL_4x, PLL_6x, PLL_8x, PLL_12x, PLL_15x, PLL_16x, PLL_18x, PLL_20x, PLL_24x, PLL_26x, PLL_28x};
-static const unsigned short markerspos[]={13, 27, 41, 56, 84, 112, 169, 203, 217, 246, 274, 331, 368, 0};
-static const char* freqstrings[]={"3.6", "7.25", "10.8", "14.5", "21.7", "29", "43.5", "54.4", "58", "65.3", "72.5", "87", "94.3", "101.5"};
+const unsigned int PLLs[] = {PLL_1x, PLL_2x, PLL_3x, PLL_4x, PLL_6x, PLL_8x, PLL_12x, PLL_15x,
+                             PLL_16x, PLL_18x, PLL_20x, PLL_24x, PLL_26x, PLL_28x};
+static const unsigned short markerspos[] = {13, 27, 41, 56, 84, 112, 169, 203, 217, 246, 274,
+                                            331, 368, 0};
+static const char* freqstrings[] = {"3.6", "7.25", "10.8", "14.5", "21.7", "29", "43.5", "54.4",
+                                    "58", "65.3", "72.5", "87", "94.3", "101.5"};
 
 int getPLLinfo(unsigned int PLL, char** freqstr, char** statusstr, int* color) {
-  // gets frequency as string, status (over/underclocked/normal) and returns the X position for the arrow
-  // freqstr and statusstr receive pointers to static strings
+  // gets frequency as string, status (over/underclocked/normal) and returns the X position for the
+  // arrow. freqstr and statusstr receive pointers to static strings
   if(PLL > PLL_16x) {
     *statusstr = (char*)"Overclocked";
     *color = COLOR_ORANGE;

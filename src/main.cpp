@@ -38,18 +38,22 @@ int main()
     // turn off blinking cursor and clear strange keys remapping
     Cursor_SetFlashOff();
     Bkey_ClrAllFlags();
-    // according to Simon, the following two syscalls shouldn't be called unless an add-in is "run from RAM".
-    // he says in the INSIGHT source code that the built-in apps remap the value of fkeys. This appears to be true.
-    // INSIGHT only remaps when running from RAM. Apparently the OS clears the key mapping when starting a new add-in, which makes sense
-    // since the OS isn't here to help us, we must clear manually.
-    // still, his comment about there being a "host" and an add-in being run from RAM doesn't seem to apply here.
-    static const unsigned int default_fkeys[] = { 0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0 };
-    Set_FKeys1( 0, (unsigned int*)default_fkeys );
-    Set_FKeys2( 0 );
+    /* according to Simon, the following two syscalls shouldn't be called unless an add-in is
+     * "run from RAM". he says in the INSIGHT source code that the built-in apps remap the value of
+     * fkeys. This appears to be true. INSIGHT only remaps when running from RAM.
+     * Apparently the OS clears the key mapping when starting a new add-in, which makes sense
+     * since the OS isn't here to help us, we must clear manually.
+     * still, his comment about there being a "host" and an add-in being run from RAM doesn't seem
+     * to apply here.
+     */
+    static const unsigned int default_fkeys[] = {0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,0,0x0000FFFF,
+                                                 0,0x0000FFFF,0,0x0000FFFF,0 };
+    Set_FKeys1(0, (unsigned int*)default_fkeys);
+    Set_FKeys2(0);
     Bdisp_EnableColor(1);
     // workaround to enable color: we must use GetKey once, otherwise color might not be enabled
-    int key;
     Keyboard_PutKeycode( -1, -1, KEY_CTRL_EXIT);
+    int key;
     GetKey(&key);
   }
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:

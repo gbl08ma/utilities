@@ -57,34 +57,36 @@ int passwordInput(int x, int y, unsigned char* buffer) {
     int keyflag = GetSetupSetting( (unsigned int)0x14);
     DisplayStatusArea();
     GetKey(&key);
-    if (GetSetupSetting( (unsigned int)0x14) == 0x01 || GetSetupSetting( (unsigned int)0x14) == 0x04 || GetSetupSetting( (unsigned int)0x14) == 0x84) {
-      keyflag = GetSetupSetting( (unsigned int)0x14); //make sure the flag we're using is the updated one.
-      //we can't update always because that way alpha-not-lock will cancel when F5 is pressed.
+    if (GetSetupSetting((unsigned int)0x14) == 0x01 ||
+        GetSetupSetting((unsigned int)0x14) == 0x04 ||
+        GetSetupSetting((unsigned int)0x14) == 0x84) {
+      // make sure the flag we're using is the updated one.
+      keyflag = GetSetupSetting( (unsigned int)0x14);
+      // we can't update always because that way alpha-not-lock will cancel when F5 is pressed.
     }
-    if(key == KEY_CTRL_F5)
-    {
+    if(key == KEY_CTRL_F5) {
       switch(keyflag) {
         case 0x08:
         case 0x88:
-          SetSetupSetting( (unsigned int)0x14, keyflag-0x04);
+          SetSetupSetting((unsigned int)0x14, keyflag-0x04);
           continue; //do not process the key, because otherwise we will leave alpha status
         case 0x04:
         case 0x84:
-          SetSetupSetting( (unsigned int)0x14, keyflag+0x04);
+          SetSetupSetting((unsigned int)0x14, keyflag+0x04);
           continue; //do not process the key, because otherwise we will leave alpha status
       }
-    }
-    else if(key == KEY_CTRL_F6)
-    {
+    } else if(key == KEY_CTRL_F6) {
       SaveVRAM_1();
       Bkey_ClrAllFlags();
       short character;
       character = CharacterSelectDialog();
-      if (character) cursor = EditMBStringChar((unsigned char*)buffer, charlimit, cursor, character);
+      if (character)
+        cursor = EditMBStringChar((unsigned char*)buffer, charlimit, cursor, character);
       LoadVRAM_1();
-    }  
-    if (key == KEY_CTRL_EXIT) { Cursor_SetFlashOff(); return 0; }
-    if (key == KEY_CTRL_EXE) {
+    } else if (key == KEY_CTRL_EXIT) {
+      Cursor_SetFlashOff();
+      return 0;
+    } else if (key == KEY_CTRL_EXE) {
       if (buffer[0]) {
         Cursor_SetFlashOff(); return 1;
       } else {
@@ -93,16 +95,13 @@ int passwordInput(int x, int y, unsigned char* buffer) {
         closeMsgBox();
       }
     }
-    if(key && key < 30000)
-    {
-      if ((keyflag == 0x08 || keyflag == 0x88) && key >= KEY_CHAR_A && key <= KEY_CHAR_Z) //if lowercase and key is char...
-      {
+    if(key && key < 30000) {
+      if ((keyflag == 0x08 || keyflag == 0x88) && key >= KEY_CHAR_A && key <= KEY_CHAR_Z) {
+        //if lowercase and key is char...
         key = key + 32; //so we switch to lowercase characters
       }
       cursor = EditMBStringChar((unsigned char*)buffer, charlimit, cursor, key);
-    }
-    else
-    {
+    } else {
       EditMBStringCtrl((unsigned char*)buffer, charlimit, &start, &cursor, &key, x, y);
     }
   }
@@ -182,7 +181,9 @@ void lockApp() {
     textElement elem[4];
     text.elements = elem;
     
-    elem[0].text = (char*)"This is probably the first time you are using the calculator lock function, which lets you lock your calculator with a password. When proceeding, you'll be prompted for a new password.";
+    elem[0].text = (char*)"This is probably the first time you are using the calculator lock "
+                          "function, which lets you lock your calculator with a password. When "
+                          "proceeding, you'll be prompted for a new password.";
     
     elem[1].newLine = 1;
     elem[1].lineSpacing = 8;
@@ -193,11 +194,14 @@ void lockApp() {
     if(!doTextArea(&text) || !setPassword()) return;
     
     elem[0].text = (char*)"You successfully set a password for locking your calculator.";
-    elem[1].text = (char*)"The next time you press F6 on the home screen, your calculator will lock. To unlock, press the ALPHA key. You'll be prompted for the password you just set.";
+    elem[1].text = (char*)"The next time you press F6 on the home screen, your calculator will "
+                          "lock. To unlock, press the ALPHA key. You'll be prompted for the "
+                          "password you just set.";
     
     elem[2].newLine = 1;
     elem[2].lineSpacing = 8;
-    elem[2].text = (char*)"You can change the password and settings of the calculator lock function on the settings menu (press Shift then Menu).";
+    elem[2].text = (char*)"You can change the password and settings of the calculator lock "
+                          "function on the settings menu (press Shift then Menu).";
     
     elem[3].newLine = 1;
     elem[3].lineSpacing = 8;
@@ -214,7 +218,8 @@ void lockApp() {
 
   while(1) {
     homeScreen(1);
-    SetSetupSetting( (unsigned int)0x14, 0); //avoid alpha still being triggered at start of text input
+    // avoid alpha still being triggered at start of text input:
+    SetSetupSetting( (unsigned int)0x14, 0);
     if(1==unlockCalc()) {
       break;
     }
@@ -226,7 +231,8 @@ void lockApp() {
     openRunMat();
   } else if (getSetting(SETTING_UNLOCK_RUNMAT) == 2) {
     mMsgBoxPush(4);
-    multiPrintXY(3, 2, "Open Run-Mat?\n\n   Yes:[F1]/[1]\n   No :Other key", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    multiPrintXY(3, 2, "Open Run-Mat?\n\n   Yes:[F1]/[1]\n   No :Other key",
+                 TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
     int key,inscreen=1;
     while(inscreen) {
       mGetKey(&key);

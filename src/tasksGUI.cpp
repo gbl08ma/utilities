@@ -20,9 +20,6 @@
 #include "calendarProvider.hpp"
 #include "calendarGUI.hpp"
 #include "constantsProvider.hpp"
-#include "textGUI.hpp"
-#include "inputGUI.hpp"
-#include "timeProvider.hpp"
 
 void viewTasks() {
   Menu menu;
@@ -42,7 +39,7 @@ int viewTasksChild(Menu* menu) {
   EventDate taskday;
   taskday.day = 0; taskday.month = 0; taskday.year = 0;
   
-  menu->numitems = getEvents(&taskday, CALENDARFOLDER, NULL); //get event count only so we know how much to alloc
+  menu->numitems = getEvents(&taskday, CALENDARFOLDER, NULL); // get event count
   CalendarEvent* tasks = (CalendarEvent*)alloca(menu->numitems*sizeof(CalendarEvent));
   MenuItem* menuitems = (MenuItem*)alloca(menu->numitems*sizeof(MenuItem));
   menu->numitems = getEvents(&taskday, CALENDARFOLDER, tasks);
@@ -84,30 +81,30 @@ int viewTasksChild(Menu* menu) {
         break;
       case KEY_CTRL_F3:
         if(menu->numitems > 0) {
-          if(eventEditor(0, 0, 0, EVENTEDITORTYPE_EDIT, &tasks[menu->selection-1], 1) == EVENTEDITOR_RETURN_CONFIRM) {
-            replaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
-          }
+          if(eventEditor(0, 0, 0, EVENTEDITORTYPE_EDIT, &tasks[menu->selection-1], 1) ==
+             EVENTEDITOR_RETURN_CONFIRM)
+            replaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER,
+                             menu->numitems);
           return 1;
         }
         break;
       case KEY_CTRL_F4:
       case KEY_CTRL_DEL:
         if(menu->numitems > 0)
-          if(EVENTDELETE_RETURN_CONFIRM == deleteEventPrompt(tasks, menu->numitems, menu->selection-1, 1)) {
+          if(EVENTDELETE_RETURN_CONFIRM ==
+             deleteEventPrompt(tasks, menu->numitems, menu->selection-1, 1))
             return 1;
-          }
         break;
       case KEY_CTRL_F5:
-        if(menu->numitems > 0) {
-          if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventsPrompt(0, 0, 0, 1)) {
+        if(menu->numitems > 0)
+          if(EVENTDELETE_RETURN_CONFIRM == deleteAllEventsPrompt(0, 0, 0, 1))
             return 1;
-          }
-        }
         break;
       case KEY_CTRL_F6:
         if(menu->numitems > 0) {
           tasks[menu->selection-1].repeat = !tasks[menu->selection-1].repeat;
-          replaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
+          replaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER,
+                           menu->numitems);
           return 1;
         }
         break;
@@ -116,7 +113,8 @@ int viewTasksChild(Menu* menu) {
           //the "FORMAT" key is used in many places in the OS to format e.g. the color of a field,
           //so in this add-in it is used to change the category (color) of a task/calendar event.
           if(EVENTEDITOR_RETURN_CONFIRM == setCategoryPrompt(&tasks[menu->selection-1])) {
-            replaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER, menu->numitems);
+            replaceEventFile(&tasks[menu->selection-1].startdate, tasks, CALENDARFOLDER,
+                             menu->numitems);
             return 1;
           }
         }

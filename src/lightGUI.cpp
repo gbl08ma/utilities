@@ -25,7 +25,8 @@ void lantern() {
   unsigned int prevlevel = getRawBacklightSubLevel();
   setRawBacklightSubLevel(249);
   Bdisp_AllClr_VRAM();
-  SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return so that we always have a chance to set the brightness correctly
+  // Disable menu return so that we always have a chance to set the brightness correctly:
+  SetGetkeyToMainFunctionReturnFlag(0);
   while(1) {
     GetKey(&key);
     if(key==KEY_CTRL_EXIT || key==KEY_CTRL_MENU) break;
@@ -39,12 +40,16 @@ void pushBogusKey() {
   Keyboard_PutKeycode( -1, -1, KEY_CHAR_STORE);
 }
 
-void flashLight(int noDraw) { // if noDraw is true, this function will just change the backlight levels without changing VRAM contents
+void flashLight(int noDraw) {
+  // if noDraw is true, this function will just change the backlight levels,
+  // without changing VRAM contents
   unsigned int initlevel = getRawBacklightSubLevel();
   unsigned int prevlevel = 0;
   int timer = Timer_Install(0, pushBogusKey, 500);
   int menuFlag = GetGetkeyToMainFunctionReturnFlag();
-  SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return. This way, we always have a chance to set the brightness correctly
+
+  // Disable menu return so that we always have a chance to set the brightness correctly:
+  SetGetkeyToMainFunctionReturnFlag(0);
   if (timer > 0) { Timer_Start(timer); }
   int key = KEY_CHAR_STORE;
   while (1) {
@@ -74,7 +79,8 @@ void flashLight(int noDraw) { // if noDraw is true, this function will just chan
         Timer_Stop(timer);
         Timer_Deinstall(timer);
       }
-      SetGetkeyToMainFunctionReturnFlag(menuFlag); // Enable menu return, if it was previously enabled
+      // Enable menu return, if it was previously enabled
+      SetGetkeyToMainFunctionReturnFlag(menuFlag);
       return;
     }
   }
@@ -85,7 +91,8 @@ void morseLight() {
   int keyCol, keyRow; 
   unsigned int initlevel = getRawBacklightSubLevel();
   while (1) {
-    //the following getkeywait does not process MENU so we always have a chance to set the brightness correctly
+    // the following getkeywait does not process MENU,
+    // so we always have a chance to set the brightness correctly
     if (0 != GetKeyWait_OS(&keyCol,&keyRow,KEYWAIT_HALTOFF_TIMEROFF,0,1, &key) ) {
       if (keyCol == 4 && keyRow == 8) { setRawBacklightSubLevel(initlevel); return; }
       Bdisp_Fill_VRAM( COLOR_WHITE, 3 ); DrawFrame( COLOR_WHITE );
@@ -135,7 +142,8 @@ void colorLight() {
   }
   Bdisp_Fill_VRAM(color, 3 );
   DrawFrame(color);
-  SetGetkeyToMainFunctionReturnFlag(0); //Disable menu return so that we always have the chance to set the brightness correctly
+  // Disable menu return, so that we always have the chance to set the brightness correctly:
+  SetGetkeyToMainFunctionReturnFlag(0);
   while(1) {
     GetKey(&gkey);
     if(gkey==KEY_CTRL_EXIT) break;

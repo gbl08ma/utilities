@@ -205,10 +205,14 @@ void addTransaction(Transaction* tx, char* wallet) {
     // one in the free space.
     if(txcount == MAX_DAY_EVENTS) {
       // must delete the oldest one
-      long long int oldestTimestamp = dateTimeToUEBT(txs[0].date.year, txs[0].date.month, txs[0].date.day, txs[0].time.hour, txs[0].time.minute, txs[0].time.second, 0);
+      long long int oldestTimestamp =
+        dateTimeToUEBT(txs[0].date.year, txs[0].date.month, txs[0].date.day,
+                       txs[0].time.hour, txs[0].time.minute, txs[0].time.second, 0);
       int oldestIndex = 0;
       for(int i = 1; i < txcount; i++) {
-        long long int thisTxTimestamp = dateTimeToUEBT(txs[i].date.year, txs[i].date.month, txs[i].date.day, txs[i].time.hour, txs[i].time.minute, txs[i].time.second, 0);
+        long long int thisTxTimestamp =
+          dateTimeToUEBT(txs[i].date.year, txs[i].date.month, txs[i].date.day,
+                         txs[i].time.hour, txs[i].time.minute, txs[i].time.second, 0);
         if(thisTxTimestamp < oldestTimestamp) {
           oldestTimestamp = thisTxTimestamp;
           oldestIndex = i;
@@ -218,10 +222,13 @@ void addTransaction(Transaction* tx, char* wallet) {
             txs[k] = txs[k+1];
       txcount--;
     }
-    long long int newTxTimestamp = dateTimeToUEBT(tx->date.year, tx->date.month, tx->date.day, tx->time.hour, tx->time.minute, tx->time.second, 0);
+    long long int newTxTimestamp = dateTimeToUEBT(tx->date.year, tx->date.month, tx->date.day,
+                                                tx->time.hour, tx->time.minute, tx->time.second, 0);
     int i = 0;
     for(; i < txcount; i++) {
-      long long int thisTxTimestamp = dateTimeToUEBT(txs[i].date.year, txs[i].date.month, txs[i].date.day, txs[i].time.hour, txs[i].time.minute, txs[i].time.second, 0);
+      long long int thisTxTimestamp =
+        dateTimeToUEBT(txs[i].date.year, txs[i].date.month, txs[i].date.day,
+                       txs[i].time.hour, txs[i].time.minute, txs[i].time.second, 0);
       if(thisTxTimestamp <= newTxTimestamp) break;
     }
     int newFreeIndex = i;
@@ -321,12 +328,15 @@ unsigned int randInterval(unsigned int min, unsigned int max, int* seed) {
   return min + (r / buckets);
 }
 
-void generateRandomString(char* dest, int length, int symbols, int numbers, int uppercase, int similar, int vowels, int* seed) {
+void generateRandomString(char* dest, int length, int symbols, int numbers, int uppercase,
+                          int similar, int vowels, int* seed) {
   int i = 0;
   int vowelSpacing = randInterval(1, 2, seed);
   while(i<length) {
     char next = randInterval(33, 126, seed);
-    if(!symbols && (next < 48 || (next > 57 && next < 65) || (next > 90 && next < 97) || next > 122)) continue;
+    if(!symbols &&
+       (next < 48 || (next > 57 && next < 65) || (next > 90 && next < 97) || next > 122))
+      continue;
     if(!numbers && next >= '0' && next <= '9') continue;
     if(!uppercase && next >= 'A' && next <= 'Z') continue;
     if(!similar && (strchr((char*)"0OoIl1()[]{};:|-_B8", next))) continue;
@@ -380,7 +390,8 @@ int loadTOTPs(totp* ts) {
   date.day = 0; date.month = 0; date.year = 0;
   int tokencount = getEvents(&date, TOTPFOLDER, events);
   for(int i = 0; i<tokencount; i++) {
-    ts[i].keylen = base32_decode((unsigned char*)events[i].description, ts[i].key, 32); // create key from secret string
+    ts[i].keylen = base32_decode((unsigned char*)events[i].description, ts[i].key, 32);
+    // create key from secret string
     if(ts[i].keylen < 0) {
       // error decoding
       tokencount--;

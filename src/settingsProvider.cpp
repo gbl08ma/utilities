@@ -35,12 +35,15 @@ int loadSettings() { // returns 0 on success, 1 if settings were reset (first ru
   MCSGetDlen2(DIRNAME, SETTINGSFILE, &size);
   if (size <= 16) goto resetSettings; // no settings file or incompatible, reset settings.
 
-  MCSGetData1(0, NUMBER_OF_SETTINGS+1, settings); // +1 because NUMBER_OF_SETTINGS does not include the file version
+  MCSGetData1(0, NUMBER_OF_SETTINGS+1, settings);
+  // ^ +1 because NUMBER_OF_SETTINGS does not include the file version
+
   // detect if the current settings file version is compatible with the one we're expecting.
-  // file version is always the first byte, except for the settings files of versions 1.0 and earlier.
+  // file version is always the first byte, except for the settings files of versions 1.0 and
+  // earlier.
   // for these, the filesize happened to be equal or smaller than 16 (checked above).
   // if we got here, the file is a "modern" one, so check the version byte.
-  if (settings[0] != SETTINGSFILE_VERSION) goto resetSettings; //if incompatible, reset settings
+  if (settings[0] != SETTINGSFILE_VERSION) goto resetSettings; // if incompatible, reset settings
   return 0;
 
   resetSettings:
@@ -68,5 +71,6 @@ void saveSettings() {
     MCSDelVar2(DIRNAME, SETTINGSFILE);
   }
   settings[SETTING_SELF_FILEVERSION] = SETTINGSFILE_VERSION;
-  MCSPutVar2(DIRNAME, SETTINGSFILE, NUMBER_OF_SETTINGS+1, settings); //+1 on purpose again, for the same reason
+  MCSPutVar2(DIRNAME, SETTINGSFILE, NUMBER_OF_SETTINGS+1, settings);
+  // ^ +1 on purpose again, for the same reason
 }

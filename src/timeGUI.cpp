@@ -22,8 +22,6 @@
 #include "textGUI.hpp"
 #include "menuGUI.hpp"
 
-#include "debugGUI.hpp"
-
 const char* getDayEnding(int day) {
   //st,nd,rd,th code:
   switch(day) {
@@ -59,10 +57,12 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
       break;
     case 1:
     case 3:
-      sprintf(buffer, "%s, %d%s %s", getCurrentDOWAsString(), curDay, getDayEnding(curDay), getCurrentMonthAsString());
+      sprintf(buffer, "%s, %d%s %s", getCurrentDOWAsString(), curDay,
+              getDayEnding(curDay), getCurrentMonthAsString());
       break;
     case 2:
-      sprintf(buffer, "%s, %d%s %s %d", getCurrentDOWAsString(), curDay, getDayEnding(curDay), getCurrentMonthAsString(), curYear);
+      sprintf(buffer, "%s, %d%s %s %d", getCurrentDOWAsString(), curDay, getDayEnding(curDay),
+              getCurrentMonthAsString(), curYear);
       break;
     case 4:
     case 6: //it's exactly the same except minimini is not used, but that's not handled here
@@ -76,7 +76,8 @@ void drawLongDate(int textY, int format, int colorfg, int colorbg, int miniminii
       sprintf(buffer, "%d%s %s", curDay, getDayEnding(curDay), getCurrentMonthAsString());
       break;
     case 8:
-      sprintf(buffer, "%d%s %s %d", curDay, getDayEnding(curDay), getCurrentMonthAsString(), curYear);
+      sprintf(buffer, "%d%s %s %d", curDay, getDayEnding(curDay), getCurrentMonthAsString(),
+              curYear);
       break;
   }
 
@@ -134,7 +135,8 @@ void drawAnalogClockMinuteNeedle(int m, int s, int cx, int cy, int radius, int c
   drawLine(cx,cy,sx,sy, colorfg);
 }
 
-void drawAnalogClockHourNeedle(int h, int m, int cx, int cy, int radius, int colorfg, int ischrono) {
+void drawAnalogClockHourNeedle(int h, int m, int cx, int cy, int radius, int colorfg, int ischrono)
+{
   double angle=-90;
   double sx,sy;
   double length = radius - radius/(ischrono? 5.0 : 2.5);
@@ -150,12 +152,14 @@ void drawAnalogClock(int cx, int cy, int radius, int colorbg, int colorfg) {
   int m = getCurrentMinute();
   int s = getCurrentSecond();
   drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 12);
-  if(getSetting(SETTING_CLOCK_SECONDS)) drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg ^ COLOR_INDIANRED);
+  if(getSetting(SETTING_CLOCK_SECONDS))
+    drawAnalogClockSecondNeedle(s, cx, cy, radius, colorfg ^ COLOR_INDIANRED);
   drawAnalogClockMinuteNeedle(m, s, cx, cy, radius, colorfg);
   drawAnalogClockHourNeedle(h, m, cx, cy, radius, colorfg, 0);
 }
 
-void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg, int d, int h, int m, int sPlusMs) {
+void drawAnalogChronometer(int cx, int cy, int radius, int colorbg, int colorfg, int d, int h,
+                           int m, int sPlusMs) {
   // draw bigger dial
   drawAnalogClockFace(cx, cy, radius, colorbg, colorfg, 60);
   // draw left dial (minutes)
@@ -236,7 +240,8 @@ void setDateScreen(int canExit) {
     year.title = (char*)"Set date";
     year.subtitle = (char*)"Year";
     year.value = getCurrentYear();
-    year.min = 1970; //don't allow to set below 1970 so it is Unix-time compatible and always has 4 digits
+    //don't allow to set below 1970 so it is Unix-time compatible and always has 4 digits
+    year.min = 1970;
     year.max = HIGHEST_SUPPORTED_YEAR;
     year.cycle = 0;
     int res = doSelector(&year);
@@ -280,12 +285,15 @@ void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
     text.allowEXE = 1; text.allowF1 = 1;
     text.scrollbar = 0;
     
-    elem[0].text = (char*)"Looks like this calculator's clock isn't set correctly, because it is set to a date in the past.";
+    elem[0].text = (char*)"Looks like this calculator's clock isn't set correctly, because it is "
+                          "set to a date in the past.";
     elem[0].spaceAtEnd = 1;
-    elem[1].text = (char*)"This may be because you took off the batteries or restarted the calculator.";
+    elem[1].text = (char*)"This may be because you took off the batteries or restarted the "
+                          "calculator.";
     elem[2].newLine = 1;
     elem[2].lineSpacing = 8;
-    elem[2].text = (char*)"Press EXE or F1 to start setting the time and date, or EXIT to ignore and continue.";
+    elem[2].text = (char*)"Press EXE or F1 to start setting the time and date, or EXIT to ignore "
+                          "and continue.";
     
     text.numelements = 3;
     if(!doTextArea(&text)) return;
@@ -300,7 +308,8 @@ void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
   text.allowEXE = 1; text.allowF1 = 1;
   text.scrollbar = 0;
   
-  elem[0].text = (char*)"When setting the date and time, use the up/down keys to change the displayed value, and EXE to confirm.";
+  elem[0].text = (char*)"When setting the date and time, use the up/down keys to change the "
+                        "displayed value, and EXE to confirm.";
   elem[1].newLine = 1;
   elem[1].lineSpacing = 8;
   elem[1].text = (char*)"Press EXE to start.";
@@ -319,7 +328,8 @@ void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
   
   setDateScreen(0);
   
-  elem[0].text = (char*)"We're done!\nIf you ever need to adjust the clock again press Shift->Menu and choose the appropriate options.";
+  elem[0].text = (char*)"We're done!\nIf you ever need to adjust the clock again press Shift->Menu "
+                        "and choose the appropriate options.";
   elem[1].newLine = 1;
   elem[1].lineSpacing = 8;
   elem[1].text = (char*)"Press EXE or EXIT to continue.";
@@ -339,7 +349,8 @@ void currentTimeToBasicVar() {
   Src.Set(hourfraction);
   Alpha_SetData('T', &Src);
   mMsgBoxPush(4);
-  multiPrintXY(3, 2, "Time fraction\nsaved to alpha\nvariable T.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+  multiPrintXY(3, 2, "Time fraction\nsaved to alpha\nvariable T.", TEXT_MODE_TRANSPARENT_BACKGROUND,
+               TEXT_COLOR_BLACK);
   closeMsgBox();
 }
 
@@ -435,7 +446,8 @@ void setTimezone() {
   text.scrollbar = 0;
   textElement elem[5];
   text.elements = elem;
-  elem[0].text = (char*)"Adjust the setting so that the time on the status bar matches with the UTC time. The latter can be seen at http://time.is/UTC";
+  elem[0].text = (char*)"Adjust the setting so that the time on the status bar matches with the "
+                        "UTC time. The latter can be seen at http://time.is/UTC";
   text.numelements = 1;
   doTextArea(&text);
 
@@ -478,7 +490,8 @@ void setTimezone() {
   menu.numitems = 108;
   menu.selection = getSetting(SETTING_TIMEZONE)+1;
   while(1) {
-    long long int currentUTC = currentUEBT() - (long long int)(menu.selection - 52) * 15LL*60LL*1000LL;
+    long long int currentUTC = currentUEBT() -
+                               (long long int)(menu.selection - 52) * 15LL*60LL*1000LL;
     int hours, minutes;
     long long int seconds;
     seconds = currentUTC / 1000;
