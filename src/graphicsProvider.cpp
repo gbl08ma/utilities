@@ -16,8 +16,10 @@
 #include "settingsProvider.hpp"
 #include "stringsProvider.hpp"
 
+color_t* VRAM_base;
+
 void drawRectangle(int x, int y, int width, int height, unsigned short color) {
-	unsigned short*s=(unsigned short*)0xA8000000;
+  color_t* s = VRAM_base;
 	s+=(y*384)+x;
 	while(height--){
 		for(int w=width;w--;)
@@ -83,8 +85,7 @@ void drawCircularCountdownIndicator(int centerx, int centery, int radius, color_
 
 //ReplaceColor By Kerm:
 void replaceColorInArea(int x, int y, int width, int height, color_t color_old, color_t color_new) { 
-  //color_t* VRAM = GetVRAMAddress();
-  color_t* VRAM = (color_t*)0xA8000000; 
+  color_t* VRAM = VRAM_base; 
   VRAM += (y*LCD_WIDTH_PX)+x; 
   for(int j=0; j<height; VRAM += (LCD_WIDTH_PX-width), j++) { 
     for(int i=0; i<width; VRAM++, i++) { 
@@ -94,7 +95,7 @@ void replaceColorInArea(int x, int y, int width, int height, color_t color_old, 
 }
 
 void invertArea(short x, short y, short width, short height) {
-  color_t* VRAM = (color_t*)0xA8000000; 
+  color_t* VRAM = VRAM_base; 
   VRAM += (y*LCD_WIDTH_PX)+x; 
   for(int j=0; j<height; VRAM += (LCD_WIDTH_PX-width), j++) { 
     for(int i=0; i<width; VRAM++, i++) { 
@@ -156,7 +157,7 @@ void drawFkeyPopup(int Fkey, const char* title) {
 }
 void CopySpriteMasked(const unsigned short* data, int x, int y, int width, int height, 
                       unsigned short maskcolor) {
-  unsigned short* VRAM = (unsigned short*)0xA8000000; 
+  color_t* VRAM = VRAM_base; 
   VRAM += (LCD_WIDTH_PX*y + x); 
   while(height--) {
     int i=width;
@@ -174,7 +175,7 @@ void CopySpriteMasked(const unsigned short* data, int x, int y, int width, int h
 
 void CopySpriteNbitMasked(const unsigned char* data, int x, int y, int width, int height,
                           const color_t* palette, color_t maskColor, unsigned int bitwidth) {
-  color_t* VRAM = (color_t*)0xA8000000;
+  color_t* VRAM = VRAM_base;
   VRAM += (LCD_WIDTH_PX*y + x);
   int offset = 0;
   unsigned char buf = 0;

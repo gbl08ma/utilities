@@ -29,6 +29,7 @@
 #include "timeProvider.hpp"
 #include "debugGUI.hpp"
 jmp_buf utilities_return;
+extern color_t* VRAM_base;
 int main()
 {
   // Add-in entry point
@@ -56,6 +57,7 @@ int main()
     int key;
     GetKey(&key);
   }
+  VRAM_base = (color_t*)GetVRAMAddress();
   // disable Catalog function throughout the add-in, as we don't know how to make use of it:
   Bkey_SetAllFlags(0x80);
   //Load settings
