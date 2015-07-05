@@ -24,6 +24,8 @@
 #include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
 
+#include "debugGUI.hpp"
+
 // the following two functions are auxiliars to memoryCapacityScreen
 void drawCapacityBar(int textY, long long int cur, long long int full) {
   long long int barwidthcpl = (long long int)(LCD_WIDTH_PX*cur)/(long long int)full;
@@ -91,25 +93,20 @@ void memoryCapacityScreen(int isPaneOffset) {
 
 int getAddins(AddIn addins[]) {
   /*searches storage memory for active and inactive add-ins, returns their count*/
-  unsigned short path[MAX_FILENAME_SIZE+1], path2[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
+  unsigned short path[MAX_FILENAME_SIZE+1], found[MAX_FILENAME_SIZE+1];
   char buffer[MAX_FILENAME_SIZE+1];
 
   // make the buffer
-  strcpy(buffer, SMEM_PREFIX"*3a");
+  strcpy(buffer, SMEM_PREFIX"*.g3a");
   
   int curitem = 0;
   file_type_t fileinfo;
   int findhandle;
   Bfile_StrToName_ncpy(path, buffer, MAX_FILENAME_SIZE+1);
   int ret = Bfile_FindFirst_NON_SMEM((const char*)path, &findhandle, (char*)found, &fileinfo);
-  Bfile_StrToName_ncpy(path, (char*)"*.g3a", MAX_FILENAME_SIZE+1);
-  Bfile_StrToName_ncpy(path2, (char*)"*.h3a", MAX_FILENAME_SIZE+1);
   while(!ret) {
     Bfile_NameToStr_ncpy(buffer, found, MAX_FILENAME_SIZE+1);
-    if(strcmp(buffer, (char*)SELFFILE) && fileinfo.fsize &&
-        (Bfile_Name_MatchMask((const short int*)path, (const short int*)found) || 
-         Bfile_Name_MatchMask((const short int*)path2, (const short int*)found)))
-    {
+    if(strcmp(buffer, (char*)SELFFILE) && fileinfo.fsize) {
       strcpy(addins[curitem].filename, (char*)buffer);
       // get friendly add-in name from the file:
       char filename[MAX_FILENAME_SIZE];
@@ -117,18 +114,17 @@ int getAddins(AddIn addins[]) {
       strcat(filename, buffer);
       int hFile = fileOpen(filename);
       if(hFile >= 0) {
+        Bfile_ReadFile_OS(hFile, buffer, 2, 0x0024);
         Bfile_ReadFile_OS(hFile, addins[curitem].name, 24, 0x006B); // read English friendly name
         Bfile_CloseFile_OS(hFile);
       } else strcpy(addins[curitem].name, (char*)buffer);
-      addins[curitem].active =
-          (Bfile_Name_MatchMask((const short int*)path, (const short int*)found) ? 1 : 0);
+      addins[curitem].active = ((unsigned char)buffer[0] == 1);
       curitem++;
     }
     ret = Bfile_FindNext_NON_SMEM(findhandle, (char*)found, (char*)&fileinfo);
   }
 
-  Bfile_FindClose(findhandle);
-  
+  Bfile_FindClose(findhandle);  
   return curitem;
 }
 
@@ -167,15 +163,22 @@ int addinManagerChild(Menu* menu) {
       if(menu->numitems > 0) {
         strcpy(buffer, SMEM_PREFIX);
         strcat(buffer, addins[menu->selection-1].filename);
-        Bfile_StrToName_ncpy(oldpath, buffer, MAX_FILENAME_SIZE+1);
-        if(addins[menu->selection-1].active) { //disable
-          buffer[strlen((char*)buffer)-3] = 'h'; //so it goes from g3a to h3a
-        } else { //enable
-          buffer[strlen((char*)buffer)-3] = 'g'; //so it goes from h3a to g3a
+        int hFile = fileOpen(buffer);
+        if(hFile >= 0) {
+          Bfile_SeekFile_OS(hFile, 0x0024);
+          if(addins[menu->selection-1].active) {
+            buffer[0] = 2;
+            buffer[1] = 2;
+            buffer[2] = 0;
+            Bfile_WriteFile_OS(hFile, buffer, 2);
+          } else {
+            buffer[0] = 1;
+            buffer[1] = 1;
+            buffer[2] = 0;
+            Bfile_WriteFile_OS(hFile, buffer, 2);
+          }
+          Bfile_CloseFile_OS(hFile);
         }
-        unsigned short newpath[MAX_FILENAME_SIZE+1];
-        Bfile_StrToName_ncpy(newpath, buffer, MAX_FILENAME_SIZE+1);
-        Bfile_RenameEntry( oldpath , newpath );
         return 1; //reload list
       }
       break;
