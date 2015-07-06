@@ -2328,7 +2328,6 @@ void eventImportScreen() {
   // they do not collide with existing event files, because the month 0 is reserved for non-calendar
   // files (tasks and files to import).
   EventDate thisday;
-  thisday.month = 0; thisday.year = 0;
   int successful = 0;
   for(thisday.day = 1; thisday.day<100; thisday.day++) {
     int count = getEvents(&thisday, CALENDARFOLDER, NULL);

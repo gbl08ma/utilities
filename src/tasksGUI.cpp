@@ -37,7 +37,6 @@ int viewTasksChild(Menu* menu) {
   //returns 1 when it wants to be restarted (refresh tasks)
   //returns 0 if the idea really is to exit the screen
   EventDate taskday;
-  taskday.day = 0; taskday.month = 0; taskday.year = 0;
   
   menu->numitems = getEvents(&taskday, CALENDARFOLDER, NULL); // get event count
   CalendarEvent* tasks = (CalendarEvent*)alloca(menu->numitems*sizeof(CalendarEvent));

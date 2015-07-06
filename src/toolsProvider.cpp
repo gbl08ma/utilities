@@ -410,14 +410,12 @@ void addTOTP(char* name, char* key) {
   strcpy((char*)event.description, key);
   strcpy((char*)event.location, (char*)"");
   EventDate date;
-  date.day = 0; date.month = 0; date.year = 0;
   event.startdate = date;
   addEvent(&event, TOTPFOLDER);
 }
 
 void removeTOTP(int index) {
   EventDate date;
-  date.day = 0; date.month = 0; date.year = 0;
   CalendarEvent events[MAX_DAY_EVENTS];
   int c = getEvents(&date, TOTPFOLDER, events);
   removeEvent(&date, events, TOTPFOLDER, c, index);
@@ -425,7 +423,6 @@ void removeTOTP(int index) {
 
 void renameTOTP(int index, char* newname) {
   EventDate date;
-  date.day = 0; date.month = 0; date.year = 0;
   CalendarEvent events[MAX_DAY_EVENTS];
   int c = getEvents(&date, TOTPFOLDER, events);
   strcpy((char*)events[index].title, newname);

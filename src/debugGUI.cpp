@@ -42,8 +42,8 @@ void debugMessage(char* text1, char* text2, int value) {
 }
 void showRAMused() {
   int ramused = 0x881E0000 - (int)GetStackPtr();
-  debugMessage((char*)"RAM", (char*)"  b:", ramused);
-  debugMessage((char*)"MB", (char*)"  c:", getMsgBoxCount());
+  debugMessage((char*)"RAM", (char*)"B:", ramused);
+  debugMessage((char*)"MB", (char*)"c:", getMsgBoxCount());
 }
 
 #endif
