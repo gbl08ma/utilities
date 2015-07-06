@@ -698,7 +698,7 @@ void repairEventFile(char* name, const char* folder, int* checkedevents, int* pr
   int len = strlen((char*)asrc);
   for(int i = 0; i<len; i++) {
     // skip the second char of multi-byte chars:
-    if(asrc[i] == FIELD_SEPARATOR && (i > 0 && !isMBsecond(asrc[i-1]))) {
+    if(asrc[i] == FIELD_SEPARATOR && (i > 0 && !isMBfirst(asrc[i-1]))) {
       // end of a field, check length
       if (fieldsep_this_event == 17 && field_length > 21) {
         // invalid title length

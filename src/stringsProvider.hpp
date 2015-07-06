@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-int isMBsecond(char s);
+int isMBfirst(char s);
 const char *toksplit(const char *src, const char tokchar, char *token, int lgh);
 int strEndsWith(const char *str, const char *suffix);
 void* memmem(char* haystack, int hlen, const char* needle, int nlen, int matchCase=1);

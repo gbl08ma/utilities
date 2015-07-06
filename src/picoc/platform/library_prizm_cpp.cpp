@@ -2052,8 +2052,8 @@ pcvoid(saveSettings)(struct ParseState *Parser, struct Value *ReturnValue, struc
 
 // stringsProvider
 
-pcvoid(isMBsecond)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = isMBsecond(Param[1]->Val->Character);
+pcvoid(isMBfirst)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = isMBfirst(Param[1]->Val->Character);
 }
 
 pcvoid(toksplit)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2754,7 +2754,7 @@ const struct LibraryFunction UtilitiesSettingsProvider[] =
 
 const struct LibraryFunction UtilitiesStringsProvider[] =
 {
-    { pcfunc(isMBsecond),            "int isMBsecond(char);" },
+    { pcfunc(isMBfirst),             "int isMBfirst(char);" },
     { pcfunc(toksplit),              "char *toksplit(char*, char, char*, int);" },
     { pcfunc(strEndsWith),           "int strEndsWith(char*, char*);" },
     { pcfunc(memmem),                "void* memmem(char*, int, char*, int, int);" },

@@ -16,7 +16,7 @@
 #include "stringsProvider.hpp"
 #include "graphicsProvider.hpp"
 
-int isMBsecond(char s) { // there is probably a syscall for this, but it's not documented
+int isMBfirst(char s) { // there is probably a syscall for this, but it's not documented
   return (s == '\xE5' || s == '\xE6' || s == '\xE7' || s == '\x7F' || s == '\xF7' || s == '\xF9');
 }
 /* copy over the next token from an input string, WITHOUT
@@ -55,7 +55,7 @@ int lgh) /* length token can receive */
         *token++ = *src;
         --lgh;
       }
-      if(isMBsecond(*src)) prevWasMBLead = 1;
+      if(isMBfirst(*src)) prevWasMBLead = 1;
       else prevWasMBLead = 0;
       src++;
     }
@@ -130,7 +130,7 @@ char* strncpy_replace(char* dest, const char* src, int n, char a, char b) {
   int i;
   for (i = 0; i < n; i++) {
     if(src[i]) {
-      if(src[i] != a || (i > 0 && isMBsecond(src[i-1])))
+      if(src[i] != a || (i > 0 && isMBfirst(src[i-1])))
         dest[i] = src[i];
       else dest[i] = b;
     }
