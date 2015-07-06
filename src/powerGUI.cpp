@@ -68,9 +68,8 @@ void setBacklightLevel() {
   text.elements = elem;
   text.scrollbar=0;
   
-  elem[0].text = (char*)"This setting is volatile because it is changed by the OS on poweroff, on "
-                        "backlight timeout and when the user changes the setting in the OS's "
-                        "System menu.";
+  elem[0].text = (char*)"This value is reset by the OS on poweroff, on backlight timeout and when "
+                        "the user changes the backlight setting in the System app.";
   elem[0].minimini = 1;
   text.numelements = 1;
   doTextArea(&text);

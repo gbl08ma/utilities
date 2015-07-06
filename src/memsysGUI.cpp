@@ -24,8 +24,6 @@
 #include "selectorGUI.hpp" 
 #include "fileProvider.hpp"
 
-#include "debugGUI.hpp"
-
 // the following two functions are auxiliars to memoryCapacityScreen
 void drawCapacityBar(int textY, long long int cur, long long int full) {
   long long int barwidthcpl = (long long int)(LCD_WIDTH_PX*cur)/(long long int)full;
@@ -166,17 +164,10 @@ int addinManagerChild(Menu* menu) {
         int hFile = fileOpen(buffer);
         if(hFile >= 0) {
           Bfile_SeekFile_OS(hFile, 0x0024);
-          if(addins[menu->selection-1].active) {
-            buffer[0] = 2;
-            buffer[1] = 2;
-            buffer[2] = 0;
-            Bfile_WriteFile_OS(hFile, buffer, 2);
-          } else {
-            buffer[0] = 1;
-            buffer[1] = 1;
-            buffer[2] = 0;
-            Bfile_WriteFile_OS(hFile, buffer, 2);
-          }
+          // toggle two bits that the OS checks to determine if a g3a is valid
+          buffer[0] = buffer[1] = 1 + addins[menu->selection-1].active;
+          buffer[2] = 0;
+          Bfile_WriteFile_OS(hFile, buffer, 2);
           Bfile_CloseFile_OS(hFile);
         }
         return 1; //reload list
