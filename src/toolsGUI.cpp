@@ -378,6 +378,7 @@ void viewTransaction(Transaction* tx) {
 
 int createWalletWizard(int isFirstUse) {
   SetBackGround(0x0A);
+  clearLine(1, 8);
   drawScreenTitle("Create wallet", "Name:");
   drawFkeyLabels(-1, -1, -1, -1, -1, 0x04A3);
   char wallet[MAX_WALLETNAME_SIZE+2] = "";
