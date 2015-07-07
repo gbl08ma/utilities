@@ -317,16 +317,16 @@ void RTCunadjustedWizard(int helpMessage, int ignoreAdjusted) {
   text.numelements = 2;
   doTextArea(&text);
   
-  setTimeScreen(0);
+  setDateScreen(0);
   
-  elem[0].text = (char*)"Now let's set the date.";
+  elem[0].text = (char*)"Now let's set the time.";
   elem[1].newLine = 1;
   elem[1].lineSpacing = 8;
   elem[1].text = (char*)"Press EXE to continue.";
   
   doTextArea(&text);
   
-  setDateScreen(0);
+  setTimeScreen(0);
   
   elem[0].text = (char*)"We're done!\nIf you ever need to adjust the clock again press Shift->Menu "
                         "and choose the appropriate options.";
