@@ -54,11 +54,7 @@ int doSelector(Selector* selector) {
           else itoa(selector->value, (unsigned char*)buffer1);
           break;
         case SELECTORTYPE_BACKLIGHT_DURATION:
-          if(selector->value % 2 == 0) { //even, so timeout is X min 0 sec.
-            itoa(selector->value/2, (unsigned char*)buffer1);
-          } else { // timeout is X min 30 sec.
-            itoa((selector->value-1)/2, (unsigned char*)buffer1);
-          }
+          itoa(selector->value/2, (unsigned char*)buffer1);
           strcat(buffer1, " Minute");
           if(selector->value != 2 && selector->value != 3) strcat(buffer1, "s");
           if(selector->value % 2 != 0) strcat(buffer1, " 30 Sec.");

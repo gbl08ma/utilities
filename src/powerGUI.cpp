@@ -162,11 +162,7 @@ void powerInformation() {
   char btimeout[20];
   int timeoutval = GetBacklightDuration();
 
-  if(timeoutval % 2 == 0) { //even, so timeout is X min 0 sec.
-    itoa(timeoutval/2, (unsigned char*)btimeout);
-  } else { // timeout is X min 30 sec.
-    itoa((timeoutval-1)/2, (unsigned char*)btimeout);
-  }
+  itoa(timeoutval/2, (unsigned char*)btimeout);
   strcat(btimeout, " Minute");
   if(timeoutval != 2 && timeoutval != 3) strcat(btimeout, "s");
   if(timeoutval % 2 != 0) strcat(btimeout, " 30 Sec.");
