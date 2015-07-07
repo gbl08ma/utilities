@@ -16,7 +16,7 @@
 #include "menuGUI.hpp"
 #include "textGUI.hpp"
 #include "graphicsProvider.hpp"
-#include "hardwareProvider.hpp"
+#include "fileProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "timeProvider.hpp"
 #include "settingsProvider.hpp"
@@ -25,6 +25,17 @@ void firstRunWizard() {
   setmGetKeyMode(MGETKEY_MODE_RESTRICT_SETTINGS);
   Bdisp_AllClr_VRAM();
   DrawFrame(COLOR_WHITE);
+
+  // check that our g3a has the correct name and stop if that's not the case
+  int hFile = fileOpen(SMEM_PREFIX SELFFILE); // let's try to open ourselves
+  if(hFile < 0) {
+    mPrintXY(4, 2, "\x9C\xE6\xC4\x9C", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_RED);
+    multiPrintXY(4, 4, "Rename me to\n" SELFFILE "\nand try again.",
+                 TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+    while(1) mGetKey(&hFile);
+  }
+  // all ok, close file and continue
+  Bfile_CloseFile_OS(hFile);
   drawtnyimLogo( LCD_WIDTH_PX/2-138/2, LCD_HEIGHT_PX/2-42/2);
   multiPrintMini(104, LCD_HEIGHT_PX/2-42/2-24 - 20, "brought to you by", COLOR_GRAY);
   multiPrintMini(94, LCD_HEIGHT_PX/2+42/2-24, "tny. internet media");
