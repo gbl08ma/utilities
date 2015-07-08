@@ -44,7 +44,7 @@ void balanceManager() {
   menu.nodatamsg = (char*)"No data - press F2";
   menu.returnOnRight = 1;
   while(res) {
-    char currentWallet[MAX_FILENAME_SIZE] = "";
+    char currentWallet[MAX_FILENAME_SIZE];
     if(!getCurrentWallet(currentWallet)) {
       // there is no wallet yet, prompt user to create one
       if(createWalletWizard(1) < 0)
@@ -381,6 +381,10 @@ int createWalletWizard(int isFirstUse) {
   clearLine(1, 8);
   drawScreenTitle("Create wallet", "Name:");
   drawFkeyLabels(-1, -1, -1, -1, -1, 0x04A3);
+  if(isFirstUse) {
+    multiPrintMini(0, 5*24, "You must create a wallet to use the\n"
+                            "balance manager.");
+  }
   char wallet[MAX_WALLETNAME_SIZE+2] = "";
   textInput input;
   input.charlimit=MAX_WALLETNAME_SIZE;

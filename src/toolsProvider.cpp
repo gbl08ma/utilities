@@ -112,7 +112,8 @@ int getCurrentWallet(char* wallet) {
   int hFile = Bfile_OpenFile_OS(ufile, READWRITE, 0); // Get handle
   if(hFile < 0)
     return 0;
-  Bfile_ReadFile_OS(hFile, wallet, MAX_FILENAME_SIZE, 0);
+  int s = Bfile_ReadFile_OS(hFile, wallet, MAX_FILENAME_SIZE, 0);
+  wallet[s] = 0;
   Bfile_CloseFile_OS(hFile);  
   return 1;
 }
