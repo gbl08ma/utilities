@@ -432,7 +432,6 @@ int changeWalletScreen(char* currentWallet) {
   menu.scrollout=1;
   menu.type=MENUTYPE_FKEYS;
   menu.height = 7;
-  menu.nodatamsg = (char*)"No wallets";
   MenuItem items[MAX_WALLETS];
   int mustRefresh = 0;
   while(1) {
