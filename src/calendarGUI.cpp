@@ -1665,7 +1665,8 @@ void searchEventsScreen(int y, int m, int d) {
   mMsgBoxPop();
   
   if(sres != MENU_RETURN_SELECTION) return;
-  char needle[55] = "";
+  char needle[55];
+  needle[0] = 0;
   
   SetBackGround(9);
   clearLine(1,8);

@@ -221,27 +221,27 @@ void changeFKeyColor() {
 }
 
 void systemInfo() {
-  char OSname[12] = "";
+  char OSname[12];
   memcpy(OSname, (void*)0x80020000, 8);
   OSname[8] = '\0';
   
-  char OSversion[12] = "";
+  char OSversion[12];
   memcpy(OSversion, (void*)0x80020020, 10);
   OSversion[10] = '\0';
   
-  char OSdate[20] = "";
+  char OSdate[20];
   memcpy(OSdate, (void*)0x80B5FFE0, 14);
   OSdate[14] = '\0';
   
-  char pcbModel[6] = "";
+  char pcbModel[6];
   memcpy(pcbModel, (void*)0x80000300, 4);
   pcbModel[4] = '\0';
   
-  char ABSname[12] = "";
+  char ABSname[12];
   memcpy(ABSname, (void*)0x80000338, 8);
   ABSname[8] = '\0';
   
-  char ABSdate[20] = "";
+  char ABSdate[20];
   memcpy(ABSdate, (void*)0x8001FFB0, 14);
   ABSdate[14] = '\0';
   

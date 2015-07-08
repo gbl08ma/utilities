@@ -341,7 +341,7 @@ void copyFile(char* oldfilename, char* newfilename) {
     int rwsize;
     do {
       unsigned char copybuffer[FILE_COPYBUFFER+5] = "";
-      rwsize = Bfile_ReadFile_OS( hOldFile, copybuffer, FILE_COPYBUFFER, -1 );
+      rwsize = Bfile_ReadFile_OS(hOldFile, copybuffer, FILE_COPYBUFFER, -1);
       if(rwsize > 0) Bfile_WriteFile_OS(hNewFile, copybuffer, rwsize);
     } while(rwsize > 0);
     //done copying, close files.
