@@ -378,9 +378,8 @@ void viewTransaction(Transaction* tx) {
 
 int createWalletWizard(int isFirstUse) {
   SetBackGround(0x0A);
-  clearLine(1, 8);
   drawScreenTitle("Create wallet", "Name:");
-  drawFkeyLabels(-1, -1, -1, -1, -1, 0x04A3);
+  drawFkeyLabels(0, 0, 0, 0, 0, 0x04A3);
   if(isFirstUse) {
     multiPrintMini(0, 5*24, "You must create a wallet to use the\n"
                             "balance manager.");

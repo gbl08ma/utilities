@@ -1669,9 +1669,8 @@ void searchEventsScreen(int y, int m, int d) {
   needle[0] = 0;
   
   SetBackGround(9);
-  clearLine(1,8);
   drawScreenTitle("Event Search", "Search for:");
-  drawFkeyLabels(-1,-1,-1,-1,-1,0x00A5); // SEARCH (white)
+  drawFkeyLabels(0, 0, 0, 0, 0, 0x00A5); // SEARCH (white)
   
   textInput input;
   input.forcetext=1; //force text so title must be at least one char.
