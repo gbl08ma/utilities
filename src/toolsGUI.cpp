@@ -57,7 +57,6 @@ void balanceManager() {
 }
 
 int balanceManagerChild(Menu* menu, char* currentWallet) {
-  Bdisp_AllClr_VRAM();
   Currency balance;
   getWalletBalance(&balance, currentWallet);
   char balanceStr[15];
@@ -598,7 +597,6 @@ void passwordGenerator() {
   menu.numitems = 6;
   menu.items = items;
   while(1) {
-    Bdisp_AllClr_VRAM();
     drawFkeyLabels(0x03B3, 0, 0, 0, 0, 0x0184); // FILE, EXE (white)
     itoa(length, (unsigned char*)lstr);
     char t[20];
