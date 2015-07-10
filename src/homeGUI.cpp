@@ -476,7 +476,7 @@ void pane_drawTodayEvents(CalendarEvent* calevents, int startx, int starty, int 
       curevent++;
     }
     if(numevents>maxevents) {
-      sprintf(itemtext, "  ...and %d more event%s", numevents-maxevents,
+      sprintf(itemtext, "...and %d more event%s", numevents-maxevents,
               numevents-maxevents > 1 ? "s" : "");
       multiPrintMini(startx + 5, starty + 20, itemtext, color_fg);
     }

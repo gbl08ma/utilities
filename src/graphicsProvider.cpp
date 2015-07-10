@@ -105,11 +105,9 @@ void invertArea(short x, short y, short width, short height) {
 }
 
 void darkenStatusbar() {
-  if(getSetting(SETTING_DISPLAY_STATUSBAR)) {
-    replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_BLACK, COLOR_GRAY);
-    replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_WHITE, COLOR_BLACK);
-    replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_BLUE, COLOR_ORANGE);
-  }
+  replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_BLACK, COLOR_GRAY);
+  replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_WHITE, COLOR_BLACK);
+  replaceColorInArea(0, 0, LCD_WIDTH_PX, 24, COLOR_BLUE, COLOR_ORANGE);
 }
 void darkenFkeys(int numkeys) {
   replaceColorInArea(0, LCD_HEIGHT_PX-24, LCD_WIDTH_PX-64*(6-numkeys), 24, COLOR_BLACK, COLOR_GRAY);
