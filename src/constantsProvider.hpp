@@ -66,12 +66,12 @@
 
 #ifndef KNOWN_PAST_TIMESTAMP
 // a timestamp that's known to be in the past for all timezones, so we can detect a unadjusted RTC
-#define KNOWN_PAST_TIMESTAMP 1402704000*1000
+#define KNOWN_PAST_TIMESTAMP 1439769600*1000
 #endif
 
 #ifndef BUILD_EXPIRE_TIMESTAMP
 // after the calc RTC is in a timestamp past this, users will be prompted to check for updates
-#define BUILD_EXPIRE_TIMESTAMP 1412035200*1000
+#define BUILD_EXPIRE_TIMESTAMP 1449532800*1000
 #endif
 
 #ifndef HIGHEST_SUPPORTED_YEAR
@@ -83,10 +83,11 @@
 #define LOWEST_SUPPORTED_YEAR 0
 #endif
 
-
+/*
 #ifndef ENABLE_DEBUG
 #define ENABLE_DEBUG 1
 #endif
+*/
 
 #ifndef ENABLE_PICOC_SUPPORT
 #ifdef __ENABLE_PICOC_SUPPORT
