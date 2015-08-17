@@ -807,6 +807,7 @@ int viewEventsChild(Menu* menu, int y, int m, int d) {
           searchValid = 0;
           return 1;
         }
+        break;
       case KEY_CTRL_F6:
         if(menu->numitems > 0) menu->fkeypage = !menu->fkeypage;
         break;
