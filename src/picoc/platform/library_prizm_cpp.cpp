@@ -2008,14 +2008,6 @@ pcvoid(getPLLinfo)(struct ParseState *Parser, struct Value *ReturnValue, struct 
     ReturnValue->Val->Integer = getPLLinfo(Param[0]->Val->UnsignedInteger, (char**)Param[1]->Val->Pointer, (char**)Param[2]->Val->Pointer, (int*)Param[3]->Val->Pointer);
 }
 
-pcvoid(updateCurrentFreq)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    updateCurrentFreq();
-}
-
-pcvoid(setCPUclock)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    setCPUclock();
-}
-
 // selectorGUI
 
 pcvoid(doSelector)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2725,8 +2717,6 @@ const struct LibraryFunction UtilitiesPowerGUI[] =
     { pcfunc(setBacklightLevel),     "void setBacklightLevel(void);" },
     { pcfunc(powerInformation),      "void powerInformation(void);" },
     { pcfunc(getPLLinfo),            "int getPLLinfo(unsigned int, char**, char**, int*);" },
-    { pcfunc(updateCurrentFreq),     "void updateCurrentFreq(void);" },
-    { pcfunc(setCPUclock),           "void setCPUclock(void);" },
     { NULL,         NULL }
 };
 

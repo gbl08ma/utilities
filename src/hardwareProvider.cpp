@@ -64,7 +64,7 @@ void setBrightnessToStartupSetting() {
   }
 }
 
-// CPU CLOCKING CODE:
+// CPU CLOCKING CODE (used only from PicoC scripts)
 
 void CPU_change_freq(int mult) { 
    __asm__( 

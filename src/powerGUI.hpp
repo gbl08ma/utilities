@@ -20,7 +20,5 @@ void setBacklightTimeout();
 void setBacklightLevel();
 void powerInformation();
 int getPLLinfo(unsigned int PLL, char** freqstr, char** statusstr, int* color);
-void updateCurrentFreq();
-void setCPUclock();
 
 #endif

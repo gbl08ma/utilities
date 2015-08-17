@@ -202,7 +202,6 @@ void powerMenu(int* pane_keycache) {
   menuitems[1].text = (char*)"Backlight duration";
   menuitems[2].text = (char*)"Backlight level";
   menuitems[3].text = (char*)"Power information";
-  menuitems[4].text = (char*)"CPU speed";
   
   Menu menu;
   menu.items=menuitems;
@@ -211,7 +210,7 @@ void powerMenu(int* pane_keycache) {
   menu.startX=2;
   menu.startY=3;
   menu.type=MENUTYPE_FKEYS;
-  menu.numitems=4 + !!getSetting(SETTING_SHOW_ADVANCED);
+  menu.numitems=4;
   menu.darken=getSetting(SETTING_THEME);
   while(1) {
     int res = doMenu(&menu);
@@ -223,7 +222,6 @@ void powerMenu(int* pane_keycache) {
           case 2: setBacklightTimeout(); break;
           case 3: setBacklightLevel(); break;
           case 4: powerInformation(); break;
-          case 5: setCPUclock(); break;
         }
         return;
       case KEY_CTRL_F6:
