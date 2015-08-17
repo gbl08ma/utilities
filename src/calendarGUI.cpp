@@ -1660,7 +1660,7 @@ void searchEventsScreen(int y, int m, int d) {
   smallmenu.startX=3;
   smallmenu.startY=2;
   smallmenu.statusText = (char*)""; // to clear "Press OPTN..." message
-  smallmenu.title = (char*)"Search on:";
+  smallmenu.title = (char*)"Search in:";
   int sres = doMenu(&smallmenu);
   mMsgBoxPop();
   
@@ -1714,7 +1714,7 @@ void searchEventsScreen(int y, int m, int d) {
     default: //avoids compiler warning
     { int userStartYear = y-2;
       Selector sel;
-      sel.title = (char*)"Search on year range";
+      sel.title = (char*)"Search in year range";
       sel.subtitle = (char*)"Start year";
       sel.value = userStartYear;
       sel.min = LOWEST_SUPPORTED_YEAR;
