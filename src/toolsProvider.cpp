@@ -41,7 +41,7 @@ int stringToCurrency(Currency* dest, char* orig) {
     buffer[i++] = *orig;
   }
   buffer[i] = 0;
-  if(i > 9) return 1; // too many digits for units
+  if((buffer[0] != '-' && i > 9) || i > 10) return 1; // too many digits for units
   long long int res = (long long int)atoi(buffer) * 100LL;
   int hasNegativeSign = 0;
   if(buffer[0] == '-') {
