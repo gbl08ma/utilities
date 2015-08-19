@@ -639,6 +639,7 @@ void passwordGenerator() {
         newname[0] = 0;
         textInput input;
         input.forcetext=1;
+        input.symbols = 0;
         input.charlimit=MAX_NAME_SIZE;
         input.buffer = (char*)newname;
         int inscreen = 1;
