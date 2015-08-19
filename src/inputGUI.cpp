@@ -121,7 +121,7 @@ int doTextInput(textInput* input) {
       Cursor_SetFlashOff(); return INPUT_RETURN_EXIT;
     } else if(input->key == KEY_CTRL_F1 || input->key == KEY_CTRL_F2) {  
       Cursor_SetFlashOff(); return INPUT_RETURN_KEYCODE;
-    } else if(input->key == KEY_CTRL_F4 && input->type == INPUTTYPE_NORMAL) {
+    } else if(input->key == KEY_CTRL_F4 && input->type == INPUTTYPE_NORMAL && input->symbols) {
       short character = selectCharacterAux();
       if (character)
         input->cursor = EditMBStringChar((unsigned char*)input->buffer, input->charlimit,
