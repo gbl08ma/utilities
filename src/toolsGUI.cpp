@@ -553,6 +553,7 @@ int renameWalletScreen(char* wallet, char* newWallet) {
   strcpy(newname, wallet);
   textInput input;
   input.forcetext=1;
+  input.symbols = 0;
   input.charlimit=MAX_WALLETNAME_SIZE;
   input.buffer = (char*)newname;
   while(1) {
