@@ -877,6 +877,7 @@ int addTOTPwizard() {
       textInput input;
       input.charlimit=32;
       input.acceptF6=1;
+      input.symbols = 0;
       input.forcetext = 1;
       input.buffer = key;
       int inloop = 1;
