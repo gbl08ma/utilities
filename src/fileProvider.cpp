@@ -643,7 +643,9 @@ void compressFile(char* oldfilename, char* newfilename, int action, int silent) 
   if(hNewFile >= 0) {
     // dest file exists (which is bad) and is open.
     Bfile_CloseFile_OS(hNewFile);
-    return; //cancel
+    if(overwriteFilePrompt(newfilename)) {
+      Bfile_DeleteEntry(newfilenameshort);
+    } else return; //cancel
   }
   
   // at this point we know that:
