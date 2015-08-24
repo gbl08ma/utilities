@@ -6,7 +6,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
 
   - **Clock functionality** - see and set the current time and date. Multiple time and date formats supported, and you can choose to show an analog clock.
 
-  - **Chronometer functionality** - 20 timers that can go upwards or downwards, and be paused (accuracy: +/- 7 ms). A downwards timer can be set by specifying its duration or specifying a date and time at which it should end.
+  - **Chronometer functionality** - 20 timers that can go upwards or downwards, and be paused (accuracy: +/- 7 ms). A downwards timer can be set by specifying its duration or specifying a date and time at which it should end. 
   
   - **Calendar** - besides seeing any calendar month, you can add events on specific days (useful for storing exam dates and assignment due dates). You can choose to use the week view, which has the advantage of showing more event details. There is also functionality for counting days (subtracting dates).
 
@@ -14,11 +14,19 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
   - **Task list** - like calendar events, but with no set date. You can mark tasks as complete and they have color categories, too.
   
-  - **Power management** - fine adjustment of the power off and backlight timeouts, as well as brightness level. Advanced users can also set the CPU clock speed (overclock or underclock).
+  - **Power management** - fine adjustment of the power off and backlight timeouts, as well as brightness level.
   
-  - **File manager** - more advanced than the one provided by Casio in the Memory menu, with Utilities you can move and copy files and folders, rename files and folders, calculate the SHA-256 sum of files and view and edit text files. Long file names supported. You can also compress and decompress files to and from a Utilities-specific format. There's, too, a file search function that can look inside files.
+  - **File manager** - more advanced than the one provided by Casio in the Memory menu, with Utilities you can move and copy files and folders, rename files and folders, calculate the SHA-256 and SHA-1 sums of files and view and edit text files. Long file names supported. You can also compress and decompress files to and from a Utilities-specific format. There's, too, a file search function that can look inside files.
+  
+  - **JPEG image viewer** - view images in JPEG format by opening them right from the file manager.
 
-  - **Text editor** - still very simple and does not allow for multi-line editing (you must insert line breaks manually with Shift+EXE). This functionality will be extended in future versions.
+  - **Text editor** - very simple and does not allow for multi-line editing (you must insert line breaks manually with Shift+EXE).
+  
+  - **Balance manager** - manage your finances. Multiple wallets supported. You can enter a description for every transation, along with a date and time.
+  
+  - **Password generator** - generate passwords with between 6 and 30 characters in length. Optionally, passwords can contain numbers and symbols. You can also ask for passwords that attempt to be pronounceable. Large amounts of passwords can be generated to text files.
+  
+  - **TOTP authenticator** - turn your calculator into a authentication second factor, like Google Authenticator.
   
   - **Lantern** - turn your Prizm into a expensive lantern! Modes supported: steady light, flashing light, morse light (screen lightens up while you press a key) and color light.
   
@@ -28,11 +36,13 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
   - **System information viewer** - view the OS and bootloader version and timestamps, calculator model information, Renesas CPU version registers and the unique device ID. You can also view the current user information (as set on the System menu and displayed during power-off) and its history, including "passwords".
   
-  - **Calculator lock** - "lock" the calculator with a password to avoid having curious people messing around with your calculator. Not suitable as a high-security lock (for now, it's easy to bypass). You can set Utilities to turn off the calculator after locking. And after unlocking, you can set it to open Run-Mat or ask you if you want. To return from Run-Mat back to Utilities, press Shift and Exit at the same time.
+  - **Calculator lock** - - "lock" the calculator with a password to avoid having curious people messing around with your calculator. Not suitable as a high-security lock (for now, it's easy to bypass). You can set Utilities to turn off the calculator after locking. And after unlocking, you can set it to open Run-Mat or ask you if you want to. To return from Run-Mat back to Utilities, press Shift and Exit at the same time.
   
     - If you fear that the lock function may cause problems at some point (e.g. locking yourself out during an exam), contact gbl08ma for instructions on how to disable it.
   
   - **Add-in manager** - allows for hiding add-ins from the Main Menu without uninstalling them, when they are not necessary. Currently it is an unstable feature due to OS limitations, sometimes causing system errors. This functionality is only available when the advanced tools option is enabled.
+  
+  - **PicoC script execution** - only available in select builds, allows for executing scripts with in interpreted C language that can use most of the functions of the OS and of Utilities.
   
   - Save the current time to the alpha/Basic variable T. This is useful for doing calculations around a certain time. Press the XoT key on the home screen to call the functionality.
   
@@ -40,7 +50,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
 ## And as a bonus...
 
-  - **Weights less than 150 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
+  - **Weights less than 180 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
   
   - Really fast to start up - it's usually even faster than the built-in app Run-Mat!
   
@@ -72,12 +82,10 @@ Everything should be pretty much self-explanatory - Utilities is made to dispens
 
 The calculator lock function will guide you through the process of setting a password, the first time you use it. You can contact gbl08ma if for some reason you wish to disable this function (be prepared to follow instructions in a very exact way).
 
-The CPU clock adjustment tool and the Add-In Manager only become available when the "Show advanced tools" setting is enabled.
-
-The Add-In manager is unstable because of technical limitations, and may cause system errors. If you see a System Error, you should try pressing Menu and then 1 to try to dismiss it, or you can press EXIT to reboot the calculator. 99% of the times no data is lost or serious damage is done in the event of System Errors.
+The Add-In Manager only becomes available when the "Show advanced tools" setting is enabled. The Add-In manager is unstable because of technical limitations, and may cause system errors. If you see a System Error, you should try pressing Menu and then 1 to try to dismiss it, or you can press EXIT to reboot the calculator. Other thing that may happen with the Add-In Manager is that all add-ins will be gone from the Main Menu. If this happens, reboot the calculator to make them appear again.
 
 ## Checking for updates
-Utilities, like most software, receives updates from time to time. Starting with the v1.2 release, Utilities includes a little function that, assuming the calculator's clock is adjusted, will remind you to check for updates after a certain date in the future. However, you do not need to wait for that message to appear. You should check for updates to Utilities periodically, to ensure you have the greatest feature pack and the most stable version. To check for new versions, you should visit the following page:
+Utilities, like most software, receives updates from time to time. Utilities includes a little function that, assuming the calculator's clock is adjusted, will remind you to check for updates after a certain date in the future. However, you do not need to wait for that message to appear. You should check for updates to Utilities periodically, to ensure you have the greatest feature pack and the most stable version. To check for new versions, you should visit the following page:
 
 [http://gbl08ma.com/casio-prizm-software/](http://gbl08ma.com/casio-prizm-software/)
 
@@ -93,6 +101,35 @@ gbl08ma@gmail.com
 For a detailed changelog, including lots of developer anger and jargon, take a look at the commit history on the GitHub page.
 
 Here is a summary of the changes, in no special order:
+
+From v1.4 to v2.0:
+  - Added balance manager;
+  - Added password generator;
+  - Added TOTP authenticator;
+  - Added "home panels": one can now set a shortcut for when up/down/left/right is pressed on the clock screen;
+  - Added JPEG image viewer;
+  - Task list: fix bug where a system error could occur if there were no tasks;
+  - File manager: allow for compressing and decompressing multiple files at once;
+  - File manager: allow for sorting files by type;
+  - File manager: file compression library upgraded, should be able to produce smaller files. Old files are still compatible;
+  - File manager: allow up/down action on file information screen, moving to the previous/next file in the list, respectively;
+  - File manager: add support for overwriting existing files when copying, moving or saving a file over an existing one;
+  - File manager clipboard: tweaks to the behavior and item limit increase, from 50 to 75 items;
+  - File manager: allow for inverting selection;
+  - File manager: show more information in the "Folder statistics" screen;
+  - File information: calculate the SHA-1 sum of files along with the SHA-256 sum;
+  - Calendar: fix problems with event search;
+  - Calendar: show days of week in the busy timetable of the week view;
+  - Render newlines correctly in calendar events and tasks;
+  - Number selectors (screens where one can select a number by pressing up/down): allow for inserting the number directly with the 0-9 keys;
+  - Allow for selecting dates with the graphical calendar, in most places where dates can be entered;
+  - Chronometer: added individual chronometer view, with analog dials for the time;
+  - Calculator lock: display the clock and, optionally, the user information on the lock screen;
+  - Improved navigation in select menus, by using the left/right keys to go back to the previous screen and to enter the current option, respectively;
+  - Removed CPU speed selector, as it was obsolete when compared to separated dedicated tools;
+  - Improved the inner workings of the Add-in manager;
+  - Many internal changes to improve stability and functionality;
+  - Many small bugs fixed and other small convenience features introduced.
 
 From v1.3 to v1.4:
   - Show more information on date difference tool ("Count days" on the calendar OPTN menu);
