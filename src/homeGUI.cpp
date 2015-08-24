@@ -75,13 +75,13 @@ void homeScreen(int isLocked) {
     } else DefineStatusMessage((char*)"", 1, 0, 0);
     if(getSetting(SETTING_DISPLAY_STATUSBAR)) {
       DisplayStatusArea();
+      if(isLocked && !GetSetupSetting((unsigned int)0x14)) {
+        setBrightnessToStartupSetting();
+        drawRectangle(18, 2, 18, 18, COLOR_BLACK);
+        drawRectangle(20, 4, 14, 14, COLOR_CYAN);
+        CopySpriteNbitMasked(lock_icon, 22, 5, 10, 12, lock_icon_palette, 0xffff, 1);
+      }
       if (getSetting(SETTING_THEME)) darkenStatusbar();
-    }
-    if(isLocked && !GetSetupSetting((unsigned int)0x14)) {
-      setBrightnessToStartupSetting();
-      drawRectangle(18, 2, 18, 18, COLOR_BLACK);
-      drawRectangle(20, 4, 14, 14, COLOR_CYAN);
-      CopySpriteNbitMasked(lock_icon, 22, 5, 10, 12, lock_icon_palette, 0xffff, 1);
     }
    
     // Print time
