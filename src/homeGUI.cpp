@@ -430,6 +430,10 @@ void handleHomePane(int key, int* pane_keycache) {
     case 7: chronoScreen(); break;
     case 8: balanceManager(); break;
     case 9: passwordGenerator(); break;
+    case 11:
+      if(getSetting(SETTING_SHOW_ADVANCED)) {
+        addinManager(); break;
+      } //else deliberate fallthrough
     case 10: totpClient(); break;
   }
 }
