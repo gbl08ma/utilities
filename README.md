@@ -36,7 +36,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
   - **System information viewer** - view the OS and bootloader version and timestamps, calculator model information, Renesas CPU version registers and the unique device ID. You can also view the current user information (as set on the System menu and displayed during power-off) and its history, including "passwords".
   
-  - **Calculator lock** - - "lock" the calculator with a password to avoid having curious people messing around with your calculator. Not suitable as a high-security lock (for now, it's easy to bypass). You can set Utilities to turn off the calculator after locking. And after unlocking, you can set it to open Run-Mat or ask you if you want to. To return from Run-Mat back to Utilities, press Shift and Exit at the same time.
+  - **Calculator lock** - "lock" the calculator with a password to avoid having curious people messing around with your calculator. Not suitable as a high-security lock (for now, it's easy to bypass). You can set Utilities to turn off the calculator after locking. And after unlocking, you can set it to open Run-Mat or ask you if you want to. To return from Run-Mat back to Utilities, press Shift and Exit at the same time.
   
     - If you fear that the lock function may cause problems at some point (e.g. locking yourself out during an exam), contact gbl08ma for instructions on how to disable it.
   

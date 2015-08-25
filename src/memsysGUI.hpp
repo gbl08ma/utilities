@@ -24,7 +24,7 @@
 
 typedef struct
 {
-  int active; //whether the add-in is set to show in menu (.g3a) or hidden (.h3a)
+  int active; //whether the add-in is set to show in menu or hidden
   char filename[MAX_FILENAME_SIZE]; //filename, not proper for use with Bfile.
   char name[MAX_NAME_SIZE]; //friendly name
 } AddIn;
