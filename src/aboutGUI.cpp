@@ -66,12 +66,16 @@ void aboutScreen() {
   
   felem[10].newLine = 1;
   felem[10].lineSpacing = 15;
+  felem[10].color = COLOR_BLUE;
   felem[10].text = (char*)"Press any key";
   
   ftext.numelements = 11;
   doTextArea(&ftext);
   drawtnyimLogo(10, 59+24); //24 pixels for the status bar
-  mGetKey(&key);
+  do {
+    mGetKey(&key);
+    // allow people to take a screenshot with Shift+7:
+  } while(key == KEY_CTRL_SHIFT || key == KEY_CTRL_CAPTURE);
   
   textArea text;
 
