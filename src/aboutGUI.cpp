@@ -62,7 +62,7 @@ void aboutScreen() {
  
   felem[9].newLine = 1;
   felem[9].lineSpacing = 8;
-  felem[9].text = (char*)"http://i.tny.im | http://gbl08ma.com\ngbl08ma@gmail.com";
+  felem[9].text = (char*)"http://i.tny.im | http://gbl08ma.com\ngabriel@tny.im";
   
   felem[10].newLine = 1;
   felem[10].lineSpacing = 15;
