@@ -161,7 +161,7 @@ void buildExpiredScreen() {
   elem[1].text = (char*)"http://tny.im/utupd";
   elem[2].newLine = 1;
   elem[2].lineSpacing = 16;
-  elem[2].text = (char*)"Press EXIT to continue, or F1 to temporarily stop this message from"
+  elem[2].text = (char*)"Press EXIT to continue, or F1 to temporarily stop this message from "
                         "showing.";
   
   text.numelements = 3;
