@@ -128,7 +128,7 @@ extern int ExitBuf[];
 #ifdef PRIZM_HOST
 # undef USE_MALLOC_STACK
 # undef USE_MALLOC_HEAP
-# define HEAP_SIZE 64*1024
+# define HEAP_SIZE 128*1024
 # include <stdio.h>
 # include <stdlib.h>
 # include <ctype.h>
