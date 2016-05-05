@@ -987,6 +987,10 @@ pcvoid(MB_ElementCount)(struct ParseState *Parser, struct Value *ReturnValue, st
     ReturnValue->Val->Integer = MB_ElementCount((char*)Param[0]->Val->Pointer);
 }
 
+pcvoid(GlibGetOSVersionInfo)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = GlibGetOSVersionInfo((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, (short*)Param[2]->Val->Pointer, (short*)Param[3]->Val->Pointer);
+}
+
 /* list of all library functions and their prototypes */
 
 const struct LibraryFunction PrizmAppSyscalls[] =
@@ -1260,6 +1264,7 @@ const struct LibraryFunction PrizmSystemSyscalls[] =
     { pcfunc(Alpha_GetData),         "void Alpha_GetData(char, void*);" },
     { pcfunc(CLIP_Store),            "int CLIP_Store(unsigned char*, int);" },
     { pcfunc(MB_ElementCount),       "int MB_ElementCount(char* buf);" },
+    { pcfunc(GlibGetOSVersionInfo),  "int GlibGetOSVersionInfo(char*, char*, short*, short*);" },
     { NULL,         NULL }
 };
 
