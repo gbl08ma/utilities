@@ -195,6 +195,16 @@ int addinManagerChild(Menu* menu) {
 
 void changeFKeyColor() {
   unsigned char*keycolor = (unsigned char*) 0xFD8013E4;
+  char major, minor;
+  short c, d;
+  GlibGetOSVersionInfo(&major, &minor, &c, &d);
+  // if OS 02.02 or later...
+  if(major >= 2) {
+    if(minor >= 2 || major > 2) {
+      keycolor = (unsigned char*) 0xFD8016AC;
+    }
+  }
+
   Bdisp_AllClr_VRAM();
   DisplayStatusArea();
   drawScreenTitle("Function Key Color");
