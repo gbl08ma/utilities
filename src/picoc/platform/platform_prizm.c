@@ -47,3 +47,16 @@ void PlatformExit(int RetVal)
     longjmp(PicocExitBuf, 1);
 }
 
+/* Utilities - PicoC output glue code */
+
+char* PlatformGetOutputPointer() {
+    return (char*)0xE5200000;
+}
+
+char* PlatformGetOutputCursor() {
+    return curoutptr;
+}
+
+void PlatformClearOutput() {
+    curoutptr = (char*)0xE5200000;
+}

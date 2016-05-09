@@ -29,6 +29,11 @@
 #include "imageGUI.hpp"
 #include "linkProvider.hpp"
 #include "sprites.h"
+#ifdef ENABLE_PICOC_SUPPORT
+extern "C" {
+#include "picoc/platform.h"
+}
+#endif
 
 void fileManager() {
   int res = 1;
@@ -48,15 +53,31 @@ void fileManager() {
       break;
       #ifdef ENABLE_PICOC_SUPPORT
       case 2:
+        DefineStatusMessage((char*)"", 1, 0, 0);
+        PlatformClearOutput();
         int res = picoc(filetoedit);
-        if(res) {
+        if(res || PlatformGetOutputCursor() != PlatformGetOutputPointer()) {
           char resStr[10];
           itoa(res, (unsigned char*)resStr);
-          mMsgBoxPush(4);
-          multiPrintXY(3, 2, "PicoC execution\nfinished with\ncode:",
-                       TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          mPrintXY(9, 4, resStr, TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
-          closeMsgBox();
+          // null-terminate output:
+          *PlatformGetOutputCursor() = NULL;
+
+          textArea text;
+          text.title = (char*)"PicoC";
+          
+          textElement elem[4];
+          text.elements = elem;
+          
+          elem[0].text = (char*)"Execution ended with code";
+          elem[0].spaceAtEnd = 1;
+          elem[1].text = resStr;
+          elem[2].text = (char*)".\nOutput:";
+          elem[3].newLine = 1;
+          elem[3].lineSpacing = 10;
+          elem[3].text = PlatformGetOutputPointer();
+          
+          text.numelements = 4;
+          doTextArea(&text);
         }
         break;
       #endif

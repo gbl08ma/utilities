@@ -1720,8 +1720,8 @@ pcvoid(CopySpriteNbitMasked)(struct ParseState *Parser, struct Value *ReturnValu
     CopySpriteNbitMasked((unsigned char*)Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer, (unsigned short*)Param[5]->Val->Pointer, Param[6]->Val->UnsignedShortInteger, Param[7]->Val->UnsignedInteger);
 }
 
-pcvoid(drawtnyimLogo)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    drawtnyimLogo(Param[0]->Val->Integer, Param[1]->Val->Integer);
+pcvoid(drawSegvaultLogo)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    drawSegvaultLogo(Param[0]->Val->Integer, Param[1]->Val->Integer);
 }
 
 pcvoid(textColorToFullColor)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2599,7 +2599,7 @@ const struct LibraryFunction UtilitiesGraphicsProvider[] =
     { pcfunc(drawFkeyPopup),         "void drawFkeyPopup(int, char*);" },
     { pcfunc(CopySpriteMasked),      "void CopySpriteMasked(unsigned short*, int, int, int, int, unsigned short);" },
     { pcfunc(CopySpriteNbitMasked),  "void CopySpriteNbitMasked(unsigned char*, int, int, int, int, unsigned short*, unsigned short, unsigned int);" },
-    { pcfunc(drawtnyimLogo),         "void drawtnyimLogo(int, int);" },
+    { pcfunc(drawSegvaultLogo),      "void drawSegvaultLogo(int, int);" },
     { pcfunc(textColorToFullColor),  "int textColorToFullColor(int);" },
     { pcfunc(progressMessage),       "void progressMessage(char*, int, int);" },
     { pcfunc(closeProgressMessage),  "void closeProgressMessage(void);" },

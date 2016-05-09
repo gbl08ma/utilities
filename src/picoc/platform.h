@@ -146,6 +146,10 @@ extern int ExitBuf[];
 #  define USE_READLINE
 #  define BIG_ENDIAN
 # endif
+/* Utilities - PicoC output glue code */
+char* PlatformGetOutputPointer();
+char* PlatformGetOutputCursor();
+void PlatformClearOutput();
 #endif
 
 #endif /* PLATFORM_H */
