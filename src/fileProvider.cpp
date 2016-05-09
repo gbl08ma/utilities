@@ -15,6 +15,7 @@
 
 #include "constantsProvider.hpp"
 #include "graphicsProvider.hpp"
+#include "keyboardProvider.hpp"
 #include "settingsProvider.hpp"
 #include "stringsProvider.hpp"
 #include "menuGUI.hpp"
@@ -812,6 +813,11 @@ extern void *StackFrame;           /* the current stack frame */
 extern void *HeapStackTop;                /* the top of the stack */
 int picoc(char* SourceFile)
 {
+    // if the user does Shift+Exit on mGetKey from inside PicoC,
+    // the calculator will crash/hang the next time PicoC is run and attempts to exit
+    // it's probably due to some setjmp/longjmp effect
+    // simply disable Shift+Exit (PicoC scripts can still re-enable it if they really, really want)
+    setmGetKeyMode(MGETKEY_MODE_RESTRICT_RESTART);
     PicocExitValue = 0;
     HeapMemory = (unsigned char*)alloca(HEAP_SIZE);
     HeapBottom = (void *)(HeapMemory + HEAP_SIZE);
@@ -823,6 +829,7 @@ int picoc(char* SourceFile)
     if (PicocPlatformSetExitPoint())
     {
         PicocCleanup();
+        setmGetKeyMode(MGETKEY_MODE_NORMAL);
         return PicocExitValue;
     }
     
@@ -831,6 +838,7 @@ int picoc(char* SourceFile)
     //PicocCallMain(argc - ParamCount, &argv[ParamCount]);
     
     PicocCleanup();
+    setmGetKeyMode(MGETKEY_MODE_NORMAL);
     return PicocExitValue;
 }
 
