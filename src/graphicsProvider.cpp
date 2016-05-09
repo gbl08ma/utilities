@@ -195,42 +195,55 @@ void CopySpriteNbitMasked(const unsigned char* data, int x, int y, int width, in
   }
 }
 
-// the following function will draw the tny.im logo starting at screen coordinates x,y
-// the tny.im logo is great enough not to require any sprites! yay!
-// w: 138
-// h: 42
-static const unsigned char logoB[]={
-//draw t
-0, 6, 6, 24,
-6, 12, 6, 6,
-6, 30, 6, 6,
-//draw n
-18, 12, 6, 24,
-24, 12, 12, 6,
-36, 18, 6, 18,
-//draw y
-48, 12, 6, 18,
-60, 12, 6, 18,
-54, 30, 6, 6,
-48, 36, 6, 6,
-//draw dot
-72, 30, 6, 6 };
-static const unsigned char logoO[]={
-//draw i (orange)
-84, 0, 6, 6,
-84, 12, 6, 24,
-//draw m (orange)
-96, 12, 6, 24,
-102, 12, 12, 6,
-114, 18, 6, 18,
-120, 12, 12, 6,
-132, 18, 6, 18 };
-void drawtnyimLogo(int x, int y) {
+// the following function will draw a variation of the Segvault logo,
+// starting at screen coordinates x,y
+// w: 101
+// h: 44
+static const unsigned char logoLines[]={
+  // S, E, G:
+  0, 10, 10, 0,
+  1, 11, 10, 20,
+  0, 30, 9, 21,
+  14, 10, 24, 0,
+  15, 11, 24, 20,
+  14, 11, 14, 20,
+  15, 21, 24, 30,
+  28, 10, 38, 0,
+  28, 11, 28, 20,
+  29, 21, 38, 30,
+  38, 29, 38, 20,
+  37, 19, 34, 16,
+  // V:
+  42, 0, 47, 30,
+  52, 0, 47, 30,
+  // A, U, L, T:
+  52, 30, 57, 0,
+  62, 30, 57, 0,
+  66, 0, 66, 20,
+  67, 21, 76, 30,
+  76, 29, 76, 0,
+  80, 0, 80, 30,
+  81, 29, 90, 20,
+  94, 0, 94, 30,
+  89, 10, 99, 0
+};
+
+void drawSegvaultLogo(int x, int y) {
   int i;
-  for(i=0;i<11*4;i+=4)
-    drawRectangle(x+logoB[i], y+logoB[i+1], logoB[i+2], logoB[i+3], COLOR_BLACK);
-  for(i=0;i<7*4;i+=4)
-    drawRectangle(x+logoO[i], y+logoO[i+1], logoO[i+2], logoO[i+3], TNYIM_ORANGE);
+  for(i = 0; i < 12*4; i += 4) {
+    drawLine(x+logoLines[i], y+logoLines[i+1], x+logoLines[i+2], y+logoLines[i+3], COLOR_BLACK);
+    drawLine(x+logoLines[i]+1, y+logoLines[i+1], x+logoLines[i+2]+1, y+logoLines[i+3], COLOR_BLACK);
+  }
+  for(; i < 14*4; i += 4) {
+    drawLine(x+logoLines[i], y+logoLines[i+1], x+logoLines[i+2], y+logoLines[i+3], 0x02BF);
+    drawLine(x+logoLines[i]+1, y+logoLines[i+1], x+logoLines[i+2]+1, y+logoLines[i+3], 0x02BF);
+  }
+  for(; i < 23*4; i += 4) {
+    drawLine(x+logoLines[i], y+logoLines[i+1], x+logoLines[i+2], y+logoLines[i+3], 0x04BF);
+    drawLine(x+logoLines[i]+1, y+logoLines[i+1], x+logoLines[i+2]+1, y+logoLines[i+3], 0x04BF);
+  }
+  int mx = x+16, my=y+35;
+  PrintMiniMini(&mx, &my, "BROAD LEAPS", 64, TEXT_COLOR_BLACK, 0);
 }
 
 static const color_t fullColorsForText[] =

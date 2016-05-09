@@ -27,7 +27,7 @@ void aboutScreen() {
   ftext.scrollbar=0;
   ftext.type=TEXTAREATYPE_INSTANT_RETURN;
 
-  textElement felem[14];
+  textElement felem[6];
   ftext.elements = felem;
   
   felem[0].text = (char*)"Version";
@@ -43,35 +43,19 @@ void aboutScreen() {
   felem[3].newLine = 1;
   felem[3].lineSpacing = 8;
   felem[3].text = (char*)"Developed by gbl08ma at";
-  
-  felem[4].newLine = 1;
-  felem[4].lineSpacing = 42;
-  felem[4].text = (char*)"tny.";
-  felem[4].spaceAtEnd = 1;
-  
-  felem[5].text = (char*)"i";
-  felem[5].color = TNYIM_ORANGE;
-  
-  felem[6].text = (char*)"nternet";
-  felem[6].spaceAtEnd = 1;
-  
-  felem[7].text = (char*)"m";
-  felem[7].color = TNYIM_ORANGE;
-  
-  felem[8].text = (char*)"edia";
  
-  felem[9].newLine = 1;
-  felem[9].lineSpacing = 8;
-  felem[9].text = (char*)"http://i.tny.im | http://gbl08ma.com\ngabriel@tny.im";
+  felem[4].newLine = 1;
+  felem[4].lineSpacing = 8+17+42;
+  felem[4].text = (char*)"http://segvault.tny.im\ngabriel@tny.im | http://gbl08ma.com";
   
-  felem[10].newLine = 1;
-  felem[10].lineSpacing = 15;
-  felem[10].color = COLOR_BLUE;
-  felem[10].text = (char*)"Press any key";
+  felem[5].newLine = 1;
+  felem[5].lineSpacing = 15;
+  felem[5].color = COLOR_BLUE;
+  felem[5].text = (char*)"Press any key";
   
-  ftext.numelements = 11;
+  ftext.numelements = 6;
   doTextArea(&ftext);
-  drawtnyimLogo(10, 59+24); //24 pixels for the status bar
+  drawSegvaultLogo(0, 65+24); //24 pixels for the status bar
   do {
     mGetKey(&key);
     // allow people to take a screenshot with Shift+7:

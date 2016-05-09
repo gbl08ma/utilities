@@ -36,13 +36,10 @@ void firstRunWizard() {
   }
   // all ok, close file and continue
   Bfile_CloseFile_OS(hFile);
-  drawtnyimLogo( LCD_WIDTH_PX/2-138/2, LCD_HEIGHT_PX/2-42/2);
-  multiPrintMini(104, LCD_HEIGHT_PX/2-42/2-24 - 20, "brought to you by", COLOR_GRAY);
-  multiPrintMini(94, LCD_HEIGHT_PX/2+42/2-24, "tny. internet media");
-  multiPrintMini(146, LCD_HEIGHT_PX/2+42/2-24, "i", TNYIM_ORANGE);
-  multiPrintMini(235, LCD_HEIGHT_PX/2+42/2-24, "m", TNYIM_ORANGE);
+  drawSegvaultLogo( LCD_WIDTH_PX/2-101/2, LCD_HEIGHT_PX/2-44/2);
+  multiPrintMini(104, LCD_HEIGHT_PX/2-44/2-24 - 25, "brought to you by", COLOR_GRAY);
   Bdisp_PutDisp_DD();
-  blockForMilliseconds(3500);
+  blockForMilliseconds(4000);
   
   textArea text;
   text.title = (char*)"Welcome to " ADDIN_FRIENDLYNAME;

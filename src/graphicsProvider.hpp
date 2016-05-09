@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define TNYIM_ORANGE 0xd222
 #define plot(x,y,c) Bdisp_SetPoint_VRAM(x, y, c)
 void drawRectangle(int x, int y, int width, int height, unsigned short color);
 void drawLine(int x1, int y1, int x2, int y2, int color);
@@ -28,7 +27,7 @@ void drawArrowDown(int bottomX, int bottomY, int color);
 void drawFkeyPopup(int Fkey, const char* title);
 void CopySpriteMasked(const unsigned short* data, int x, int y, int width, int height, unsigned short maskcolor);
 void CopySpriteNbitMasked(const unsigned char* data, int x, int y, int width, int height, const color_t* palette, color_t maskColor, unsigned int bitwidth);
-void drawtnyimLogo(int x, int y);
+void drawSegvaultLogo(int x, int y);
 int textColorToFullColor(int textcolor);
 void progressMessage(const char* message, int cur, int total);
 void closeProgressMessage();
