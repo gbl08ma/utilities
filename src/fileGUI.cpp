@@ -43,8 +43,8 @@ void fileManager() {
   File clipboard[MAX_ITEMS_IN_CLIPBOARD+1];
   char filetoedit[MAX_FILENAME_SIZE+1];
   strcpy(filetoedit, "");
+  int fileAction = 0;
   while(res) {
-    int fileAction = 0;
     res = fileManagerChild(browserbasepath, &itemsinclip, &fileAction, &shownMainMemHelp,
                            clipboard, filetoedit);
     switch(fileAction) {
@@ -144,11 +144,14 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction,
       menuitems[i].type=MENUITEM_NORMAL;
       menuitems[i].value=MENUITEM_VALUE_NONE;
       if(!has_preset_selection && filetoedit[0] && !strcmp(files[i].filename, filetoedit)) {
+        // if there's a fileAction (edit, PicoC) then show the details screen
+        // otherwise, we just want to highlight the file
         menu.selection = i+1;
-        has_preset_selection = 1;
+        if(*fileAction) has_preset_selection = 1;
       }
   }
   menu.items = menuitems;
+  *fileAction = 0;
   strcpy(filetoedit, "");
   
   unsigned short smemMedia[10]={'\\','\\','f','l','s','0',0};
@@ -371,7 +374,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction,
                 }
               }
             }
-          } else if(menu.numitems && searchFilesScreen(browserbasepath, *itemsinclip)) return 1;
+          } else if(menu.numitems && searchFilesScreen(browserbasepath, filetoedit, *itemsinclip)) return 1;
         }
         break;
       case KEY_CTRL_F4: {
@@ -581,9 +584,10 @@ int renameFileScreen(File* files, Menu* menu, char* browserbasepath) {
   return 0;
 }
 
-int searchFilesScreen(char* browserbasepath, int itemsinclip) {
-  // returns 1 when it wants the caller to jump to browserbasepath
+int searchFilesScreen(char* browserbasepath, char* filetojump, int itemsinclip) {
+  // returns 1 when it wants the caller to jump to browserbasepath and eventually highlight filetojump
   // returns 0 otherwise.
+  strcpy(filetojump, "");
   char statusText[120];
   getFileManagerStatus((char*)statusText, itemsinclip, 1);
   DefineStatusMessage((char*)statusText, 1, 0, 0);
@@ -741,6 +745,7 @@ int searchFilesScreen(char* browserbasepath, int itemsinclip) {
       case KEY_CTRL_F2:
         if(menu.numitems>0) {
           if(!files[menu.selection-1].isfolder) {
+            strcpy(filetojump, files[menu.selection-1].filename);
             // get folder path from full filename
             // we can work on the string in the files array, as it is going to be discarded right
             // after:

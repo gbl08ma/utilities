@@ -24,7 +24,7 @@ int deleteFilesPrompt(File* files, Menu* menu);
 int newFolderScreen(char* browserbasepath);
 int newG3Pscreen(char* browserbasepath);
 int renameFileScreen(File* files, Menu* menu, char* browserbasepath);
-int searchFilesScreen(char* browserbasepath, int itemsinclip);
+int searchFilesScreen(char* browserbasepath, char* filetojump, int itemsinclip);
 
 #define VIEWFILEINFO_RETURN_EXIT 0
 #define VIEWFILEINFO_RETURN_EDIT 1

@@ -1563,7 +1563,7 @@ pcvoid(renameFileScreen)(struct ParseState *Parser, struct Value *ReturnValue, s
 }
 
 pcvoid(searchFilesScreen)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = searchFilesScreen((char*)Param[0]->Val->Pointer, Param[1]->Val->Integer);
+    ReturnValue->Val->Integer = searchFilesScreen((char*)Param[0]->Val->Pointer, (char*)Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
 pcvoid(viewFileInfo)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2546,7 +2546,7 @@ const struct LibraryFunction UtilitiesFileGUI[] =
     { pcfunc(newFolderScreen),       "int newFolderScreen(char*);" },
     { pcfunc(newG3Pscreen),          "int newG3Pscreen(char*);" },
     { pcfunc(renameFileScreen),      "int renameFileScreen(void*, void*, char*);" },
-    { pcfunc(searchFilesScreen),     "int searchFilesScreen(char*, int);" },
+    { pcfunc(searchFilesScreen),     "int searchFilesScreen(char*, char*, int);" },
     { pcfunc(viewFileInfo),          "int viewFileInfo(void*, int, int, int);" },
     { pcfunc(viewFileAsText),        "void viewFileAsText(char*);" },
     { pcfunc(viewClipboard),         "void viewClipboard(void*, int*);" },
