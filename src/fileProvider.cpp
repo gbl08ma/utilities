@@ -812,13 +812,13 @@ extern void *StackFrame;           /* the current stack frame */
 extern void *HeapStackTop;                /* the top of the stack */
 int picoc(char* SourceFile)
 {
-    int StackSize = HEAP_SIZE;
-    HeapMemory = (unsigned char*)alloca(StackSize);
+    PicocExitValue = 0;
+    HeapMemory = (unsigned char*)alloca(HEAP_SIZE);
     HeapBottom = (void *)(HeapMemory + HEAP_SIZE);
     StackFrame = (void *)HeapMemory;
     HeapStackTop = (void *)HeapMemory;
     
-    PicocInitialise(StackSize);
+    PicocInitialise(HEAP_SIZE);
 
     if (PicocPlatformSetExitPoint())
     {
