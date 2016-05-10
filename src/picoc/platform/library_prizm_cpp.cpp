@@ -353,6 +353,36 @@ pcvoid(Bdisp_WriteSystemMessage)(struct ParseState *Parser, struct Value *Return
     Bdisp_WriteSystemMessage(Param[0]->Val->Integer, Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Integer, Param[4]->Val->Integer);
 }
 
+pcvoid(Bdisp_MMPrintRef)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    Bdisp_MMPrintRef(
+        (int*)Param[0]->Val->Pointer,
+        (int*)Param[1]->Val->Pointer,
+        (unsigned char*)Param[2]->Val->Pointer,
+        Param[3]->Val->Integer,
+        Param[4]->Val->Integer,
+        Param[5]->Val->Integer,
+        Param[6]->Val->Integer,
+        Param[7]->Val->Integer,
+        Param[8]->Val->Integer,
+        Param[9]->Val->Integer,
+        Param[10]->Val->Integer);
+}
+
+pcvoid(Bdisp_MMPrint)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    Bdisp_MMPrint(
+        Param[0]->Val->Integer,
+        Param[1]->Val->Integer,
+        (unsigned char*)Param[2]->Val->Pointer,
+        Param[3]->Val->Integer,
+        Param[4]->Val->Integer,
+        Param[5]->Val->Integer,
+        Param[6]->Val->Integer,
+        Param[7]->Val->Integer,
+        Param[8]->Val->Integer,
+        Param[9]->Val->Integer,
+        Param[10]->Val->Integer);
+}
+
 pcvoid(Scrollbar)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     Scrollbar((struct scrollbar*)Param[0]->Val->Pointer);
 }
@@ -1073,6 +1103,8 @@ const struct LibraryFunction PrizmDisplaySyscalls[] =
     { pcfunc(PrintMiniMini),         "void PrintMiniMini(int*, int*, char*, int, char, int);" },
     { pcfunc(Print_OS),              "void Print_OS(char*, int, int);" },
     { pcfunc(Bdisp_WriteSystemMessage),"void Bdisp_WriteSystemMessage(int, int, int, int, char);" },
+    { pcfunc(Bdisp_MMPrintRef),      "void Bdisp_MMPrintRef(int*, int*, unsigned char*, int, int, int, int, int, int, int, int);" },
+    { pcfunc(Bdisp_MMPrint),         "void Bdisp_MMPrint(int, int, unsigned char*, int, int, int, int, int, int, int, int);" },
     { pcfunc(Scrollbar),             "void Scrollbar(struct scrollbar*);" },
     { pcfunc(StandardScrollbar),     "void StandardScrollbar(void*);" },
     { pcfunc(ProgressBar),           "void ProgressBar(int, int);" },
