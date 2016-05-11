@@ -42,7 +42,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
   - **Add-in manager** - allows for hiding add-ins from the Main Menu without uninstalling them, when they are not necessary. Currently it is an unstable feature due to OS limitations, sometimes causing system errors. This functionality is only available when the advanced tools option is enabled.
   
-  - **PicoC script execution** - only available in select builds, allows for executing scripts with in interpreted C language that can use most of the functions of the OS and of Utilities.
+  - **PicoC script execution** - only available in select editions, allows for executing scripts, written in an interpreted variant of C, that can use most of the functions of the OS and of Utilities.
   
   - Save the current time to the alpha/Basic variable T. This is useful for doing calculations around a certain time. Press the XoT key on the home screen to call the functionality.
   
@@ -50,7 +50,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
 ## And as a bonus...
 
-  - **Weights less than 180 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.
+  - **Weights less than 180 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.  The PicoC edition has a larger file size, over 250 KiB.
   
   - Really fast to start up - it's usually even faster than the built-in app Run-Mat!
   
@@ -63,7 +63,7 @@ To install, connect the Prizm calculator to the computer with a miniUSB<->USB ca
 
 Copy "utilities.g3a" to the root folder of the "pendisk" (i.e., out of any folders but inside the pendisk; if necessary, overwrite the existing file) and safely remove it. Wait for the calculator to finish "updating the Main Memory". When it does, you should notice a new Main Menu item, called "Utilities".
 
-The first time you run Utilities you'll be presented the tny. internet media group logo and then a first run wizard with some important notes about the add-in. You should definitely read it. You will then be guided to adjust the clock, something you'll have to do every time you take the batteries off. Don't worry, Utilities will remind you to do it and guide you through the process.
+The first time you run Utilities you'll be presented the Segvault logo and then a first run wizard with some important notes about the add-in, which you should read. You will then be told to adjust the clock, something you'll have to do every time you take the batteries off. Don't worry, Utilities will remind you to do it and guide you through the process.
   
 ## Old version users - update instructions
 (only applies if you are currently using a version Utilities older than Beta 9. If that's not the case, just follow the instalation instructions, copying utilities.g3a over the old one)
@@ -84,12 +84,14 @@ The calculator lock function will guide you through the process of setting a pas
 
 The Add-In Manager only becomes available when the "Show advanced tools" setting is enabled. The Add-In manager is unstable because of technical limitations, and may cause system errors. If you see a System Error, you should try pressing Menu and then 1 to try to dismiss it, or you can press EXIT to reboot the calculator. Other thing that may happen with the Add-In Manager is that all add-ins will be gone from the Main Menu. If this happens, reboot the calculator to make them appear again.
 
+For information on how to use PicoC on Utilities, please [go here](https://github.com/gbl08ma/utilities/wiki/PicoC-information).
+
 ## Checking for updates
 Utilities, like most software, receives updates from time to time. Utilities includes a little function that, assuming the calculator's clock is adjusted, will remind you to check for updates after a certain date in the future. However, you do not need to wait for that message to appear. You should check for updates to Utilities periodically, to ensure you have the greatest feature pack and the most stable version. To check for new versions, you should visit the following page:
 
 [http://gbl08ma.com/casio-prizm-software/](http://gbl08ma.com/casio-prizm-software/)
 
-If the above page isn't available, you can try checking for news at the tny. internet media website:
+If the above page isn't available, you can try checking for news at the TNY network website:
 
 [http://i.tny.im/](http://i.tny.im/)
 
@@ -101,6 +103,11 @@ gbl08ma@gmail.com
 For a detailed changelog, including lots of developer anger and jargon, take a look at the commit history on the GitHub page.
 
 Here is a summary of the changes, in no special order:
+
+From v2.0 to v2.1:
+  - Actually complete PicoC support and release PicoC edition;
+  - Add support for OS 02.02 (function key color changer was broken);
+  - File manager: Pressing Jump (F2) on a file from the search results now moves the selection to the file in question in the file list.
 
 From v1.4 to v2.0:
   - Added balance manager;
@@ -214,7 +221,7 @@ See the disclaimer at the end of this file or the messages on the about screen o
 
 Distributing this Read-Me along with the g3a binary is not mandatory.
 
-Any derivative work based on this software must clearly state it is not the original Utilities add-in by gbl08ma at tny. internet media.
+Any derivative work based on this software must clearly state it is not the original Utilities add-in by gbl08ma at Segvault.
 
 ## Last words
 Utilities is the result of over two years of research, work and extensive testing. That said, we can't guarantee you will have no problems using the add-in or that everything will work as described. You are welcome to report problems to the contacts above, as well as modify the source code to your needs as long as you respect the license.
@@ -222,7 +229,7 @@ Utilities is the result of over two years of research, work and extensive testin
 We hope you enjoy using Utilities as much as we did developing it. And if this add-in ever becomes useful, you just found a secret feature ;)
 
 ---
-Copyright (C) 2013-2014  Gabriel Maia (gbl08ma) and the tny. internet media group
+Copyright (C) 2013-2016  Gabriel Maia (gbl08ma) and Segvault (http://segvault.tny.im)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

@@ -44,10 +44,6 @@
 #define TOTPFOLDER (char*)SMEM_PREFIX CALENDARFOLDER_NAME "\\TOTP"
 #endif
 
-#ifndef HASHFILE
-#define HASHFILE (unsigned char*)"Hash"
-#endif
-
 #ifndef SMEMHASHFILE
 #define SMEMHASHFILE (char*)SMEM_PREFIX CALENDARFOLDER_NAME "\\Hash.plp"
 #endif
@@ -66,12 +62,12 @@
 
 #ifndef KNOWN_PAST_TIMESTAMP
 // a timestamp that's known to be in the past for all timezones, so we can detect a unadjusted RTC
-#define KNOWN_PAST_TIMESTAMP 1440374400*1000
+#define KNOWN_PAST_TIMESTAMP 1462838400*1000
 #endif
 
 #ifndef BUILD_EXPIRE_TIMESTAMP
 // after the calc RTC is in a timestamp past this, users will be prompted to check for updates
-#define BUILD_EXPIRE_TIMESTAMP 1449532800*1000
+#define BUILD_EXPIRE_TIMESTAMP 1478736000*1000
 #endif
 
 #ifndef HIGHEST_SUPPORTED_YEAR
