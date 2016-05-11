@@ -232,28 +232,28 @@ void changeFKeyColor() {
 
 void systemInfo() {
   char OSname[12];
-  memcpy(OSname, (void*)0x80020000, 8);
-  OSname[8] = '\0';
+  for(int i = 0; i < 8; i++) OSname[i] = *((char*)0x80020000+i);
+  OSname[8] = 0;
   
   char OSversion[12];
-  memcpy(OSversion, (void*)0x80020020, 10);
-  OSversion[10] = '\0';
+  for(int i = 0; i < 10; i++) OSversion[i] = *((char*)0x80020020+i);
+  OSversion[10] = 0;
   
   char OSdate[20];
-  memcpy(OSdate, (void*)0x80B5FFE0, 14);
-  OSdate[14] = '\0';
+  for(int i = 0; i < 14; i++) OSdate[i] = *((char*)0x80B5FFE0+i);
+  OSdate[14] = 0;
   
   char pcbModel[6];
-  memcpy(pcbModel, (void*)0x80000300, 4);
-  pcbModel[4] = '\0';
+  for(int i = 0; i < 4; i++) pcbModel[i] = *((char*)0x80000300+i);
+  pcbModel[4] = 0;
   
   char ABSname[12];
-  memcpy(ABSname, (void*)0x80000338, 8);
-  ABSname[8] = '\0';
+  for(int i = 0; i < 8; i++) ABSname[i] = *((char*)0x80000338+i);
+  ABSname[8] = 0;
   
   char ABSdate[20];
-  memcpy(ABSdate, (void*)0x8001FFB0, 14);
-  ABSdate[14] = '\0';
+  for(int i = 0; i < 14; i++) ABSdate[i] = *((char*)0x8001FFB0+i);
+  ABSdate[14] = 0;
   
   char devID[10];
   getHardwareID(devID);  
@@ -264,7 +264,7 @@ void systemInfo() {
     int d = (pvr >> (i * 4)) & 0xF;
     pvrstr[7 - i] = d + ((d > 9)? 0x37 : 0x30);
   }
-  pvrstr[8] = '\0';
+  pvrstr[8] = 0;
   
   long prr = *(long *)0xFF000044;
   char prrstr[9];
@@ -272,7 +272,7 @@ void systemInfo() {
     int d = (prr >> (i * 4)) & 0xF;
     prrstr[7 - i] = d + ((d > 9)? 0x37 : 0x30);
   }
-  prrstr[8] = '\0';
+  prrstr[8] = 0;
   
   long cvr = *(long *)0xFF000040;
   char cvrstr[9];
@@ -280,7 +280,7 @@ void systemInfo() {
     int d = (cvr >> (i * 4)) & 0xF;
     cvrstr[7 - i] = d + ((d > 9)? 0x37 : 0x30);
   }
-  cvrstr[8] = '\0';
+  cvrstr[8] = 0;
   
   textArea text;
   text.title = (char*)"System Information";
@@ -340,22 +340,22 @@ void systemInfo() {
   elem[16].newLine = 1;
   elem[16].text = (char*)"CPU PVR:";
   elem[16].spaceAtEnd=1;
-  elem[17].text = pvrstr;
+  elem[17].text = (char*)pvrstr;
   
   elem[18].newLine = 1;
   elem[18].text = (char*)"CPU PRR:";
   elem[18].spaceAtEnd=1;
-  elem[19].text = prrstr;
+  elem[19].text = (char*)prrstr;
   
   elem[20].newLine = 1;
   elem[20].text = (char*)"CPU CVR:";
   elem[20].spaceAtEnd=1;
-  elem[21].text = cvrstr;
+  elem[21].text = (char*)cvrstr;
   
   elem[22].newLine = 1;
   elem[22].text = (char*)"Device ID:";
   elem[22].spaceAtEnd=1;
-  elem[23].text = devID;
+  elem[23].text = (char*)devID;
 
   elem[24].lineSpacing = 5;
   elem[24].newLine = 1;

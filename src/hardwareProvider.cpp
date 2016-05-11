@@ -32,7 +32,7 @@ void setRawBacklightSubLevel(int level)
 void getHardwareID(char* buffer) {
   // Gets the calculator's unique ID (as told by Simon Lothar): 8 bytes starting at 0x8001FFD0
   // NOTE buffer must be at least 9 bytes long!
-  memcpy(buffer, (void*)0x8001FFD0, 8);
+  for(int i = 0; i < 8; i++) buffer[i] = *((char*)0x8001FFD0+i);
   buffer[8] = 0;
 }
 

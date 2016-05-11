@@ -50,7 +50,7 @@ The Utilities add-in enhances your Casio Prizm calculator by providing functiona
   
 ## And as a bonus...
 
-  - **Weights less than 180 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators.  The PicoC edition has a larger file size, over 250 KiB.
+  - **Weights less than 180 KiB**, saving space on your Prizm's storage memory and speeding up its transfer between calculators. The PicoC edition has a larger file size, over 250 KiB.
   
   - Really fast to start up - it's usually even faster than the built-in app Run-Mat!
   
@@ -107,7 +107,8 @@ Here is a summary of the changes, in no special order:
 From v2.0 to v2.1:
   - Actually complete PicoC support and release PicoC edition;
   - Add support for OS 02.02 (function key color changer was broken);
-  - File manager: Pressing Jump (F2) on a file from the search results now moves the selection to the file in question in the file list.
+  - File manager: Pressing Jump (F2) on a file from the search results now moves the selection to the file in question in the file list;
+  - Fixed problems with the System Information viewer.
 
 From v1.4 to v2.0:
   - Added balance manager;
