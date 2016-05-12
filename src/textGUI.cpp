@@ -17,6 +17,8 @@
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 
+#include "debugGUI.hpp"
+
 typedef scrollbar TScrollbar;
 
 void printAreaText(int* x, int* y, const char* string, color_t color, int micro, int preview) {
@@ -40,21 +42,23 @@ int doTextArea(textArea* text) {
       }
       int tlen = strlen(text->elements[cur].text);
       if(!tlen) continue;
-      // support \n within text elements:
-      // a single text element can't have more bytes than malloc can provide
-      char* singleline = (char*)malloc(tlen);
-      if(singleline == NULL)
-        continue; // could not allocate, skip line
       const char* src = (char*)text->elements[cur].text;
-      while(*src) {
-        src = toksplit(src, '\n', singleline, tlen);
-        const char* wsrc = singleline;
-        char* singleword = (char*)malloc(tlen);
-        if(singleword == NULL) continue; // could not allocate, skip word
-        while(*wsrc) {
+      while(*src && src < text->elements[cur].text + tlen) {
+        // support \n within text elements:
+        int linelength = 0;
+        for(; src[linelength] != '\n' && src[linelength]; linelength++);
+        char singleword[linelength+1]; // +1 for NULL at the end
+        int i = 0;
+        while(i < linelength) {
+          int w = 0;
+          while(src[i] != ' ' && src[i] && i < linelength) {
+            singleword[w] = src[i];
+            i++;
+            w++;
+          }
+          if(i < linelength) i++;
+          singleword[w] = 0;
           int temptextX = 0, temptextY = 0;
-          wsrc = toksplit(wsrc, ' ', singleword, tlen); //break into words; next word
-
           //check if printing this word would go off the screen, by previewing the length:
           printAreaText(&temptextX, &temptextY, singleword, text->elements[cur].color,
                         text->elements[cur].minimini, 1);
@@ -70,27 +74,27 @@ int doTextArea(textArea* text) {
             printAreaText(&textX, &textY, singleword, text->elements[cur].color,
                           text->elements[cur].minimini, 0);
             //add a space, since it was removed from token
-            if(*wsrc || text->elements[cur].spaceAtEnd)
+            if(i < linelength || text->elements[cur].spaceAtEnd)
               printAreaText(&textX, &textY, " ", text->elements[cur].color,
                             text->elements[cur].minimini, 0);
           } else {
             textX += temptextX;
-            if(*wsrc || text->elements[cur].spaceAtEnd)
+            if(i < linelength || text->elements[cur].spaceAtEnd)
               textX += 7; // size of a PrintMini space
           }
         }
-        if(*src) {
+        src += linelength;
+        while(*src == '\n') {
           // there's more text in the element, new line
           textX=text->x;
           textY=textY+(text->elements[cur].minimini ? -7 : 0)+text->lineHeight;
+          src++;
         }
-        free(singleword);
         if(isFirstDraw)
           totalTextY = textY+(showtitle ? 0 : 24);
         else if(textY>LCD_HEIGHT_PX)
           break;
       }
-      free(singleline);
     }
     isFirstDraw=0;
     if(showtitle) {
