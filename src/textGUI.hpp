@@ -26,6 +26,7 @@ typedef struct
 
 #define TEXTAREATYPE_NORMAL 0
 #define TEXTAREATYPE_INSTANT_RETURN 1
+#define TEXTAREATYPE_CURSOR 2 // like instant return, but with a cursor. the fields change meaning
 typedef struct
 {
   int x=0;
@@ -36,15 +37,29 @@ typedef struct
   int numelements;
   char* title = NULL;
   int scrollbar=1;
-  int allowEXE=0; //whether to allow EXE to exit the screen
-  int allowLeft=0; //whether pressing Left exits the screen like EXIT
-  int allowF1=0; //whether to allow F1 to exit the screen
+  union {
+    int allowEXE=0; //whether to allow EXE to exit the screen
+    int scroll; // used to set scroll when type is TEXTAREATYPE_CURSOR 
+  };
+  union {
+    int allowLeft=0; //whether pressing Left exits the screen like EXIT.
+    int cursor; // cursor index
+  };
+  union {
+    int allowF1=0; //whether to allow F1 to exit the screen
+    int updateCursor; // for TEXTAREATYPE_CURSOR
+  };
   int type=TEXTAREATYPE_NORMAL;
+  // fields below are for TEXTAREATYPE_CURSOR only:
+  int shadowCursorX=0;
+  int shadowCursorY=0;
+
 } textArea;
 
 #define TEXTAREA_RETURN_EXIT 0
 #define TEXTAREA_RETURN_EXE 1
 #define TEXTAREA_RETURN_F1 2
+#define TEXTAREA_RETURN_REDRAW 3
 int doTextArea(textArea* text); //returns 0 when user EXITs, 1 when allowEXE is true and user presses EXE, 2 when allowF1 is true and user presses F1.
 
 #endif 

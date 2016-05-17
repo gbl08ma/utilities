@@ -39,6 +39,7 @@ typedef struct {
   char* buffer;
 } textInput;
 
+short selectCharacterAux();
 int doTextInput(textInput* input);
 
 #endif

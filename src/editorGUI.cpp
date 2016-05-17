@@ -15,6 +15,7 @@
 #include "editorGUI.hpp"
 #include "menuGUI.hpp"
 #include "inputGUI.hpp"
+#include "textEditGUI.hpp"
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "fileProvider.hpp"
@@ -45,18 +46,18 @@ void textfileEditor(char* filename, char* basefolder) {
       return;
     }
   }
-  textInput input;
-  input.forcetext=1;
+  textEdit input;
+  //input.forcetext=1;
   input.charlimit=TEXT_BUFFER_SIZE;
   input.buffer = (char*)sText;
   while(1) {
     input.key=0;
-    SetBackGround(newfile ? 10 : 6);
+    /*SetBackGround(newfile ? 10 : 6);
     clearLine(1,8);
-    drawScreenTitle("Text Editor", "File contents:");
-    int res = doTextInput(&input);
-    if (res==INPUT_RETURN_EXIT) return; // user aborted
-    else if (res==INPUT_RETURN_CONFIRM) {
+    drawScreenTitle("Text Editor", "File contents:");*/
+    int res = doTextEdit(&input);
+    if (res==TEXTEDIT_RETURN_EXIT) return; // user aborted
+    else if (res==TEXTEDIT_RETURN_CONFIRM) {
       char newfilename[MAX_FILENAME_SIZE];
       unsigned short newfilenameshort[0x10A];
       if(newfile) {
