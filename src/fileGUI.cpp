@@ -340,12 +340,12 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction,
             mMsgBoxPush(6);
             MenuItem smallmenuitems[7];
             smallmenuitems[0].text = (char*)"Do not sort";
-            smallmenuitems[1].text = (char*)"Name (A to Z)";
-            smallmenuitems[2].text = (char*)"Name (Z to A)";
-            smallmenuitems[3].text = (char*)"Size (small 1st)";
-            smallmenuitems[4].text = (char*)"Size (big 1st)";
-            smallmenuitems[5].text = (char*)"Type (A to Z)";
-            smallmenuitems[6].text = (char*)"Type (Z to A)";
+            smallmenuitems[1].text = (char*)"Name (\xe6\x92)";
+            smallmenuitems[2].text = (char*)"Name (\xe6\x93)";
+            smallmenuitems[3].text = (char*)"Size (\xe6\x92)";
+            smallmenuitems[4].text = (char*)"Size (\xe6\x93)";
+            smallmenuitems[5].text = (char*)"Type (\xe6\x92)";
+            smallmenuitems[6].text = (char*)"Type (\xe6\x93)";
             
             Menu smallmenu;
             smallmenu.items=smallmenuitems;
