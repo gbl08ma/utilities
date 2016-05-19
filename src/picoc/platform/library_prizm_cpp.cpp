@@ -908,7 +908,7 @@ pcvoid(App_LINK_Send_ST9_Packet)(struct ParseState *Parser, struct Value *Return
 }
 
 pcvoid(App_LINK_GetDeviceInfo)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
-    ReturnValue->Val->Integer = App_LINK_GetDeviceInfo((unsigned int*)Param[0]->Val->Pointer, (unsigned int*)Param[1]->Val->Pointer);
+    ReturnValue->Val->Integer = App_LINK_GetDeviceInfo((unsigned int*)Param[0]->Val->Pointer, (unsigned short*)Param[1]->Val->Pointer);
 }
 
 pcvoid(App_LINK_TransmitInit)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {

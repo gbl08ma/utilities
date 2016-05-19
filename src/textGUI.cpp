@@ -17,8 +17,6 @@
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 
-#include "debugGUI.hpp"
-
 typedef scrollbar TScrollbar;
 
 void printAreaText(int* x, int* y, const char* string, color_t color, int micro, int preview) {
@@ -26,10 +24,7 @@ void printAreaText(int* x, int* y, const char* string, color_t color, int micro,
   else PrintMini(x, y, string, 0, 0xFFFFFFFF, 0, 0, color, COLOR_WHITE, !preview, 0);
 }
 int doTextArea(textArea* text) {
-  int scroll = 0;
-  if(text->type == TEXTAREATYPE_CURSOR) {
-    scroll = text->scroll;
-  }
+  int scroll = text->scroll;
   int isFirstDraw = 1;
   int totalTextY = 0;
   int key;
@@ -45,6 +40,8 @@ int doTextArea(textArea* text) {
     if(text->type == TEXTAREATYPE_CURSOR) {
       updateCursorIndex = text->updateCursor == 1;
     }
+    int cursorLine = 0;
+    int lineCount = 1;
     for(int cur = 0; cur < text->numelements; cur++) {
       if(text->elements[cur].newLine) {
         textX=text->x;
@@ -94,6 +91,7 @@ int doTextArea(textArea* text) {
               text->cursor = src - text->elements[cur].text + i - w - 1; // -1 to go before the line-breaking space;
               cursorX = textX - 7; // - 7 to appear before the space
               cursorY = textY;
+              cursorLine = lineCount;
               updateCursorIndex = 2;
             }
 
@@ -117,6 +115,7 @@ int doTextArea(textArea* text) {
                 // the cursor must be on this index
                 cursorIndex = j - !!smallstring[1];
                 text->cursor = j + src - text->elements[cur].text + i - w - !!smallstring[1];
+                cursorLine = lineCount;
                 updateCursorIndex = 2;
                 break;
               }
@@ -135,6 +134,7 @@ int doTextArea(textArea* text) {
                 if(j == cursorIndex) {
                   cursorX = textX;
                   cursorY = textY;
+                  cursorLine = lineCount;
                 }
                 smallstring[0] = singleword[j];
                 smallstring[1] = (isMBfirst(singleword[j]) && j < w - 1 ? singleword[++j] : 0);
@@ -145,6 +145,16 @@ int doTextArea(textArea* text) {
             }
           } else {
             textX += temptextX;
+            if(cursorIndex != -1) {
+              // cursor was in this word, but it is not on screen
+              if(textY < -24) {
+                text->scroll += text->lineHeight;
+                return TEXTAREA_RETURN_REDRAW;
+              } else if(textY >= LCD_HEIGHT_PX) {
+                text->scroll -= text->lineHeight;
+                return TEXTAREA_RETURN_REDRAW;
+              }
+            }
           }
         }
         src += linelength;
@@ -152,17 +162,17 @@ int doTextArea(textArea* text) {
           if(updateCursorIndex == 1 && textY >= text->shadowCursorY && textX <= text->shadowCursorX) {
             // graphical calculation of cursor position based on shadow cursor coordinates
             text->cursor = src - text->elements[cur].text;
-            cursorX = textX;
-            cursorY = textY;
             updateCursorIndex = 2;
           }
           if(text->type == TEXTAREATYPE_CURSOR && text->cursor == src - text->elements[cur].text) {
+            cursorLine = lineCount;
             cursorX = textX;
             cursorY = textY;
           }
           // there's more text in the element, new line
           textX=text->x;
           textY=textY+(text->elements[cur].minimini ? -7 : 0)+text->lineHeight;
+          lineCount++;
           src++;
         }
         if(isFirstDraw)
@@ -173,6 +183,7 @@ int doTextArea(textArea* text) {
       if(updateCursorIndex == 1 && textY <= text->shadowCursorY && textX <= text->shadowCursorX) {
         // graphical calculation of cursor position based on shadow cursor coordinates
         text->cursor = tlen;
+        cursorLine = lineCount;
         updateCursorIndex = 2;
       }
       if(text->cursor >= tlen) {
@@ -220,6 +231,12 @@ int doTextArea(textArea* text) {
       }
       if(!text->updateCursor)
         text->shadowCursorX = cursorX;
+      else {
+        if(cursorLine < 1) cursorLine = 1;
+        char message[25];
+        sprintf(message, (char*)"Line %d of %d", cursorLine, lineCount);
+        DefineStatusMessage(message, 1, 0, 0);
+      }
       text->updateCursor = 2;
       if(cursorY > LCD_HEIGHT_PX - text->lineHeight - 24) {
         text->scroll -= text->lineHeight;

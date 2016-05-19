@@ -37,22 +37,16 @@ typedef struct
   int numelements;
   char* title = NULL;
   int scrollbar=1;
-  union {
-    int allowEXE=0; //whether to allow EXE to exit the screen
-    int scroll; // used to set scroll when type is TEXTAREATYPE_CURSOR 
-  };
-  union {
-    int allowLeft=0; //whether pressing Left exits the screen like EXIT.
-    int cursor; // cursor index
-  };
-  union {
-    int allowF1=0; //whether to allow F1 to exit the screen
-    int updateCursor; // for TEXTAREATYPE_CURSOR
-  };
+  int allowEXE=0; //whether to allow EXE to exit the screen
+  int allowLeft=0; //whether pressing Left exits the screen like EXIT.
+  int allowF1=0; //whether to allow F1 to exit the screen
   int type=TEXTAREATYPE_NORMAL;
   // fields below are for TEXTAREATYPE_CURSOR only:
   int shadowCursorX=0;
   int shadowCursorY=0;
+  int scroll = 0; // used to set scroll when type is TEXTAREATYPE_CURSOR 
+  int cursor = 0; // cursor index
+  int updateCursor = 0; // for TEXTAREATYPE_CURSOR
 
 } textArea;
 
