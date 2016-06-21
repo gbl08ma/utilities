@@ -32,6 +32,11 @@ int doTextEdit(textEdit* edit) {
   text.numelements = 1;
   int enterClip = 0;
   int defaultStatusMsg = 0;
+
+  // For text finding:
+  char needle[55];
+  needle[0] = 0;
+  int caseSensitive = 0;
   while(1) {
     if(!text.updateCursor) {
       if(!defaultStatusMsg) {
@@ -75,7 +80,7 @@ int doTextEdit(textEdit* edit) {
       DisplayMBString2(0, (unsigned char*)edit->buffer, edit->start, edit->cursor, 0, 1, 7*24-24, 21, 0);
     } else if(keyflag == 0x01) {
       // Shift enabled, show labels
-      drawFkeyLabels(0, 0x01FC, 0x018D, 0x02A1, 0x0307, 0x0302); // JUMP, SYMBOL, CHAR, A<>a, SAVE
+      drawFkeyLabels(0x0187, 0x01FC, 0x018D, 0x02A1, 0x0307, 0x0302); // SEARCH, JUMP, SYMBOL, CHAR, A<>a, SAVE
     }
     mGetKey(&edit->key);
     // remap certain keys/characters
@@ -148,6 +153,54 @@ int doTextEdit(textEdit* edit) {
       }
       // Aborted
       return TEXTEDIT_RETURN_EXIT;
+    } else if(edit->key == KEY_CTRL_F1) {
+      textInput input;
+      input.forcetext=1; //force text so title must be at least one char.
+      input.charlimit=50;
+      input.acceptF6=1;
+      input.buffer = needle;
+      while(1) {
+        SetBackGround(9);
+        drawScreenTitle("Text Editor", "Find next:");
+        drawFkeyLabels(0x0103, 0, 0, 0, 0, 0x00A5); // CHANGE (white), SEARCH (white)
+        mPrintXY(1, 5, caseSensitive ? "Case sensitive" : "Case insensitive", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+        input.key = 0;
+        int res = doTextInput(&input);
+        if (res==INPUT_RETURN_EXIT) break; // user aborted
+        else if (res==INPUT_RETURN_KEYCODE && input.key==KEY_CTRL_F1) {
+          caseSensitive = !caseSensitive;
+        } else if (res == INPUT_RETURN_CONFIRM) {
+          int searchcursor = edit->cursor;
+          int attempt = 0;
+          while(1) {
+            char* result = (char*)memmem(edit->buffer + searchcursor, strlen(edit->buffer) - searchcursor, needle, strlen(needle), caseSensitive);
+            if(edit->cursor == result - edit->buffer && !attempt) {
+              searchcursor += strlen(needle);
+              attempt++;
+              continue;
+            }
+
+            if(result != NULL) {
+              edit->cursor = result - edit->buffer;
+              break;
+            } else {
+              if(searchcursor != 0) {
+                // wrap around
+                searchcursor = 0;
+                attempt++;
+                continue;
+              }
+              // no occurences
+              mMsgBoxPush(3);
+              mPrintXY(3, 3, "Not found.", TEXT_MODE_TRANSPARENT_BACKGROUND, TEXT_COLOR_BLACK);
+              closeMsgBox(); 
+              attempt = -1;
+              break;
+            }
+          }
+          if(attempt != -1) break;
+        }
+      }
     } else if(edit->key == KEY_CTRL_F2) {
       int i = 0;
       int cursorline = 0, curline = 1;
