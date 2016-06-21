@@ -54,7 +54,8 @@ void firstRunWizard() {
   elem[1].lineSpacing = 5;
   elem[1].text = (char*)"- Clock and chronometer\n"
   "- File manager with file search\n"
-  "- Text editor and JPEG viewer\n"
+  "- Text editor\n"
+  "- JPEG viewer\n"
   "- Calendar with agenda and tasklist\n"
   "- Balance manager\n"
   "- Fine timeout&backlight adjustment\n"
