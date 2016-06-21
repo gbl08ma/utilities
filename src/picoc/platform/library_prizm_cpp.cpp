@@ -43,6 +43,7 @@ extern "C" {
 #include "../../stringsProvider.hpp"
 #include "../../tasksGUI.hpp"
 #include "../../textGUI.hpp"
+#include "../../textEditGUI.hpp"
 #include "../../timeGUI.hpp"
 #include "../../timeProvider.hpp"
 #include "../../toolsGUI.hpp"
@@ -2133,6 +2134,12 @@ pcvoid(doTextArea)(struct ParseState *Parser, struct Value *ReturnValue, struct 
     ReturnValue->Val->Integer = doTextArea((textArea*)Param[0]->Val->Pointer);
 }
 
+// textEditGUI
+
+pcvoid(doTextEdit)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    ReturnValue->Val->Integer = doTextEdit((textEdit*)Param[0]->Val->Pointer);
+}
+
 // timeGUI
 
 pcvoid(drawLongDate)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
@@ -2806,6 +2813,12 @@ const struct LibraryFunction UtilitiesTextGUI[] =
     { NULL,         NULL }
 };
 
+const struct LibraryFunction UtilitiesTextEditGUI[] =
+{
+    { pcfunc(doTextEdit),            "int doTextEdit(void*)" },
+    { NULL,         NULL }
+};
+
 const struct LibraryFunction UtilitiesTimeGUI[] =
 {
     { pcfunc(drawLongDate),          "void drawLongDate(int, int, int, int, int);" },
@@ -2981,6 +2994,11 @@ pcvoid(initTextArea)(struct ParseState *Parser, struct Value *ReturnValue, struc
     *(textArea*)Param[0]->Val->Pointer = s;
 }
 
+pcvoid(initTextEdit)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
+    textEdit s;
+    *(textEdit*)Param[0]->Val->Pointer = s;
+}
+
 pcvoid(initCurrency)(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs) {
     Currency s;
     *(Currency*)Param[0]->Val->Pointer = s;
@@ -3011,6 +3029,7 @@ const struct LibraryFunction UtilitiesStructInitializers[] =
     { pcfunc(initSelector),          "void initSelector(void*);" },
     { pcfunc(initTextElement),       "void initTextElement(void*);" },
     { pcfunc(initTextArea),          "void initTextArea(void*);" },
+    { pcfunc(initTextEdit),          "void initTextEdit(void*);" },
     { pcfunc(initCurrency),          "void initCurrency(void*);" },
     { pcfunc(initTransaction),       "void initTransaction(void*);" },
     { pcfunc(initTOTP),              "void initTOTP(void*);" },
@@ -3079,6 +3098,7 @@ void PlatformLibraryInit_cpp()
     IncludeRegister("utilities/stringsProvider.h", &PrizmSetupFunc, &UtilitiesStringsProvider[0], NULL);
     IncludeRegister("utilities/tasksGUI.h", &PrizmSetupFunc, &UtilitiesTasksGUI[0], NULL);
     IncludeRegister("utilities/textGUI.h", &PrizmSetupFunc, &UtilitiesTextGUI[0], NULL);
+    IncludeRegister("utilities/textEditGUI.h", &PrizmSetupFunc, &UtilitiesTextEditGUI[0], NULL);
     IncludeRegister("utilities/timeGUI.h", &PrizmSetupFunc, &UtilitiesTimeGUI[0], NULL);
     IncludeRegister("utilities/timeProvider.h", &PrizmSetupFunc, &UtilitiesTimeProvider[0], NULL);
     IncludeRegister("utilities/toolsGUI.h", &PrizmSetupFunc, &UtilitiesToolsGUI[0], NULL);
