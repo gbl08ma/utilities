@@ -264,6 +264,7 @@ void deleteFiles(File* files, Menu* menu) {
 }
 
 void renameFile(char* old, char* newf) {
+  if(!strcmp(old, newf)) return;
   unsigned short orig[MAX_FILENAME_SIZE+1];
   unsigned short dest[MAX_FILENAME_SIZE+1];
   Bfile_StrToName_ncpy(orig, old, MAX_FILENAME_SIZE+1);
