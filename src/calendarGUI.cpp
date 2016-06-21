@@ -1661,7 +1661,7 @@ void searchEventsScreen(int y, int m, int d) {
   smallmenu.startX=3;
   smallmenu.startY=2;
   smallmenu.statusText = (char*)""; // to clear "Press OPTN..." message
-  smallmenu.title = (char*)"Search in:";
+  smallmenu.title = (char*)"Search in";
   int sres = doMenu(&smallmenu);
   mMsgBoxPop();
   

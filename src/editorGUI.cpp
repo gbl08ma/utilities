@@ -52,9 +52,6 @@ void textfileEditor(char* filename, char* basefolder) {
   input.buffer = (char*)sText;
   while(1) {
     input.key=0;
-    /*SetBackGround(newfile ? 10 : 6);
-    clearLine(1,8);
-    drawScreenTitle("Text Editor", "File contents:");*/
     int res = doTextEdit(&input);
     if (res==TEXTEDIT_RETURN_EXIT) return; // user aborted
     else if (res==TEXTEDIT_RETURN_CONFIRM) {

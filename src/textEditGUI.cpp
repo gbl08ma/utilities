@@ -200,7 +200,7 @@ int doTextEdit(textEdit* edit) {
       smallmenu.startX=3;
       smallmenu.startY=2;
       smallmenu.scrollout=1;
-      smallmenu.title = (char*)"Insert symbol:";
+      smallmenu.title = (char*)"Insert symbol";
       int sres = doMenu(&smallmenu);
       mMsgBoxPop();
       

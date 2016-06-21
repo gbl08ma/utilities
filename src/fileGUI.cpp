@@ -356,7 +356,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction,
             smallmenu.startY=2;
             smallmenu.scrollout=1;
             smallmenu.selection = getSetting(SETTING_FILE_MANAGER_SORT)+1;
-            smallmenu.title = (char*)"Sort items by:";
+            smallmenu.title = (char*)"Sort items by";
             int sres = doMenu(&smallmenu);
             mMsgBoxPop();
             
@@ -392,7 +392,7 @@ int fileManagerChild(char* browserbasepath, int* itemsinclip, int* fileAction,
           smallmenu.height=4;
           smallmenu.startX=3;
           smallmenu.startY=2;
-          smallmenu.title = (char*)"Create new:";
+          smallmenu.title = (char*)"Create new";
           int sres = doMenu(&smallmenu);
           mMsgBoxPop();
           
