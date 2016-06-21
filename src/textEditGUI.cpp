@@ -44,13 +44,9 @@ int doTextEdit(textEdit* edit) {
       defaultStatusMsg = 0;
     }
     text.cursor = edit->cursor;
-    int renderResult = 0, redrawCount = 0;
+    int renderResult = 0;
     do {
       renderResult = doTextArea(&text);
-      if(renderResult == TEXTAREA_RETURN_REDRAW) {
-        if(redrawCount > 1) HourGlass();
-        redrawCount++;
-      }
     } while(renderResult == TEXTAREA_RETURN_REDRAW);
     edit->cursor = text.cursor;
     int keyflag = GetSetupSetting( (unsigned int)0x14);
@@ -203,6 +199,7 @@ int doTextEdit(textEdit* edit) {
       smallmenu.height=6;
       smallmenu.startX=3;
       smallmenu.startY=2;
+      smallmenu.scrollout=1;
       smallmenu.title = (char*)"Insert symbol:";
       int sres = doMenu(&smallmenu);
       mMsgBoxPop();

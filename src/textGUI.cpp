@@ -148,10 +148,12 @@ int doTextArea(textArea* text) {
             if(cursorIndex != -1) {
               // cursor was in this word, but it is not on screen
               if(textY < -24) {
-                text->scroll += text->lineHeight;
+                text->scroll += -24 - textY;
+                text->shadowCursorY += -24 - textY;
                 return TEXTAREA_RETURN_REDRAW;
               } else if(textY >= LCD_HEIGHT_PX) {
-                text->scroll -= text->lineHeight;
+                text->shadowCursorY -= textY - LCD_HEIGHT_PX + 1;
+                text->scroll -= textY - LCD_HEIGHT_PX + 1;
                 return TEXTAREA_RETURN_REDRAW;
               }
             }
@@ -232,17 +234,20 @@ int doTextArea(textArea* text) {
       if(!text->updateCursor)
         text->shadowCursorX = cursorX;
       else {
-        if(cursorLine < 1) cursorLine = 1;
+        if(cursorLine < 1) cursorLine = lineCount;
         char message[25];
         sprintf(message, (char*)"Line %d of %d", cursorLine, lineCount);
         DefineStatusMessage(message, 1, 0, 0);
       }
       text->updateCursor = 2;
       if(cursorY > LCD_HEIGHT_PX - text->lineHeight - 24) {
-        text->scroll -= text->lineHeight;
+        text->scroll -= cursorY - (LCD_HEIGHT_PX - text->lineHeight - 24);
+        if(scroll < -totalTextY+scrollableHeight-(showtitle ? 0 : 17))
+            scroll = -totalTextY+scrollableHeight-(showtitle ? 0 : 17);
         return TEXTAREA_RETURN_REDRAW;
       } else if(cursorY < 0) {
-        text->scroll += text->lineHeight;
+        text->scroll += -cursorY;
+        if(scroll > 0) scroll = 0;
         return TEXTAREA_RETURN_REDRAW;
       }
       text->updateCursor = 0;
