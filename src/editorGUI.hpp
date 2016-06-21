@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define TEXT_BUFFER_SIZE 32*1024
+#define TEXT_BUFFER_SIZE 64*1024
 
 void textfileEditor(char* filename=NULL, char* basefolder=NULL);
 
