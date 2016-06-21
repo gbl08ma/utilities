@@ -109,7 +109,8 @@ From v2.0 to v2.1:
   - Add proper text editor, with multi-line and text search support;
   - Add support for OS 02.02 (function key color changer was broken);
   - File manager: Pressing Jump (F2) on a file from the search results now moves the selection to the file in question in the file list;
-  - Fixed problems with the System Information viewer.
+  - Fixed problems with the System Information viewer;
+  - Fixed minor file manager issues.
 
 From v1.4 to v2.0:
   - Added balance manager;
