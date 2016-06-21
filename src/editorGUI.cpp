@@ -58,9 +58,11 @@ void textfileEditor(char* filename, char* basefolder) {
   while(1) {
     input.key=0;
     int res = doTextEdit(&input);
+    int exit = 0;
     switch(res) {
       case TEXTEDIT_RETURN_EXIT:
       {
+        exit = 1;
         unsigned char newHash[20] = "";
         sha1((unsigned char*)sText, strlen(sText), newHash);
         if(!memcmp(origHash, newHash, 20)) return;
@@ -133,8 +135,10 @@ void textfileEditor(char* filename, char* basefolder) {
           //Write file contents
           Bfile_WriteFile_OS(h, sText, size);
           Bfile_CloseFile_OS(h);
+          // clear unsaved changes "flag":
+          sha1((unsigned char*)sText, strlen(sText), origHash);
         }
-        return;
+        if(exit) return;
       }
       break;
     }
