@@ -17,7 +17,6 @@
 #include "keyboardProvider.hpp"
 #include "graphicsProvider.hpp"
 #include "settingsProvider.hpp"
-#include "debugGUI.hpp"
 
 short selectCharacterAux() {
   unsigned short VRAMbuffer[LCD_WIDTH_PX*(LCD_HEIGHT_PX-24)];

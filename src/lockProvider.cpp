@@ -19,7 +19,6 @@
 #include "calendarProvider.hpp"
 #include "hardwareProvider.hpp"
 #include "fileProvider.hpp"
-#include "debugGUI.hpp"
 #include "stringsProvider.hpp"
 #include "sha2.h"
 

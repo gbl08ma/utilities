@@ -18,7 +18,6 @@
 #include "hardwareProvider.hpp"
 #include "keyboardProvider.hpp"
 #include "timeProvider.hpp"
-#include "debugGUI.hpp"
  
 void lantern() {
   int key;  
